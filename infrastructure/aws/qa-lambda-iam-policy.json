@@ -1,0 +1,38 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:*",
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:DeleteObject",
+        "s3:HeadObject",
+        "ses:SendEmail",
+        "ses:SendRawEmail",
+        "sns:Publish"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:us-east-2:519010577666:table/*",
+        "arn:aws:dynamodb:us-east-2:519010577666:table/*/index/*",
+        "arn:aws:s3:::doeventprofileimagesbucket",
+        "arn:aws:s3:::doeventprofileimagesbucket/*",
+        "arn:aws:s3:::doeventimageeventbucket",
+        "arn:aws:s3:::doeventimageeventbucket/*",
+        "arn:aws:s3:::ticket-qr-qa",
+        "arn:aws:s3:::ticket-qr-qa/*",
+        "arn:aws:s3:::aws-lambda-wall-social-media-qa-media-519010577666",
+        "arn:aws:s3:::aws-lambda-wall-social-media-qa-media-519010577666/*",
+        "arn:aws:s3:::doeventschatroombucket",
+        "arn:aws:s3:::doeventschatroombucket/*",
+        "arn:aws:s3:::doevents-profile-media-qa",
+        "arn:aws:s3:::doevents-profile-media-qa/*",
+        "arn:aws:s3:::doevent-venue-images",
+        "arn:aws:s3:::doevent-venue-images/*",
+        "arn:aws:ses:us-east-1:*:identity/*",
+        "arn:aws:sns:us-east-2:519010577666:*"
+      ]
+    }
+  ]
+}

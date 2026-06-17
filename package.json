@@ -1,0 +1,27 @@
+{
+  "name": "doevents-web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "DoEvents - Aplicación Web con arquitectura de microfrontends",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=@doevents/shell",
+    "dev:auth": "npm run dev --workspace=@doevents/mfe-auth",
+    "dev:all": "concurrently \"npm run dev:auth\" \"npm run dev\"",
+    "build": "npm run build --workspace=@doevents/shared && npm run build --workspace=@doevents/mfe-auth && npm run build --workspace=@doevents/shell",
+    "build:qa": "npm run build --workspace=@doevents/shared && npm run build:qa --workspace=@doevents/mfe-auth && npm run build:qa --workspace=@doevents/shell",
+    "deploy:qa": "powershell -ExecutionPolicy Bypass -File infrastructure/aws/deploy-qa.ps1",
+    "preview": "npm run preview --workspace=@doevents/shell",
+    "lint": "npm run lint --workspaces --if-present"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

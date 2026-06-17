@@ -1,0 +1,323 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Do•events brand tokens
+       Primary  #6979F8  → 231 90% 69%
+       Navy     #2F366F  → 232 41% 31%
+       Tint     #F4F5FE  → 234 78% 98%
+       Ink      #010E15  → 204 91% 4%
+    */
+    --background: 0 0% 100%;
+    --foreground: 204 91% 4%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 204 91% 4%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 204 91% 4%;
+
+    --primary: 231 90% 69%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 231 95% 78%;
+    --primary-deep: 232 41% 31%;
+
+    --secondary: 234 78% 98%;
+    --secondary-foreground: 232 41% 31%;
+
+    --muted: 234 40% 96%;
+    --muted-foreground: 232 15% 42%;
+
+    --accent: 234 78% 96%;
+    --accent-foreground: 231 90% 60%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 234 30% 91%;
+    --input: 234 30% 91%;
+    --ring: 231 90% 69%;
+
+    --favorite: 142 76% 50%;
+    --favorite-foreground: 0 0% 100%;
+    --favorite-light: 142 76% 88%;
+    --icon-primary: 232 41% 31%;
+    --icon-secondary: 231 90% 69%;
+    --icon-muted: 232 15% 50%;
+
+    --radius: 0.875rem;
+
+    --sidebar-background: 234 78% 98%;
+    --sidebar-foreground: 232 41% 25%;
+    --sidebar-primary: 231 90% 69%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 234 50% 94%;
+    --sidebar-accent-foreground: 232 41% 31%;
+    --sidebar-border: 234 30% 88%;
+    --sidebar-ring: 231 90% 69%;
+  }
+
+  .dark {
+    --background: 204 91% 4%;
+    --foreground: 234 78% 98%;
+
+    --card: 232 41% 12%;
+    --card-foreground: 234 78% 98%;
+
+    --popover: 232 41% 12%;
+    --popover-foreground: 234 78% 98%;
+
+    --primary: 231 90% 69%;
+    --primary-foreground: 204 91% 6%;
+    --primary-glow: 231 95% 78%;
+    --primary-deep: 232 41% 31%;
+
+    --secondary: 232 41% 18%;
+    --secondary-foreground: 234 78% 98%;
+
+    --muted: 232 30% 18%;
+    --muted-foreground: 234 20% 70%;
+
+    --accent: 232 41% 22%;
+    --accent-foreground: 231 90% 78%;
+
+    --destructive: 0 62.8% 40%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 232 30% 20%;
+    --input: 232 30% 20%;
+    --ring: 231 90% 69%;
+
+    --favorite: 142 76% 60%;
+    --favorite-foreground: 0 0% 100%;
+    --favorite-light: 142 30% 25%;
+    --icon-primary: 234 78% 90%;
+    --icon-secondary: 231 90% 69%;
+    --icon-muted: 234 20% 70%;
+
+    --sidebar-background: 204 91% 6%;
+    --sidebar-foreground: 234 78% 96%;
+    --sidebar-primary: 231 90% 69%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 232 41% 18%;
+    --sidebar-accent-foreground: 234 78% 96%;
+    --sidebar-border: 232 30% 20%;
+    --sidebar-ring: 231 90% 69%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+@layer components {
+  .card-enhanced {
+    background: linear-gradient(135deg, hsl(var(--card)), hsl(var(--secondary)));
+    box-shadow: 0 4px 15px -3px hsl(0 0% 0% / 0.05), 0 2px 6px -2px hsl(0 0% 0% / 0.03);
+    border: 1px solid hsl(var(--border) / 0.5);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card-enhanced:hover {
+    box-shadow: 0 10px 25px -5px hsl(var(--primary) / 0.12);
+    transform: translateY(-2px);
+  }
+  .button-gradient {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    color: hsl(var(--primary-foreground));
+    box-shadow: 0 4px 14px -2px hsl(var(--primary) / 0.25);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .button-gradient:hover {
+    box-shadow: 0 0 40px hsl(var(--primary) / 0.18);
+    transform: translateY(-1px);
+  }
+  .glass-effect {
+    background: hsl(0 0% 100% / 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--border) / 0.3);
+  }
+  .gradient-text {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-deep)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 200%;
+    animation: guests-gradient-shift 3s ease-in-out infinite;
+  }
+  @keyframes guests-gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  .animate-fade-in {
+    animation: guests-fade-in 0.5s ease-out;
+  }
+  .animate-slide-up {
+    animation: guests-slide-up 0.5s ease-out;
+  }
+  .animate-float {
+    animation: guests-float 3s ease-in-out infinite;
+  }
+  .hover-scale {
+    transition: transform 0.2s ease-out;
+  }
+  .hover-scale:hover {
+    transform: scale(1.05);
+  }
+  @keyframes guests-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes guests-slide-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes guests-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+}
+
+@layer utilities {
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .no-scrollbar,
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar,
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@keyframes float-nav-in {
+  0% {
+    opacity: 0;
+    transform: translateY(24px) scale(0.92);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes float-nav-out {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(24px) scale(0.92);
+  }
+}
+
+@keyframes fab-in {
+  0% {
+    opacity: 0;
+    transform: translateY(24px) scale(0.8);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fab-out {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(24px) scale(0.8);
+  }
+}
+
+.animate-float-nav-in {
+  animation: float-nav-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-float-nav-out {
+  animation: float-nav-out 0.3s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+.animate-fab-in {
+  animation: fab-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.08s forwards;
+  opacity: 0;
+}
+
+.animate-fab-out {
+  animation: fab-out 0.3s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+/* ============= Banking module tokens (Account Verification Hub) ============= */
+@layer base {
+  :root {
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --bancolombia: 45 100% 51%;
+    --nequi: 280 100% 60%;
+    --paypal: 210 100% 40%;
+  }
+  .dark {
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --bancolombia: 45 100% 51%;
+    --nequi: 280 100% 60%;
+    --paypal: 210 100% 40%;
+  }
+}
+
+@layer components {
+  .form-section {
+    @apply bg-card rounded-xl p-6 shadow-sm border border-border;
+  }
+  .form-label {
+    @apply text-sm font-medium text-foreground mb-2 block;
+  }
+  .bank-card {
+    @apply relative flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200;
+  }
+  .bank-card-bancolombia {
+    @apply border-border hover:border-[hsl(var(--bancolombia))] hover:bg-[hsl(var(--bancolombia)/0.05)];
+  }
+  .bank-card-bancolombia[data-selected="true"] {
+    @apply border-[hsl(var(--bancolombia))] bg-[hsl(var(--bancolombia)/0.1)];
+  }
+  .bank-card-nequi {
+    @apply border-border hover:border-[hsl(var(--nequi))] hover:bg-[hsl(var(--nequi)/0.05)];
+  }
+  .bank-card-nequi[data-selected="true"] {
+    @apply border-[hsl(var(--nequi))] bg-[hsl(var(--nequi)/0.1)];
+  }
+  .validation-success {
+    @apply text-[hsl(var(--success))] flex items-center gap-2 text-sm font-medium;
+  }
+  .validation-error {
+    @apply text-destructive flex items-center gap-2 text-sm;
+  }
+}

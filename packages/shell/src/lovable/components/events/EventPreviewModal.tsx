@@ -1,0 +1,257 @@
+import { useState } from 'react';
+import { X, ChevronLeft, Heart, MessageSquare, Share2, Reply, Calendar, Clock, Tag, Users, MapPin, Home as HomeIcon, ShieldCheck, ArrowRight, Star, Play } from 'lucide-react';
+import { EventFormData, REFUND_POLICY_OPTIONS } from '@lovable/data/eventFormData';
+
+interface EventPreviewModalProps {
+  open: boolean;
+  onClose: () => void;
+  data: EventFormData;
+}
+
+const Field = ({ icon: Icon, label, value }: { icon: any; label: string; value: string }) => (
+  <div>
+    <div className="flex items-center gap-1.5 text-sm text-foreground">
+      <Icon className="h-4 w-4 text-primary" />
+      <span className="font-semibold">{label}</span>
+    </div>
+    <div className="mt-1 text-sm text-foreground">{value || '—'}</div>
+  </div>
+);
+
+const formatDate = (d: string) => {
+  if (!d) return '—';
+  try {
+    const dt = new Date(d);
+    if (isNaN(+dt)) return d;
+    return dt.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  } catch { return d; }
+};
+
+const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
+  const [showDetail, setShowDetail] = useState(true);
+  const [showVenueImgs, setShowVenueImgs] = useState(true);
+  if (!open) return null;
+
+  const heroImg = data.images[0];
+  const refundLabel = data.refundPolicy
+    ? REFUND_POLICY_OPTIONS.find((o) => o.value === data.refundPolicy)?.label
+    : '—';
+  const venueImgs = data.location.customImages ?? [];
+  const seatingFigures = data.location.seatingMap?.figures ?? [];
+
+  return (
+    <div className="fixed inset-0 z-[250] bg-black/50 overflow-y-auto">
+      <div className="mx-auto min-h-screen max-w-lg bg-secondary">
+        {/* Top bar */}
+        <div className="sticky top-0 z-10 flex items-center justify-between bg-secondary px-4 pt-4 pb-3">
+          <button onClick={onClose} className="flex items-center gap-1 text-sm font-medium text-primary">
+            <ChevronLeft className="h-4 w-4" /> Atras
+          </button>
+          <button onClick={onClose} className="rounded-full bg-card p-1.5 text-muted-foreground shadow-sm">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="px-4 pb-12">
+          {/* Hero */}
+          <div className="overflow-hidden rounded-2xl bg-card shadow-sm">
+            {heroImg ? (
+              <img src={heroImg} alt={data.name} className="h-44 w-full object-cover" />
+            ) : (
+              <div className="flex h-44 w-full items-center justify-center bg-muted text-muted-foreground">Sin imagen</div>
+            )}
+          </div>
+
+          <h1 className="mt-4 text-2xl font-extrabold text-primary leading-tight">{data.name || 'Sin nombre'}</h1>
+          <div className="mt-2">
+            <span className="inline-block rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
+              Estado: activo
+            </span>
+          </div>
+
+          {/* Actions row */}
+          <div className="mt-3 flex justify-end gap-2">
+            {[Heart, MessageSquare, Reply, Share2].map((Icon, i) => (
+              <button key={i} className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <Icon className="h-4 w-4" />
+              </button>
+            ))}
+          </div>
+
+          {/* Date / details card */}
+          <div className="mt-4 rounded-2xl bg-card p-4 shadow-sm">
+            <div className="grid grid-cols-2 gap-4">
+              <Field icon={Calendar} label="Fecha" value={`Inicio\n${formatDate(data.startDate)}\n\nFin\n${formatDate(data.endDate)}`} />
+              <Field icon={Clock} label="Hora" value={`Inicio\n${data.startTime || '—'}\n\nFin\n${data.endTime || '—'}`} />
+            </div>
+            <div className="my-4 border-t border-border" />
+            <div className="grid grid-cols-2 gap-4">
+              <Field icon={Tag} label="Categoría" value={data.category} />
+              <Field icon={Tag} label="Clase de evento" value={data.eventClass === 'public' ? 'Public' : 'Private'} />
+              <Field icon={Users} label="Aforo" value={data.capacity} />
+              <Field icon={HomeIcon} label="Tipo de lugar" value={data.location.customType || '—'} />
+            </div>
+            <div className="mt-4 text-center">
+              <button onClick={() => setShowDetail((v) => !v)} className="text-sm font-semibold text-primary">
+                {showDetail ? 'Más detalle del evento  -' : 'Más detalle del evento  +'}
+              </button>
+            </div>
+          </div>
+
+          {showDetail && (
+            <>
+              {/* Descripción */}
+              <div className="mt-4">
+                <h3 className="text-sm font-bold text-foreground">Descripción de evento</h3>
+                <p className="mt-2 text-sm text-foreground whitespace-pre-wrap">{data.description || '—'}</p>
+              </div>
+
+              {/* Agenda */}
+              {data.agenda.length > 0 && (
+                <div className="mt-6 space-y-4">
+                  {data.agenda.map((day, i) => (
+                    <div key={day.id} className="rounded-2xl bg-card p-4 shadow-sm">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-5 w-5 text-primary" />
+                        <div>
+                          <div className="text-base font-bold text-foreground">Agenda Día {i + 1}</div>
+                          <div className="text-xs text-muted-foreground">{day.name || formatDate(day.date)}</div>
+                        </div>
+                      </div>
+                      <div className="mt-4 space-y-3 border-l-2 border-primary/30 pl-4">
+                        {day.activities.map((a) => (
+                          <div key={a.id} className="rounded-xl bg-secondary p-3">
+                            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 px-3 py-1 text-xs font-bold text-primary">
+                              <Clock className="h-3 w-3" /> {a.startTime} - {a.endTime}
+                            </span>
+                            <div className="mt-2 text-sm text-foreground">{a.description}</div>
+                            {a.responsible && (
+                              <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
+                                <Users className="h-3 w-3" /> {a.responsible.name}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Lugar */}
+              <div className="mt-6 rounded-2xl bg-card p-4 shadow-sm">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <HomeIcon className="h-4 w-4" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-bold text-foreground">{data.location.customName || '—'}</div>
+                    <div className="text-xs text-muted-foreground">{data.location.customAddress || data.location.detectedCity}</div>
+                  </div>
+                </div>
+                {(venueImgs.length > 0 || seatingFigures.length > 0) && (
+                  <button onClick={() => setShowVenueImgs((v) => !v)} className="mt-3 flex items-center gap-1 text-sm font-semibold text-primary">
+                    {showVenueImgs ? '∧ Ocultar imágenes del lugar' : '∨ Ver imágenes del lugar'}
+                  </button>
+                )}
+                {showVenueImgs && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {venueImgs.map((src, i) => (
+                      <img key={i} src={src} className="h-20 w-20 rounded-lg object-cover" />
+                    ))}
+                    {seatingFigures.length > 0 && (
+                      <div className="flex h-20 w-20 items-center justify-center rounded-lg bg-secondary text-[10px] text-muted-foreground text-center">
+                        Mapa de butacas
+                      </div>
+                    )}
+                  </div>
+                )}
+                <button className="mt-3 flex items-center gap-1 text-sm font-semibold text-primary">
+                  <MapPin className="h-4 w-4" /> Ver ubicación en el mapa
+                </button>
+              </div>
+
+              {/* Video */}
+              {data.videoUrl && (
+                <div className="mt-6">
+                  <h3 className="text-sm font-bold text-foreground">Video del evento</h3>
+                  <div className="mt-2 relative overflow-hidden rounded-2xl bg-card shadow-sm">
+                    <div className="flex h-44 items-center justify-center bg-foreground/10">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-foreground">
+                        <Play className="h-5 w-5" />
+                      </div>
+                    </div>
+                    <a href={data.videoUrl} target="_blank" rel="noreferrer" className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-card px-3 py-1 text-xs font-semibold text-foreground shadow">
+                      Ver video en YouTube ↗
+                    </a>
+                  </div>
+                </div>
+              )}
+
+              {/* Organizador */}
+              <div className="mt-6">
+                <h3 className="text-sm font-bold text-foreground">Organizador del evento</h3>
+                <div className="mt-2 rounded-2xl bg-card p-4 shadow-sm">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/15 text-base font-bold text-primary">TU</div>
+                    <div className="flex-1">
+                      <div className="font-bold text-foreground">Tú</div>
+                      <div className="mt-1 grid grid-cols-2 gap-2 text-xs">
+                        <div><div className="text-muted-foreground">Eventos realizados</div><div className="font-bold text-foreground">0</div></div>
+                        <div><div className="text-muted-foreground">Experiencia</div><div className="font-bold text-foreground">%0</div></div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xs text-muted-foreground">Calificación</div>
+                      <div className="mt-0.5 flex">{[0,1,2,3,4].map(i => <Star key={i} className="h-3 w-3 text-primary" />)}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Anfitriones */}
+              {data.hosts.length > 0 && (
+                <div className="mt-4">
+                  <h3 className="text-sm font-bold text-foreground">Anfitrión del evento</h3>
+                  {data.hosts.map((h) => (
+                    <div key={h.id} className="mt-2 rounded-2xl bg-card p-4 shadow-sm">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/15 text-base font-bold text-primary">{h.initials || h.name?.slice(0,2).toUpperCase()}</div>
+                        <div className="flex-1">
+                          <div className="font-bold text-foreground">{h.name}</div>
+                          {h.role && <div className="text-xs text-muted-foreground">{h.role}</div>}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* FAQs */}
+              {data.faqs.length > 0 && (
+                <div className="mt-6 rounded-2xl bg-card p-4 shadow-sm flex items-center justify-between">
+                  <span className="font-semibold text-foreground">Preguntas frecuentes</span>
+                  <ArrowRight className="h-4 w-4 text-primary" />
+                </div>
+              )}
+
+              {/* Reembolsos */}
+              <div className="mt-4 rounded-2xl bg-primary/10 p-4">
+                <div className="flex items-center gap-2 text-primary">
+                  <ShieldCheck className="h-5 w-5" />
+                  <span className="font-bold">Solicita tu reembolso</span>
+                </div>
+                <p className="mt-2 text-sm text-foreground">{refundLabel}</p>
+                <button className="mt-3 w-full rounded-xl bg-card py-2.5 text-sm font-semibold text-primary shadow-sm">
+                  Ver política de reembolsos →
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default EventPreviewModal;

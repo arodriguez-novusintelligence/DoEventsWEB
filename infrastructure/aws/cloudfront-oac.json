@@ -1,0 +1,7 @@
+{
+  "Name": "doevents-web-qa-oac",
+  "Description": "OAC for DoEventsWEB QA",
+  "SigningProtocol": "sigv4",
+  "SigningBehavior": "always",
+  "OriginAccessControlOriginType": "s3"
+}

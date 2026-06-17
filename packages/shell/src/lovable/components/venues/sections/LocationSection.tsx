@@ -1,0 +1,110 @@
+import { useState } from 'react';
+import { Input } from '@lovable/components/ui/input';
+import { Textarea } from '@lovable/components/ui/textarea';
+import { Button } from '@lovable/components/ui/button';
+import { MapPinPlus, Crosshair, MapPin } from 'lucide-react';
+import { PlaceSeatingMapSection } from '../../../../components/places/PlaceSeatingMapSection';
+import { usePlaceForm } from '@lovable/components/places/placeFormContext';
+
+const underlineInput =
+  'border-0 border-b border-border rounded-none px-0 h-10 focus-visible:ring-0 focus-visible:border-primary bg-transparent';
+
+const Field = ({ label, children, bold = false }: { label: string; children: React.ReactNode; bold?: boolean }) => (
+  <div className="space-y-1.5">
+    <p className={`text-sm ${bold ? 'font-semibold text-foreground' : 'text-foreground'}`}>{label}</p>
+    {children}
+  </div>
+);
+
+const LocationSection = () => {
+  const {
+    form, update, locating, useDeviceLocation, searchLocation,
+  } = usePlaceForm();
+  const [showMap, setShowMap] = useState(false);
+  const lat = Number(form.latitude);
+  const lng = Number(form.longitude);
+  const hasCoords = Number.isFinite(lat) && Number.isFinite(lng);
+  const mapSrc = hasCoords
+    ? `https://www.google.com/maps?q=${lat},${lng}&z=16&output=embed`
+    : null;
+
+  return (
+    <div className="space-y-5">
+      <div className="rounded-2xl bg-card border border-border p-4 space-y-5">
+        <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+          <Button type="button" variant="outline" size="sm" disabled={locating} onClick={() => void useDeviceLocation()}>
+            <Crosshair className="mr-2 h-4 w-4" />
+            Usar mi ubicación
+          </Button>
+          <Button type="button" variant="outline" size="sm" disabled={locating} onClick={() => void searchLocation()}>
+            <MapPin className="mr-2 h-4 w-4" />
+            Buscar en mapa
+          </Button>
+          {hasCoords && (
+            <button
+              type="button"
+              onClick={() => setShowMap((v) => !v)}
+              className="flex items-center justify-center gap-1.5 text-primary font-medium text-sm"
+            >
+              {showMap ? 'Ocultar mapa' : 'Consultar mapa'}
+              <MapPinPlus className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+
+        {showMap && mapSrc && (
+          <div className="space-y-2 animate-fade-in">
+            <div className="rounded-xl overflow-hidden border border-border aspect-video">
+              <iframe src={mapSrc} width="100%" height="100%" style={{ border: 0 }} loading="lazy" title="Ubicación del lugar" className="w-full h-full" />
+            </div>
+            {form.locationLabel && (
+              <p className="text-center text-sm text-muted-foreground">{form.locationLabel}</p>
+            )}
+          </div>
+        )}
+
+        <Field label="Dirección del lugar">
+          <Input value={form.address} onChange={(e) => update({ address: e.target.value })} placeholder="Ej: Calle 48c #97-45" className={underlineInput} />
+        </Field>
+
+        <Field label="Barrio">
+          <Input value={form.neighborhood} onChange={(e) => update({ neighborhood: e.target.value })} placeholder="Ej: Chapinero" className={underlineInput} />
+        </Field>
+
+        <Field label="Ciudad *">
+          <Input value={form.city} onChange={(e) => update({ city: e.target.value })} placeholder="Ej: Bogotá" className={underlineInput} />
+        </Field>
+
+        <Field label="Departamento">
+          <Input value={form.department} onChange={(e) => update({ department: e.target.value })} placeholder="Ej: Cundinamarca" className={underlineInput} />
+        </Field>
+
+        <Field label="Cómo llegar">
+          <Input value={form.directions} onChange={(e) => update({ directions: e.target.value })} placeholder="Indicaciones para visitantes" className={underlineInput} />
+        </Field>
+
+        <Field label="Referencias o puntos cercanos" bold>
+          <Textarea
+            value={form.nearbyReferencesText}
+            onChange={(e) => update({ nearbyReferencesText: e.target.value })}
+            placeholder="Una por línea: Nombre | Tipo | Distancia"
+            className={`${underlineInput} min-h-[80px] resize-none py-2`}
+          />
+        </Field>
+      </div>
+
+      {form.hasSeating && (
+        <PlaceSeatingMapSection
+          placeName={form.name}
+          floors={form.floors}
+          gates={form.gates}
+          capacity={form.capacity}
+          onFloorsChange={(floors) => update({ floors })}
+          onGatesChange={(gates) => update({ gates })}
+        />
+      )}
+    </div>
+  );
+};
+
+export default LocationSection;

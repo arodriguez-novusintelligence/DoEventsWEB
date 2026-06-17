@@ -1,0 +1,26 @@
+{
+    "CORSRules":  [
+                      {
+                          "MaxAgeSeconds":  3600,
+                          "AllowedHeaders":  [
+                                                 "*"
+                                             ],
+                          "AllowedOrigins":  [
+                                                 "https://qa.doeventsapp.com",
+                                                 "https://doeventsapp.com",
+                                                 "http://localhost:5173",
+                                                 "http://localhost:4173",
+                                                 "http://127.0.0.1:5173"
+                                             ],
+                          "ExposeHeaders":  [
+                                                "ETag"
+                                            ],
+                          "AllowedMethods":  [
+                                                 "GET",
+                                                 "PUT",
+                                                 "POST",
+                                                 "HEAD"
+                                             ]
+                      }
+                  ]
+}

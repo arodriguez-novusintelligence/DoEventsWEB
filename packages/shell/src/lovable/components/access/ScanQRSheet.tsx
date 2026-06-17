@@ -1,0 +1,124 @@
+import { useEffect, useRef, useState } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@lovable/components/ui/dialog';
+import { ScanLine, ShieldCheck, CameraOff, KeyRound } from 'lucide-react';
+import { toast } from 'sonner';
+
+interface ScanQRSheetProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  eventTitle: string;
+}
+
+const ScanQRSheet = ({ open, onOpenChange, eventTitle }: ScanQRSheetProps) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [cameraReady, setCameraReady] = useState(false);
+  const [manualCode, setManualCode] = useState('');
+
+  useEffect(() => {
+    if (!open) return;
+    let stream: MediaStream | null = null;
+    (async () => {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          setCameraReady(true);
+        }
+      } catch {
+        setCameraReady(false);
+      }
+    })();
+    return () => {
+      stream?.getTracks().forEach((t) => t.stop());
+      setCameraReady(false);
+    };
+  }, [open]);
+
+  const validate = () => {
+    if (!manualCode.trim()) {
+      toast('Ingresa un código manualmente');
+      return;
+    }
+    toast.success(`✓ Acceso concedido • ${eventTitle}`);
+    setManualCode('');
+    onOpenChange(false);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-md p-0 overflow-hidden gap-0 bg-card">
+        <DialogHeader className="px-5 pt-5 pb-3">
+          <DialogTitle className="flex items-center gap-2 text-xl font-extrabold text-foreground">
+            <ScanLine className="h-5 w-5 text-primary" />
+            Escanear código
+          </DialogTitle>
+          <p className="text-xs text-muted-foreground mt-1 truncate">{eventTitle}</p>
+        </DialogHeader>
+
+        <div className="px-5 pb-5">
+          {/* Camera viewfinder */}
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-black">
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            {!cameraReady && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-muted text-muted-foreground">
+                <CameraOff className="h-8 w-8" />
+                <span className="text-xs">Cámara no disponible</span>
+              </div>
+            )}
+
+            {/* Scan frame overlay */}
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+              <div className="relative h-3/5 w-3/5 rounded-2xl border-2 border-white/90 shadow-[0_0_0_9999px_rgba(0,0,0,0.35)]">
+                <span className="absolute -top-px -left-px h-6 w-6 border-t-4 border-l-4 border-primary rounded-tl-2xl" />
+                <span className="absolute -top-px -right-px h-6 w-6 border-t-4 border-r-4 border-primary rounded-tr-2xl" />
+                <span className="absolute -bottom-px -left-px h-6 w-6 border-b-4 border-l-4 border-primary rounded-bl-2xl" />
+                <span className="absolute -bottom-px -right-px h-6 w-6 border-b-4 border-r-4 border-primary rounded-br-2xl" />
+                {cameraReady && (
+                  <div className="absolute left-2 right-2 top-1/2 h-0.5 -translate-y-1/2 bg-primary shadow-[0_0_12px_hsl(var(--primary))] animate-pulse" />
+                )}
+              </div>
+            </div>
+
+            <div className="absolute left-0 right-0 bottom-2 text-center">
+              <span className="inline-flex items-center gap-1 rounded-full bg-black/50 px-3 py-1 text-[11px] font-medium text-white backdrop-blur">
+                <ShieldCheck className="h-3 w-3" /> Centra el QR en el recuadro
+              </span>
+            </div>
+          </div>
+
+          {/* Manual entry */}
+          <div className="mt-4 rounded-2xl border border-border bg-secondary/60 p-4">
+            <p className="text-[11px] text-muted-foreground mb-2">
+              ¿No se detecta? Ingresa el código manualmente.
+            </p>
+            <label className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-1.5">
+              <KeyRound className="h-3.5 w-3.5 text-primary" /> Código manual
+            </label>
+            <input
+              value={manualCode}
+              onChange={(e) => setManualCode(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && validate()}
+              placeholder="Pega el código QR"
+              className="w-full rounded-xl border border-border bg-card px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
+            />
+          </div>
+
+          <button
+            onClick={validate}
+            className="mt-4 w-full rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground shadow hover:bg-primary/90"
+          >
+            Validar código
+          </button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default ScanQRSheet;

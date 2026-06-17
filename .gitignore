@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.DS_Store
+*.local
+.env
+.env.*
+!.env.example
+*.log
+.vite/
+coverage/
+.idea/
+.vscode/
+*.tsbuildinfo
+tmp-*.jpg
+tmp-*.png

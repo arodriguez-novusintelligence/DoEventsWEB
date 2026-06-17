@@ -1,0 +1,10 @@
+{
+  "qaWebDomain": "qa.doeventsapp.com",
+  "s3Bucket": "doevents-web-qa",
+  "s3Region": "us-east-2",
+  "cloudFrontDistributionId": "E3UV9NHXADGSAJ",
+  "cloudFrontDomain": "d2u3uwg4xpaxra.cloudfront.net",
+  "acmCertificateArn": "arn:aws:acm:us-east-1:519010577666:certificate/c5c36764-614b-408c-b848-a9a3d3e844bd",
+  "oacId": "E3TV58WYA0XY9A",
+  "loginUrl": "https://qa.doeventsapp.com/auth/login"
+}
