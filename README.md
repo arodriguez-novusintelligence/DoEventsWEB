@@ -53,6 +53,8 @@ Entornos disponibles: `dev`, `qa`, `prod`
 
 ## Desarrollo local
 
+Ver **[DESARROLLO.md](./DESARROLLO.md)** para dependencias, versiones, configuración de entorno y pruebas en `localhost`.
+
 ```powershell
 cd DoEventsWEB
 npm install
@@ -99,12 +101,14 @@ Los cambios de backend para la migración web van en la rama `feature/migracionW
 
 ## Repositorio
 
+## Repositorio (AWS CodeCommit us-east-2)
+
 ```powershell
+pip install git-remote-codecommit
+git clone codecommit::us-east-2://DoEventsWEB
 cd DoEventsWEB
-git init
-git add .
-git commit -m "feat: Fase 1 - autenticación web con microfrontends"
-# Crear repo remoto DoEventsWEB y push
-git remote add origin <URL_REPO_DOEVENTS_WEB>
-git push -u origin main
+npm install
+npm run dev:all
 ```
+
+Documentación completa: [DESARROLLO.md](./DESARROLLO.md)
