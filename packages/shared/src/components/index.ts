@@ -25,8 +25,6 @@ export * from './ProfileGalleryPickerSheet';
 export * from './MediaSourcePicker';
 export * from './ProfileMediaPickerSheet';
 export * from './CommentsSheet';
-export * from './IntegrationNotice';
-export * from './SimulatedPaymentGateway';
 export * from './PageTopbar';
 export * from './EnrollmentProgress';
 export * from './PreferenceTag';

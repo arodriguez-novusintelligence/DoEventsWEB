@@ -50,9 +50,6 @@ export interface Post {
   };
 }
 
-/** @deprecated Sin datos mock — usar API real */
+/** Listas vacías — menciones en composer usan API cuando hay datos */
 export const users: User[] = [];
-/** @deprecated Sin datos mock — usar API real */
 export const bannerEvents: Array<{ id: string; title: string; image: string; date: string; location: string }> = [];
-/** @deprecated Sin datos mock — usar API real */
-export const mockPosts: Post[] = [];

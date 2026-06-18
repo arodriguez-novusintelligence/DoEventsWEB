@@ -13,9 +13,6 @@ export interface Venue {
   lng?: number;
 }
 
-/** @deprecated Sin datos mock — usar API real (lugares cercanos / mis lugares) */
-export const MOCK_VENUES: Venue[] = [];
-
 export const VENUE_TYPES = [
   'Salón de eventos',
   'Teatro',

@@ -94,6 +94,3 @@ export const useTickets = () =>
     () => tickets,
     () => tickets
   );
-
-// Backwards compat
-export const mockTickets = tickets;

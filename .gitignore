@@ -13,3 +13,4 @@ coverage/
 *.tsbuildinfo
 tmp-*.jpg
 tmp-*.png
+packages/shell/@mf-types/
