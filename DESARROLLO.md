@@ -10,7 +10,7 @@ Documentación de referencia para clonar, instalar, ejecutar y probar la aplicac
 |-------|--------|
 | **Nombre** | `doevents-web` |
 | **Versión** | `0.1.0` |
-| **Repositorio** | AWS CodeCommit `DoEventsWEB` (us-east-2) |
+| **Repositorio** | [github.com/doeventsrepo/DoEventsWEB](https://github.com/doeventsrepo/DoEventsWEB) — rama `develop` |
 | **Código base** | Migración desde **DoEventsFront** (React Native / Expo) hacia **React 18 + TypeScript + Vite** |
 | **Diseño UI** | Componentes portados desde **Lovable** (`version_17_06_2026` → `packages/shell/src/lovable`) |
 | **Backend** | APIs REST en **DoEventsBack** (`api-qa.doeventsapp.com` en QA) |
@@ -27,7 +27,6 @@ Documentación de referencia para clonar, instalar, ejecutar y probar la aplicac
 | Node.js | `>= 20` | Runtime obligatorio |
 | TypeScript | `^5.7.3` | Tipado |
 | concurrently | `^9.1.2` | Ejecutar shell + auth en paralelo |
-| cross-env | `^7.0.3` | Variables de entorno en scripts |
 
 ### Workspaces
 
@@ -77,15 +76,32 @@ DoEventsWEB/
 ## 5. Configuración inicial
 
 ```powershell
-# Clonar desde CodeCommit (us-east-2)
-git clone https://git-codecommit.us-east-2.amazonaws.com/v1/repos/DoEventsWEB
+# 1. Clonar frontend (rama develop)
+git clone https://github.com/doeventsrepo/DoEventsWEB.git
 cd DoEventsWEB
+git checkout develop
 
-# Instalar dependencias del monorepo
+# 2. Instalar dependencias del monorepo
 npm install
 
-# Variables de entorno (opcional en local; por defecto usa QA)
+# 3. Variables de entorno locales (copiar plantilla)
 copy .env.example .env.local
+# Opcional: VITE_GOOGLE_MAPS_API_KEY para mapas en localhost
+# Sin .env.local el dev apunta a API QA con valores por defecto en config/environments/
+```
+
+### Repositorios hermanos (opcional según tu rol)
+
+```powershell
+# Backend serverless (lambdas, DynamoDB)
+git clone https://github.com/doeventsrepo/DoEventsBack.git
+cd DoEventsBack && git checkout develop
+
+# Asistente IA (/ai/*) — solo si trabajas en el chat o agentes
+git clone https://github.com/doeventsrepo/DoEventsIA.git
+cd DoEventsIA && git checkout develop
+npm install
+copy .env.example .env   # CURSOR_API_KEY solo para deploy local de IA
 ```
 
 ### Entornos (`config/environments/index.ts`)
@@ -169,11 +185,13 @@ Requiere credenciales AWS con permisos sobre S3 `doevents-web-qa` y CloudFront.
 
 ## 8. Relación con otros repositorios
 
-| Repositorio CodeCommit | Relación |
-|------------------------|----------|
-| **DoEventsBack** | Lambdas y APIs consumidas por `@doevents/shared` |
-| **DoEventsLovable** | Diseño fuente (Lovable v17); se porta manualmente a `shell/src/lovable` |
-| **DoEventsIA** | Backend del asistente (`AgentesIA`); endpoint `/ai/chat` |
+| Repositorio | URL | Relación |
+|-------------|-----|----------|
+| **DoEventsWEB** | [doeventsrepo/DoEventsWEB](https://github.com/doeventsrepo/DoEventsWEB) | Este frontend |
+| **DoEventsBack** | [doeventsrepo/DoEventsBack](https://github.com/doeventsrepo/DoEventsBack) | Lambdas y APIs consumidas por `@doevents/shared` |
+| **DoEventsIA** | [doeventsrepo/DoEventsIA](https://github.com/doeventsrepo/DoEventsIA) | Asistente IA — endpoint `/ai/chat` |
+| **discover-joyful-feed** | [doeventsrepo/discover-joyful-feed](https://github.com/doeventsrepo/discover-joyful-feed) | Diseño Lovable de referencia (no es runtime) |
+| **DoEventsFront** | App móvil Expo (repo legado) | Referencia de lógica migrada a web |
 
 ---
 
