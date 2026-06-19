@@ -2,7 +2,9 @@
 
 ## Resumen
 
-Run 38e2c759: manifiesto sin diff UI — validación únicamente. Sin cambios backend.
+Run 38e2c759 (re-run 20:54 UTC): manifiesto sin diff UI — validación únicamente. Sin cambios backend.
+
+Run 38e2c759 (20:00 UTC): manifiesto sin diff UI — validación únicamente. Sin cambios backend.
 
 Run b6c89604: navegación `onBack` en lista de mensajes — solo frontend (`ChatPage` → `/`). Sin cambios backend.
 

@@ -515,6 +515,42 @@
         "Adaptacion pendiente por agente Cursor"
       ],
       "agentStatus": "pending"
+    },
+    {
+      "id": "agent-38e2c759-rerun",
+      "lovableSha": "38e2c7598916480a27aa12f8045633003a35c3ac",
+      "before": "9ae14ffe1e9e52e0a266a9d7edf6a93aedf17da2",
+      "timestamp": "2026-06-19 20:54 UTC",
+      "workflowRunId": "27847959667",
+      "changeTypes": [
+        "VISUAL"
+      ],
+      "designSimilarityPercentBefore": 59.92,
+      "designSimilarityPercentAfter": 59.92,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 38.08,
+      "requiresDesignAlignment": true,
+      "summary": "Manifiesto sin diff UI (38e2c759); validación build:devaws OK; empalmes previos intactos",
+      "changedFilesLovable": [],
+      "webFilesModified": [
+        "ReglasAgente/cambios-lovable.json",
+        "ReglasAgente/decision-log.md",
+        "ReglasAgente/impacto-backend.md",
+        "ReglasAgente/reglas-front.md",
+        "design-comparison.json",
+        "Reports/2026-06-19-design-comparison-38e2c759-rerun.md",
+        "Reports/2026-06-19-agent-execution-38e2c759-rerun.md"
+      ],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "testStatus": "SKIPPED",
+      "pendingRisks": [
+        "Similitud global ~59.92% — 103 componentes needs_adaptation pendientes",
+        "Re-comparación CI con compare-design-similarity.py no disponible en agente cloud",
+        "Brechas BACKEND_REQUIRED (banking, KYC, reseñas) sin resolver"
+      ],
+      "agentStatus": "APPLIED"
     }
   ]
 }
