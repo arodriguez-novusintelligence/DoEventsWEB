@@ -435,8 +435,8 @@
       "id": "prepare-b6c89604",
       "lovableSha": "b6c89604624e6903e00e6bc14890df198ee2fc57",
       "before": "HEAD~1",
-      "timestamp": "2026-06-19 18:49 UTC",
-      "workflowRunId": "27843136315",
+      "timestamp": "2026-06-19 19:25 UTC",
+      "workflowRunId": "27844541944",
       "changeTypes": [
         "VISUAL"
       ],
@@ -457,44 +457,6 @@
         "Adaptacion pendiente por agente Cursor"
       ],
       "agentStatus": "pending"
-    },
-    {
-      "id": "agent-b6c89604",
-      "lovableSha": "b6c89604624e6903e00e6bc14890df198ee2fc57",
-      "before": "HEAD",
-      "timestamp": "2026-06-19 19:15 UTC",
-      "workflowRunId": "27843136315",
-      "changeTypes": [
-        "VISUAL",
-        "FRONTEND_LOGIC"
-      ],
-      "designSimilarityPercentBefore": 59.92,
-      "designSimilarityPercentAfter": 60.1,
-      "designSimilarityTarget": 98.0,
-      "designGapPercent": 37.9,
-      "requiresDesignAlignment": true,
-      "summary": "Empalme onBack en MessagesListView: ChatPage navega a / (feed) equivalente a setActiveTab('wall') en Lovable Index",
-      "changedFilesLovable": [
-        "src/components/chat/MessagesListView.tsx",
-        "src/pages/Index.tsx"
-      ],
-      "webFilesModified": [
-        "packages/shell/src/pages/ChatPage.tsx",
-        "ReglasAgente/cambios-lovable.json",
-        "ReglasAgente/decision-log.md",
-        "ReglasAgente/impacto-backend.md",
-        "ReglasAgente/reglas-front.md",
-        "Reports/2026-06-19-design-comparison-b6c89604.md"
-      ],
-      "backFilesModified": [],
-      "mocksUsed": false,
-      "buildResult": "SUCCESS",
-      "testStatus": "SKIPPED",
-      "pendingRisks": [
-        "Similitud global <98% — 104 archivos needs_adaptation pendientes",
-        "Re-comparación CI de MessagesListView post-empalme"
-      ],
-      "agentStatus": "APPLIED"
     }
   ]
 }
