@@ -493,30 +493,6 @@
       "agentStatus": "APPLIED"
     },
     {
-      "id": "prepare-e1cc7eaf",
-      "lovableSha": "e1cc7eafff46b30f5210f46cbcc2e6eb14687053",
-      "before": "HEAD~1",
-      "timestamp": "2026-06-19 20:53 UTC",
-      "workflowRunId": "27847959667",
-      "changeTypes": [
-        "VISUAL"
-      ],
-      "designSimilarityPercent": 59.92,
-      "designSimilarityTarget": 98.0,
-      "designGapPercent": 38.08,
-      "requiresDesignAlignment": true,
-      "summary": "Manifiesto: UI=False, reglas=False, 0 archivo(s); similitud diseño=59.92%",
-      "changedFilesLovable": [],
-      "webFilesModified": [],
-      "backFilesModified": [],
-      "mocksUsed": false,
-      "buildResult": "pending",
-      "pendingRisks": [
-        "Adaptacion pendiente por agente Cursor"
-      ],
-      "agentStatus": "pending"
-    },
-    {
       "id": "agent-38e2c759-rerun",
       "lovableSha": "38e2c7598916480a27aa12f8045633003a35c3ac",
       "before": "9ae14ffe1e9e52e0a266a9d7edf6a93aedf17da2",
@@ -848,7 +824,10 @@
       "designSimilarityPercentAfter": 82.5,
       "designSimilarityTarget": 98.0,
       "summary": "Batch 5: compras/reservas, búsqueda global, feed KYC banner, admin panels, guests hook, rutas KYC/admin legacy",
-      "changeTypes": ["VISUAL", "FRONTEND_LOGIC"],
+      "changeTypes": [
+        "VISUAL",
+        "FRONTEND_LOGIC"
+      ],
       "gapsClosed": [
         "src/components/purchases/ServiceReservationDetail.tsx",
         "src/pages/ForgotPassword.tsx",
@@ -902,6 +881,30 @@
         "Auth pages re-export mfe-auth — similitud visual limitada por diseño"
       ],
       "agentStatus": "finished"
+    },
+    {
+      "id": "prepare-e1cc7eaf",
+      "lovableSha": "e1cc7eafff46b30f5210f46cbcc2e6eb14687053",
+      "before": "HEAD~1",
+      "timestamp": "2026-06-19 21:47 UTC",
+      "workflowRunId": "27849872403",
+      "changeTypes": [
+        "VISUAL"
+      ],
+      "designSimilarityPercent": 58.82,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 39.18,
+      "requiresDesignAlignment": true,
+      "summary": "Manifiesto: UI=False, reglas=False, 0 archivo(s); similitud diseño=58.82%",
+      "changedFilesLovable": [],
+      "webFilesModified": [],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "pending",
+      "pendingRisks": [
+        "Adaptacion pendiente por agente Cursor"
+      ],
+      "agentStatus": "pending"
     }
   ]
 }
