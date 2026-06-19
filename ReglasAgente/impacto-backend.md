@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `agent-38e2c759-27850000711`: validación sin diff UI; build:devaws OK; sin cambios backend ni frontend de lógica; batch 6 (~18 gaps) pendiente.
+
 Run `gap-empalme-27849872403-b5`: batch 5 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`KycCertificationView` submit).
 
 Run `gap-empalme-27849872403-b4`: batch 4 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`StoryViewersSheet`).

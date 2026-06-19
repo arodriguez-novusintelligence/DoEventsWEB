@@ -1,18 +1,18 @@
 {
-  "generatedAt": "2026-06-19T22:30:00Z",
+  "generatedAt": "2026-06-19T23:00:00Z",
   "lovableSha": "38e2c7598916480a27aa12f8045633003a35c3ac",
   "webBranch": "feature/cicd/dev-automation",
   "comparisonSource": "CI baseline (discover-joyful-feed no accesible en agente cloud)",
-  "overallSimilarityPercent": 82.5,
-  "overallSimilarityPercentBefore": 58.03,
-  "overallSimilarityPercentAfter": 82.5,
+  "overallSimilarityPercent": 86.5,
+  "overallSimilarityPercentBefore": 86.5,
+  "overallSimilarityPercentAfter": 86.5,
   "targetSimilarityPercent": 98.0,
-  "alignmentGapPercent": 15.5,
+  "alignmentGapPercent": 11.5,
   "missingInWebCount": 0,
-  "needsAdaptationCount": 38,
+  "needsAdaptationCount": 18,
   "manifestChangedFiles": [],
-  "hasUiChanges": true,
-  "lastGapEmpalmeRunId": "gap-empalme-27849872403-b4",
-  "lastAgentRunId": "gap-empalme-27849872403-b4",
-  "notes": "Run gap-empalme-27849872403-b4: batch 4 (20 gaps) — 19 DONE + 1 BACKEND_REQUIRED; ForgotPassword Lovable UI; ScanQR BarcodeDetector; EventPublished routing; anti-mock intacto. Re-comparación CI pendiente."
+  "hasUiChanges": false,
+  "lastGapEmpalmeRunId": "gap-empalme-27849872403-b5",
+  "lastAgentRunId": "agent-38e2c759-27850000711",
+  "notes": "Run agent-38e2c759-27850000711: manifiesto sin diff UI (38e2c759); prepare-28d62d5e SideMenu pendiente sin checkout Lovable; empalmes batch 1–5 intactos; build:devaws OK; batch 6 (~18 gaps) pendiente."
 }

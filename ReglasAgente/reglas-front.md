@@ -85,6 +85,16 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-19 validación agente (run 27850000711)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| Manifiesto vacío (38e2c759) | Validación | Sí | — | Sin diff UI; build:devaws OK |
+| Anti-mock pages | Bloqueo | Sí | `packages/shell/src/pages/` | grep sin coincidencias runtime |
+| Similitud diseño | Métrica | Parcial | `design-comparison.json` | 86.5% estable; batch 6 pendiente (~18 gaps) |
+| Empalmes batch 1–5 | Integración | Sí | rama `feature/cicd/dev-automation` | Intactos; sin regresión build |
+| SideMenu prepare-28d62d5e | Bloqueo | Parcial | `feed/SideMenu.tsx` | discover-joyful-feed privado; empalme batch 1 previo intacto |
+
 ## Ejecución 2026-06-19 gap-empalme batch 5 (run 27849872403-b5)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

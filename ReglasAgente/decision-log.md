@@ -14,6 +14,40 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-19 23:00 UTC] agent-38e2c759-27850000711
+
+### 1. Resumen del cambio detectado
+Manifiesto SHA `38e2c7598916480a27aa12f8045633003a35c3ac`: sin cambios UI (`changedFiles: []`, `hasUiChanges: false`). Validación de empalmes batch 1–5 intactos y build DEV sa-east-1. Prepare `28d62d5e` (`SideMenu.tsx`) no analizable — `discover-joyful-feed` privado.
+
+### 2. Tipo de cambio
+- [x] VISUAL (validación)
+- [ ] FRONTEND_LOGIC
+- [ ] BACKEND_REQUIRED
+- [ ] RISKY
+
+### 3. Archivos modificados en DoEventsWEB
+- Artefactos `ReglasAgente/`, `design-comparison.json`, `Reports/*-27850000711.md`
+
+### 4. Archivos modificados en DoEventsBack (si aplica)
+- Ninguno
+
+### 5. Evidencia de que no se usaron mocks
+- `mocksUsed: false`
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias
+
+### 6. Resultado build/test
+- `npm run build:devaws`: **SUCCESS**
+
+### 7. Riesgos pendientes
+- Similitud global ~86.5% vs objetivo 98% (18 `needs_adaptation` — batch 6)
+- Re-comparación CI con `compare-design-similarity.py` no disponible
+- Delta SideMenu `28d62d5e` sin verificar
+
+### Decisión
+**APPLIED**
+
+---
+
 ## [2026-06-19 22:20 UTC] prepare-28d62d5e
 
 ### 1. Resumen del cambio detectado
