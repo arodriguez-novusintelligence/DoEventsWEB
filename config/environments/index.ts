@@ -9,7 +9,7 @@
  * También puede definirse en .env como VITE_DOEVENTS_ENV=qa
  */
 
-export type EnvironmentName = 'dev' | 'qa' | 'prod';
+export type EnvironmentName = 'dev' | 'devaws' | 'qa' | 'prod';
 
 export interface ApiEndpoints {
   login: string;
@@ -116,6 +116,10 @@ export interface AppEnvironment {
   googleMapsApiKey: string;
 }
 
+/** Chat REST/WebSocket — DEV cloud (sa-east-1) */
+const DEVAWS_CHAT_REST = 'https://api-dev.doeventsapp.com/chats';
+const DEVAWS_CHAT_WS = 'wss://ws-dev.doeventsapp.com';
+
 /** Chat REST/WebSocket — QA usa api-qa + WS en us-east-2 */
 const QA_CHAT_REST = 'https://api-qa.doeventsapp.com/chats';
 const QA_CHAT_WS = 'wss://zjg66jel41.execute-api.us-east-2.amazonaws.com/qa';
@@ -199,6 +203,43 @@ const dev: AppEnvironment = {
     domain: 'doevents-qa.auth.us-east-2.amazoncognito.com',
     redirectSignIn: 'https://qa.doeventsapp.com/auth/callback',
     redirectSignOut: 'https://qa.doeventsapp.com/auth/login',
+  },
+  oauth: {
+    google: {
+      clientId: '465354618241-o281g4an56hcrvmjgc3p727otg2fej8m.apps.googleusercontent.com',
+      enabled: true,
+    },
+    facebook: { appId: '', enabled: false },
+    apple: { clientId: '', enabled: false },
+  },
+  features: {
+    auth: true,
+    events: true,
+    chat: true,
+    notifications: true,
+    aiAssistant: true,
+  },
+  googleMapsApiKey: '',
+};
+
+const devaws: AppEnvironment = {
+  name: 'devaws',
+  label: 'DEV Cloud (sa-east-1)',
+  awsRegion: 'sa-east-1',
+  apiBaseUrl: 'https://api-dev.doeventsapp.com',
+  webBaseUrl: 'https://dev.doeventsapp.com',
+  websocketUrl: 'wss://ws-dev.doeventsapp.com',
+  dynamoDbSuffix: '-dev',
+  lambdaPrefix: 'dev-',
+  endpoints: buildEndpoints('https://api-dev.doeventsapp.com'),
+  chat: buildChat(DEVAWS_CHAT_REST, DEVAWS_CHAT_WS),
+  cognito: {
+    region: 'us-east-2',
+    userPoolId: 'CONFIGURE_DEVAWS_USER_POOL_ID',
+    clientId: 'CONFIGURE_DEVAWS_CLIENT_ID',
+    domain: 'doevents-qa.auth.us-east-2.amazoncognito.com',
+    redirectSignIn: 'https://dev.doeventsapp.com/auth/callback',
+    redirectSignOut: 'https://dev.doeventsapp.com/auth/login',
   },
   oauth: {
     google: {
@@ -329,7 +370,7 @@ function applyRuntimeOverrides(base: AppEnvironment): AppEnvironment {
   };
 }
 
-const environments: Record<EnvironmentName, AppEnvironment> = { dev, qa, prod };
+const environments: Record<EnvironmentName, AppEnvironment> = { dev, devaws, qa, prod };
 
 export function resolveEnvironment(): EnvironmentName {
   const fromVite = typeof import.meta !== 'undefined'

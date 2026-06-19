@@ -12,7 +12,9 @@
     "dev:all": "concurrently \"npm run dev:auth\" \"npm run dev\"",
     "build": "npm run build --workspace=@doevents/shared && npm run build --workspace=@doevents/mfe-auth && npm run build --workspace=@doevents/shell",
     "build:qa": "npm run build --workspace=@doevents/shared && npm run build:qa --workspace=@doevents/mfe-auth && npm run build:qa --workspace=@doevents/shell",
+    "build:devaws": "npm run build --workspace=@doevents/shared && npm run build:devaws --workspace=@doevents/mfe-auth && npm run build:devaws --workspace=@doevents/shell",
     "deploy:qa": "powershell -ExecutionPolicy Bypass -File infrastructure/aws/deploy-qa.ps1",
+    "deploy:devaws": "powershell -ExecutionPolicy Bypass -File infrastructure/aws/deploy-dev.ps1",
     "preview": "npm run preview --workspace=@doevents/shell",
     "lint": "npm run lint --workspaces --if-present"
   },

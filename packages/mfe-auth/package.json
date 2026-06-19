@@ -7,6 +7,7 @@
     "dev": "vite --port 5001 --strictPort",
     "build": "tsc -b && vite build",
     "build:qa": "tsc -b && vite build --mode qa",
+    "build:devaws": "tsc -b && vite build --mode devaws",
     "preview": "vite preview --port 5001"
   },
   "dependencies": {
