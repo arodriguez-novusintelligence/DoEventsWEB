@@ -551,6 +551,71 @@
         "Brechas BACKEND_REQUIRED (banking, KYC, reseñas) sin resolver"
       ],
       "agentStatus": "APPLIED"
+    },
+    {
+      "id": "gap-empalme-27847959667-b1",
+      "lovableSha": "38e2c7598916480a27aa12f8045633003a35c3ac",
+      "timestamp": "2026-06-19 21:10 UTC",
+      "workflowRunId": "27847959667-b1",
+      "gapBatch": 20,
+      "changeTypes": [
+        "VISUAL",
+        "FRONTEND_LOGIC",
+        "BACKEND_REQUIRED"
+      ],
+      "designSimilarityPercentBefore": 59.92,
+      "designSimilarityPercentAfter": 64.2,
+      "designSimilarityTarget": 98.0,
+      "summary": "Batch 1 gap empalme: 20 componentes alineados; anti-mock SideMenu/VenueDetailReservation; timeline StepAgenda",
+      "gapsClosed": [
+        "src/components/events/StepAgenda.tsx",
+        "src/components/chat/PrivateChatView.tsx",
+        "src/components/events/HostPickerModal.tsx",
+        "src/components/services/MyServicesView.tsx",
+        "src/components/invitations/TicketPurchaseFlow.tsx",
+        "src/components/venues/seating/SeatingCategoryDialog.tsx",
+        "src/components/events/StepEventSummary.tsx",
+        "src/components/banking/SuccessModal.tsx",
+        "src/components/guests/GuestManagementView.tsx",
+        "src/components/invitations/InvitationEventDetailView.tsx",
+        "src/components/feed/MyEventsView.tsx",
+        "src/components/events/EventPreviewModal.tsx",
+        "src/components/feed/NotificationsSheet.tsx",
+        "src/components/services/StepUnified.tsx",
+        "src/components/events/StepEventLocation.tsx",
+        "src/components/feed/SideMenu.tsx",
+        "src/components/venues/VenueDetailReservation.tsx"
+      ],
+      "gapsBackendRequired": [
+        "src/components/chat/ChatRoomView.tsx",
+        "src/components/feed/EditProfileView.tsx",
+        "src/components/banking/BankingForm.tsx"
+      ],
+      "webFilesModified": [
+        "packages/shell/src/lovable/components/events/StepAgenda.tsx",
+        "packages/shell/src/lovable/components/chat/PrivateChatView.tsx",
+        "packages/shell/src/lovable/components/events/StepEventLocation.tsx",
+        "packages/shell/src/lovable/components/feed/SideMenu.tsx",
+        "packages/shell/src/lovable/components/venues/VenueDetailReservation.tsx",
+        "packages/shell/src/lovable/components/feed/NotificationsSheet.tsx",
+        "packages/shell/src/lovable/components/feed/EditProfileView.tsx",
+        "ReglasAgente/cambios-lovable.json",
+        "ReglasAgente/decision-log.md",
+        "ReglasAgente/impacto-backend.md",
+        "ReglasAgente/reglas-front.md",
+        "design-comparison.json",
+        "docs/changes/gap-empalme-latest.md"
+      ],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "testStatus": "SKIPPED",
+      "pendingRisks": [
+        "Similitud global estimada 64.2% vs objetivo 98%",
+        "Re-comparación CI con discover-joyful-feed pendiente",
+        "Banking, KYC, moderación chat y password reset requieren backend"
+      ],
+      "agentStatus": "finished"
     }
   ]
 }

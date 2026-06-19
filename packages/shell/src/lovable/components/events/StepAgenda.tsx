@@ -198,11 +198,11 @@ const StepAgenda = ({ formData, updateForm }: Props) => {
         </span>
       </div>
 
-      <div className="space-y-4">
+      <div className="relative space-y-4 pl-4 before:absolute before:left-[11px] before:top-3 before:bottom-3 before:w-0.5 before:bg-primary/20">
         {selectedDay.activities.map((act, idx) => (
-          <div key={act.id} className="rounded-2xl bg-card p-4 shadow-sm">
+          <div key={act.id} className="relative rounded-2xl bg-card p-4 shadow-sm">
             <div className="mb-2 flex items-center justify-between">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+              <span className="absolute -left-4 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground ring-4 ring-secondary">
                 {idx + 1}
               </span>
               {selectedDay.activities.length > 1 && (

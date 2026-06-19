@@ -249,7 +249,10 @@ const EditProfileView = ({
           </div>
           <Button
             disabled={!complete}
-            onClick={() => { toast.success('Contraseña actualizada exitosamente'); setSubView(null); }}
+            onClick={() => {
+              toast.info('El cambio de contraseña requiere integración con el servicio de autenticación (BACKEND_REQUIRED).');
+              setSubView(null);
+            }}
             className="w-full rounded-full"
           >
             Continuar

@@ -83,6 +83,19 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-19 gap-empalme batch 1 (run 27847959667-b1)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| SideMenu sin perfil hardcodeado | Bloqueo | Sí | `feed/SideMenu.tsx` | Defaults `Sebastian Motta` eliminados |
+| VenueDetailReservation anti-mock | Bloqueo | Sí | `venues/VenueDetailReservation.tsx` | Sin tarjeta 4242 ni host ficticio |
+| StepAgenda timeline | VISUAL | Sí | `events/StepAgenda.tsx` | Línea de tiempo entre actividades |
+| StepEventLocation header | VISUAL | Sí | `events/StepEventLocation.tsx` | Copy alineado Lovable |
+| Password reset BACKEND_REQUIRED | Bloqueo | Sí | `feed/EditProfileView.tsx` | No simula éxito de cambio |
+| Notifications empty state | VISUAL | Sí | `feed/NotificationsSheet.tsx` | Icono + copy descriptivo |
+| PrivateChatView header | VISUAL | Sí | `chat/PrivateChatView.tsx` | Estado en línea alineado |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 17 DONE + 3 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-19 re-run (agente cloud, 20:54 UTC)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

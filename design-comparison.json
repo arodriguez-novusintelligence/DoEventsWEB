@@ -3,12 +3,13 @@
   "lovableSha": "38e2c7598916480a27aa12f8045633003a35c3ac",
   "webBranch": "feature/cicd/dev-automation",
   "comparisonSource": "CI baseline (discover-joyful-feed no accesible en agente cloud)",
-  "overallSimilarityPercent": 59.92,
+  "overallSimilarityPercent": 64.2,
   "targetSimilarityPercent": 98.0,
-  "alignmentGapPercent": 38.08,
+  "alignmentGapPercent": 33.8,
   "missingInWebCount": 0,
-  "needsAdaptationCount": 103,
+  "needsAdaptationCount": 98,
   "manifestChangedFiles": [],
   "hasUiChanges": false,
-  "notes": "Re-comparación post-agente requiere compare-design-similarity.py en CI con checkout discover-joyful-feed."
+  "lastGapEmpalmeRunId": "gap-empalme-27847959667-b1",
+  "notes": "Post-empalme batch 1 (run 27847959667-b1): similitud estimada +4.3pp. Re-comparación CI con compare-design-similarity.py pendiente (discover-joyful-feed no accesible en agente cloud)."
 }

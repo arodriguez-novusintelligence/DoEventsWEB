@@ -162,6 +162,7 @@ const VenueDetailReservation = ({
   const [liveDayMap, setLiveDayMap] = useState<Record<string, { status: VenueDayStatus; pricePerDay: number }>>({});
   const [loadingAvailability, setLoadingAvailability] = useState(false);
   const [submittingBooking, setSubmittingBooking] = useState(false);
+  const [lastBookingId, setLastBookingId] = useState<string | null>(null);
   const [hireBookingOpen, setHireBookingOpen] = useState(false);
   const [hireServiceForm, setHireServiceForm] = useState<ServiceFormData | null>(null);
   const [hireServiceId, setHireServiceId] = useState('');
@@ -175,10 +176,10 @@ const VenueDetailReservation = ({
     email: liveBooking?.buyerProfile?.email || '',
   });
   const [card, setCard] = useState({
-    number: '4242 4242 4242 4242',
-    name: 'Tatiana Muñoz',
-    expiry: '12/28',
-    cvv: '123',
+    number: '',
+    name: '',
+    expiry: '',
+    cvv: '',
   });
 
   const previewDayMap = useMemo(
@@ -278,7 +279,11 @@ const VenueDetailReservation = ({
   const commissionIva = Math.round(commission * IVA_RATE);
   const total = subtotalReserva + commission + commissionIva;
   const fmt = (n: number) => `$ ${n.toLocaleString('es-CO')}`;
-  const reservationNumber = '054321';
+  const reservationNumber = lastBookingId
+    ? lastBookingId.slice(-6).toUpperCase()
+    : '—';
+  const hostDisplayName = hostProfile?.name || venueMeta?.hostName || 'Anfitrión';
+  const hostDisplayEmail = hostProfile?.email || venueMeta?.hostEmail || '';
   const formatIsoDisplay = (iso: string) => {
     const [y, m, d] = iso.split('-');
     return `${d}/${m}/${y}`;
@@ -313,6 +318,7 @@ const VenueDetailReservation = ({
         expiredAtTs: result.expired_at_ts,
         selectedDates: selectedIsoDates,
       });
+      setLastBookingId(result.bookingId);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'No se pudo crear la reserva');
     } finally {
@@ -851,13 +857,17 @@ const VenueDetailReservation = ({
 
           <Button
             onClick={() => {
+              if (!card.number.trim() || !card.name.trim() || !card.expiry.trim() || !card.cvv.trim()) {
+                toast.error('Completa los datos de la tarjeta');
+                return;
+              }
               toast.success('Pago aprobado ✓');
               notifyPurchase({
                 kind: 'venue',
                 itemName: venue.name,
-                sellerName: 'Juan Betancur',
-                sellerEmail: 'jbetancur@gmail.com',
-                buyerName: `${buyer.firstName} ${buyer.lastName}`,
+                sellerName: hostDisplayName,
+                sellerEmail: hostDisplayEmail,
+                buyerName: `${buyer.firstName} ${buyer.lastName}`.trim() || buyer.email,
                 buyerEmail: buyer.email,
                 amount: fmt(total),
               });
@@ -887,9 +897,18 @@ const VenueDetailReservation = ({
           <CheckCircle2 className="h-20 w-20 text-emerald-500" strokeWidth={2} />
           <h2 className="mt-3 text-2xl font-bold text-foreground">¡Felicidades!</h2>
           <p className="mt-1 text-sm text-muted-foreground">Tu reserva está lista</p>
-          <p className="mt-3 text-sm text-foreground">
-            No de reserva: <span className="ml-1 rounded-md bg-primary/10 px-2 py-0.5 font-bold text-primary">{reservationNumber}</span>
-          </p>
+          {reservationNumber !== '—' ? (
+            <p className="mt-3 text-sm text-foreground">
+              No de reserva:{' '}
+              <span className="ml-1 rounded-md bg-primary/10 px-2 py-0.5 font-bold text-primary">
+                {reservationNumber}
+              </span>
+            </p>
+          ) : (
+            <p className="mt-3 text-sm text-muted-foreground">
+              Recibirás el número de reserva por correo electrónico.
+            </p>
+          )}
         </div>
 
         <section className="rounded-2xl bg-card p-4 shadow-sm">

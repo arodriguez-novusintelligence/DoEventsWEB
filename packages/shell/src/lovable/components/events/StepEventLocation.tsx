@@ -379,9 +379,17 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
 
   return (
     <div className="space-y-4 pb-4">
-      <h2 className="px-1 text-lg font-bold text-foreground">
+      <div className="px-1">
+        <h2 className="text-xl font-bold text-primary">Ubicación del evento</h2>
+        <p className="mt-1 text-sm text-foreground">
+          Elige un lugar existente o configura uno personalizado.{' '}
+          <span className="text-muted-foreground">(Obligatorio)</span>
+        </p>
+      </div>
+
+      <h3 className="px-1 text-sm font-bold text-foreground">
         Selecciona el tipo de lugar
-      </h2>
+      </h3>
 
       {/* Mode tabs */}
       <div className="grid grid-cols-2 gap-3">

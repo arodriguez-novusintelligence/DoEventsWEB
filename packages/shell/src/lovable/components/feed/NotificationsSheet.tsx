@@ -4,7 +4,7 @@ import { Button } from '@lovable/components/ui/button';
 import {
   Heart, MessageSquare, Repeat2, Share2, UserPlus, CheckCheck,
   CalendarPlus, Mail, Ticket, CreditCard, ShieldCheck, Star,
-  Megaphone, FileText, Trash2, MessagesSquare, AtSign, Building2, Briefcase, Crown,
+  Megaphone, FileText, Trash2, MessagesSquare, AtSign, Building2, Briefcase, Crown, Bell,
 } from 'lucide-react';
 import { useNotifications, Notification, NotificationType } from '@lovable/contexts/NotificationsContext';
 import { cn } from '@lovable/lib/utils';
@@ -403,9 +403,15 @@ const NotificationsSheet = ({
 
         <div className="mt-2 overflow-y-auto divide-y divide-border pb-6">
           {notifications.length === 0 ? (
-            <p className="py-10 text-center text-sm text-muted-foreground">
-              No tienes notificaciones
-            </p>
+            <div className="flex flex-col items-center py-12 text-center">
+              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                <Bell className="h-7 w-7 text-primary" strokeWidth={2} />
+              </div>
+              <p className="text-sm font-semibold text-foreground">Sin notificaciones</p>
+              <p className="mt-1 max-w-[240px] text-xs text-muted-foreground">
+                Aquí verás actividad de tus eventos, reservas y mensajes.
+              </p>
+            </div>
           ) : (
             notifications.map((n) => (
               <NotificationRow

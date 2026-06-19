@@ -48,12 +48,14 @@ const SideMenu = ({
   onGoToAdmin,
   isAdmin = false,
   onLogout,
-  profileName = 'Sebastian Motta',
-  profileUsername = '@Sebas1506',
+  profileName,
+  profileUsername,
   profileAvatar,
   profileUserId,
   unreadMessages = 0,
 }: SideMenuProps) => {
+  const displayName = profileName?.trim() || 'Usuario';
+  const displayUsername = profileUsername?.trim() || '@usuario';
   const [activeDoc, setActiveDoc] = useState<LegalDoc>(null);
 
   const go = (section: string) => {
@@ -134,15 +136,15 @@ const SideMenu = ({
           >
             <StoryAvatar
               userId={profileUserId}
-              name={profileName}
+              name={displayName}
               imageUrl={profileAvatar}
               size={48}
               isOwn
               onClick={() => go('perfil')}
             />
             <div className="flex-1 min-w-0">
-              <p className="truncate text-base font-semibold text-primary-foreground">{profileName}</p>
-              <p className="truncate text-xs text-primary-foreground/60">{profileUsername}</p>
+              <p className="truncate text-base font-semibold text-primary-foreground">{displayName}</p>
+              <p className="truncate text-xs text-primary-foreground/60">{displayUsername}</p>
             </div>
           </button>
           <button
