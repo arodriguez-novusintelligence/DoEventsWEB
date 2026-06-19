@@ -309,6 +309,28 @@ export async function reportPublicationComment(
   }
 }
 
+export async function reportPublication(
+  publicationId: string,
+  input: { reason?: string; details?: string } = {},
+): Promise<void> {
+  const response = await fetch(
+    `${wallFeedBase()}/publications/${encodeURIComponent(publicationId)}/report`,
+    {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({
+        reason: input.reason || 'inappropriate',
+        details: input.details || '',
+        clientRequestId: clientRequestId('web-report-publication'),
+      }),
+    },
+  );
+  const body = await response.json() as { error?: { message?: string } };
+  if (!response.ok) {
+    throw new Error(body.error?.message || 'No se pudo reportar la publicación');
+  }
+}
+
 export async function updatePublication(
   publicationId: string,
   payload: {
