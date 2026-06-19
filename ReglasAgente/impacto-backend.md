@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run 38e2c759: manifiesto sin diff UI — validación únicamente. Sin cambios backend.
+
 Run b6c89604: navegación `onBack` en lista de mensajes — solo frontend (`ChatPage` → `/`). Sin cambios backend.
 
 Empalme batch 1 (20 gaps): checkout real para tickets, mapa con horarios API, notificaciones sin fixture local. Banking, reseñas de servicios, moderación chat e intereses/perfil requieren contratos backend.

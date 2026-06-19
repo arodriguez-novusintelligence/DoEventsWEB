@@ -14,6 +14,45 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-19 20:00 UTC] agent-38e2c759
+
+### 1. Resumen del cambio detectado
+Manifiesto SHA `38e2c7598916480a27aa12f8045633003a35c3ac`: sin cambios UI (`changedFiles: []`, `hasUiChanges: false`). Validación del empalme previo `b6c89604` y build DEV.
+
+### 2. Tipo de cambio
+- [x] VISUAL (validación)
+- [ ] FRONTEND_LOGIC
+- [ ] BACKEND_REQUIRED
+- [ ] RISKY
+
+### 3. Archivos modificados en DoEventsWEB
+- Artefactos `ReglasAgente/`, `design-comparison.json`, `Reports/*-38e2c759.md`
+- Código aplicación: sin cambios (diff Lovable vacío)
+
+### 4. Archivos modificados en DoEventsBack
+- Ninguno
+
+### 5. Evidencia de que no se usaron mocks
+- `mocksUsed: false`
+- `grep` en `packages/shell/src/pages`: solo imports de tipos, sin fixtures runtime
+
+### 6. Resultado build/test
+- `npm run build:devaws`: **SUCCESS**
+- Tests: no ejecutados
+
+### 7. Riesgos pendientes
+- Similitud global 59.92% vs objetivo 98% (103 `needs_adaptation`)
+- `compare-design-similarity.py` no ejecutable sin checkout `discover-joyful-feed`
+
+### 8. Similitud diseño
+- **Antes:** 59.92%
+- **Después:** 59.92% (sin delta — manifiesto vacío)
+
+### 9. Decisión final
+**APPLIED** (validación)
+
+---
+
 ## [2026-06-19 19:25 UTC] prepare-b6c89604
 
 ### 1. Resumen del cambio detectado
