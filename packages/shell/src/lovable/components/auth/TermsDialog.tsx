@@ -7,6 +7,7 @@ import {
   DialogTitle,
 } from '@lovable/components/ui/dialog';
 import { Button } from '@lovable/components/ui/button';
+import { ScrollText } from 'lucide-react';
 
 interface TermsDialogProps {
   open: boolean;
@@ -14,44 +15,55 @@ interface TermsDialogProps {
   onAccept?: () => void;
 }
 
+const SECTIONS = [
+  {
+    title: '1. Aceptación',
+    body: 'Bienvenidos a Do.Events. Estos términos describen las reglas para el uso de la aplicación móvil y/o web Do.Events. Al acceder a la aplicación aceptas estos términos en su totalidad.',
+  },
+  {
+    title: '2. Servicio',
+    body: 'Do.Events es una plataforma tecnológica que permite gestionar eventos de principio a fin: crear, publicar, vender, comunicar, contratar servicios, gestionar invitados, control de accesos y estadísticas.',
+  },
+  {
+    title: '3. Conducta del usuario',
+    body: 'Te comprometes a no publicar contenido ofensivo, ilegal o engañoso, a respetar la privacidad de otros usuarios y a proporcionar información real al registrarte.',
+  },
+  {
+    title: '4. Edad y datos',
+    body: 'Para registrarte y vender boletas debes ser mayor de 18 años. El tratamiento de datos personales se realiza conforme a nuestra política de privacidad y la normativa colombiana aplicable.',
+  },
+  {
+    title: '5. Pagos y reembolsos',
+    body: 'Los cobros de boletas y reservas se procesan a través de proveedores de pago autorizados. Las políticas de reembolso dependen del organizador y del tipo de evento o servicio contratado.',
+  },
+  {
+    title: '6. Propiedad intelectual',
+    body: 'El contenido que publiques sigue siendo tuyo, pero nos concedes una licencia limitada para mostrarlo en la plataforma con fines operativos del servicio.',
+  },
+];
+
 export const TermsDialog = ({ open, onClose, onAccept }: TermsDialogProps) => (
   <Dialog open={open} onOpenChange={(next) => !next && onClose()}>
     <DialogContent className="max-w-lg">
       <DialogHeader>
-        <DialogTitle>Términos y Condiciones</DialogTitle>
+        <DialogTitle className="flex items-center gap-2">
+          <ScrollText className="h-5 w-5 text-primary" />
+          Términos y Condiciones
+        </DialogTitle>
         <DialogDescription>Do.Events — Versión actualizada</DialogDescription>
       </DialogHeader>
-      <div className="space-y-3 text-sm text-muted-foreground max-h-[50vh] overflow-y-auto pr-1">
-        <section>
-          <h3 className="font-semibold text-foreground mb-1">1. Aceptación</h3>
-          <p>
-            Bienvenidos a Do.Events. Estos términos describen las reglas para el uso de la aplicación móvil y/o web
-            Do.Events. Al acceder a la aplicación aceptas estos términos en su totalidad.
-          </p>
-        </section>
-        <section>
-          <h3 className="font-semibold text-foreground mb-1">2. Servicio</h3>
-          <p>
-            Do.Events es una plataforma tecnológica que permite gestionar eventos de principio a fin: crear, publicar,
-            vender, comunicar, contratar servicios, gestionar invitados, control de accesos y estadísticas.
-          </p>
-        </section>
-        <section>
-          <h3 className="font-semibold text-foreground mb-1">3. Conducta del usuario</h3>
-          <p>
-            Te comprometes a no publicar contenido ofensivo, ilegal o engañoso, a respetar la privacidad de otros usuarios
-            y a proporcionar información real al registrarte.
-          </p>
-        </section>
-        <section>
-          <h3 className="font-semibold text-foreground mb-1">4. Edad y datos</h3>
-          <p>
-            Para registrarte y vender boletas debes ser mayor de 18 años. El tratamiento de datos personales se realiza
-            conforme a nuestra política de privacidad y la normativa colombiana aplicable.
-          </p>
-        </section>
+      <div className="relative">
+        <div className="space-y-4 text-sm text-muted-foreground max-h-[50vh] overflow-y-auto pr-2">
+          {SECTIONS.map((section) => (
+            <section key={section.title}>
+              <h3 className="font-semibold text-foreground mb-1">{section.title}</h3>
+              <p>{section.body}</p>
+            </section>
+          ))}
+        </div>
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-background to-transparent" />
       </div>
-      <DialogFooter>
+      <DialogFooter className="flex-col gap-2 sm:flex-col">
         <Button
           type="button"
           className="w-full rounded-full"
@@ -61,6 +73,9 @@ export const TermsDialog = ({ open, onClose, onAccept }: TermsDialogProps) => (
           }}
         >
           Aceptar términos
+        </Button>
+        <Button type="button" variant="ghost" className="w-full" onClick={onClose}>
+          Cerrar
         </Button>
       </DialogFooter>
     </DialogContent>

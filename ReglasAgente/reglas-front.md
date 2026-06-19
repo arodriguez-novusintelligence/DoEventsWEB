@@ -89,6 +89,32 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+---
+
+## Ejecución 2026-06-20 gap-empalme batch 4 (run 27850000711-b4)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| PaymentMethodsDashboard cards | VISUAL | Parcial | `banking/PaymentMethodsDashboard.tsx` | BACKEND_REQUIRED delete |
+| BookingReviewSheet términos | VISUAL | Sí | `services/BookingReviewSheet.tsx` | Copy + total Lovable |
+| FAQSection / MediaUpload headers | VISUAL | Sí | `venues/sections/*`, `MediaUpload.tsx` | Iconos + empty states |
+| ReportPostDialog selección | VISUAL | Sí | `feed/ReportPostDialog.tsx` | Radio activo con borde primary |
+| ScanQR feedback tokens | VISUAL | Sí | `access/ScanQRSheet.tsx` | Sin emerald hardcoded |
+| FeedHero story skeleton | VISUAL | Sí | `feed/FeedHero.tsx` | Avatares pulse en carga |
+| KycContext loadError | Integración | Sí | `contexts/KycContext.tsx` | Estado error expuesto |
+| TermsDialog secciones | VISUAL | Sí | `auth/TermsDialog.tsx` | Pagos + PI; scroll gradiente |
+| MyPurchases retry | Integración | Sí | `purchases/MyPurchasesView.tsx` | Reintento en error |
+| ChangeLocation card | VISUAL | Sí | `feed/ChangeLocationSheet.tsx` | Ubicación actual visible |
+| StoryViewersSheet | Bloqueo | Parcial | `feed/StoryViewersSheet.tsx` | BACKEND_REQUIRED viewers API |
+| CompanyContext loadError | Integración | Sí | `contexts/CompanyContext.tsx` | Flag derivado de fetch |
+| EventPublished nombre API | Integración | Sí | `pages/EventPublished.tsx` | `fetchEventById` + share |
+| ProfileComments Loader | VISUAL | Sí | `feed/ProfileCommentsView.tsx` | Loader + reintento |
+| Reservation detail fix | Bloqueo | Sí | `purchases/*ReservationDetail.tsx` | Import Button + retry |
+| StoriesContext loadError | Integración | Sí | `contexts/StoriesContext.tsx` | Error en fetch rings |
+| NotFound 404 ring | VISUAL | Sí | `pages/NotFound.tsx` | Anillo primary |
+| GlobalSearch posts | Bloqueo | Parcial | `feed/GlobalSearchView.tsx` | BACKEND_REQUIRED tab posts |
+| Batch 4 gaps (20) | Empalme | Sí | ver `decision-log.md` | 17 DONE + 3 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-20 gap-empalme batch 3 (run 27850000711-b3)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

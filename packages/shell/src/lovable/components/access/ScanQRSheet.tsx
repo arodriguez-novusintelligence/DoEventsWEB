@@ -170,7 +170,7 @@ const ScanQRSheet = ({ open, onOpenChange, eventTitle, eventId }: ScanQRSheetPro
           </div>
 
           {lastResult === 'success' && (
-            <div className="mt-3 flex items-center gap-2 rounded-xl bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+            <div className="mt-3 flex items-center gap-2 rounded-xl bg-primary/10 px-3 py-2 text-sm text-primary">
               <CheckCircle2 className="h-4 w-4 shrink-0" />
               Acceso validado correctamente
             </div>

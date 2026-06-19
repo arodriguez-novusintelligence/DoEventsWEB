@@ -75,7 +75,11 @@ export const ReportPostDialog = ({
             {REASONS.map((item) => (
               <label
                 key={item.id}
-                className="flex items-center gap-2 rounded-lg border border-border p-3 text-sm cursor-pointer hover:bg-accent/50"
+                className={`flex items-center gap-2 rounded-lg border p-3 text-sm cursor-pointer transition-colors ${
+                  reason === item.id
+                    ? 'border-primary bg-primary/5 ring-1 ring-primary/30'
+                    : 'border-border hover:bg-accent/50'
+                }`}
               >
                 <input
                   type="radio"

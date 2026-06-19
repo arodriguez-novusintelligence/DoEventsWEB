@@ -13,6 +13,57 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-20 01:15 UTC] gap-empalme-27850000711-b4
+
+### 1. Resumen del empalme
+Batch 4 (20 gaps, manifiesto `27850000711-b4`, similitud baseline 84.0%): empalme focalizado en banca, reservas, feed, contextos, auth y páginas shell. **VenueReservationDetail** y **ServiceReservationDetail** corregidos (import `Button`, error/reintento). **FeedHero** skeleton de historias. **EventPublished** personaliza con nombre de evento vía API + compartir enlace. **GlobalSearchView** banner BACKEND_REQUIRED en tab posts. **PaymentMethodsDashboard** cards Lovable; delete sigue BACKEND_REQUIRED. **StoryViewersSheet** placeholder documentado.
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Payment methods dashboard | `packages/shell/src/lovable/components/banking/PaymentMethodsDashboard.tsx` | BACKEND_REQUIRED |
+| Booking review | `packages/shell/src/lovable/components/services/BookingReviewSheet.tsx` | DONE |
+| FAQ section | `packages/shell/src/lovable/components/venues/sections/FAQSection.tsx` | DONE |
+| Media upload | `packages/shell/src/lovable/components/venues/MediaUpload.tsx` | DONE |
+| Report post | `packages/shell/src/lovable/components/feed/ReportPostDialog.tsx` | DONE |
+| Scan QR | `packages/shell/src/lovable/components/access/ScanQRSheet.tsx` | DONE |
+| Feed hero | `packages/shell/src/lovable/components/feed/FeedHero.tsx` | DONE |
+| KYC context | `packages/shell/src/lovable/contexts/KycContext.tsx` | DONE |
+| Terms dialog | `packages/shell/src/lovable/components/auth/TermsDialog.tsx` | DONE |
+| My purchases | `packages/shell/src/lovable/components/purchases/MyPurchasesView.tsx` | DONE |
+| Change location | `packages/shell/src/lovable/components/feed/ChangeLocationSheet.tsx` | DONE |
+| Story viewers | `packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx` | BACKEND_REQUIRED |
+| Company context | `packages/shell/src/lovable/contexts/CompanyContext.tsx` | DONE |
+| Event published | `packages/shell/src/pages/EventPublished.tsx` | DONE |
+| Profile comments | `packages/shell/src/lovable/components/feed/ProfileCommentsView.tsx` | DONE |
+| Venue reservation detail | `packages/shell/src/lovable/components/purchases/VenueReservationDetail.tsx` | DONE |
+| Stories context | `packages/shell/src/lovable/contexts/StoriesContext.tsx` | DONE |
+| Not found | `packages/shell/src/pages/NotFound.tsx` | DONE |
+| Service reservation detail | `packages/shell/src/lovable/components/purchases/ServiceReservationDetail.tsx` | DONE |
+| Global search | `packages/shell/src/lovable/components/feed/GlobalSearchView.tsx` | BACKEND_REQUIRED |
+
+### 3. Similitud antes/después
+- **Antes:** 84.0%
+- **Después:** ~88.5% (estimado; re-comparación CI pendiente)
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias
+
+### 6. Riesgos pendientes
+- 38 gaps restantes (batches 5–6) para alcanzar 98% similitud
+- BACKEND_REQUIRED: delete método cobro, story viewers API, búsqueda publicaciones
+- `discover-joyful-feed` privado — re-comparación CI pendiente
+
+### Decisión
+**APPLIED**
+
+---
+
 ## [2026-06-20 00:30 UTC] gap-empalme-27850000711-b3
 
 ### 1. Resumen del empalme

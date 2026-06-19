@@ -82,6 +82,9 @@ interface ProfileViewProps {
   favoritePlaces?: FavPlaceItem[];
   favoriteProfiles?: ProfileListUser[];
   profileComments?: ProfileCommentItem[];
+  profileCommentsLoading?: boolean;
+  profileCommentsError?: string | null;
+  onRetryComments?: () => void;
   myPosts?: Post[];
   onDeletePost?: (postId: string) => Promise<void>;
   onSaveContact?: (data: {
@@ -154,6 +157,9 @@ const ProfileView = ({
   favoritePlaces = [],
   favoriteProfiles = [],
   profileComments = [],
+  profileCommentsLoading = false,
+  profileCommentsError = null,
+  onRetryComments,
   myPosts = [],
   onDeletePost,
   onSaveContact,
@@ -307,6 +313,9 @@ const ProfileView = ({
       <ProfileCommentsView
         onBack={() => setShowComments(false)}
         comments={profileComments}
+        loading={profileCommentsLoading}
+        error={profileCommentsError}
+        onRetry={onRetryComments}
       />
     );
   }

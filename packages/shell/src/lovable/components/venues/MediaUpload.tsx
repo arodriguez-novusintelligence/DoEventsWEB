@@ -1,14 +1,20 @@
-import { FileUp, Video, X } from 'lucide-react';
+import { FileUp, ImageIcon, Video, X } from 'lucide-react';
 import { usePlaceForm, PlaceMediaPicker } from '@lovable/components/places/placeFormContext';
 
 const MediaUpload = () => {
   const { form, addMedia, removeMedia } = usePlaceForm();
 
   return (
-    <div className="py-4">
-      <label className="block text-sm font-medium text-foreground mb-2">
-        Material publicitario del lugar
-      </label>
+    <div className="form-section py-4">
+      <div className="flex items-center gap-2 mb-1">
+        <ImageIcon className="h-5 w-5 text-primary" />
+        <label className="block text-sm font-medium text-foreground">
+          Material publicitario del lugar
+        </label>
+      </div>
+      <p className="text-xs text-muted-foreground mb-3">
+        Sube fotos o videos para mostrar tu espacio a los organizadores.
+      </p>
 
       {form.media.length === 0 ? (
         <div className="space-y-3">

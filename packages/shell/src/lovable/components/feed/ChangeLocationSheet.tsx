@@ -92,7 +92,10 @@ export const ChangeLocationSheet = ({
         </SheetHeader>
 
         <div className="mt-4 space-y-4">
-          <p className="text-sm text-muted-foreground">{displayLabel}</p>
+          <div className="rounded-2xl border border-border bg-secondary/40 p-4">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Ubicación actual</p>
+            <p className="mt-1 text-sm font-semibold text-foreground">{displayLabel}</p>
+          </div>
 
           <Button
             type="button"

@@ -1597,6 +1597,88 @@
         "BACKEND_REQUIRED: delete cuenta bancaria, PayPal payout"
       ],
       "agentStatus": "finished"
+    },
+    {
+      "id": "gap-empalme-27850000711-b4",
+      "timestamp": "2026-06-20 01:15 UTC",
+      "workflowRunId": "27850000711-b4",
+      "changeTypes": [
+        "VISUAL",
+        "FRONTEND_LOGIC",
+        "BACKEND_REQUIRED"
+      ],
+      "gapBatch": 20,
+      "designSimilarityPercentBefore": 84.0,
+      "designSimilarityPercentAfter": 88.5,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 9.5,
+      "requiresDesignAlignment": true,
+      "summary": "Gap empalme batch 4: 20 gaps — 17 DONE frontend, 3 BACKEND_REQUIRED (PaymentMethodsDashboard delete, StoryViewersSheet, GlobalSearchView posts)",
+      "gapsClosed": [
+        "src/components/services/BookingReviewSheet.tsx",
+        "src/components/venues/sections/FAQSection.tsx",
+        "src/components/venues/MediaUpload.tsx",
+        "src/components/feed/ReportPostDialog.tsx",
+        "src/components/access/ScanQRSheet.tsx",
+        "src/components/feed/FeedHero.tsx",
+        "src/contexts/KycContext.tsx",
+        "src/components/auth/TermsDialog.tsx",
+        "src/components/purchases/MyPurchasesView.tsx",
+        "src/components/feed/ChangeLocationSheet.tsx",
+        "src/contexts/CompanyContext.tsx",
+        "src/pages/EventPublished.tsx",
+        "src/components/feed/ProfileCommentsView.tsx",
+        "src/components/purchases/VenueReservationDetail.tsx",
+        "src/contexts/StoriesContext.tsx",
+        "src/pages/NotFound.tsx",
+        "src/components/purchases/ServiceReservationDetail.tsx"
+      ],
+      "gapsBackendRequired": [
+        "src/components/banking/PaymentMethodsDashboard.tsx",
+        "src/components/feed/StoryViewersSheet.tsx",
+        "src/components/feed/GlobalSearchView.tsx"
+      ],
+      "webFilesModified": [
+        "packages/shell/src/lovable/components/banking/PaymentMethodsDashboard.tsx",
+        "packages/shell/src/lovable/components/banking/BankingHub.tsx",
+        "packages/shell/src/lovable/components/services/BookingReviewSheet.tsx",
+        "packages/shell/src/lovable/components/venues/sections/FAQSection.tsx",
+        "packages/shell/src/lovable/components/venues/MediaUpload.tsx",
+        "packages/shell/src/lovable/components/feed/ReportPostDialog.tsx",
+        "packages/shell/src/lovable/components/access/ScanQRSheet.tsx",
+        "packages/shell/src/lovable/components/feed/FeedHero.tsx",
+        "packages/shell/src/lovable/contexts/KycContext.tsx",
+        "packages/shell/src/lovable/components/auth/TermsDialog.tsx",
+        "packages/shell/src/lovable/components/purchases/MyPurchasesView.tsx",
+        "packages/shell/src/lovable/components/feed/ChangeLocationSheet.tsx",
+        "packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx",
+        "packages/shell/src/lovable/contexts/CompanyContext.tsx",
+        "packages/shell/src/pages/EventPublished.tsx",
+        "packages/shell/src/lovable/components/feed/ProfileCommentsView.tsx",
+        "packages/shell/src/lovable/components/feed/ProfileView.tsx",
+        "packages/shell/src/pages/ProfilePage.tsx",
+        "packages/shell/src/lovable/components/purchases/VenueReservationDetail.tsx",
+        "packages/shell/src/contexts/StoriesContext.tsx",
+        "packages/shell/src/pages/NotFound.tsx",
+        "packages/shell/src/lovable/components/purchases/ServiceReservationDetail.tsx",
+        "packages/shell/src/lovable/components/feed/GlobalSearchView.tsx",
+        "ReglasAgente/cambios-lovable.json",
+        "ReglasAgente/decision-log.md",
+        "ReglasAgente/impacto-backend.md",
+        "ReglasAgente/reglas-front.md",
+        "design-comparison.json",
+        "docs/changes/gap-empalme-latest.md"
+      ],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "testStatus": "SKIPPED",
+      "pendingRisks": [
+        "38 gaps restantes (batches 5–6) para 98% similitud",
+        "Re-comparación CI con compare-design-similarity.py pendiente",
+        "BACKEND_REQUIRED: delete método cobro, story viewers, búsqueda publicaciones"
+      ],
+      "agentStatus": "finished"
     }
   ]
 }

@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27850000711-b4`: batch 4 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`PaymentMethodsDashboard` delete, `StoryViewersSheet`, `GlobalSearchView` posts).
+
 Run `gap-empalme-27850000711-b3`: batch 3 (20 gaps) — 18 DONE frontend; 2 BACKEND_REQUIRED (`BankingHub` delete, `PaymentMethodsDashboard` delete).
 
 Run `gap-empalme-27850000711-b2`: batch 2 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`PublishFlowModal`, `BookingSheet`, `PaymentGatewaySheet`).
@@ -36,7 +38,27 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27850000711-b3)
+## Empalme realizado (última ejecución — gap-empalme-27850000711-b4)
+
+- **PaymentMethodsDashboard / BankingHub:** cards con borde Lovable; enlace estado fiscal con toast; delete deshabilitado (BACKEND_REQUIRED).
+- **BookingReviewSheet:** copy términos reserva; total con tokens diseño.
+- **FAQSection / MediaUpload:** headers con icono Lovable; empty states alineados.
+- **ReportPostDialog:** radio seleccionado con borde primary.
+- **ScanQRSheet:** feedback éxito con tokens `primary` (sin colores hardcoded).
+- **FeedHero:** skeleton avatars en carga de historias.
+- **KycContext:** `loadError` + `refresh` intactos para consumidores.
+- **TermsDialog:** secciones ampliadas (pagos, PI); scroll con gradiente.
+- **MyPurchasesView:** botón reintentar en error de carga.
+- **ChangeLocationSheet:** card ubicación actual antes de acciones.
+- **CompanyContext / StoriesContext:** `loadError` expuesto en contexto.
+- **EventPublished:** nombre evento vía `fetchEventById`; copiar/compartir enlace.
+- **ProfileCommentsView / ProfileView / ProfilePage:** Loader, reintento, empty state enriquecido.
+- **VenueReservationDetail / ServiceReservationDetail:** fix import `Button`; error/reintento API.
+- **NotFound:** anillo visual 404 alineado Lovable.
+- **GlobalSearchView:** empty states por tab; banner posts BACKEND_REQUIRED; reintento inline.
+- **StoryViewersSheet:** placeholder documentado con badge backend requerido.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27850000711-b3)
 
 - **EventInvitationModal:** `loadEvents` con error/reintento; empty states eventos e invitados.
 - **LocationSection:** empty state sin coordenadas; mapa embebido condicional.

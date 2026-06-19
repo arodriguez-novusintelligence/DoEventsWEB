@@ -1,4 +1,4 @@
-import { Eye } from 'lucide-react';
+import { Eye, Users } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@lovable/components/ui/sheet';
 
 interface StoryViewersSheetProps {
@@ -21,14 +21,19 @@ export const StoryViewersSheet = ({
         </SheetTitle>
       </SheetHeader>
 
-      <div className="mt-6 rounded-2xl bg-muted/50 p-8 text-center">
-        <Eye className="mx-auto h-10 w-10 text-muted-foreground/40" />
-        <p className="mt-3 text-sm font-medium text-foreground">Sin datos de visualizaciones</p>
-        <p className="mt-2 text-xs text-muted-foreground">
+      <div className="mt-6 rounded-2xl border border-dashed border-border bg-muted/30 p-8 text-center">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-muted">
+          <Users className="h-7 w-7 text-muted-foreground/50" />
+        </div>
+        <p className="mt-3 text-sm font-semibold text-foreground">Visualizaciones no disponibles</p>
+        <p className="mt-2 text-xs text-muted-foreground max-w-xs mx-auto leading-relaxed">
           {storyId
-            ? 'El endpoint de visualizaciones de historias aún no está disponible en la API compartida.'
-            : 'Selecciona una historia para ver sus visualizaciones cuando el backend lo soporte.'}
+            ? 'El endpoint GET /stories/{id}/viewers aún no está expuesto en DoEventsBack. Cuando esté disponible, verás aquí la lista de personas que vieron tu historia.'
+            : 'Selecciona una historia para consultar sus visualizaciones cuando el backend lo soporte.'}
         </p>
+        <span className="mt-4 inline-block rounded-full bg-warning/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-warning">
+          Backend requerido
+        </span>
       </div>
     </SheetContent>
   </Sheet>

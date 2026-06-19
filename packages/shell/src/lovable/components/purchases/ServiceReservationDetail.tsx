@@ -8,6 +8,7 @@ import {
   RootState,
   type UserServiceBooking,
 } from '@doevents/shared';
+import { Button } from '@lovable/components/ui/button';
 import { formatBookingStatus } from '@lovable/lib/bookingStatusLabels';
 
 function formatDateRange(start?: string, end?: string) {
@@ -27,7 +28,9 @@ export const ServiceReservationDetail = () => {
   const navigate = useNavigate();
   const userId = useSelector((s: RootState) => s.auth.idUser);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [booking, setBooking] = useState<UserServiceBooking | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     if (!userId || !bookingId) {
@@ -35,25 +38,48 @@ export const ServiceReservationDetail = () => {
       return;
     }
     let cancelled = false;
+    setLoading(true);
+    setLoadError(null);
     void fetchUserServiceBookings(userId)
       .then((rows) => {
         if (!cancelled) {
           setBooking(rows.find((b) => b.bookingId === bookingId) || null);
         }
       })
-      .catch(() => {
-        if (!cancelled) setBooking(null);
+      .catch((err) => {
+        if (!cancelled) {
+          setBooking(null);
+          setLoadError(err instanceof Error ? err.message : 'No se pudo cargar la reserva');
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [userId, bookingId]);
+  }, [userId, bookingId, reloadKey]);
 
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <Loader />
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="mx-auto max-w-lg px-4 py-16 text-center">
+        <Briefcase className="mx-auto h-10 w-10 text-destructive/50" />
+        <p className="mt-3 text-sm font-medium text-foreground">Error al cargar</p>
+        <p className="mt-1 text-xs text-muted-foreground">{loadError}</p>
+        <Button
+          type="button"
+          variant="outline"
+          className="mt-4 rounded-full"
+          onClick={() => setReloadKey((k) => k + 1)}
+        >
+          Reintentar
+        </Button>
       </div>
     );
   }

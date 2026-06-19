@@ -12,6 +12,7 @@ import {
   type UserVenueBooking,
 } from '@doevents/shared';
 import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBanner';
+import { Button } from '@lovable/components/ui/button';
 import { groupedTicketsToLovable } from '../../../lovable-bridge/ticketsAdapter';
 import type { Ticket } from '@lovable/data/ticketsData';
 
@@ -31,6 +32,7 @@ export const MyPurchasesView = ({ onBack }: MyPurchasesViewProps) => {
   const userId = useSelector((s: RootState) => s.auth.idUser);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [venueBookings, setVenueBookings] = useState<UserVenueBooking[]>([]);
   const [serviceBookings, setServiceBookings] = useState<UserServiceBooking[]>([]);
@@ -61,7 +63,9 @@ export const MyPurchasesView = ({ onBack }: MyPurchasesViewProps) => {
       }
     })();
     return () => { cancelled = true; };
-  }, [userId]);
+  }, [userId, reloadKey]);
+
+  const retryLoad = () => setReloadKey((k) => k + 1);
 
   const ticketCount = tickets.filter((t) => t.status === 'aprobada' || t.status === 'pendiente').length;
 
@@ -80,8 +84,16 @@ export const MyPurchasesView = ({ onBack }: MyPurchasesViewProps) => {
             <Loader />
           </div>
         ) : loadError ? (
-          <div className="rounded-2xl bg-destructive/10 p-8 text-center">
-            <p className="text-sm text-destructive">No pudimos cargar tus compras. Intenta de nuevo más tarde.</p>
+          <div className="rounded-2xl border border-destructive/30 bg-card p-8 text-center shadow-sm">
+            <p className="text-sm font-medium text-destructive">No pudimos cargar tus compras.</p>
+            <Button
+              type="button"
+              variant="outline"
+              className="mt-4 rounded-full"
+              onClick={retryLoad}
+            >
+              Reintentar
+            </Button>
           </div>
         ) : (
           <>

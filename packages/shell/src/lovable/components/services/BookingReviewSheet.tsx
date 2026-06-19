@@ -83,16 +83,20 @@ export const BookingReviewSheet = ({
           {summary.total != null && (
             <div className="border-t border-border pt-4">
               <div className="flex items-center justify-between rounded-xl border border-primary/20 bg-primary/5 p-3">
-              <div className="flex items-center gap-2 text-sm font-semibold">
-                <CreditCard className="h-4 w-4 text-primary" />
-                Total
+                <div className="flex items-center gap-2 text-sm font-semibold">
+                  <CreditCard className="h-4 w-4 text-primary" />
+                  Total
+                </div>
+                <span className="text-base font-bold text-primary">
+                  {formatCurrency(summary.total, summary.currency)}
+                </span>
               </div>
-              <span className="text-base font-bold text-primary">
-                {formatCurrency(summary.total, summary.currency)}
-              </span>
-            </div>
             </div>
           )}
+
+          <p className="text-[11px] text-center text-muted-foreground">
+            Al confirmar, aceptas los términos de reserva del proveedor.
+          </p>
 
           <Button
             type="button"

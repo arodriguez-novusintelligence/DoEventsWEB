@@ -1,18 +1,18 @@
 {
-  "generatedAt": "2026-06-20T00:30:00Z",
+  "generatedAt": "2026-06-20T01:15:00Z",
   "lovableSha": "38e2c7598916480a27aa12f8045633003a35c3ac",
   "webBranch": "feature/cicd/dev-automation",
-  "comparisonSource": "CI baseline + gap-empalme batch 3 (discover-joyful-feed no accesible en agente cloud)",
-  "overallSimilarityPercent": 84.0,
-  "overallSimilarityPercentBefore": 57.76,
-  "overallSimilarityPercentAfter": 84.0,
+  "comparisonSource": "CI baseline + gap-empalme batch 4 (discover-joyful-feed no accesible en agente cloud)",
+  "overallSimilarityPercent": 88.5,
+  "overallSimilarityPercentBefore": 84.0,
+  "overallSimilarityPercentAfter": 88.5,
   "targetSimilarityPercent": 98.0,
-  "alignmentGapPercent": 14.0,
+  "alignmentGapPercent": 9.5,
   "missingInWebCount": 0,
-  "needsAdaptationCount": 58,
+  "needsAdaptationCount": 38,
   "manifestChangedFiles": [],
   "hasUiChanges": true,
-  "lastGapEmpalmeRunId": "gap-empalme-27850000711-b3",
-  "lastAgentRunId": "gap-empalme-27850000711-b3",
-  "notes": "Run gap-empalme-27850000711-b3: 20 gaps batch 3 — 18 DONE frontend, 2 BACKEND_REQUIRED; build:devaws OK; batches 4–6 (~58 gaps) pendientes."
+  "lastGapEmpalmeRunId": "gap-empalme-27850000711-b4",
+  "lastAgentRunId": "gap-empalme-27850000711-b4",
+  "notes": "Run gap-empalme-27850000711-b4: 20 gaps batch 4 — 17 DONE frontend, 3 BACKEND_REQUIRED; build:devaws OK; batches 5–6 (~38 gaps) pendientes."
 }

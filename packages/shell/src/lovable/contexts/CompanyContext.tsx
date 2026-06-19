@@ -13,12 +13,14 @@ interface CompanyInfo {
 interface CompanyContextValue {
   company: CompanyInfo | null;
   loading: boolean;
+  loadError: boolean;
   refresh: () => void;
 }
 
 const CompanyContext = createContext<CompanyContextValue>({
   company: null,
   loading: false,
+  loadError: false,
   refresh: () => undefined,
 });
 
@@ -32,6 +34,7 @@ interface CompanyProviderProps {
 export const CompanyProvider = ({ userId, children }: CompanyProviderProps) => {
   const [company, setCompany] = useState<CompanyInfo | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const refresh = () => setRefreshKey((k) => k + 1);
@@ -39,10 +42,12 @@ export const CompanyProvider = ({ userId, children }: CompanyProviderProps) => {
   useEffect(() => {
     if (!userId) {
       setCompany(null);
+      setLoadError(false);
       return;
     }
     let cancelled = false;
     setLoading(true);
+    setLoadError(false);
     void fetchUserById(userId)
       .then((profile) => {
         if (cancelled || !profile) return;
@@ -57,7 +62,10 @@ export const CompanyProvider = ({ userId, children }: CompanyProviderProps) => {
         });
       })
       .catch(() => {
-        if (!cancelled) setCompany(null);
+        if (!cancelled) {
+          setCompany(null);
+          setLoadError(true);
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -65,7 +73,10 @@ export const CompanyProvider = ({ userId, children }: CompanyProviderProps) => {
     return () => { cancelled = true; };
   }, [userId, refreshKey]);
 
-  const value = useMemo(() => ({ company, loading, refresh }), [company, loading]);
+  const value = useMemo(
+    () => ({ company, loading, loadError, refresh }),
+    [company, loading, loadError],
+  );
 
   return (
     <CompanyContext.Provider value={value}>

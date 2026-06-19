@@ -355,6 +355,8 @@ export const ProfilePage: React.FC = () => {
         favoritePlaces={favoritePlaces}
         favoriteProfiles={favoriteProfiles}
         profileComments={profileComments}
+        profileCommentsLoading={loading}
+        onRetryComments={() => void reload(true)}
         myPosts={myPosts}
         onDeletePost={async (postId) => {
           await deletePublication(postId);

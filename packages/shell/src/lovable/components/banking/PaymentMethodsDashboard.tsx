@@ -15,6 +15,7 @@ interface PaymentMethodsDashboardProps {
   onSetDefault: (id: string) => void;
   onDelete: (id: string) => void;
   onEdit: (id: string) => void;
+  onCheckFiscalStatus?: () => void;
 }
 
 const getMethodIcon = (type: SavedPaymentMethod["type"]) => {
@@ -53,7 +54,14 @@ const maskDetails = (details: string) => {
   return `•••• ${visible}`;
 };
 
-export default function PaymentMethodsDashboard({ onAddMethod, methods, onSetDefault, onDelete, onEdit }: PaymentMethodsDashboardProps) {
+export default function PaymentMethodsDashboard({
+  onAddMethod,
+  methods,
+  onSetDefault,
+  onDelete,
+  onEdit,
+  onCheckFiscalStatus,
+}: PaymentMethodsDashboardProps) {
   const hasPendingMethods = methods.some(m => m.status === "pending");
 
   return (
@@ -72,7 +80,11 @@ export default function PaymentMethodsDashboard({ onAddMethod, methods, onSetDef
               <p className="text-sm text-muted-foreground">
                 Verificar tu método de cobro y tus datos fiscales puede llevar un máximo de 2 días laborables, tras los cuales ya podrás recibir tus cobros en la cuenta que hayas añadido.
               </p>
-              <button className="text-sm font-medium text-foreground underline underline-offset-2 hover:no-underline">
+              <button
+                type="button"
+                className="text-sm font-medium text-foreground underline underline-offset-2 hover:no-underline"
+                onClick={onCheckFiscalStatus}
+              >
                 Comprueba el estado de tus datos fiscales
               </button>
             </div>
@@ -103,9 +115,9 @@ export default function PaymentMethodsDashboard({ onAddMethod, methods, onSetDef
           )}
 
           {/* Methods List */}
-          <div className="divide-y divide-border">
+          <div className="rounded-2xl border border-border bg-card divide-y divide-border overflow-hidden">
             {methods.length === 0 && (
-              <div className="py-12 text-center">
+              <div className="py-12 text-center px-4">
                 <Wallet className="mx-auto h-10 w-10 text-muted-foreground/40" />
                 <p className="mt-3 text-sm font-medium text-foreground">Sin métodos de cobro</p>
                 <p className="mt-1 text-xs text-muted-foreground max-w-sm mx-auto">
@@ -114,7 +126,7 @@ export default function PaymentMethodsDashboard({ onAddMethod, methods, onSetDef
               </div>
             )}
             {methods.map((method) => (
-              <div key={method.id} className="flex items-center justify-between py-5">
+              <div key={method.id} className="flex items-center justify-between py-5 px-4 hover:bg-muted/30 transition-colors">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-lg bg-muted/50 flex items-center justify-center">
                     {getMethodIcon(method.type)}

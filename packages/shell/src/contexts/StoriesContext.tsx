@@ -6,6 +6,7 @@ interface StoriesContextValue {
   hasActiveStory: (userId: string) => boolean;
   refreshStories: () => void;
   loading: boolean;
+  loadError: boolean;
 }
 
 const StoriesContext = createContext<StoriesContextValue>({
@@ -13,6 +14,7 @@ const StoriesContext = createContext<StoriesContextValue>({
   hasActiveStory: () => false,
   refreshStories: () => undefined,
   loading: false,
+  loadError: false,
 });
 
 interface StoriesProviderProps {
@@ -23,6 +25,7 @@ interface StoriesProviderProps {
 export const StoriesProvider: React.FC<StoriesProviderProps> = ({ children, currentUserId }) => {
   const [activeAuthorIds, setActiveAuthorIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const refreshStories = useCallback(() => {
@@ -35,6 +38,7 @@ export const StoriesProvider: React.FC<StoriesProviderProps> = ({ children, curr
 
     const load = async () => {
       setLoading(true);
+      setLoadError(false);
       try {
         const [rings, ownStories] = await Promise.all([
           fetchNearbyStories({
@@ -53,7 +57,10 @@ export const StoriesProvider: React.FC<StoriesProviderProps> = ({ children, curr
         }
         setActiveAuthorIds(ids);
       } catch {
-        if (!cancelled) setActiveAuthorIds(new Set());
+        if (!cancelled) {
+          setActiveAuthorIds(new Set());
+          setLoadError(true);
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -68,7 +75,8 @@ export const StoriesProvider: React.FC<StoriesProviderProps> = ({ children, curr
     hasActiveStory: (userId: string) => activeAuthorIds.has(userId),
     refreshStories,
     loading,
-  }), [activeAuthorIds, refreshStories, loading]);
+    loadError,
+  }), [activeAuthorIds, refreshStories, loading, loadError]);
 
   return (
     <StoriesContext.Provider value={value}>{children}</StoriesContext.Provider>

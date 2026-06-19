@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { ChevronLeft, Search, UserPlus, Check, MessageCircle } from 'lucide-react';
+import { ChevronLeft, Search, UserPlus, Check, MessageCircle, AlertCircle } from 'lucide-react';
 import {
   EventSection,
   FeedPublication,
@@ -47,6 +47,8 @@ export const GlobalSearchView = ({
   const [postResults, setPostResults] = useState<FeedPublication[]>([]);
   const [followState, setFollowState] = useState<Record<string, FollowState>>({});
   const [messageBusy, setMessageBusy] = useState<string | null>(null);
+  const [searchError, setSearchError] = useState<string | null>(null);
+  const [hasSearched, setHasSearched] = useState(false);
 
   const tabLabel = useMemo(() => ({
     events: 'Eventos',
@@ -60,6 +62,8 @@ export const GlobalSearchView = ({
       return;
     }
     setLoading(true);
+    setSearchError(null);
+    setHasSearched(true);
     try {
       if (activeTab === 'events') {
         const data = await searchEvents(term.trim());
@@ -99,7 +103,9 @@ export const GlobalSearchView = ({
         if (!filtered.length) showToast('No se encontraron publicaciones', 'success');
       }
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Error en la búsqueda', 'error');
+      const message = err instanceof Error ? err.message : 'Error en la búsqueda';
+      setSearchError(message);
+      showToast(message, 'error');
     } finally {
       setLoading(false);
     }
@@ -189,18 +195,51 @@ export const GlobalSearchView = ({
           <div className="py-12">
             <Loader />
           </div>
+        ) : searchError ? (
+          <div className="mt-4 rounded-2xl border border-destructive/30 bg-card p-8 text-center shadow-sm">
+            <p className="text-sm text-destructive">{searchError}</p>
+            <Button
+              type="button"
+              variant="outline"
+              className="mt-4 rounded-full"
+              onClick={() => void runSearch(query, tab)}
+            >
+              Reintentar
+            </Button>
+          </div>
         ) : (
           <>
+            {tab === 'posts' && (
+              <div className="mt-3 flex gap-2 rounded-xl border border-warning/30 bg-warning/5 p-3 text-xs text-muted-foreground">
+                <AlertCircle className="h-4 w-4 shrink-0 text-warning" />
+                <span>
+                  La búsqueda de publicaciones filtra resultados recientes del feed.
+                  Un endpoint dedicado de búsqueda full-text está pendiente en backend.
+                </span>
+              </div>
+            )}
+
             <TabsContent value="events" className="mt-4">
-              <EventSection
-                title={`Resultados (${eventResults.length})`}
-                events={eventResults}
-                onEventClick={(id) => navigate(`/events/${id}`)}
-              />
+              {!hasSearched || !query.trim() ? (
+                <p className="py-8 text-center text-sm text-muted-foreground">
+                  Escribe para buscar eventos por nombre, ciudad o categoría.
+                </p>
+              ) : (
+                <EventSection
+                  title={`Resultados (${eventResults.length})`}
+                  events={eventResults}
+                  onEventClick={(id) => navigate(`/events/${id}`)}
+                />
+              )}
             </TabsContent>
 
             <TabsContent value="users" className="mt-4 space-y-2">
-              {userResults.map((user) => {
+              {(!hasSearched || !query.trim()) && (
+                <p className="py-8 text-center text-sm text-muted-foreground">
+                  Escribe un nombre o usuario para encontrar personas.
+                </p>
+              )}
+              {hasSearched && query.trim() && userResults.map((user) => {
                 const userId = user.id || '';
                 const state = followState[userId] || 'idle';
                 const displayName = user.name || user.username || user.email || 'Usuario';
@@ -263,16 +302,21 @@ export const GlobalSearchView = ({
                   </div>
                 );
               })}
-              {!userResults.length && query.trim() && (
+              {hasSearched && query.trim() && !userResults.length && (
                 <p className="py-8 text-center text-sm text-muted-foreground">Sin resultados</p>
               )}
             </TabsContent>
 
             <TabsContent value="posts" className="mt-4 space-y-3">
-              {postResults.map((post) => (
+              {(!hasSearched || !query.trim()) && (
+                <p className="py-8 text-center text-sm text-muted-foreground">
+                  Escribe palabras clave para buscar en publicaciones recientes.
+                </p>
+              )}
+              {hasSearched && query.trim() && postResults.map((post) => (
                 <PostCard key={post.id} post={post} />
               ))}
-              {!postResults.length && query.trim() && (
+              {hasSearched && query.trim() && !postResults.length && (
                 <p className="py-8 text-center text-sm text-muted-foreground">Sin publicaciones</p>
               )}
             </TabsContent>

@@ -129,6 +129,9 @@ const BankingHub = ({ onBack }: BankingHubProps) => {
           onSetDefault={handleSetDefault}
           onDelete={handleDelete}
           onEdit={handleEditMethod}
+          onCheckFiscalStatus={() => {
+            toast.info('Revisa tu correo o contacta soporte para el estado fiscal de tu cuenta.');
+          }}
         />
       )}
     </div>

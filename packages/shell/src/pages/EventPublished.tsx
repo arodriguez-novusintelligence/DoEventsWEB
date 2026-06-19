@@ -1,11 +1,48 @@
+import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { CheckCircle2, PartyPopper } from 'lucide-react';
+import { CheckCircle2, Copy, PartyPopper, Share2 } from 'lucide-react';
+import { fetchEventById, Loader, useToast } from '@doevents/shared';
 import { Button } from '@lovable/components/ui/button';
 
 export const EventPublished = () => {
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const [params] = useSearchParams();
   const eventId = params.get('eventId') || params.get('id') || '';
+  const [eventName, setEventName] = useState<string | null>(null);
+  const [loadingName, setLoadingName] = useState(Boolean(eventId));
+
+  useEffect(() => {
+    if (!eventId) {
+      setLoadingName(false);
+      return;
+    }
+    let cancelled = false;
+    void fetchEventById(eventId)
+      .then((ev) => {
+        if (!cancelled) setEventName(ev?.nombre || null);
+      })
+      .catch(() => {
+        if (!cancelled) setEventName(null);
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingName(false);
+      });
+    return () => { cancelled = true; };
+  }, [eventId]);
+
+  const shareUrl = eventId
+    ? `${window.location.origin}/events/${eventId}`
+    : window.location.origin;
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      showToast('Enlace copiado al portapapeles', 'success');
+    } catch {
+      showToast('No se pudo copiar el enlace', 'error');
+    }
+  };
 
   return (
     <div className="mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center bg-secondary px-6 text-center pb-24">
@@ -13,24 +50,58 @@ export const EventPublished = () => {
         <PartyPopper className="h-12 w-12 text-primary" />
       </div>
       <h1 className="mt-6 text-2xl font-extrabold text-foreground">¡Evento publicado!</h1>
+      {loadingName ? (
+        <div className="mt-4">
+          <Loader />
+        </div>
+      ) : eventName ? (
+        <p className="mt-3 text-base font-semibold text-primary">{eventName}</p>
+      ) : null}
       <p className="mt-3 text-sm text-muted-foreground max-w-sm">
         Tu evento ya está visible en Do.Events. Compártelo con tu audiencia y empieza a vender boletas.
       </p>
 
       <div className="mt-8 flex w-full max-w-xs flex-col gap-3">
         {eventId ? (
-          <Button
-            type="button"
-            className="w-full rounded-full"
-            onClick={() => navigate(`/events/${eventId}`)}
-          >
-            <CheckCircle2 className="mr-2 h-4 w-4" />
-            Ver evento
-          </Button>
+          <>
+            <Button
+              type="button"
+              className="w-full rounded-full"
+              onClick={() => navigate(`/events/${eventId}`)}
+            >
+              <CheckCircle2 className="mr-2 h-4 w-4" />
+              Ver evento
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full rounded-full"
+              onClick={copyLink}
+            >
+              <Copy className="mr-2 h-4 w-4" />
+              Copiar enlace
+            </Button>
+            {typeof navigator.share === 'function' && (
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full"
+                onClick={() => {
+                  void navigator.share({
+                    title: eventName || 'Mi evento en Do.Events',
+                    url: shareUrl,
+                  }).catch(() => undefined);
+                }}
+              >
+                <Share2 className="mr-2 h-4 w-4" />
+                Compartir
+              </Button>
+            )}
+          </>
         ) : null}
         <Button
           type="button"
-          variant="outline"
+          variant={eventId ? 'ghost' : 'outline'}
           className="w-full rounded-full"
           onClick={() => navigate('/')}
         >

@@ -158,7 +158,14 @@ const FeedHero = ({
             </div>
             <div className="flex items-start gap-3 overflow-x-auto no-scrollbar pb-1">
               {storiesLoading && (
-                <p className="text-xs text-muted-foreground py-4">Cargando historias…</p>
+                <>
+                  {[0, 1, 2, 3, 4].map((i) => (
+                    <div key={i} className="flex flex-col items-center gap-1 shrink-0 w-16 animate-pulse">
+                      <div className="h-16 w-16 rounded-full bg-muted" />
+                      <div className="h-2 w-10 rounded bg-muted" />
+                    </div>
+                  ))}
+                </>
               )}
               {!storiesLoading && useApiStories && apiStories!.length === 0 && (
                 <p className="text-xs text-muted-foreground py-4">No hay historias cerca de ti aún.</p>
