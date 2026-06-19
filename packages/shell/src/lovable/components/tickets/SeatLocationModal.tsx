@@ -108,16 +108,19 @@ const SeatLocationModal = ({ open, onOpenChange, ticket }: Props) => {
           </div>
 
           {!ticketHasSeat(ticket) ? (
-            <div className="flex h-[200px] items-center justify-center rounded-lg bg-secondary px-4 text-center text-sm text-muted-foreground">
-              Esta boleta no tiene asiento numerado.
+            <div className="flex h-[200px] flex-col items-center justify-center gap-2 rounded-lg bg-secondary px-4 text-center">
+              <Armchair className="h-8 w-8 text-muted-foreground/60" />
+              <p className="text-sm text-muted-foreground">Esta boleta no tiene asiento numerado.</p>
             </div>
           ) : loading ? (
-            <div className="flex h-[320px] items-center justify-center rounded-lg bg-secondary">
+            <div className="flex h-[320px] flex-col items-center justify-center gap-2 rounded-lg bg-secondary">
               <Loader2 className="h-6 w-6 animate-spin text-primary" />
+              <p className="text-xs text-muted-foreground">Cargando mapa…</p>
             </div>
           ) : error || !floors.length ? (
-            <div className="flex h-[200px] items-center justify-center rounded-lg bg-secondary px-4 text-center text-sm text-muted-foreground">
-              {error || 'Mapa de asientos no disponible'}
+            <div className="flex h-[200px] flex-col items-center justify-center gap-2 rounded-lg bg-secondary px-4 text-center">
+              <MapPin className="h-8 w-8 text-muted-foreground/60" />
+              <p className="text-sm text-muted-foreground">{error || 'Mapa de asientos no disponible'}</p>
             </div>
           ) : (
             <MultiFloorVenueMap

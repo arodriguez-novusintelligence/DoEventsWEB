@@ -2,7 +2,7 @@ import { Input } from '@lovable/components/ui/input';
 import { Textarea } from '@lovable/components/ui/textarea';
 import { Label } from '@lovable/components/ui/label';
 import { Button } from '@lovable/components/ui/button';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, HelpCircle } from 'lucide-react';
 import { newWizardId } from '@doevents/shared';
 import { usePlaceForm } from '@lovable/components/places/placeFormContext';
 
@@ -27,16 +27,23 @@ const FAQSection = () => {
 
   return (
     <div className="form-section">
-      <Label className="form-label">Preguntas frecuentes</Label>
+      <div className="flex items-center gap-2 mb-1">
+        <HelpCircle className="h-5 w-5 text-primary" />
+        <Label className="form-label mb-0">Preguntas frecuentes</Label>
+      </div>
       <p className="form-sublabel text-sm text-muted-foreground">
         Opcional: agrega preguntas que los clientes suelen hacer sobre tu lugar.
       </p>
 
       {form.faqs.length === 0 ? (
-        <Button type="button" variant="outline" className="mt-4 w-full border-dashed" onClick={addFAQ}>
-          <Plus className="w-4 h-4 mr-2" />
-          Agregar pregunta
-        </Button>
+        <div className="mt-4 rounded-xl border border-dashed border-border bg-secondary/20 p-6 text-center">
+          <HelpCircle className="mx-auto h-8 w-8 text-muted-foreground/60" />
+          <p className="mt-2 text-sm text-muted-foreground">Sin preguntas frecuentes aún</p>
+          <Button type="button" variant="outline" className="mt-4 w-full border-dashed" onClick={addFAQ}>
+            <Plus className="w-4 h-4 mr-2" />
+            Agregar pregunta
+          </Button>
+        </div>
       ) : (
         <div className="space-y-4 mt-4">
           {form.faqs.map((faq, index) => (

@@ -76,8 +76,8 @@ const PaymentGatewaySheet = ({ open, onOpenChange, booking, onSuccess, sellerNam
     };
 
     if (!booking.orderId) {
-      setStep('processing');
-      setTimeout(() => completeSuccess(), 2800);
+      // BACKEND_REQUIRED: orden de pago real — no simular éxito sin orderId
+      toast.error('No hay orden de pago asociada. Intenta reservar de nuevo.');
       return;
     }
 
@@ -130,6 +130,23 @@ const PaymentGatewaySheet = ({ open, onOpenChange, booking, onSuccess, sellerNam
         </SheetHeader>
 
         <div className="px-5 py-4">
+          {(step === 'method' || step === 'form' || step === 'processing') && (
+            <div className="mb-5 flex items-center gap-2">
+              {(['method', 'form', 'processing'] as const).map((s, i) => {
+                const labels = ['Método', 'Datos', 'Pago'];
+                const active = step === s;
+                const done = (step === 'form' && i === 0) || (step === 'processing' && i < 2);
+                return (
+                  <div key={s} className="flex flex-1 flex-col items-center gap-1">
+                    <div className={`h-1.5 w-full rounded-full transition-all ${active || done ? 'bg-primary' : 'bg-muted'}`} />
+                    <span className={`text-[10px] font-semibold ${active ? 'text-primary' : 'text-muted-foreground'}`}>
+                      {labels[i]}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
           {/* ── SUCCESS ── */}
           {step === 'success' && (

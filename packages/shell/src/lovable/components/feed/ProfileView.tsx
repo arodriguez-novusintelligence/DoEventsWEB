@@ -25,7 +25,7 @@ import SubscriptionPlanSheet from '@lovable/components/feed/SubscriptionPlanShee
 import PlanDetailView, { type PlanId } from '@lovable/components/legal/PlanDetailView';
 import FavoritesView, { type FavEventItem, type FavPlaceItem } from '@lovable/components/feed/FavoritesView';
 import MyPostsView from '@lovable/components/feed/MyPostsView';
-import type { Post } from '@lovable/data/mockData';
+import type { Post } from '@doevents/shared';
 import type { ProfileCommentItem } from '@lovable/components/feed/ProfileCommentsView';
 import FollowersSheet, { type ProfileListUser } from '@lovable/components/feed/FollowersSheet';
 import { Button } from '@lovable/components/ui/button';
@@ -38,6 +38,7 @@ import { BookingData } from '@lovable/components/services/BookingSheet';
 import { toast } from 'sonner';
 import EditProfileView from '@lovable/components/feed/EditProfileView';
 import ProfileCommentsView from '@lovable/components/feed/ProfileCommentsView';
+import { useKyc } from '@lovable/contexts/KycContext';
 import { StoryAvatar } from '../../../components/StoryAvatar';
 
 interface ProfileViewProps {
@@ -192,7 +193,7 @@ const ProfileView = ({
   const [showFavorites, setShowFavorites] = useState(false);
   const [showMyPosts, setShowMyPosts] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
-  const [showComments, setShowComments] = useState(false);
+  const { isCertified } = useKyc();
 
   useEffect(() => {
     setProfileLikes(profileLikesProp);
@@ -342,7 +343,7 @@ const ProfileView = ({
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <h2 className="text-lg font-bold text-foreground truncate">{profileName}</h2>
-                <Shield className="h-4 w-4 text-primary shrink-0" />
+                {isCertified && <Shield className="h-4 w-4 text-primary shrink-0" aria-label="Certificado" />}
               </div>
               <p className="text-sm text-muted-foreground">{profileUsername}</p>
             </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ImagePlus, Send, RotateCcw } from 'lucide-react';
+import { ImagePlus, Send, RotateCcw, Sparkles } from 'lucide-react';
 import {
   sendAIAssistantMessage,
   resetAIAssistantSession,
@@ -361,7 +361,8 @@ export const AIAssistantView: React.FC<AIAssistantViewProps> = ({ userId, onBack
         ))}
         {loading && (
           <div className="flex justify-start">
-            <div className="rounded-2xl bg-muted px-3.5 py-2.5 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2 rounded-2xl bg-muted px-3.5 py-2.5 text-sm text-muted-foreground">
+              <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-primary" />
               Pensando…
             </div>
           </div>
@@ -392,9 +393,10 @@ export const AIAssistantView: React.FC<AIAssistantViewProps> = ({ userId, onBack
                 key={s}
                 type="button"
                 onClick={() => void send(s)}
-                className="block w-full rounded-xl border border-border bg-card px-3 py-2.5 text-left text-sm hover:border-primary/40"
+                className="flex w-full items-start gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-left text-sm transition-colors hover:border-primary/40 hover:bg-primary/5 active:scale-[0.99]"
               >
-                ✨ {s}
+                <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <span className="leading-snug">{s}</span>
               </button>
             ))}
           </div>

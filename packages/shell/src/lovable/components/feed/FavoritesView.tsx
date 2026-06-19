@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { ChevronLeft, Heart, MapPin, User } from 'lucide-react';
+import { ChevronLeft, Heart, MapPin, User, CalendarDays, FileText, Building2 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@lovable/components/ui/tabs';
 import PostCard from './PostCard';
-import type { Post } from '@lovable/data/mockData';
+import type { Post } from '@doevents/shared';
 import type { ProfileListUser } from './FollowersSheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@lovable/components/ui/avatar';
 
@@ -64,8 +64,13 @@ const FavoriteHeartButton = ({
   </button>
 );
 
-const EmptyTab = ({ message }: { message: string }) => (
-  <p className="py-12 text-center text-sm text-muted-foreground">{message}</p>
+const EmptyTab = ({ message, icon: Icon }: { message: string; icon: typeof Heart }) => (
+  <div className="flex flex-col items-center gap-3 py-12">
+    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+      <Icon className="h-7 w-7 text-primary" />
+    </div>
+    <p className="text-sm text-muted-foreground max-w-[240px] text-center">{message}</p>
+  </div>
 );
 
 const EventsTab = ({ events }: { events: FavEventItem[] }) => {
@@ -74,7 +79,7 @@ const EventsTab = ({ events }: { events: FavEventItem[] }) => {
   );
 
   if (!events.length) {
-    return <EmptyTab message="No tienes eventos favoritos todavía" />;
+    return <EmptyTab message="No tienes eventos favoritos todavía" icon={CalendarDays} />;
   }
 
   return (
@@ -126,7 +131,7 @@ const EventsTab = ({ events }: { events: FavEventItem[] }) => {
 
 const PostsTab = ({ posts }: { posts: Post[] }) => {
   if (!posts.length) {
-    return <EmptyTab message="No tienes publicaciones favoritas" />;
+    return <EmptyTab message="No tienes publicaciones favoritas" icon={FileText} />;
   }
   return (
     <div className="space-y-4 pt-4">
@@ -139,7 +144,7 @@ const PostsTab = ({ posts }: { posts: Post[] }) => {
 
 const PlacesTab = ({ places }: { places: FavPlaceItem[] }) => {
   if (!places.length) {
-    return <EmptyTab message="No tienes lugares favoritos" />;
+    return <EmptyTab message="No tienes lugares favoritos" icon={Building2} />;
   }
   return (
     <div className="space-y-3 pt-4">
@@ -173,7 +178,7 @@ const ProfilesTab = ({
   onViewProfile?: (user: ProfileListUser) => void;
 }) => {
   if (!profiles.length) {
-    return <EmptyTab message="No tienes servicios favoritos" />;
+    return <EmptyTab message="No tienes servicios favoritos" icon={User} />;
   }
   return (
     <div className="space-y-3 pt-4">
@@ -211,7 +216,7 @@ const FavoritesView = ({
   favoriteProfiles = [],
   onViewProfile,
 }: FavoritesViewProps) => (
-  <div className="mx-auto max-w-lg min-h-screen bg-background pb-24">
+  <div className="mx-auto max-w-lg min-h-screen bg-secondary pb-24">
     <div className="px-4 pt-4">
       <button onClick={onBack} className="flex items-center gap-1 text-foreground font-medium">
         <ChevronLeft className="h-5 w-5 text-primary" />

@@ -22,7 +22,7 @@ const PreferencesRefundSection = () => {
             onClick={() => update({ bookingPreference: 'instant' })}
             className={cn(
               'p-4 rounded-xl border-2 cursor-pointer transition-all',
-              form.bookingPreference === 'instant' ? 'border-primary bg-card' : 'border-border bg-card',
+              form.bookingPreference === 'instant' ? 'border-primary bg-card ring-2 ring-primary/20' : 'border-border bg-card',
             )}
           >
             <div className="flex items-start gap-4">
@@ -44,7 +44,7 @@ const PreferencesRefundSection = () => {
             onClick={() => update({ bookingPreference: 'approval' })}
             className={cn(
               'p-4 rounded-xl border-2 cursor-pointer transition-all',
-              form.bookingPreference === 'approval' ? 'border-primary bg-card' : 'border-border bg-card',
+              form.bookingPreference === 'approval' ? 'border-primary bg-card ring-2 ring-primary/20' : 'border-border bg-card',
             )}
           >
             <div className="flex items-start gap-4">

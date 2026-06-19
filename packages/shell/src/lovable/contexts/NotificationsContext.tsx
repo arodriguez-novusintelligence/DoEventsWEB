@@ -67,6 +67,7 @@ export interface Notification {
 interface NotificationsContextType {
   notifications: Notification[];
   unreadCount: number;
+  loading: boolean;
   addNotification: (n: Omit<Notification, 'id' | 'timeAgo' | 'read'>) => void;
   markAllRead: () => void;
   markRead: (id: string) => void;
@@ -78,6 +79,7 @@ interface NotificationsContextType {
 const fallbackContext: NotificationsContextType = {
   notifications: [],
   unreadCount: 0,
+  loading: false,
   addNotification: () => undefined,
   markAllRead: () => undefined,
   markRead: () => undefined,
@@ -106,17 +108,21 @@ export const NotificationsProvider = ({
   userId?: string;
 }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const reloadFromApi = useCallback(async () => {
     if (!userId) {
       setNotifications([]);
       return;
     }
+    setLoading(true);
     try {
       const items = await fetchUserNotifications(userId);
       setNotifications(items.map(appNotificationToLovable));
     } catch {
       setNotifications([]);
+    } finally {
+      setLoading(false);
     }
   }, [userId]);
 
@@ -215,7 +221,7 @@ export const NotificationsProvider = ({
 
   return (
     <NotificationsContext.Provider
-      value={{ notifications, unreadCount, addNotification, markAllRead, markRead, dismissNotification, updateNotification, clearAll }}
+      value={{ notifications, unreadCount, loading, addNotification, markAllRead, markRead, dismissNotification, updateNotification, clearAll }}
     >
       {children}
     </NotificationsContext.Provider>

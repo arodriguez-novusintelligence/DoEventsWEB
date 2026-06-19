@@ -34,6 +34,8 @@ import {
   ShieldCheck,
   Megaphone,
   Star,
+  Search,
+  Loader2,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
@@ -361,8 +363,13 @@ const SectionHeader = ({ title, action }: { title: string; action?: boolean }) =
   </div>
 );
 
-const EmptyHint = ({ children }: { children: ReactNode }) => (
-  <p className="mt-4 text-sm text-muted-foreground px-1">{children}</p>
+const EmptyHint = ({ children, icon: Icon = Search }: { children: ReactNode; icon?: LucideIcon }) => (
+  <div className="mt-4 flex flex-col items-center gap-2 px-4 py-6 text-center">
+    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+      <Icon className="h-6 w-6 text-primary" />
+    </div>
+    <p className="text-sm text-muted-foreground max-w-[260px]">{children}</p>
+  </div>
 );
 
 type ServiceProviderItem = {
@@ -731,7 +738,7 @@ const EventsView = ({
               <Dots count={filteredFavEvents.length} />
             </>
           ) : (
-            <EmptyHint>Marca eventos con me gusta para verlos aquí.</EmptyHint>
+            <EmptyHint icon={Heart}>Marca eventos con me gusta para verlos aquí.</EmptyHint>
           )}
         </section>
       )}
@@ -750,7 +757,7 @@ const EventsView = ({
                 <Dots count={filteredNearEvents.length} />
               </>
             ) : (
-              <EmptyHint>Activa tu ubicación para descubrir eventos cerca de ti.</EmptyHint>
+              <EmptyHint icon={MapPin}>Activa tu ubicación para descubrir eventos cerca de ti.</EmptyHint>
             )}
           </div>
         </section>
@@ -800,7 +807,12 @@ const EventsView = ({
             title={selectedCategory ? `Perfiles · ${selectedCategory}` : 'Perfiles que prestan servicios'}
             action
           />
-          {filteredProviders.length > 0 ? (
+          {servicesLoading ? (
+            <div className="mt-4 flex items-center justify-center gap-2 py-8">
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+              <span className="text-sm text-muted-foreground">Buscando servicios cerca…</span>
+            </div>
+          ) : filteredProviders.length > 0 ? (
             <>
               <div className={HORIZONTAL_SCROLL}>
                 {filteredProviders.map((p) => (
@@ -825,7 +837,7 @@ const EventsView = ({
               <Dots count={filteredProviders.length} />
             </>
           ) : (
-            <EmptyHint>No hay servicios publicados cerca de ti para esta categoría.</EmptyHint>
+            <EmptyHint icon={Users}>No hay servicios publicados cerca de ti para esta categoría.</EmptyHint>
           )}
         </section>
       )}
@@ -858,7 +870,7 @@ const EventsView = ({
               ))}
             </div>
           ) : (
-            <EmptyHint>No tienes eventos activos programados por ahora.</EmptyHint>
+            <EmptyHint icon={CalendarDays}>No tienes eventos activos programados por ahora.</EmptyHint>
           )}
         </section>
       )}

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Ticket as TicketIcon, Eye, Calendar, Clock } from 'lucide-react';
+import { Ticket as TicketIcon, Eye, Calendar, Clock, Loader2 } from 'lucide-react';
 import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBanner';
 import type { Ticket, TicketStatus } from '@lovable/data/ticketsData';
 import { groupTicketsForListView } from '../../../lovable-bridge/ticketsAdapter';
@@ -128,16 +128,25 @@ const MyTicketsView = ({
 
         <div className="mt-5 space-y-4">
           {loading && tickets.length === 0 && (
-            <div className="rounded-2xl bg-card p-10 text-center text-sm text-muted-foreground shadow-sm">
-              Cargando tus boletas…
+            <div className="flex flex-col items-center gap-3 rounded-2xl bg-card p-10 text-center shadow-sm">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="text-sm text-muted-foreground">Cargando tus boletas…</p>
             </div>
           )}
 
           {!loading && tickets.length === 0 && (
-            <div className="rounded-2xl bg-card p-10 text-center text-sm text-muted-foreground shadow-sm">
-              {ticketsProp.length > 0
-                ? 'No tienes boletas en esta categoría. Revisa las otras pestañas.'
-                : 'Aún no tienes boletas. Compra entradas en un evento para verlas aquí.'}
+            <div className="flex flex-col items-center gap-3 rounded-2xl bg-card p-10 text-center shadow-sm">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                <TicketIcon className="h-7 w-7 text-primary" />
+              </div>
+              <p className="text-sm font-semibold text-foreground">
+                {ticketsProp.length > 0 ? 'Sin boletas en esta pestaña' : 'Aún no tienes boletas'}
+              </p>
+              <p className="text-xs text-muted-foreground max-w-[240px]">
+                {ticketsProp.length > 0
+                  ? 'Revisa las otras categorías para ver tus entradas.'
+                  : 'Compra entradas en un evento para verlas aquí.'}
+              </p>
             </div>
           )}
 

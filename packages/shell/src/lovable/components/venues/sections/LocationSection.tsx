@@ -30,6 +30,10 @@ const LocationSection = () => {
 
   return (
     <div className="space-y-5">
+      <div className="flex items-center gap-2">
+        <MapPin className="h-5 w-5 text-primary" />
+        <h3 className="text-base font-semibold text-foreground">Ubicación del lugar</h3>
+      </div>
       <div className="rounded-2xl bg-card border border-border p-4 space-y-5">
         <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
           <Button type="button" variant="outline" size="sm" disabled={locating} onClick={() => void useDeviceLocation()}>

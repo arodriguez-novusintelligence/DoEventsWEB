@@ -3,10 +3,18 @@ import { fetchUserById } from '@doevents/shared';
 
 export type KycStatus = 'pending' | 'in_review' | 'verified' | 'rejected';
 
+export const KYC_STATUS_LABELS: Record<KycStatus, string> = {
+  pending: 'Pendiente de certificación',
+  in_review: 'En revisión',
+  verified: 'Certificado',
+  rejected: 'Rechazado',
+};
+
 interface KycContextValue {
   status: KycStatus;
   loading: boolean;
   isCertified: boolean;
+  statusLabel: string;
   refresh: () => void;
 }
 
@@ -14,6 +22,7 @@ const KycContext = createContext<KycContextValue>({
   status: 'pending',
   loading: false,
   isCertified: false,
+  statusLabel: KYC_STATUS_LABELS.pending,
   refresh: () => undefined,
 });
 
@@ -73,6 +82,7 @@ export const KycProvider = ({ userId, children }: KycProviderProps) => {
       status,
       loading,
       isCertified: status === 'verified',
+      statusLabel: KYC_STATUS_LABELS[status],
       refresh,
     }),
     [status, loading],

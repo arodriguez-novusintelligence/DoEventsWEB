@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Heart, Ticket } from 'lucide-react';
+import { Heart, Ticket, Mail, Loader2 } from 'lucide-react';
 import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBanner';
 import type { InvitationEvent } from '@lovable/data/invitationsData';
 
 interface MyInvitationsViewProps {
   onBack: () => void;
   invitations?: InvitationEvent[];
+  loading?: boolean;
   onOpenInvitation?: (invitation: InvitationEvent) => void;
 }
 
@@ -15,9 +16,16 @@ const statusLabel: Record<InvitationEvent['status'], string> = {
   rechazada: 'Invitación rechazada',
 };
 
+const statusBadgeClass: Record<InvitationEvent['status'], string> = {
+  pendiente: 'bg-amber-100 text-amber-800',
+  aceptada: 'bg-emerald-100 text-emerald-800',
+  rechazada: 'bg-destructive/10 text-destructive',
+};
+
 const MyInvitationsView = ({
   onBack,
   invitations = [],
+  loading = false,
   onOpenInvitation,
 }: MyInvitationsViewProps) => {
   const [liked, setLiked] = useState<Record<string, boolean>>({});
@@ -32,9 +40,20 @@ const MyInvitationsView = ({
       />
 
       <div className="px-4 pt-4">
-        {invitations.length === 0 ? (
-        <div className="rounded-2xl bg-card p-10 text-center text-sm text-muted-foreground shadow-sm">
-          No tienes invitaciones a eventos.
+        {loading ? (
+          <div className="flex flex-col items-center gap-3 rounded-2xl bg-card p-10 text-center shadow-sm">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="text-sm text-muted-foreground">Cargando invitaciones…</p>
+          </div>
+        ) : invitations.length === 0 ? (
+        <div className="flex flex-col items-center gap-3 rounded-2xl bg-card p-10 text-center shadow-sm">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+            <Mail className="h-7 w-7 text-primary" />
+          </div>
+          <p className="text-sm font-semibold text-foreground">Sin invitaciones</p>
+          <p className="text-xs text-muted-foreground max-w-[240px]">
+            Cuando te inviten a un evento, aparecerá aquí.
+          </p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -74,7 +93,9 @@ const MyInvitationsView = ({
                   {new Date(inv.receivedAt).toLocaleString('es-CO')}
                 </p>
                 <p className="text-xs text-muted-foreground mt-3">{inv.inviter}</p>
-                <p className="text-sm text-foreground mt-1">{statusLabel[inv.status]}</p>
+                <span className={`inline-block mt-2 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${statusBadgeClass[inv.status]}`}>
+                  {statusLabel[inv.status]}
+                </span>
               </div>
             </button>
           ))}

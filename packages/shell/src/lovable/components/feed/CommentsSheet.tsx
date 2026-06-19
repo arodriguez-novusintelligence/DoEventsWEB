@@ -14,7 +14,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@lovable/components/ui/popover';
 import { Heart, ImagePlus, MessageSquare, MoreHorizontal, Send, Smile, X, Flag } from 'lucide-react';
 import { useState, useRef } from 'react';
-import type { Comment } from '@lovable/data/mockData';
+import type { Comment } from '@doevents/shared';
 import MentionText from './MentionText';
 
 const QUICK_EMOJIS = ['😀', '😂', '❤️', '🔥', '👏', '🎉', '😍', '🙌', '💯', '✨', '😊', '🤩', '👍', '😎', '🥳', '💪', '🙏', '😢', '😮', '🤔', '👀', '💙', '🎵', '⚽'];
@@ -234,9 +234,15 @@ const CommentsSheet = ({
                 />
               ))}
               {comments.length === 0 && (
-                <p className="py-8 text-center text-sm text-muted-foreground">
-                  Sé el primero en comentar
-                </p>
+                <div className="flex flex-col items-center gap-3 py-10">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                    <MessageSquare className="h-7 w-7 text-primary" />
+                  </div>
+                  <p className="text-sm font-semibold text-foreground">Sé el primero en comentar</p>
+                  <p className="text-xs text-muted-foreground max-w-[220px] text-center">
+                    Comparte tu opinión sobre esta publicación.
+                  </p>
+                </div>
               )}
             </div>
           </div>

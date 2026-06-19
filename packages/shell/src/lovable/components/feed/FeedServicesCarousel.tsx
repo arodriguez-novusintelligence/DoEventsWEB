@@ -46,7 +46,20 @@ const FeedServicesCarousel = ({
   onToggleServiceLike,
 }: FeedServicesCarouselProps) => {
   const list = providers.filter((p) => p.id && !/^sp-\d+$/i.test(p.id));
-  if (loading) return null;
+
+  if (loading) {
+    return (
+      <section className="my-5 px-4">
+        <div className="mb-3 h-5 w-48 animate-pulse rounded bg-muted" />
+        <div className="flex gap-3 overflow-hidden">
+          {[1, 2].map((i) => (
+            <div key={i} className="h-64 w-[72%] shrink-0 animate-pulse rounded-2xl bg-muted sm:w-[280px]" />
+          ))}
+        </div>
+      </section>
+    );
+  }
+
   if (!list.length) return null;
 
   return (

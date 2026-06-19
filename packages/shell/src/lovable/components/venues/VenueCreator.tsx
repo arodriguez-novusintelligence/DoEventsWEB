@@ -88,6 +88,11 @@ function VenueCreatorBody({
               <h1 className="text-lg font-semibold italic text-primary truncate">
                 {headerTitle || (mode === 'edit' ? 'Editar lugar' : 'Mi Lugar de Eventos')}
               </h1>
+              {mode !== 'edit' && (
+                <p className="text-xs text-muted-foreground truncate">
+                  {completedCount} de {totalSteps} secciones completadas
+                </p>
+              )}
             </div>
           </div>
         </div>

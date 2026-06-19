@@ -8,14 +8,16 @@ import { Avatar, AvatarFallback } from '@lovable/components/ui/avatar';
 import { ImagePlus, Video, X, Globe, Lock } from 'lucide-react';
 import { useState, useRef, useMemo } from 'react';
 import { cn } from '@lovable/lib/utils';
-import type { Post } from '@lovable/data/mockData';
-import { users, bannerEvents } from '@lovable/data/mockData';
+import type { Post } from '@doevents/shared';
 import MentionAutocomplete, { type MentionOption } from './MentionAutocomplete';
 
 interface CreatePostSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onPublish: (post: Omit<Post, 'id' | 'likes' | 'comments' | 'reposts'>) => void;
+  authorName?: string;
+  authorInitials?: string;
+  mentionOptions?: MentionOption[];
 }
 
 const isVideo = (src: string) => {
@@ -23,7 +25,14 @@ const isVideo = (src: string) => {
   return /\.(mp4|webm|ogg|mov)(\?|$)/i.test(src);
 };
 
-const CreatePostSheet = ({ open, onOpenChange, onPublish }: CreatePostSheetProps) => {
+const CreatePostSheet = ({
+  open,
+  onOpenChange,
+  onPublish,
+  authorName = 'Tú',
+  authorInitials = 'TU',
+  mentionOptions: mentionOptionsProp = [],
+}: CreatePostSheetProps) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
@@ -34,18 +43,10 @@ const CreatePostSheet = ({ open, onOpenChange, onPublish }: CreatePostSheetProps
   const videoInputRef = useRef<HTMLInputElement>(null);
   const descRef = useRef<HTMLTextAreaElement>(null);
 
-  const mentionOptions = useMemo<MentionOption[]>(() => {
-    const userOpts: MentionOption[] = users
-      .filter((u) => u.id !== 'me')
-      .map((u) => ({ id: u.id, name: u.name, initials: u.initials, type: 'user' as const }));
-    const eventOpts: MentionOption[] = bannerEvents.map((e) => ({
-      id: e.id,
-      name: e.title,
-      initials: e.title.slice(0, 2).toUpperCase(),
-      type: 'event' as const,
-    }));
-    return [...userOpts, ...eventOpts];
-  }, []);
+  const mentionOptions = useMemo<MentionOption[]>(
+    () => mentionOptionsProp,
+    [mentionOptionsProp],
+  );
 
   const handleMentionSelect = (option: MentionOption, mentionStart: number, mentionEnd: number) => {
     const mentionTag = `@${option.name.replace(/\s+/g, '')}`;
@@ -86,7 +87,7 @@ const CreatePostSheet = ({ open, onOpenChange, onPublish }: CreatePostSheetProps
   const handlePublish = () => {
     if (!canPublish) return;
     onPublish({
-      user: { id: 'me', name: 'Tú', initials: 'TU' },
+      user: { id: 'me', name: authorName, initials: authorInitials },
       timeAgo: 'Justo ahora',
       images: media,
       title: title.trim(),
@@ -125,11 +126,11 @@ const CreatePostSheet = ({ open, onOpenChange, onPublish }: CreatePostSheetProps
               <div className="flex items-center gap-3">
                 <Avatar className="h-10 w-10">
                   <AvatarFallback className="bg-accent text-sm font-semibold text-accent-foreground">
-                    TU
+                    {authorInitials}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="text-sm font-semibold text-card-foreground">Tú</p>
+                  <p className="text-sm font-semibold text-card-foreground">{authorName}</p>
                   <p className="text-xs text-muted-foreground">
                     {visibility === 'public' ? 'Publicación pública' : 'Solo seguidores'}
                   </p>

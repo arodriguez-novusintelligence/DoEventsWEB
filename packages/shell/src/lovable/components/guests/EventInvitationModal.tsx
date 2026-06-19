@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, Mail, MessageCircle, Bell, Smartphone, Heart, Plus, Edit, Trash2, MoreHorizontal, Check, X, AlertTriangle, AtSign, UserCheck } from "lucide-react";
+import { ArrowLeft, Mail, MessageCircle, Bell, Smartphone, Heart, Plus, Edit, Trash2, MoreHorizontal, Check, X, AlertTriangle, AtSign, UserCheck, CalendarDays, Loader2, Users } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@lovable/components/ui/dialog";
 import { Button } from "@lovable/components/ui/button";
 import { Badge } from "@lovable/components/ui/badge";
@@ -877,10 +877,21 @@ export const EventInvitationModal = ({
               </DialogHeader>
               <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-6 pb-6 touch-pan-y">
                 {loadingEvents && (
-                  <p className="py-8 text-center text-sm text-muted-foreground">Cargando eventos…</p>
+                  <div className="flex flex-col items-center gap-3 py-12">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    <p className="text-sm text-muted-foreground">Cargando eventos…</p>
+                  </div>
                 )}
                 {!loadingEvents && events.length === 0 && (
-                  <p className="py-8 text-center text-sm text-muted-foreground">No tienes eventos activos para invitar.</p>
+                  <div className="flex flex-col items-center gap-3 py-12 text-center">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                      <CalendarDays className="h-7 w-7 text-primary" />
+                    </div>
+                    <p className="text-sm font-semibold text-foreground">Sin eventos activos</p>
+                    <p className="text-xs text-muted-foreground max-w-[240px]">
+                      Publica un evento para poder enviar invitaciones a tus contactos.
+                    </p>
+                  </div>
                 )}
                 <div className="space-y-4">
                   {events.map((ev) => (
@@ -1081,13 +1092,20 @@ export const EventInvitationModal = ({
                   </div>
 
                   {loadingEventGuests && (
-                    <p className="text-sm text-muted-foreground py-2 text-center">Cargando invitados del evento…</p>
+                    <div className="flex items-center justify-center gap-2 py-4">
+                      <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                      <p className="text-sm text-muted-foreground">Cargando invitados del evento…</p>
+                    </div>
                   )}
 
                   {!loadingEventGuests && displayGuests.length === 0 ? (
-                    <p className="text-sm text-muted-foreground py-4 text-center">
-                      No hay invitados en este filtro. Usa Nuevo para agregar contactos.
-                    </p>
+                    <div className="flex flex-col items-center gap-2 py-6 text-center">
+                      <Users className="h-8 w-8 text-muted-foreground/60" />
+                      <p className="text-sm font-semibold text-foreground">Sin invitados en este filtro</p>
+                      <p className="text-xs text-muted-foreground max-w-[220px]">
+                        Usa &quot;Nuevo&quot; para agregar contactos o cambia el filtro de grupo.
+                      </p>
+                    </div>
                   ) : (
                     <div className="space-y-2">
                       {displayGuests.map((g) => {
