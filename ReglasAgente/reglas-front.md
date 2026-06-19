@@ -91,6 +91,24 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-20 gap-empalme batch 5 (run 27850000711-b5)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| LoginView Lovable + APIs | RISKY | Sí | `auth/LoginView.tsx`, `App.tsx` | Cognito/shared sin mocks |
+| SignUpView shell | Navegación | Sí | `auth/SignUpView.tsx`, `pages/SignUp.tsx` | Formulario real mfe-auth |
+| TicketPurchaseFlow resumen | FRONTEND_LOGIC | Sí | `invitations/TicketPurchaseFlow.tsx` | Checkout tras confirmación |
+| KYC pasos upload | Bloqueo | Parcial | `feed/KycCertificationView.tsx` | BACKEND_REQUIRED envío |
+| AdminPanelSection headers | VISUAL | Sí | `admin/*Panel.tsx` | Headers Lovable |
+| FeedBanner dismissible | VISUAL | Sí | `feed/FeedBanner.tsx`, `SocialWallTab.tsx` | CTA KYC sin mocks |
+| MyPosts ProfileSectionBanner | VISUAL | Sí | `feed/MyPostsView.tsx` | Banner + empty state |
+| MyReserved* tokens primary | VISUAL | Sí | `purchases/MyReserved*View.tsx` | Sin colores hardcoded |
+| Index / VenueDetail shell | Navegación | Sí | `pages/Index.tsx`, `VenueDetail.tsx` | Layout Lovable |
+| EventPublished badge | VISUAL | Sí | `pages/EventPublished.tsx` | Anillo éxito + share API |
+| useGuests bridge docs | Integración | Sí | `hooks/useGuests.ts` | Re-export useApiGuests |
+| AddGuestModal título | VISUAL | Sí | `guests/AddGuestModal.tsx` | Icono UserPlus |
+| Batch 5 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-20 gap-empalme batch 4 (run 27850000711-b4)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

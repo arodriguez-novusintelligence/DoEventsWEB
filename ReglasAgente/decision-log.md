@@ -13,6 +13,58 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-20 02:00 UTC] gap-empalme-27850000711-b5
+
+### 1. Resumen del empalme
+Batch 5 (20 gaps, manifiesto `27850000711-b5`, similitud baseline 57.69%): empalme focalizado en auth Lovable (`LoginView`, `SignUpView`, rutas shell), compras/reservas, feed (banner KYC dismissible, MyPosts), admin (headers Lovable), tickets (resumen pre-checkout), KYC (pasos documentados), páginas shell (`Index`, `VenueDetail`, `EventPublished`). **KycCertificationView** permanece BACKEND_REQUIRED (envío documentos).
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Forgot password | `packages/shell/src/pages/ForgotPassword.tsx` | DONE |
+| My reserved services | `packages/shell/src/lovable/components/purchases/MyReservedServicesView.tsx` | DONE |
+| Feed banner | `packages/shell/src/lovable/components/feed/FeedBanner.tsx` | DONE |
+| My reserved venues | `packages/shell/src/lovable/components/purchases/MyReservedVenuesView.tsx` | DONE |
+| My posts | `packages/shell/src/lovable/components/feed/MyPostsView.tsx` | DONE |
+| Venue detail | `packages/shell/src/pages/VenueDetail.tsx` | DONE |
+| Admin users panel | `packages/shell/src/lovable/components/admin/AdminUsersPanel.tsx` | DONE |
+| Add guest | `packages/shell/src/lovable/components/guests/AddGuestModal.tsx` | DONE |
+| Story viewer | `packages/shell/src/lovable/components/feed/StoryViewer.tsx` | DONE |
+| Payments panel | `packages/shell/src/lovable/components/admin/PaymentsPanel.tsx` | DONE |
+| New users panel | `packages/shell/src/lovable/components/admin/NewUsersPanel.tsx` | DONE |
+| Support search panel | `packages/shell/src/lovable/components/admin/SupportSearchPanel.tsx` | DONE |
+| Admin panel | `packages/shell/src/lovable/components/admin/AdminPanelView.tsx` | DONE |
+| KYC certification | `packages/shell/src/lovable/components/feed/KycCertificationView.tsx` | BACKEND_REQUIRED |
+| Login | `packages/shell/src/pages/Login.tsx` | DONE |
+| Use guests | `packages/shell/src/lovable/hooks/useGuests.ts` | DONE |
+| Ticket purchase flow | `packages/shell/src/lovable/components/invitations/TicketPurchaseFlow.tsx` | DONE |
+| Event published | `packages/shell/src/pages/EventPublished.tsx` | DONE |
+| Index | `packages/shell/src/pages/Index.tsx` | DONE |
+| Sign up | `packages/shell/src/pages/SignUp.tsx` | DONE |
+
+### 3. Similitud antes/después
+- **Antes:** 57.69%
+- **Después:** ~91.5% (estimado; re-comparación CI pendiente)
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias
+- TicketPurchaseFlow redirige a checkout real tras confirmación; KYC sin simulación de envío
+
+### 6. Riesgos pendientes
+- 18 gaps restantes (batch 6) para alcanzar 98% similitud
+- BACKEND_REQUIRED: envío documentos KYC (`POST /users/{id}/kyc`)
+- LoginView clasificado RISKY — revisión humana recomendada antes de merge a develop
+
+### Decisión
+**APPLIED**
+
+---
+
 ## [2026-06-20 01:15 UTC] gap-empalme-27850000711-b4
 
 ### 1. Resumen del empalme

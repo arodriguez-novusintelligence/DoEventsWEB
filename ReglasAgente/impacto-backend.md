@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27850000711-b5`: batch 5 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`KycCertificationView` envío documentos).
+
 Run `gap-empalme-27850000711-b4`: batch 4 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`PaymentMethodsDashboard` delete, `StoryViewersSheet`, `GlobalSearchView` posts).
 
 Run `gap-empalme-27850000711-b3`: batch 3 (20 gaps) — 18 DONE frontend; 2 BACKEND_REQUIRED (`BankingHub` delete, `PaymentMethodsDashboard` delete).
@@ -38,7 +40,20 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27850000711-b4)
+## Empalme realizado (última ejecución — gap-empalme-27850000711-b5)
+
+- **LoginView / SignUpView:** UI Lovable Tailwind con APIs reales (`loginUser`, OAuth); rutas shell `/auth/login` y `/auth/register`.
+- **TicketPurchaseFlow:** resumen evento + botón «Continuar al checkout» antes de redirect real.
+- **KycCertificationView:** pasos documento/selfie/envío; botón submit deshabilitado (BACKEND_REQUIRED).
+- **Admin panels:** `AdminPanelSection` con headers Lovable en usuarios, pagos, nuevos usuarios, soporte.
+- **FeedBanner:** dismissible en muro social; CTA KYC sin mocks.
+- **MyPostsView:** `ProfileSectionBanner` + empty state card.
+- **MyReservedServices/Venues:** iconos con tokens `primary`; error/reintento API intactos.
+- **Index / VenueDetail:** wrappers shell `bg-secondary` alineados Lovable.
+- **EventPublished:** badge éxito + anillo primary; nombre vía `fetchEventById`.
+- **AddGuestModal:** título con icono; **useGuests:** documentación bridge API.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27850000711-b4)
 
 - **PaymentMethodsDashboard / BankingHub:** cards con borde Lovable; enlace estado fiscal con toast; delete deshabilitado (BACKEND_REQUIRED).
 - **BookingReviewSheet:** copy términos reserva; total con tokens diseño.
@@ -188,10 +203,11 @@ NO DESPLEGADO
 
 - KYC submit bloqueado hasta integración proveedor identidad.
 - Búsqueda posts limitada a filtro cliente sobre feed reciente.
-- Auth pages similitud visual limitada (re-export mfe-auth intencional).
+- Auth pages: `LoginView` empalme Lovable (RISKY — revisión humana recomendada).
 - Flujos pago/acceso RISKY — revisión humana antes de merge.
 
 ## Pendientes
 
 - Re-comparación diseño ≥98% en CI (batch 6, ~18 gaps restantes).
 - Endpoint KYC submit y búsqueda publicaciones.
+- Story viewers API; delete método cobro; payment gateway servicios.

@@ -29,6 +29,8 @@ export default defineConfig(({ mode }) => {
         '@doevents/shared': path.resolve(__dirname, '../shared/src/index.ts'),
         '@config': path.resolve(__dirname, '../../config'),
         '@mfe-auth/AuthRoutes': path.resolve(__dirname, '../mfe-auth/src/AuthRoutes.tsx'),
+        'mfeAuth': path.resolve(__dirname, '../mfe-auth/src'),
+        'mfeAuth/*': path.resolve(__dirname, '../mfe-auth/src/*'),
         '@lovable': path.resolve(__dirname, './src/lovable'),
       },
     },
