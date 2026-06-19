@@ -5,6 +5,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { isAuthenticated } from '@doevents/shared';
 
 import { AuthMicrofrontend } from './remotes/AuthMicrofrontend';
+import { ForgotPasswordView } from '@lovable/components/auth/ForgotPasswordView';
 
 import { LovableLayout } from './lovable-bridge/LovableLayout';
 
@@ -189,6 +190,7 @@ export const AppRouter: React.FC = () => (
 
     </Route>
 
+    <Route path="/auth/forgot-password" element={<ForgotPasswordView />} />
     <Route path="/auth/*" element={<AuthMicrofrontend />} />
 
     <Route path="*" element={<NotFound />} />

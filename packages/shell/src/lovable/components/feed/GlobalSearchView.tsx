@@ -27,14 +27,20 @@ type FollowState = 'idle' | 'pending' | 'following';
 
 interface GlobalSearchViewProps {
   onBack?: () => void;
+  initialQuery?: string;
+  initialTab?: SearchTab;
 }
 
-export const GlobalSearchView = ({ onBack }: GlobalSearchViewProps) => {
+export const GlobalSearchView = ({
+  onBack,
+  initialQuery = '',
+  initialTab = 'users',
+}: GlobalSearchViewProps) => {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const currentUserId = useSelector((s: RootState) => s.auth.idUser);
-  const [query, setQuery] = useState('');
-  const [tab, setTab] = useState<SearchTab>('users');
+  const [query, setQuery] = useState(initialQuery);
+  const [tab, setTab] = useState<SearchTab>(initialTab);
   const [loading, setLoading] = useState(false);
   const [eventResults, setEventResults] = useState<Awaited<ReturnType<typeof searchEvents>>['items']>([]);
   const [userResults, setUserResults] = useState<SearchUserResult[]>([]);

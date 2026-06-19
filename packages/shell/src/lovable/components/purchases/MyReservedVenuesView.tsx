@@ -9,6 +9,7 @@ import {
   type UserVenueBooking,
 } from '@doevents/shared';
 import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBanner';
+import { formatBookingStatus } from '@lovable/lib/bookingStatusLabels';
 
 interface MyReservedVenuesViewProps {
   onBack: () => void;
@@ -31,6 +32,7 @@ export const MyReservedVenuesView = ({ onBack }: MyReservedVenuesViewProps) => {
   const navigate = useNavigate();
   const userId = useSelector((s: RootState) => s.auth.idUser);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [bookings, setBookings] = useState<UserVenueBooking[]>([]);
 
   useEffect(() => {
@@ -40,12 +42,16 @@ export const MyReservedVenuesView = ({ onBack }: MyReservedVenuesViewProps) => {
     }
     let cancelled = false;
     setLoading(true);
+    setLoadError(null);
     void fetchUserVenueBookings(userId)
       .then((rows) => {
         if (!cancelled) setBookings(rows);
       })
-      .catch(() => {
-        if (!cancelled) setBookings([]);
+      .catch((err) => {
+        if (!cancelled) {
+          setBookings([]);
+          setLoadError(err instanceof Error ? err.message : 'No se pudieron cargar las reservas');
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -66,6 +72,25 @@ export const MyReservedVenuesView = ({ onBack }: MyReservedVenuesViewProps) => {
         {loading ? (
           <div className="py-12">
             <Loader />
+          </div>
+        ) : loadError ? (
+          <div className="rounded-2xl border border-destructive/30 bg-card p-8 text-center shadow-sm">
+            <p className="text-sm font-medium text-destructive">{loadError}</p>
+            <button
+              type="button"
+              onClick={() => {
+                if (!userId) return;
+                setLoading(true);
+                setLoadError(null);
+                void fetchUserVenueBookings(userId)
+                  .then(setBookings)
+                  .catch((err) => setLoadError(err instanceof Error ? err.message : 'Error al reintentar'))
+                  .finally(() => setLoading(false));
+              }}
+              className="mt-3 text-xs font-semibold text-primary"
+            >
+              Reintentar
+            </button>
           </div>
         ) : bookings.length === 0 ? (
           <div className="rounded-2xl bg-card p-10 text-center shadow-sm">
@@ -88,7 +113,7 @@ export const MyReservedVenuesView = ({ onBack }: MyReservedVenuesViewProps) => {
                 <div className="flex-1 min-w-0">
                   <p className="truncate text-sm font-bold text-foreground">{booking.venueName}</p>
                   <p className="text-xs text-muted-foreground">{formatDates(booking.selectedDates)}</p>
-                  <p className="mt-1 text-xs font-medium capitalize text-primary">{booking.status}</p>
+                  <p className="mt-1 text-xs font-medium text-primary">{formatBookingStatus(booking.status)}</p>
                 </div>
                 <div className="text-right shrink-0">
                   <p className="text-xs font-semibold text-foreground">

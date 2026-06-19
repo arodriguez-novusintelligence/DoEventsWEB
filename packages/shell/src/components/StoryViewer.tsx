@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { MoreHorizontal, X } from 'lucide-react';
 import {
   FeedStoryItem,
   Loader,
@@ -187,71 +188,95 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   if (!open || !authorUserId) return null;
 
   return (
-    <div className="de-story-viewer" role="dialog" aria-modal="true">
-      {loading && !stories.length && <Loader />}
+    <div
+      className="fixed inset-0 z-50 flex flex-col bg-black text-white"
+      role="dialog"
+      aria-modal="true"
+    >
+      {loading && !stories.length && (
+        <div className="flex flex-1 items-center justify-center">
+          <Loader />
+        </div>
+      )}
 
       {!loading && !stories.length && (
-        <div className="de-story-viewer__empty">
-          <p>No hay historias activas de este usuario.</p>
-          <button type="button" onClick={onClose}>Cerrar</button>
+        <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
+          <p className="text-sm text-white/80">No hay historias activas de este usuario.</p>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-full bg-white/15 px-6 py-2 text-sm font-semibold"
+          >
+            Cerrar
+          </button>
         </div>
       )}
 
       {!loading && current && (
         <>
-          <header className="de-story-viewer__header">
-            <div className="de-story-viewer__header-row">
+          <header className="absolute inset-x-0 top-0 z-20 px-3 pb-3 pt-4">
+            <div className="mb-3 flex gap-1">
+              {stories.map((story, i) => (
+                <span
+                  key={story.id}
+                  className="h-0.5 flex-1 overflow-hidden rounded-full bg-white/30"
+                >
+                  <span
+                    className={`block h-full rounded-full bg-white transition-all ${
+                      i < index ? 'w-full' : i === index ? 'w-full animate-pulse' : 'w-0'
+                    }`}
+                  />
+                </span>
+              ))}
+            </div>
+
+            <div className="flex items-center justify-between">
               <button
                 type="button"
-                className="de-story-viewer__author"
+                className="flex min-w-0 items-center gap-2"
                 onClick={() => navigate(`/users/${authorUserId}`)}
               >
                 <UserAvatar name={current.authorName} imageUrl={current.authorAvatar} size={36} />
-                <span>{current.authorName}</span>
-                {current.isLive && <span className="de-feed-stories__badge">Live</span>}
+                <span className="truncate text-sm font-semibold">{current.authorName}</span>
+                {current.isLive && (
+                  <span className="rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold uppercase">
+                    Live
+                  </span>
+                )}
               </button>
 
-              <div className="de-story-viewer__header-actions">
+              <div className="flex items-center gap-1">
                 {canManage && (
                   <button
                     type="button"
-                    className="de-story-viewer__menu-btn"
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-black/30"
                     onClick={toggleMenu}
                     aria-label="Opciones de la historia"
                     aria-expanded={menuOpen}
                     disabled={Boolean(busyAction)}
                   >
-                    ⋯
+                    <MoreHorizontal className="h-5 w-5" />
                   </button>
                 )}
                 <button
                   type="button"
-                  className="de-story-viewer__close"
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-black/30"
                   onClick={onClose}
                   aria-label="Cerrar"
                 >
-                  ×
+                  <X className="h-5 w-5" />
                 </button>
               </div>
             </div>
-
-            <div className="de-story-viewer__progress">
-              {stories.map((story, i) => (
-                <span
-                  key={story.id}
-                  className={`de-story-viewer__seg${i <= index ? ' de-story-viewer__seg--active' : ''}`}
-                />
-              ))}
-            </div>
           </header>
 
-          <div className="de-story-viewer__body" role="presentation">
+          <div className="relative flex flex-1 items-center justify-center" role="presentation">
             {mediaUrl && !mediaFailed ? (
               isVideo ? (
                 <video
                   key={mediaUrl}
                   src={mediaUrl}
-                  className="de-story-viewer__media"
+                  className="max-h-full w-full object-contain"
                   autoPlay
                   muted
                   playsInline
@@ -263,27 +288,31 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
                   key={mediaUrl}
                   src={mediaUrl}
                   alt=""
-                  className="de-story-viewer__media"
+                  className="max-h-full w-full object-contain"
                   onError={() => setMediaFailed(true)}
                 />
               )
             ) : (
-              <div className="de-story-viewer__text-only">
-                <p>{current.description || (mediaFailed ? 'No se pudo cargar el contenido.' : 'Estado')}</p>
+              <div className="px-8 text-center">
+                <p className="text-lg font-medium">
+                  {current.description || (mediaFailed ? 'No se pudo cargar el contenido.' : 'Estado')}
+                </p>
               </div>
             )}
             {current.description && mediaUrl && !mediaFailed && (
-              <p className="de-story-viewer__caption">{current.description}</p>
+              <p className="absolute inset-x-0 bottom-24 px-6 text-center text-sm text-white/90 drop-shadow">
+                {current.description}
+              </p>
             )}
             <button
               type="button"
-              className="de-story-viewer__tap de-story-viewer__tap--prev"
+              className="absolute inset-y-0 left-0 w-1/3"
               aria-label="Historia anterior"
               onClick={goPrev}
             />
             <button
               type="button"
-              className="de-story-viewer__tap de-story-viewer__tap--next"
+              className="absolute inset-y-0 right-0 w-1/3"
               aria-label="Siguiente historia"
               onClick={goNext}
             />
@@ -292,21 +321,27 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
       )}
 
       {menuOpen && canManage && (
-        <div className="de-story-viewer__menu-overlay" onClick={closeMenu} role="presentation">
+        <div
+          className="absolute inset-0 z-30 flex flex-col justify-end bg-black/60"
+          onClick={closeMenu}
+          role="presentation"
+        >
           <div
-            className="de-story-viewer__menu-sheet"
+            className="mx-3 mb-2 overflow-hidden rounded-2xl bg-card text-foreground shadow-xl"
             onClick={(e) => e.stopPropagation()}
             role="menu"
             aria-label="Opciones de la historia"
           >
-            <div className="de-story-viewer__menu-head">
+            <div className="flex items-center justify-between border-b border-border px-4 py-3 text-xs text-muted-foreground">
               <span>Archivar historias mientras están activas.</span>
-              <button type="button" onClick={closeMenu} aria-label="Cerrar menú">×</button>
+              <button type="button" onClick={closeMenu} aria-label="Cerrar menú">
+                <X className="h-4 w-4" />
+              </button>
             </div>
 
             <button
               type="button"
-              className="de-story-viewer__menu-item"
+              className="flex w-full px-4 py-3 text-left text-sm hover:bg-accent/50"
               onClick={() => {
                 closeMenu();
                 setViewersOpen(true);
@@ -318,7 +353,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
 
             <button
               type="button"
-              className="de-story-viewer__menu-item de-story-viewer__menu-item--danger"
+              className="flex w-full px-4 py-3 text-left text-sm text-destructive hover:bg-destructive/10"
               onClick={() => void handleDelete()}
               disabled={busyAction === 'delete'}
               role="menuitem"
@@ -330,7 +365,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
               <button
                 key={label}
                 type="button"
-                className="de-story-viewer__menu-item de-story-viewer__menu-item--disabled"
+                className="flex w-full px-4 py-3 text-left text-sm text-muted-foreground/50"
                 disabled
                 role="menuitem"
               >
@@ -340,7 +375,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
 
             <button
               type="button"
-              className="de-story-viewer__menu-item"
+              className="flex w-full px-4 py-3 text-left text-sm hover:bg-accent/50"
               onClick={() => void handleShareAsPublication()}
               disabled={busyAction === 'share'}
               role="menuitem"
@@ -351,7 +386,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
 
           <button
             type="button"
-            className="de-story-viewer__menu-cancel"
+            className="mx-3 mb-6 rounded-2xl bg-card py-3 text-center text-sm font-semibold text-foreground"
             onClick={closeMenu}
           >
             Cancelar

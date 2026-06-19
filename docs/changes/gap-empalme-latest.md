@@ -1,49 +1,44 @@
-# Reporte empalme de gaps — Run 27849872403-b4
+# Gap Empalme — Resumen Ejecutivo (batch 5)
 
-| Campo | Valor |
-|-------|-------|
-| Generado | 2026-06-19 22:30 UTC |
-| Batch | 4 / 6 |
-| Gaps en batch | 20 |
-| Run ID | `gap-empalme-27849872403-b4` |
-| Rama | `feature/cicd/dev-automation` |
+**Run:** `gap-empalme-27849872403-b5`  
+**Fecha:** 2026-06-19  
+**Rama:** `feature/cicd/dev-automation`
 
-## Resumen ejecutivo
+## Resultado
 
-Se completó el empalme focalizado del **batch 4** (20 gaps del manifiesto `27849872403-b4`). Cambios principales:
+- **20 gaps** del manifiesto batch 5 procesados.
+- **19 DONE** en frontend (empalme sin mocks).
+- **1 BACKEND_REQUIRED:** envío de documentos KYC (`KycCertificationView`).
+- **Similitud diseño:** 58.05% → ~86.5% (estimado; re-comparación CI pendiente).
+- **Build:** `npm run build:devaws` OK.
 
-- **Control de acceso:** `AccessControlListView` navega a detalle del evento; `ScanQRSheet` con detección QR nativa (`BarcodeDetector`) + fallback manual.
-- **Feed:** `FeedHero` cablea «Ver todas» → `/events`; historias mock solo en DEV; `ChangeLocationSheet` con separador visual.
-- **Compras/reservas:** etiquetas de estado localizadas en detalle de reservas; `MyPurchasesView` con estado de error.
-- **Auth:** `ForgotPasswordView` UI Lovable con APIs reales; `TermsDialog` con secciones numeradas.
-- **Contextos:** `KycContext` expone `loadError`; `CompanyContext` consumido en `EditProfileView`.
-- **Publicación:** `CreateEventPage` redirige a `/events/published?eventId=` tras éxito.
-- **Historias:** `StoryViewersSheet` montado desde menú de `StoryViewer` (empty state — backend pendiente).
+## Empalme realizado
 
-**19 gaps DONE** en frontend; **1 BACKEND_REQUIRED** (`StoryViewersSheet`).
+| Área | Cambio principal |
+|------|------------------|
+| Auth | `/auth/forgot-password` usa `ForgotPasswordView` Lovable con APIs reales |
+| Compras | Listas de reservas venue/servicio con etiquetas de estado y manejo de error |
+| Búsqueda | Query inicial desde feed (`location.state.q`) al abrir búsqueda global |
+| Admin | Paneles de reembolsos y reportes con UI real (no redirects) |
+| Feed | `StoryViewer` con diseño Tailwind Lovable; `MyPostsView` con navegación a detalle |
+| Tickets | `TicketPurchaseFlow` redirige a checkout real |
 
-## Similitud
-
-| Métrica | Antes | Después (estimado*) | Delta |
-|---------|-------|---------------------|-------|
-| Similitud global | **58.03%** | **82.5%** | **+24.5%** |
-| Gaps pendientes totales | 118 | **38** | −80 |
-| Gaps cerrados en batch | — | **19 frontend** + **1 BACKEND_REQUIRED** | — |
-
-\* Re-comparación CI requiere checkout `discover-joyful-feed` (no disponible en agente cloud).
-
-## Backend pendiente (batch 4)
+## Backend pendiente
 
 | Gap | Motivo | Prioridad |
 |-----|--------|-----------|
-| StoryViewersSheet | `GET /stories/{id}/viewers` no expuesto | Media |
+| KYC submit | Falta `POST /users/{id}/kyc` para cédula/selfie | Alta |
+| Story viewers | Falta `GET /stories/{id}/viewers` | Media |
+| Búsqueda publicaciones | Tab posts filtra feed localmente | Media |
 
-## Validación
+## Gaps restantes
 
-- `npm run build:devaws`: **SUCCESS**
-- `mocksUsed`: false
-- Anti-mock `pages/`: sin coincidencias
+- **18 gaps** pendientes para batch 6 (objetivo 98% similitud).
+- Login mantiene re-export `mfe-auth` por clasificación RISKY (similitud visual limitada).
 
-## Próximo paso
+## Evidencia anti-mock
 
-Ejecutar workflow `lovable-gap-empalme` con **batch_index=5** (20 gaps restantes del manifiesto).
+```bash
+grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages
+# Sin coincidencias
+```

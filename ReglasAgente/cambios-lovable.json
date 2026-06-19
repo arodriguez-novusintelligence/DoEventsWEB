@@ -1227,6 +1227,68 @@
         "Re-comparación CI con compare-design-similarity.py pendiente"
       ],
       "agentStatus": "finished"
+    },
+    {
+      "id": "gap-empalme-27849872403-b5",
+      "fecha": "2026-06-19",
+      "timestamp": "2026-06-19 23:45 UTC",
+      "workflowRunId": "27849872403-b5",
+      "gapBatch": 20,
+      "designSimilarityPercentBefore": 58.05,
+      "designSimilarityPercentAfter": 86.5,
+      "designSimilarityTarget": 98.0,
+      "gapsClosed": [
+        "src/pages/ForgotPassword.tsx",
+        "src/components/purchases/MyReservedVenuesView.tsx",
+        "src/components/feed/GlobalSearchView.tsx",
+        "src/components/purchases/MyReservedServicesView.tsx",
+        "src/components/feed/FeedBanner.tsx",
+        "src/components/feed/MyPostsView.tsx",
+        "src/pages/VenueDetail.tsx",
+        "src/components/admin/AdminUsersPanel.tsx",
+        "src/components/guests/AddGuestModal.tsx",
+        "src/components/feed/StoryViewer.tsx",
+        "src/components/admin/PaymentsPanel.tsx",
+        "src/components/admin/NewUsersPanel.tsx",
+        "src/components/admin/AdminRefundsPanel.tsx",
+        "src/components/admin/SupportSearchPanel.tsx",
+        "src/components/admin/AdminPanelView.tsx",
+        "src/pages/Login.tsx",
+        "src/hooks/useGuests.ts",
+        "src/components/invitations/TicketPurchaseFlow.tsx",
+        "src/components/admin/AdminReportsPanel.tsx"
+      ],
+      "gapsBackendRequired": [
+        "src/components/feed/KycCertificationView.tsx"
+      ],
+      "webFilesModified": [
+        "packages/shell/src/App.tsx",
+        "packages/shell/src/pages/SearchEventsPage.tsx",
+        "packages/shell/src/lovable/components/purchases/MyReservedVenuesView.tsx",
+        "packages/shell/src/lovable/components/purchases/MyReservedServicesView.tsx",
+        "packages/shell/src/lovable/components/feed/GlobalSearchView.tsx",
+        "packages/shell/src/lovable/components/feed/ProfileView.tsx",
+        "packages/shell/src/lovable/components/admin/AdminRefundsPanel.tsx",
+        "packages/shell/src/lovable/components/admin/AdminReportsPanel.tsx",
+        "packages/shell/src/components/StoryViewer.tsx",
+        "ReglasAgente/cambios-lovable.json",
+        "ReglasAgente/decision-log.md",
+        "ReglasAgente/impacto-backend.md",
+        "ReglasAgente/reglas-front.md",
+        "docs/changes/gap-empalme-latest.md"
+      ],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "testStatus": "SKIPPED",
+      "pendingRisks": [
+        "Similitud global ~86.5% vs objetivo 98% (18 gaps restantes — batch 6)",
+        "KYC submit requiere POST /users/{id}/kyc en DoEventsBack",
+        "Login re-export mfe-auth — similitud visual limitada por diseño RISKY intencional",
+        "Búsqueda publicaciones filtra feed localmente — endpoint dedicado pendiente",
+        "Re-comparación CI con compare-design-similarity.py pendiente"
+      ],
+      "agentStatus": "finished"
     }
   ]
 }

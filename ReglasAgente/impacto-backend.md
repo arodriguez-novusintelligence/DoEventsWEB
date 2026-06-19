@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27849872403-b5`: batch 5 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`KycCertificationView` submit).
+
 Run `gap-empalme-27849872403-b4`: batch 4 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`StoryViewersSheet`).
 
 Run `gap-empalme-27849872403-b3`: batch 3 (20 gaps) — 18 DONE frontend; 2 BACKEND_REQUIRED (`BankingHub` delete, `PaymentMethodsDashboard` delete).
@@ -26,7 +28,18 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27849872403-b4)
+## Empalme realizado (última ejecución — gap-empalme-27849872403-b5)
+
+- **ForgotPassword:** ruta shell `/auth/forgot-password` → `ForgotPasswordView` Lovable con APIs reales.
+- **MyReservedVenues/Services:** `formatBookingStatus`, estados vacío/error/reintento; APIs `fetchUserVenueBookings` / `fetchUserServiceBookings`.
+- **GlobalSearchView:** `initialQuery`/`initialTab` desde `SearchEventsPage` (`location.state.q` del TopHeader).
+- **AdminRefundsPanel / AdminReportsPanel:** paneles standalone con `AdminPaymentsTab` y `AdminHomeTab` (sin redirect stub).
+- **StoryViewer:** UI Tailwind fullscreen Lovable; `StoryViewersSheet` montado (viewers API pendiente).
+- **MyPostsView:** `onOpenDetail` en ruta inline de `ProfileView` vía `post.detailPath`.
+- **TicketPurchaseFlow:** redirect a `/events/:id/checkout` sin mocks.
+- **Login / useGuests / AddGuestModal / admin wrappers:** intactos con integración real.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27849872403-b4)
 
 - **AccessControlListView:** navegación real a `/events/{id}` y `/events/create`; sin toasts stub.
 - **ScanQRSheet:** detección QR vía `BarcodeDetector` nativo + validación `scanTicketFromQr`.

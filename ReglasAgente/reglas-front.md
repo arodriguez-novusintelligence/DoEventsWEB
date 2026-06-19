@@ -83,6 +83,22 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+---
+
+## Ejecución 2026-06-19 gap-empalme batch 5 (run 27849872403-b5)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| ForgotPassword ruta Lovable | Navegación | Sí | `App.tsx`, `ForgotPasswordView.tsx` | `/auth/forgot-password` prioriza shell |
+| MyReserved* status labels | VISUAL | Sí | `purchases/MyReserved*View.tsx` | `formatBookingStatus` + error/reintento |
+| GlobalSearch initialQuery | FRONTEND_LOGIC | Sí | `GlobalSearchView.tsx`, `SearchEventsPage.tsx` | `location.state.q` desde TopHeader |
+| Admin refunds/reports panels | Navegación | Sí | `admin/AdminRefundsPanel.tsx`, `AdminReportsPanel.tsx` | Paneles reales sin stub Navigate |
+| StoryViewer Tailwind | VISUAL | Sí | `components/StoryViewer.tsx` | Fullscreen Lovable; viewers BACKEND_REQUIRED |
+| MyPosts onOpenDetail | Navegación | Sí | `feed/ProfileView.tsx` | Inline path con `post.detailPath` |
+| KYC submit | Bloqueo | Parcial | `feed/KycCertificationView.tsx` | BACKEND_REQUIRED documentado |
+| Login mfe-auth re-export | RISKY | Sí | `pages/Login.tsx` | Sin duplicar lógica auth |
+| Batch 5 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-19 gap-empalme batch 4 (run 27849872403-b4)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

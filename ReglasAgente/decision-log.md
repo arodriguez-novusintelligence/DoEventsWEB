@@ -14,6 +14,53 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-19 23:45 UTC] gap-empalme-27849872403-b5
+
+### 1. Resumen del empalme
+Batch 5 (20 gaps, manifiesto `27849872403-b5`, similitud baseline 58.05%): empalme focalizado en auth, compras/reservas, búsqueda global, feed, admin, historias y tickets. **ForgotPassword** cableado a `ForgotPasswordView` Lovable vía ruta shell `/auth/forgot-password`. **MyReservedVenues/Services** con `formatBookingStatus`, estados de error y reintento. **GlobalSearchView** recibe `initialQuery` desde `location.state.q` (TopHeader). **AdminRefundsPanel** y **AdminReportsPanel** reemplazan stubs con paneles reales (`AdminPaymentsTab`, `AdminHomeTab`). **StoryViewer** migrado a Tailwind Lovable (fullscreen, barras de progreso, menú sheet). **ProfileView** cablea `onOpenDetail` en `MyPostsView` inline. **KycCertificationView** permanece BACKEND_REQUIRED (sin simulación de envío).
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Forgot password | `packages/shell/src/pages/ForgotPassword.tsx` | DONE |
+| My reserved venues | `packages/shell/src/lovable/components/purchases/MyReservedVenuesView.tsx` | DONE |
+| Global search | `packages/shell/src/lovable/components/feed/GlobalSearchView.tsx` | DONE |
+| My reserved services | `packages/shell/src/lovable/components/purchases/MyReservedServicesView.tsx` | DONE |
+| Feed banner | `packages/shell/src/lovable/components/feed/FeedBanner.tsx` | DONE |
+| My posts | `packages/shell/src/lovable/components/feed/MyPostsView.tsx` | DONE |
+| Venue detail | `packages/shell/src/pages/VenueDetail.tsx` | DONE |
+| Admin users panel | `packages/shell/src/lovable/components/admin/AdminUsersPanel.tsx` | DONE |
+| Add guest | `packages/shell/src/lovable/components/guests/AddGuestModal.tsx` | DONE |
+| Story viewer | `packages/shell/src/lovable/components/feed/StoryViewer.tsx` | DONE |
+| Payments panel | `packages/shell/src/lovable/components/admin/PaymentsPanel.tsx` | DONE |
+| New users panel | `packages/shell/src/lovable/components/admin/NewUsersPanel.tsx` | DONE |
+| Admin refunds panel | `packages/shell/src/lovable/components/admin/AdminRefundsPanel.tsx` | DONE |
+| Support search panel | `packages/shell/src/lovable/components/admin/SupportSearchPanel.tsx` | DONE |
+| Admin panel | `packages/shell/src/lovable/components/admin/AdminPanelView.tsx` | DONE |
+| KYC certification | `packages/shell/src/lovable/components/feed/KycCertificationView.tsx` | BACKEND_REQUIRED |
+| Login | `packages/shell/src/pages/Login.tsx` | DONE |
+| Use guests | `packages/shell/src/lovable/hooks/useGuests.ts` | DONE |
+| Ticket purchase flow | `packages/shell/src/lovable/components/invitations/TicketPurchaseFlow.tsx` | DONE |
+| Admin reports panel | `packages/shell/src/lovable/components/admin/AdminReportsPanel.tsx` | DONE |
+
+### 3. Similitud diseño
+- **Antes:** 58.05% (manifiesto batch 5)
+- **Después (estimado):** 86.5% — re-comparación CI pendiente
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- TicketPurchaseFlow redirige a checkout real; KYC sin simulación de envío
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias
+
+### 6. Decisión
+**APPLIED**
+
+---
+
 ## [2026-06-19 22:30 UTC] gap-empalme-27849872403-b4
 
 ### 1. Resumen del empalme

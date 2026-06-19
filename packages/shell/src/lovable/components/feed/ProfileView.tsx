@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Star,
   MessageSquare,
@@ -196,6 +197,7 @@ const ProfileView = ({
   const [showPlanDetail, setShowPlanDetail] = useState(false);
   const [showFavorites, setShowFavorites] = useState(false);
   const [showMyPosts, setShowMyPosts] = useState(false);
+  const navigate = useNavigate();
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const { isCertified } = useKyc();
@@ -276,6 +278,9 @@ const ProfileView = ({
         onBack={() => setShowMyPosts(false)}
         posts={myPosts}
         onDeletePost={onDeletePost}
+        onOpenDetail={(post) => {
+          if (post.detailPath) navigate(post.detailPath);
+        }}
       />
     );
   }
