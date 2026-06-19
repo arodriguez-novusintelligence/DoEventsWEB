@@ -83,6 +83,32 @@
         "Adaptacion pendiente por agente Cursor"
       ],
       "agentStatus": "pending"
+    },
+    {
+      "id": "prepare-d865fa85",
+      "lovableSha": "d865fa85bcf2b4dd8495dfdd5c8c1baf935a2080",
+      "before": "HEAD~1",
+      "timestamp": "2026-06-19 13:14 UTC",
+      "workflowRunId": "27827870671",
+      "changeTypes": [
+        "VISUAL"
+      ],
+      "designSimilarityPercent": 61.51,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 36.49,
+      "requiresDesignAlignment": true,
+      "summary": "Manifiesto: UI=True, reglas=False, 1 archivo(s); similitud diseño=61.51%",
+      "changedFilesLovable": [
+        "src/components/services/BookingSheet.tsx"
+      ],
+      "webFilesModified": [],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "pending",
+      "pendingRisks": [
+        "Adaptacion pendiente por agente Cursor"
+      ],
+      "agentStatus": "pending"
     }
   ]
 }
