@@ -85,6 +85,20 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+---
+
+## Ejecución 2026-06-19 gap-empalme batch 1 (run 27850000711-b1)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| StepAgenda timeline/validación | VISUAL | Sí | `events/StepAgenda.tsx` | Horarios + empty state día |
+| BankingForm anti-simulación | Bloqueo | Parcial | `banking/BankingForm.tsx` | BACKEND_REQUIRED — delega API |
+| EditProfileView intereses | Bloqueo | Parcial | `feed/EditProfileView.tsx` | BACKEND_REQUIRED — sin toast éxito |
+| ChatRoomView sin stubs | Integración | Sí | `chat/ChatRoomView.tsx` | Eliminado «Ocultar evento» ficticio |
+| SideMenu mis-eventos | Navegación | Sí | `feed/SideMenu.tsx` | Ítem menú lateral |
+| EventPreviewModal preview-only | VISUAL | Sí | `events/EventPreviewModal.tsx` | Sin botones sociales muertos |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 18 DONE + 2 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-19 validación agente (run 27850000711)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

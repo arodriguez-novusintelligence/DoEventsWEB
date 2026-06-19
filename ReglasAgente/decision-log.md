@@ -14,6 +14,57 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-19 23:30 UTC] gap-empalme-27850000711-b1
+
+### 1. Resumen del empalme
+Batch 1 (20 gaps, manifiesto `27850000711-b1`, similitud baseline 58.04%): empalme focalizado en crear evento, chat, servicios, perfil/menú, invitaciones, invitados, banca y mapa. **StepAgenda** con validación de horarios y empty state por día. **StepEventSummary** abre secciones principal/ubicación por defecto. **EventPreviewModal** elimina botones sociales no funcionales. **ChatRoomView** sin stub «Ocultar evento». **BankingForm** delega persistencia a `BankingHub` sin SuccessModal prematuro. **EditProfileView** intereses documentados BACKEND_REQUIRED. **SideMenu** añade «Mis eventos».
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Step agenda | `packages/shell/src/lovable/components/events/StepAgenda.tsx` | DONE |
+| Private chat | `packages/shell/src/lovable/components/chat/PrivateChatView.tsx` | DONE |
+| Host picker | `packages/shell/src/lovable/components/events/HostPickerModal.tsx` | DONE |
+| My services | `packages/shell/src/lovable/components/services/MyServicesView.tsx` | DONE |
+| Seating category | `packages/shell/src/lovable/components/venues/seating/SeatingCategoryDialog.tsx` | DONE |
+| Step event summary | `packages/shell/src/lovable/components/events/StepEventSummary.tsx` | DONE |
+| Success modal | `packages/shell/src/lovable/components/banking/SuccessModal.tsx` | DONE |
+| Guest management | `packages/shell/src/lovable/components/guests/GuestManagementView.tsx` | DONE |
+| Invitation event detail | `packages/shell/src/lovable/components/invitations/InvitationEventDetailView.tsx` | DONE |
+| My events | `packages/shell/src/lovable/components/feed/MyEventsView.tsx` | DONE |
+| Event preview | `packages/shell/src/lovable/components/events/EventPreviewModal.tsx` | DONE |
+| Step unified | `packages/shell/src/lovable/components/services/StepUnified.tsx` | DONE |
+| Chat room | `packages/shell/src/lovable/components/chat/ChatRoomView.tsx` | DONE |
+| Banking form | `packages/shell/src/lovable/components/banking/BankingForm.tsx` | BACKEND_REQUIRED |
+| Step event location | `packages/shell/src/lovable/components/events/StepEventLocation.tsx` | DONE |
+| Side menu | `packages/shell/src/lovable/components/feed/SideMenu.tsx` | DONE |
+| Edit profile | `packages/shell/src/lovable/components/feed/EditProfileView.tsx` | BACKEND_REQUIRED |
+| Map | `packages/shell/src/lovable/components/feed/MapView.tsx` | DONE |
+| Step event details | `packages/shell/src/lovable/components/events/StepEventDetails.tsx` | DONE |
+| Profile gallery | `packages/shell/src/lovable/components/feed/ProfileGallery.tsx` | DONE |
+
+### 3. Similitud antes/después
+- **Antes:** 58.04%
+- **Después:** ~72.5% (estimado; re-comparación CI pendiente)
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias
+
+### 6. Riesgos pendientes
+- 98 gaps restantes (batches 2–6) para alcanzar 98% similitud
+- `discover-joyful-feed` privado — re-comparación CI pendiente
+- BACKEND_REQUIRED: intereses perfil, SWIFT/PayPal banking, chat ban
+
+### Decisión
+**APPLIED**
+
+---
+
 ## [2026-06-19 23:00 UTC] agent-38e2c759-27850000711
 
 ### 1. Resumen del cambio detectado

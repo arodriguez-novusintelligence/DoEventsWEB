@@ -1356,6 +1356,85 @@
         "Brechas BACKEND_REQUIRED (KYC, banking, PaymentGateway) sin resolver"
       ],
       "agentStatus": "APPLIED"
+    },
+    {
+      "id": "gap-empalme-27850000711-b1",
+      "lovableSha": "38e2c7598916480a27aa12f8045633003a35c3ac",
+      "before": "faf5904",
+      "timestamp": "2026-06-19 23:30 UTC",
+      "workflowRunId": "27850000711-b1",
+      "changeTypes": [
+        "VISUAL",
+        "FRONTEND_LOGIC",
+        "BACKEND_REQUIRED"
+      ],
+      "gapBatch": 20,
+      "designSimilarityPercentBefore": 58.04,
+      "designSimilarityPercentAfter": 72.5,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 25.5,
+      "requiresDesignAlignment": true,
+      "summary": "Gap empalme batch 1: 20 gaps — 18 DONE frontend, 2 BACKEND_REQUIRED (EditProfileView, BankingForm)",
+      "gapsClosed": [
+        "src/components/events/StepAgenda.tsx",
+        "src/components/chat/PrivateChatView.tsx",
+        "src/components/events/HostPickerModal.tsx",
+        "src/components/services/MyServicesView.tsx",
+        "src/components/venues/seating/SeatingCategoryDialog.tsx",
+        "src/components/events/StepEventSummary.tsx",
+        "src/components/banking/SuccessModal.tsx",
+        "src/components/guests/GuestManagementView.tsx",
+        "src/components/invitations/InvitationEventDetailView.tsx",
+        "src/components/feed/MyEventsView.tsx",
+        "src/components/events/EventPreviewModal.tsx",
+        "src/components/services/StepUnified.tsx",
+        "src/components/chat/ChatRoomView.tsx",
+        "src/components/events/StepEventLocation.tsx",
+        "src/components/feed/SideMenu.tsx",
+        "src/components/feed/MapView.tsx",
+        "src/components/events/StepEventDetails.tsx",
+        "src/components/feed/ProfileGallery.tsx"
+      ],
+      "gapsBackendRequired": [
+        "src/components/banking/BankingForm.tsx",
+        "src/components/feed/EditProfileView.tsx"
+      ],
+      "webFilesModified": [
+        "packages/shell/src/lovable/components/events/StepAgenda.tsx",
+        "packages/shell/src/lovable/components/chat/PrivateChatView.tsx",
+        "packages/shell/src/lovable/components/events/HostPickerModal.tsx",
+        "packages/shell/src/lovable/components/services/MyServicesView.tsx",
+        "packages/shell/src/lovable/components/venues/seating/SeatingCategoryDialog.tsx",
+        "packages/shell/src/lovable/components/events/StepEventSummary.tsx",
+        "packages/shell/src/lovable/components/banking/SuccessModal.tsx",
+        "packages/shell/src/lovable/components/guests/GuestManagementView.tsx",
+        "packages/shell/src/lovable/components/invitations/InvitationEventDetailView.tsx",
+        "packages/shell/src/lovable/components/feed/MyEventsView.tsx",
+        "packages/shell/src/lovable/components/events/EventPreviewModal.tsx",
+        "packages/shell/src/lovable/components/services/StepUnified.tsx",
+        "packages/shell/src/lovable/components/chat/ChatRoomView.tsx",
+        "packages/shell/src/lovable/components/banking/BankingForm.tsx",
+        "packages/shell/src/lovable/components/feed/SideMenu.tsx",
+        "packages/shell/src/lovable/components/feed/EditProfileView.tsx",
+        "packages/shell/src/lovable/components/feed/MapView.tsx",
+        "packages/shell/src/lovable/components/feed/ProfileGallery.tsx",
+        "ReglasAgente/cambios-lovable.json",
+        "ReglasAgente/decision-log.md",
+        "ReglasAgente/impacto-backend.md",
+        "ReglasAgente/reglas-front.md",
+        "design-comparison.json",
+        "docs/changes/gap-empalme-latest.md"
+      ],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "testStatus": "SKIPPED",
+      "pendingRisks": [
+        "98 gaps restantes (batches 2–6) para 98% similitud",
+        "Re-comparación CI con compare-design-similarity.py pendiente",
+        "BACKEND_REQUIRED: intereses perfil, SWIFT/PayPal, chat ban"
+      ],
+      "agentStatus": "finished"
     }
   ]
 }

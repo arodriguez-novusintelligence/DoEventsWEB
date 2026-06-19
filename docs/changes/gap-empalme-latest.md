@@ -1,40 +1,43 @@
-# Gap Empalme — Resumen Ejecutivo (batch 5)
+# Gap Empalme — Resumen Ejecutivo (batch 1)
 
-**Run:** `gap-empalme-27849872403-b5`  
+**Run:** `gap-empalme-27850000711-b1`  
 **Fecha:** 2026-06-19  
 **Rama:** `feature/cicd/dev-automation`
 
 ## Resultado
 
-- **20 gaps** del manifiesto batch 5 procesados.
-- **19 DONE** en frontend (empalme sin mocks).
-- **1 BACKEND_REQUIRED:** envío de documentos KYC (`KycCertificationView`).
-- **Similitud diseño:** 58.05% → ~86.5% (estimado; re-comparación CI pendiente).
+- **20 gaps** del manifiesto batch 1 procesados.
+- **18 DONE** en frontend (empalme sin mocks).
+- **2 BACKEND_REQUIRED:** `EditProfileView` (intereses/password), `BankingForm` (persistencia SWIFT/PayPal).
+- **Similitud diseño:** 58.04% → ~72.5% (estimado; re-comparación CI pendiente).
 - **Build:** `npm run build:devaws` OK.
 
 ## Empalme realizado
 
 | Área | Cambio principal |
 |------|------------------|
-| Auth | `/auth/forgot-password` usa `ForgotPasswordView` Lovable con APIs reales |
-| Compras | Listas de reservas venue/servicio con etiquetas de estado y manejo de error |
-| Búsqueda | Query inicial desde feed (`location.state.q`) al abrir búsqueda global |
-| Admin | Paneles de reembolsos y reportes con UI real (no redirects) |
-| Feed | `StoryViewer` con diseño Tailwind Lovable; `MyPostsView` con navegación a detalle |
-| Tickets | `TicketPurchaseFlow` redirige a checkout real |
+| Crear evento | `StepAgenda` validación horarios + timeline; `StepEventSummary` secciones abiertas por defecto; `EventPreviewModal` sin botones ficticios |
+| Chat | `PrivateChatView` burbujas DM; `ChatRoomView` sin stub «Ocultar evento» |
+| Servicios | `StepUnified` barra de progreso; `MyServicesView` empty state con icono Briefcase |
+| Perfil / menú | `SideMenu` ítem «Mis eventos»; `MyEventsView` empty state enriquecido; `ProfileGallery` skeleton + error |
+| Invitaciones | `InvitationEventDetailView` stats condicionales (sin ceros ficticios) |
+| Invitados | `GuestManagementView` skeleton de carga |
+| Banca | `BankingForm` sin SuccessModal prematuro; delega a `BankingHub` + API real |
+| Mapa | `MapView` overlay de carga vía prop `loading` |
+| Otros | `HostPickerModal` error de búsqueda; `SeatingCategoryDialog` validación filas/asientos; `SuccessModal` botón unificado |
 
 ## Backend pendiente
 
 | Gap | Motivo | Prioridad |
 |-----|--------|-----------|
-| KYC submit | Falta `POST /users/{id}/kyc` para cédula/selfie | Alta |
-| Story viewers | Falta `GET /stories/{id}/viewers` | Media |
-| Búsqueda publicaciones | Tab posts filtra feed localmente | Media |
+| EditProfileView intereses/password | Falta persistencia preferencias y reset Cognito | Media |
+| BankingForm SWIFT/PayPal | Validación servidor + soporte PayPal en `POST /bank-data` | Alta |
+| ChatRoomView ban | Falta `POST /chat/rooms/{id}/ban` | Baja |
 
 ## Gaps restantes
 
-- **18 gaps** pendientes para batch 6 (objetivo 98% similitud).
-- Login mantiene re-export `mfe-auth` por clasificación RISKY (similitud visual limitada).
+- **98 gaps** pendientes para batches 2–6 (objetivo 98% similitud).
+- Re-comparación CI con `compare-design-similarity.py` pendiente (`discover-joyful-feed` privado).
 
 ## Evidencia anti-mock
 

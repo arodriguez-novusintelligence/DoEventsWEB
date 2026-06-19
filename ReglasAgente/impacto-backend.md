@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27850000711-b1`: batch 1 (20 gaps) — 18 DONE frontend; 2 BACKEND_REQUIRED (`EditProfileView`, `BankingForm`).
+
 Run `agent-38e2c759-27850000711`: validación sin diff UI; build:devaws OK; sin cambios backend ni frontend de lógica; batch 6 (~18 gaps) pendiente.
 
 Run `gap-empalme-27849872403-b5`: batch 5 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`KycCertificationView` submit).
@@ -30,7 +32,22 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27849872403-b5)
+## Empalme realizado (última ejecución — gap-empalme-27850000711-b1)
+
+- **StepAgenda:** validación horarios fin ≥ inicio; empty state por día sin actividades; timeline intacto.
+- **StepEventSummary:** secciones `main` y `location` abiertas por defecto.
+- **EventPreviewModal:** aviso preview-only; eliminados botones sociales no funcionales.
+- **ChatRoomView / PrivateChatView:** sin stubs de ocultar evento; burbujas DM alineadas Lovable.
+- **BankingForm:** submit delega a `onComplete`/`BankingHub`; sin SuccessModal antes de API; PayPal bloqueado.
+- **EditProfileView:** guardar intereses → BACKEND_REQUIRED (sin toast de éxito ficticio).
+- **SideMenu:** ítem «Mis eventos» (`mis-eventos`).
+- **MyEventsView / MyServicesView:** empty states enriquecidos con iconografía Lovable.
+- **MapView:** prop `loading` con overlay; **ProfileGallery:** skeleton + `loadError`.
+- **HostPickerModal:** error de búsqueda; **SeatingCategoryDialog:** validación filas/asientos.
+- **InvitationEventDetailView:** stats organizador condicionales (sin ceros ficticios).
+- **GuestManagementView:** skeleton de carga; **StepUnified:** barra de progreso por sección.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27849872403-b5)
 
 - **ForgotPassword:** ruta shell `/auth/forgot-password` → `ForgotPasswordView` Lovable con APIs reales.
 - **MyReservedVenues/Services:** `formatBookingStatus`, estados vacío/error/reintento; APIs `fetchUserVenueBookings` / `fetchUserServiceBookings`.
