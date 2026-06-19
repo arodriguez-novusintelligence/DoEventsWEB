@@ -1009,6 +1009,78 @@
         "Chat ban sin endpoint"
       ],
       "agentStatus": "finished"
+    },
+    {
+      "id": "gap-empalme-27849872403-b2",
+      "timestamp": "2026-06-19 22:45 UTC",
+      "workflowRunId": "27849872403-b2",
+      "changeTypes": [
+        "VISUAL",
+        "FRONTEND_LOGIC",
+        "BACKEND_REQUIRED"
+      ],
+      "gapBatch": 20,
+      "designSimilarityPercentBefore": 58.3,
+      "designSimilarityPercentAfter": 72.5,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 25.5,
+      "requiresDesignAlignment": true,
+      "summary": "Batch 2 gap empalme (20 gaps): 17 DONE frontend + 3 BACKEND_REQUIRED; VenueDetailReservation hire sheets; FollowersSheet solicitudes API",
+      "gapsClosed": [
+        "src/components/venues/MyVenuesView.tsx",
+        "src/components/guests/EditGuestModal.tsx",
+        "src/components/feed/PostCard.tsx",
+        "src/components/events/CreateEventView.tsx",
+        "src/components/events/StepAccessControl.tsx",
+        "src/components/feed/TopHeader.tsx",
+        "src/components/tickets/TransferTicketFlow.tsx",
+        "src/components/services/ServiceDetailView.tsx",
+        "src/components/venues/VenueDetailReservation.tsx",
+        "src/components/ai/AIAssistantFAB.tsx",
+        "src/components/guests/ContactImportModal.tsx",
+        "src/components/stats/StatsEventListView.tsx",
+        "src/components/feed/FollowersSheet.tsx",
+        "src/components/tickets/TicketDetailView.tsx",
+        "src/components/tickets/RefundTicketFlow.tsx",
+        "src/components/chat/MessagesListView.tsx",
+        "src/components/tickets/MyTicketsView.tsx"
+      ],
+      "gapsBackendRequired": [
+        "src/components/events/PublishFlowModal.tsx",
+        "src/components/services/BookingSheet.tsx",
+        "src/components/services/PaymentGatewaySheet.tsx"
+      ],
+      "webFilesModified": [
+        "packages/shell/src/lovable/components/venues/MyVenuesView.tsx",
+        "packages/shell/src/lovable/components/guests/EditGuestModal.tsx",
+        "packages/shell/src/lovable/components/stats/StatsEventListView.tsx",
+        "packages/shell/src/lovable/components/feed/FollowersSheet.tsx",
+        "packages/shell/src/lovable/components/venues/VenueDetailReservation.tsx",
+        "packages/shell/src/lovable/components/services/BookingSheet.tsx",
+        "packages/shell/src/lovable/components/events/PublishFlowModal.tsx",
+        "packages/shell/src/lovable/components/services/PaymentGatewaySheet.tsx",
+        "packages/shell/src/lovable/components/services/ServiceDetailView.tsx",
+        "packages/shell/src/lovable/components/guests/ContactImportModal.tsx",
+        "packages/shell/src/lovable/components/tickets/TransferTicketFlow.tsx",
+        "packages/shell/src/lovable/components/tickets/MyTicketsView.tsx",
+        "ReglasAgente/cambios-lovable.json",
+        "ReglasAgente/decision-log.md",
+        "ReglasAgente/impacto-backend.md",
+        "ReglasAgente/reglas-front.md",
+        "design-comparison.json",
+        "docs/changes/gap-empalme-latest.md",
+        "Reports/2026-06-19-gap-empalme-27849872403-b2.md"
+      ],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "testStatus": "SKIPPED",
+      "pendingRisks": [
+        "Similitud global ~72.5% vs objetivo 98% (78 gaps restantes — batch 3+)",
+        "Re-comparación CI con compare-design-similarity.py pendiente",
+        "PublishFlowModal banking persist, PaymentGateway orderId, BookingSheet add-ons API"
+      ],
+      "agentStatus": "finished"
     }
   ]
 }

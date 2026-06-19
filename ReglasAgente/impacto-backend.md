@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27849872403-b2`: batch 2 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`PublishFlowModal`, `BookingSheet` add-ons, `PaymentGatewaySheet`).
+
 Run `gap-empalme-27849872403-b1`: batch 1 (20 gaps) — 18 DONE frontend; 2 BACKEND_REQUIRED (`EditProfileView`, `BankingForm`). Anti-mock: TicketPurchaseFlow, VenueDetailReservation. Kick chat vía `kickFromEventChat`.
 
 Run `agent-38e2c759-27849872403`: validación sin diff UI; build:devaws OK; sin cambios backend ni frontend de lógica.
@@ -20,12 +22,14 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27849872403-b1)
+## Empalme realizado (última ejecución — gap-empalme-27849872403-b2)
 
-- **ChatRoomView + LovableChatThread + ChatPage:** expulsión participantes vía `kickFromEventChat`; `canModerate` cuando admin evento; ban documentado sin API.
-- **TicketPurchaseFlow:** redirect `/events/:id/checkout`; sin id → estado vacío (eliminado mock CATEGORIES/4242/test txn).
-- **VenueDetailReservation:** eliminado paso pago simulado; reserva en vivo `createVenueBooking` + `onPaymentReady`.
-- **Batch 1 restante:** StepAgenda, PrivateChatView, HostPickerModal, MyServicesView, SeatingCategoryDialog, StepEventSummary, SuccessModal, GuestManagementView, InvitationEventDetailView, MyEventsView, EventPreviewModal, StepUnified, StepEventLocation, SideMenu, MapView — validados empalme previo.
+- **VenueDetailReservation:** montados `BookingSheet` + `PaymentGatewaySheet` para contratar servicios adicionales del lugar; indicador paso 1/3–3/3 dinámico; reserva venue vía `createVenueBooking` + `onPaymentReady`.
+- **FollowersSheet:** tab Solicitudes con `fetchPendingFollowRequests`; seguir/dejar de seguir vía API real.
+- **PaymentGatewaySheet:** panel inline cuando falta `orderId`; botón pago deshabilitado sin orden.
+- **BookingSheet:** empty state servicios adicionales (catálogo real pendiente backend).
+- **PublishFlowModal:** banner “Datos bancarios pendientes” en éxito; sin simular persistencia bancaria.
+- **MyVenuesView, StatsEventListView, ServiceDetailView, ContactImportModal, TransferTicketFlow, MyTicketsView:** polish visual alineado Lovable.
 
 ## Backend pendiente para 100%
 

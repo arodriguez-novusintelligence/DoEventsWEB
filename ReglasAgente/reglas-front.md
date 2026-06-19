@@ -83,6 +83,19 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-19 gap-empalme batch 2 (run 27849872403-b2)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| VenueDetailReservation hire sheets | Integración | Sí | `venues/VenueDetailReservation.tsx` | BookingSheet + PaymentGatewaySheet montados |
+| FollowersSheet solicitudes | Integración | Sí | `feed/FollowersSheet.tsx` | Tab Solicitudes vía `fetchPendingFollowRequests` |
+| PaymentGateway sin orderId | Bloqueo | Parcial | `services/PaymentGatewaySheet.tsx` | BACKEND_REQUIRED — panel inline + botón disabled |
+| PublishFlow banking | Bloqueo | Parcial | `events/PublishFlowModal.tsx` | BACKEND_REQUIRED — banner pendiente en éxito |
+| BookingSheet add-ons | Bloqueo | Parcial | `services/BookingSheet.tsx` | BACKEND_REQUIRED — empty state sin mock |
+| TransferTicketFlow empty | VISUAL | Sí | `tickets/TransferTicketFlow.tsx` | Sin entradas → estado vacío |
+| StatsEventListView tokens | VISUAL | Sí | `stats/StatsEventListView.tsx` | `bg-secondary` + ProfileSectionBanner |
+| Batch 2 gaps (20) | Empalme | Sí | ver `decision-log.md` | 17 DONE + 3 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-19 gap-empalme batch 1 (run 27849872403-b1)
 
 | Regla | Tipo | Implementada | Archivo | Observación |
