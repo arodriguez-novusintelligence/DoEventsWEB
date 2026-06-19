@@ -9,8 +9,6 @@ import {
   Calendar as CalendarIcon,
   Mail,
   CheckCircle2,
-  CreditCard,
-  Lock,
   Plus,
   Briefcase,
 } from 'lucide-react';
@@ -21,7 +19,6 @@ import { toast } from 'sonner';
 import type { PublishedVenueDraft } from './VenueCreator';
 import VenueDetails from './detail/VenueDetails';
 import { buildVenueFromDetail } from '../../../lovable-bridge/buildVenueFromDetail';
-import { useNotifyPurchase } from '@lovable/lib/useNotifyPurchase';
 import {
   createVenueBooking,
   fetchServiceById,
@@ -83,7 +80,7 @@ interface Props {
   liked?: boolean;
 }
 
-type Step = 'detail' | 'confirm' | 'payment' | 'success';
+type Step = 'detail' | 'confirm' | 'success';
 
 const BASE_PRICE_PER_DAY = 1_250_000;
 const COMMISSION_RATE = 0.12;
@@ -153,7 +150,6 @@ const VenueDetailReservation = ({
     () => mapAddonServices(addonServices || []),
     [addonServices],
   );
-  const notifyPurchase = useNotifyPurchase();
   const [step, setStep] = useState<Step>('detail');
   const [byDay, setByDay] = useState(true);
   const [selectedIsoDates, setSelectedIsoDates] = useState<string[]>([]);
@@ -174,12 +170,6 @@ const VenueDetailReservation = ({
     firstName: liveBooking?.buyerProfile?.firstName || '',
     lastName: liveBooking?.buyerProfile?.lastName || '',
     email: liveBooking?.buyerProfile?.email || '',
-  });
-  const [card, setCard] = useState({
-    number: '',
-    name: '',
-    expiry: '',
-    cvv: '',
   });
 
   const previewDayMap = useMemo(
@@ -767,116 +757,12 @@ const VenueDetailReservation = ({
                 void handleSubmitLiveBooking();
                 return;
               }
-              setStep('payment');
+              toast.error('Este lugar aún no tiene reserva en línea. Contacta al anfitrión para reservar.');
             }}
             disabled={submittingBooking}
             className="w-full rounded-full py-6 text-base font-semibold"
           >
             {submittingBooking ? 'Creando reserva…' : isLive ? 'Continuar al pago' : 'Reservar'}
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  // ─────────── PAYMENT STEP ───────────
-  if (step === 'payment') {
-    return (
-      <div className="min-h-screen bg-secondary pb-32">
-        <div className="sticky top-0 z-10 bg-secondary px-4 pt-4 pb-2">
-          <button onClick={() => setStep('confirm')} className="flex items-center gap-1 text-sm font-medium text-primary">
-            <ChevronLeft className="h-4 w-4" /> Volver
-          </button>
-        </div>
-
-        <div className="mx-auto max-w-lg space-y-4 px-4 pt-2">
-          <div className="text-center">
-            <h2 className="text-xl font-bold text-foreground">Pasarela de pago</h2>
-            <p className="mt-1 text-xs text-muted-foreground">
-              <Lock className="mr-1 inline h-3 w-3" />
-              Pago seguro encriptado
-            </p>
-          </div>
-
-          <section className="rounded-2xl bg-card p-4 shadow-sm">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold text-foreground">Total a pagar</p>
-              <p className="text-2xl font-bold text-primary">{fmt(total)}</p>
-            </div>
-            <p className="text-[11px] text-muted-foreground">
-              {venue.name} · {numDays} día(s)
-            </p>
-          </section>
-
-          <section className="rounded-2xl bg-card p-4 shadow-sm">
-            <p className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <CreditCard className="h-4 w-4 text-primary" /> Tarjeta de crédito / débito
-            </p>
-            <div className="mt-3 space-y-3">
-              <div>
-                <label className="text-[11px] text-muted-foreground">Número de tarjeta</label>
-                <Input
-                  value={card.number}
-                  onChange={(e) => setCard({ ...card, number: e.target.value })}
-                  className="mt-1 h-10"
-                  placeholder="1234 5678 9012 3456"
-                  inputMode="numeric"
-                />
-              </div>
-              <div>
-                <label className="text-[11px] text-muted-foreground">Nombre en la tarjeta</label>
-                <Input
-                  value={card.name}
-                  onChange={(e) => setCard({ ...card, name: e.target.value })}
-                  className="mt-1 h-10"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-[11px] text-muted-foreground">Vencimiento</label>
-                  <Input
-                    value={card.expiry}
-                    onChange={(e) => setCard({ ...card, expiry: e.target.value })}
-                    className="mt-1 h-10"
-                    placeholder="MM/AA"
-                  />
-                </div>
-                <div>
-                  <label className="text-[11px] text-muted-foreground">CVV</label>
-                  <Input
-                    value={card.cvv}
-                    onChange={(e) => setCard({ ...card, cvv: e.target.value })}
-                    className="mt-1 h-10"
-                    placeholder="123"
-                    inputMode="numeric"
-                  />
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <Button
-            onClick={() => {
-              if (!card.number.trim() || !card.name.trim() || !card.expiry.trim() || !card.cvv.trim()) {
-                toast.error('Completa los datos de la tarjeta');
-                return;
-              }
-              toast.success('Pago aprobado ✓');
-              notifyPurchase({
-                kind: 'venue',
-                itemName: venue.name,
-                sellerName: hostDisplayName,
-                sellerEmail: hostDisplayEmail,
-                buyerName: `${buyer.firstName} ${buyer.lastName}`.trim() || buyer.email,
-                buyerEmail: buyer.email,
-                amount: fmt(total),
-              });
-              setTimeout(() => setStep('success'), 400);
-            }}
-            className="w-full rounded-full py-6 text-base font-semibold"
-          >
-            <Lock className="mr-2 h-4 w-4" />
-            Pagar {fmt(total)}
           </Button>
         </div>
       </div>

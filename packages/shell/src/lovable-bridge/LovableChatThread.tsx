@@ -37,6 +37,7 @@ interface LovableChatThreadProps {
   isEventChat: boolean;
   isPrivateGroup: boolean;
   isReadOnlyEventChat?: boolean;
+  onKickParticipant?: (participantId: string, participantName?: string) => void;
 }
 
 export const LovableChatThread: React.FC<LovableChatThreadProps> = ({
@@ -68,6 +69,7 @@ export const LovableChatThread: React.FC<LovableChatThreadProps> = ({
   isEventChat,
   isPrivateGroup,
   isReadOnlyEventChat = false,
+  onKickParticipant,
 }) => {
   if (loadingMessages) {
     return (
@@ -146,6 +148,8 @@ export const LovableChatThread: React.FC<LovableChatThreadProps> = ({
           onShareEvent={onShareEvent}
           onEventClick={onEventClick}
           onAddPerson={onAddPerson}
+          canModerate={isEventAdmin}
+          onKickParticipant={onKickParticipant}
         />
       )}
 
@@ -178,6 +182,8 @@ export const LovableChatThread: React.FC<LovableChatThreadProps> = ({
           onShareLocation={onShareLocation}
           onShareEvent={onShareEvent}
           onEventClick={onEventClick}
+          canModerate={isEventAdmin}
+          onKickParticipant={onKickParticipant}
         />
       )}
     </div>

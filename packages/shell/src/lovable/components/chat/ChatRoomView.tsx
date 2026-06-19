@@ -24,6 +24,7 @@ interface ChatRoomViewProps {
   canBroadcast?: boolean;
   isReadOnly?: boolean;
   canModerate?: boolean;
+  onKickParticipant?: (participantId: string, participantName?: string) => void;
 }
 
 /* ── Attendee bubble ── */
@@ -69,10 +70,11 @@ const AttendeeBubble = ({ attendee }: { attendee: ChatAttendee }) => (
 );
 
 /* ── Context menu ── */
-const MessageContextMenu = ({ message, position, isAdmin, onClose, onReply, onCopy, onEdit, onDelete, onKick }: {
+const MessageContextMenu = ({ message, position, isAdmin, canModerate, onClose, onReply, onCopy, onEdit, onDelete, onKick }: {
   message: ChatMessage;
   position: { x: number; y: number };
   isAdmin: boolean;
+  canModerate: boolean;
   onClose: () => void;
   onReply: () => void;
   onCopy: () => void;
@@ -140,6 +142,7 @@ const ChatRoomView = ({
   canBroadcast,
   isReadOnly = false,
   canModerate = false,
+  onKickParticipant,
 }: ChatRoomViewProps) => {
   const [newMessage, setNewMessage] = useState('');
   const [contextMenu, setContextMenu] = useState<{ message: ChatMessage; position: { x: number; y: number } } | null>(null);
@@ -237,8 +240,18 @@ const ChatRoomView = ({
     }
     setContextMenu(null);
   };
-  const handleKick = (attendee: ChatAttendee) => toast(`${attendee.name} ha sido expulsado del chat`);
-  const handleBan = (attendee: ChatAttendee) => toast(`${attendee.name} ha sido baneado del chat`);
+  const handleKick = (attendee: ChatAttendee) => {
+    if (!canModerate) {
+      toast.error('No tienes permisos para expulsar participantes');
+      return;
+    }
+    if (onKickParticipant) {
+      onKickParticipant(attendee.id, attendee.name);
+      return;
+    }
+    toast.error('Expulsión no disponible en este chat');
+  };
+  const handleBan = () => toast.error('Ban de usuarios requiere soporte backend');
 
   return (
     <div className="flex h-[100dvh] max-h-[100dvh] w-full min-w-0 flex-col overflow-hidden bg-secondary">
@@ -347,7 +360,7 @@ const ChatRoomView = ({
                     <button onClick={() => handleKick(att)} className="rounded-lg bg-accent px-2.5 py-1 text-xs font-medium text-primary hover:bg-primary hover:text-primary-foreground transition-colors">
                       Expulsar
                     </button>
-                    <button onClick={() => handleBan(att)} className="rounded-lg bg-destructive/10 px-2 py-1 text-xs text-destructive hover:bg-destructive hover:text-destructive-foreground transition-colors">
+                    <button onClick={handleBan} className="rounded-lg bg-destructive/10 px-2 py-1 text-xs text-destructive hover:bg-destructive hover:text-destructive-foreground transition-colors">
                       <Ban className="h-3.5 w-3.5" />
                     </button>
                   </div>
@@ -447,14 +460,24 @@ const ChatRoomView = ({
           message={contextMenu.message}
           position={contextMenu.position}
           isAdmin={currentUserIsAdmin}
+          canModerate={canModerate}
           onClose={() => setContextMenu(null)}
           onReply={() => { setNewMessage(`> ${contextMenu.message.senderName}: ${contextMenu.message.text}\n`); inputRef.current?.focus(); setContextMenu(null); }}
           onCopy={handleCopy}
           onEdit={handleEdit}
           onDelete={handleDelete}
           onKick={() => {
-            if (!canModerate) return;
-            toast(`${contextMenu.message.senderName} ha sido expulsado del chat`);
+            if (!canModerate) {
+              toast.error('No tienes permisos para expulsar participantes');
+              setContextMenu(null);
+              return;
+            }
+            const senderId = contextMenu.message.senderId;
+            if (onKickParticipant && senderId) {
+              onKickParticipant(senderId, contextMenu.message.senderName);
+            } else {
+              toast.error('Expulsión no disponible en este chat');
+            }
             setContextMenu(null);
           }}
         />

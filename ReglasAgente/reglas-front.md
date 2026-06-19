@@ -83,6 +83,17 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-19 gap-empalme batch 1 (run 27849872403-b1)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| TicketPurchaseFlow anti-mock | Bloqueo | Sí | `invitations/TicketPurchaseFlow.tsx` | Redirect checkout; sin CATEGORIES/4242 |
+| VenueDetailReservation pago real | Bloqueo | Sí | `venues/VenueDetailReservation.tsx` | Eliminado paso pago simulado |
+| ChatRoomView kick API | Integración | Sí | `chat/ChatRoomView.tsx`, `LovableChatThread.tsx`, `ChatPage.tsx` | `kickFromEventChat` |
+| EditProfileView password | Bloqueo | Parcial | `feed/EditProfileView.tsx` | BACKEND_REQUIRED |
+| BankingForm SWIFT | Bloqueo | Parcial | `banking/BankingForm.tsx` | BACKEND_REQUIRED |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 18 DONE + 2 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-19 validación agente (run 27849872403)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

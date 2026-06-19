@@ -1726,6 +1726,11 @@ export const ChatPage: React.FC = () => {
           isEventChat={showEventLayout}
           isPrivateGroup={isPrivateGroupRoom(selectedRoom)}
           isReadOnlyEventChat={isClosedEventChat}
+          onKickParticipant={
+            isEventAdmin && !isClosedEventChat
+              ? (participantId, participantName) => void handleKickParticipant(participantId, participantName)
+              : undefined
+          }
         />
         <ChatEventPickerSheet
           open={showEventPicker}

@@ -1,62 +1,65 @@
-# Reporte empalme de gaps — Run 27847959667-b5
+# Reporte empalme de gaps — Run 27849872403-b1
 
 | Campo | Valor |
 |-------|-------|
-| Generado | 2026-06-20 00:30 UTC |
-| Batch | 5 / 6 |
+| Generado | 2026-06-19 22:15 UTC |
+| Batch | 1 / 6 |
 | Gaps en batch | 20 |
-| Run ID | `gap-empalme-27847959667-b5` |
+| Run ID | `gap-empalme-27849872403-b1` |
 | Rama | `feature/cicd/dev-automation` |
 
 ## Resumen ejecutivo
 
-Se completó el empalme focalizado del **batch 5** (20 gaps). Cambios principales: empty states en reservas de servicios/lugares, `SearchEventsPage` delega en `GlobalSearchView`, `FeedBanner` KYC en muro social, `KycProvider` + ruta `/profile/kyc`, panel admin vía wrappers Lovable, `AddGuestModal` con `onSearchUser`, convención `useGuests`, rutas `/admin/reports` y `/admin/refunds`.
+Se completó el empalme focalizado del **batch 1** (20 gaps del manifiesto `27849872403-b1`). Los componentes ya empalados en runs anteriores se validaron; este run cierra brechas anti-mock y cableado real pendiente:
 
-Un gap queda **BACKEND_REQUIRED**: envío de documentos KYC (`KycCertificationView`).
+- **ChatRoomView:** expulsión de participantes vía `kickFromEventChat` (API `@doevents/shared`).
+- **TicketPurchaseFlow:** eliminado flujo mock completo; redirect a `/events/:id/checkout` o estado vacío sin datos falsos.
+- **VenueDetailReservation:** eliminado paso de pago simulado (`Pago aprobado ✓`); reserva en vivo usa `createVenueBooking` + pasarela real.
+
+**18 gaps DONE** en frontend; **2 BACKEND_REQUIRED** documentados (`EditProfileView`, `BankingForm`).
 
 ## Similitud
 
 | Métrica | Antes | Después (estimado*) | Delta |
 |---------|-------|---------------------|-------|
-| Similitud global | **59.92%** | **82.5%** | **+22.6%** |
-| Gaps pendientes totales | 118 | **18** | −20 |
-| Gaps cerrados en batch | — | **19 frontend** + **1 BACKEND_REQUIRED** | — |
+| Similitud global | **58.82%** | **65.5%** | **+6.7%** |
+| Gaps pendientes totales | 118 | **98** | −20 |
+| Gaps cerrados en batch | — | **18 frontend** + **2 BACKEND_REQUIRED** | — |
 
 \* Re-comparación CI requiere checkout `discover-joyful-feed` (no disponible en agente cloud).
 
-## Empalme realizado (este batch)
+## Empalme realizado (batch 1 — 20 gaps)
 
 | Feature | WEB | Estado |
 |---------|-----|--------|
-| Service reservation detail | `ServiceReservationDetail.tsx` | DONE |
-| Olvidé mi contraseña | `ForgotPassword.tsx` | DONE |
-| Restablecer contraseña | `ResetPassword.tsx` | DONE |
-| My reserved services | `MyReservedServicesView.tsx` | DONE |
-| Búsqueda global | `GlobalSearchView.tsx` + `SearchEventsPage.tsx` | DONE |
-| My reserved venues | `MyReservedVenuesView.tsx` | DONE |
-| Banner promocional | `FeedBanner.tsx` + `SocialWallTab.tsx` | DONE |
-| Kyc certification | `KycCertificationView.tsx` + `KycPage.tsx` | BACKEND_REQUIRED |
-| Venue detail | `VenueDetail.tsx` | DONE |
-| Admin users panel | `AdminUsersPanel.tsx` | DONE |
-| Add guest | `AddGuestModal.tsx` | DONE |
-| Visor de historias | `StoryViewer.tsx` | DONE |
-| Payments panel | `PaymentsPanel.tsx` | DONE |
-| New users panel | `NewUsersPanel.tsx` | DONE |
-| Admin refunds panel | `AdminRefundsPanel.tsx` | DONE |
-| Support search panel | `SupportSearchPanel.tsx` | DONE |
-| Admin panel | `AdminPanelView.tsx` | DONE |
-| Login | `Login.tsx` | DONE |
-| Use guests | `useGuests.ts` | DONE |
-| Admin reports panel | `AdminReportsPanel.tsx` | DONE |
+| Step agenda | `events/StepAgenda.tsx` | DONE |
+| Private chat | `chat/PrivateChatView.tsx` | DONE |
+| Host picker | `events/HostPickerModal.tsx` | DONE |
+| My services | `services/MyServicesView.tsx` | DONE |
+| Ticket purchase flow | `invitations/TicketPurchaseFlow.tsx` | DONE |
+| Seating category | `venues/seating/SeatingCategoryDialog.tsx` | DONE |
+| Step event summary | `events/StepEventSummary.tsx` | DONE |
+| Success modal | `banking/SuccessModal.tsx` | DONE |
+| Guest management | `guests/GuestManagementView.tsx` | DONE |
+| Invitation event detail | `invitations/InvitationEventDetailView.tsx` | DONE |
+| My events | `feed/MyEventsView.tsx` | DONE |
+| Chat room | `chat/ChatRoomView.tsx` | DONE |
+| Event preview | `events/EventPreviewModal.tsx` | DONE |
+| Step unified | `services/StepUnified.tsx` | DONE |
+| Edit profile | `feed/EditProfileView.tsx` | BACKEND_REQUIRED |
+| Banking form | `banking/BankingForm.tsx` | BACKEND_REQUIRED |
+| Step event location | `events/StepEventLocation.tsx` | DONE |
+| Side menu | `feed/SideMenu.tsx` | DONE |
+| Venue detail reservation | `venues/VenueDetailReservation.tsx` | DONE |
+| Map | `feed/MapView.tsx` | DONE |
 
-## Backend pendiente
+## Backend pendiente (batch 1)
 
 | Gap | Motivo | Prioridad |
 |-----|--------|-----------|
-| KycCertificationView submit | Sin endpoint proveedor KYC | Alta |
-| GlobalSearchView posts | Sin `searchPublications` API | Media |
-| StoryViewersSheet (batch 4) | Sin endpoint viewers | Media |
-| PaymentGatewaySheet (batch 3) | Orden/gateway servicios | Alta |
+| EditProfileView password/intereses | Sin API persistencia intereses / reset Cognito | Media |
+| BankingForm SWIFT/intl/PayPal | Validación servidor y tipos no soportados | Alta |
+| ChatRoomView ban | Sin endpoint ban chat | Baja |
 
 ## Validación
 
@@ -66,4 +69,4 @@ Un gap queda **BACKEND_REQUIRED**: envío de documentos KYC (`KycCertificationVi
 
 ## Próximo paso
 
-Ejecutar workflow `lovable-gap-empalme` con **batch_index=6** (~18 gaps restantes).
+Ejecutar workflow `lovable-gap-empalme` con **batch_index=2** (20 gaps restantes del manifiesto).

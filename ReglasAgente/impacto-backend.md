@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27849872403-b1`: batch 1 (20 gaps) — 18 DONE frontend; 2 BACKEND_REQUIRED (`EditProfileView`, `BankingForm`). Anti-mock: TicketPurchaseFlow, VenueDetailReservation. Kick chat vía `kickFromEventChat`.
+
 Run `agent-38e2c759-27849872403`: validación sin diff UI; build:devaws OK; sin cambios backend ni frontend de lógica.
 
 Run `gap-empalme-27847959667-b5`: batch 5 (20 gaps) — empalme frontend completado en 19 componentes; 1 gap documentado como BACKEND_REQUIRED (KycCertificationView submit).
@@ -18,21 +20,20 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27847959667-b5)
+## Empalme realizado (última ejecución — gap-empalme-27849872403-b1)
 
-- **ServiceReservationDetail / MyReservedServicesView / MyReservedVenuesView:** empty states con iconografía alineada batch 4; APIs `fetchUserServiceBookings` / `fetchUserVenueBookings`.
-- **GlobalSearchView + SearchEventsPage:** búsqueda unificada eventos/usuarios/publicaciones; enlace perfil `/users/:id`; sin mocks.
-- **FeedBanner + KycCertificationView:** banner KYC en muro social; `KycProvider` montado en `LovableLayout`; ruta `/profile/kyc`; estado real vía `fetchUserById`.
-- **Admin panels:** `AdminPanelPage` usa wrappers Lovable (`AdminUsersPanel`, `PaymentsPanel`, etc.); rutas `/admin/reports`, `/admin/refunds`; `App.tsx` importa `AdminPanelView`.
-- **AddGuestModal:** búsqueda usa `onSearchUser` (matching consistente vía `useApiGuests`).
-- **useGuests / GuestsHubPage:** convención `@lovable/hooks/useGuests`.
-- **StoryViewer:** import unificado vía `@lovable/components/feed/StoryViewer`.
-- **Auth pages (Login, ForgotPassword, ResetPassword):** re-export `mfe-auth` — lógica real sin duplicar.
+- **ChatRoomView + LovableChatThread + ChatPage:** expulsión participantes vía `kickFromEventChat`; `canModerate` cuando admin evento; ban documentado sin API.
+- **TicketPurchaseFlow:** redirect `/events/:id/checkout`; sin id → estado vacío (eliminado mock CATEGORIES/4242/test txn).
+- **VenueDetailReservation:** eliminado paso pago simulado; reserva en vivo `createVenueBooking` + `onPaymentReady`.
+- **Batch 1 restante:** StepAgenda, PrivateChatView, HostPickerModal, MyServicesView, SeatingCategoryDialog, StepEventSummary, SuccessModal, GuestManagementView, InvitationEventDetailView, MyEventsView, EventPreviewModal, StepUnified, StepEventLocation, SideMenu, MapView — validados empalme previo.
 
 ## Backend pendiente para 100%
 
 | Gap / Feature | lovablePath | webPath | Motivo | Endpoint / Lambda | Tabla DynamoDB | Acción | Prioridad |
 |---------------|-------------|---------|--------|-------------------|----------------|--------|-----------|
+| Edit profile password/intereses | `src/components/feed/EditProfileView.tsx` | `packages/shell/src/lovable/components/feed/EditProfileView.tsx` | Reset password e intereses no persisten | Auth Cognito + `PATCH /users/{id}` | Users | Conectar flujos UI | Media |
+| Banking form SWIFT/intl | `src/components/banking/BankingForm.tsx` | `packages/shell/src/lovable/components/banking/BankingForm.tsx` | Validación SWIFT servidor; cert upload | Extender `POST /bank-data` | BankAccounts | Validación backend | Alta |
+| Chat ban | `src/components/chat/ChatRoomView.tsx` | `packages/shell/src/lovable/components/chat/ChatRoomView.tsx` | Ban participantes sin endpoint | `POST /chat/rooms/{id}/ban` (TBD) | Chats | Endpoint ban | Baja |
 | KYC submit | `src/components/feed/KycCertificationView.tsx` | `packages/shell/src/lovable/components/feed/KycCertificationView.tsx` | Envío documento/selfie certificación | `POST /users/{id}/kyc` (TBD) | Users | Integrar proveedor KYC | Alta |
 | Búsqueda publicaciones | `src/components/feed/GlobalSearchView.tsx` | `packages/shell/src/lovable/components/feed/GlobalSearchView.tsx` | Tab posts filtra feed localmente | `GET /publications/search?q=` (TBD) | Publications | Endpoint búsqueda full-text | Media |
 | Story viewers | `src/components/feed/StoryViewersSheet.tsx` | `packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx` | Lista de visualizaciones por historia | `GET /stories/{id}/viewers` (TBD) | Stories | Exponer endpoint viewers | Media |

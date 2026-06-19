@@ -14,7 +14,54 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
-## [2026-06-19 21:48 UTC] agent-38e2c759-27849872403
+## [2026-06-19 22:15 UTC] gap-empalme-27849872403-b1
+
+### 1. Resumen del empalme
+Batch 1 (20 gaps, manifiesto `27849872403-b1`, similitud baseline 58.82%): cierre anti-mock y cableado real en componentes con brechas pendientes. **ChatRoomView** expulsión vía `kickFromEventChat`; **TicketPurchaseFlow** sin flujo mock (redirect checkout o estado vacío); **VenueDetailReservation** sin paso de pago simulado. Resto del batch validado desde empalmes previos (StepAgenda, SideMenu, MapView, etc.).
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Step agenda | `packages/shell/src/lovable/components/events/StepAgenda.tsx` | DONE |
+| Private chat | `packages/shell/src/lovable/components/chat/PrivateChatView.tsx` | DONE |
+| Host picker | `packages/shell/src/lovable/components/events/HostPickerModal.tsx` | DONE |
+| My services | `packages/shell/src/lovable/components/services/MyServicesView.tsx` | DONE |
+| Ticket purchase flow | `packages/shell/src/lovable/components/invitations/TicketPurchaseFlow.tsx` | DONE |
+| Seating category | `packages/shell/src/lovable/components/venues/seating/SeatingCategoryDialog.tsx` | DONE |
+| Step event summary | `packages/shell/src/lovable/components/events/StepEventSummary.tsx` | DONE |
+| Success modal | `packages/shell/src/lovable/components/banking/SuccessModal.tsx` | DONE |
+| Guest management | `packages/shell/src/lovable/components/guests/GuestManagementView.tsx` | DONE |
+| Invitation event detail | `packages/shell/src/lovable/components/invitations/InvitationEventDetailView.tsx` | DONE |
+| My events | `packages/shell/src/lovable/components/feed/MyEventsView.tsx` | DONE |
+| Chat room | `packages/shell/src/lovable/components/chat/ChatRoomView.tsx` | DONE |
+| Event preview | `packages/shell/src/lovable/components/events/EventPreviewModal.tsx` | DONE |
+| Step unified | `packages/shell/src/lovable/components/services/StepUnified.tsx` | DONE |
+| Edit profile | `packages/shell/src/lovable/components/feed/EditProfileView.tsx` | BACKEND_REQUIRED |
+| Banking form | `packages/shell/src/lovable/components/banking/BankingForm.tsx` | BACKEND_REQUIRED |
+| Step event location | `packages/shell/src/lovable/components/events/StepEventLocation.tsx` | DONE |
+| Side menu | `packages/shell/src/lovable/components/feed/SideMenu.tsx` | DONE |
+| Venue detail reservation | `packages/shell/src/lovable/components/venues/VenueDetailReservation.tsx` | DONE |
+| Map | `packages/shell/src/lovable/components/feed/MapView.tsx` | DONE |
+
+### 3. Similitud diseño
+- **Antes:** 58.82%
+- **Después (estimado):** 65.5% — re-comparación CI pendiente
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- TicketPurchaseFlow: eliminados CATEGORIES/takenSet/4242; redirect a checkout real
+- VenueDetailReservation: eliminado `toast.success('Pago aprobado ✓')` y formulario tarjeta ficticio
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias
+
+### 6. Decisión
+**APPLIED**
+
+---
+
 
 ### 1. Resumen del cambio detectado
 Manifiesto Lovable SHA `38e2c759` sin diff UI (`changedFiles: []`, `hasUiChanges: false`). Validación de rama `feature/cicd/dev-automation` post batch 5: build DEV sa-east-1 OK, anti-mock limpio, empalmes previos intactos. Sin cambios de código frontend en este run.
