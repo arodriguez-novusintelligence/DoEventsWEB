@@ -837,7 +837,8 @@
         "StoryViewersSheet y PayPal payout requieren backend",
         "Scan QR cámara sin librería decode — solo manual",
         "Flujos acceso/pago RISKY — revisión humana recomendada"
-      ],
+      ]
+    },
     {
       "id": "gap-empalme-27847959667-b5",
       "timestamp": "2026-06-20 00:30 UTC",
