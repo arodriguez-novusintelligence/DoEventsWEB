@@ -129,8 +129,10 @@ export const MyPurchasesView = ({ onBack }: MyPurchasesViewProps) => {
             </button>
 
             {!ticketCount && !venueBookings.length && !serviceBookings.length && (
-              <div className="rounded-2xl bg-card p-8 text-center text-sm text-muted-foreground shadow-sm">
-                Aún no tienes compras ni reservas.
+              <div className="rounded-2xl bg-card p-10 text-center shadow-sm">
+                <Ticket className="mx-auto h-10 w-10 text-muted-foreground/40" />
+                <p className="mt-3 text-sm font-medium text-foreground">Sin compras ni reservas</p>
+                <p className="mt-1 text-xs text-muted-foreground">Tus boletas y reservas aparecerán aquí</p>
               </div>
             )}
           </>

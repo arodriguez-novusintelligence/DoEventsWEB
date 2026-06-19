@@ -62,8 +62,10 @@ export const VenueReservationDetail = () => {
   if (!booking) {
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
-        <p className="text-sm text-muted-foreground">No se encontró la reserva.</p>
-        <Button type="button" variant="outline" className="mt-4" onClick={() => navigate('/purchases/venues')}>
+        <Building2 className="mx-auto h-10 w-10 text-muted-foreground/40" />
+        <p className="mt-3 text-sm font-medium text-foreground">Reserva no encontrada</p>
+        <p className="mt-1 text-xs text-muted-foreground">Verifica el enlace o consulta tus reservas activas.</p>
+        <Button type="button" variant="outline" className="mt-4 rounded-full" onClick={() => navigate('/purchases/venues')}>
           Volver a reservas
         </Button>
       </div>

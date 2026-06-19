@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronLeft, Calendar, MapPin, DoorOpen, Users, ScanLine, Settings2, Plus, Lock } from 'lucide-react';
+import { ChevronLeft, Calendar, MapPin, DoorOpen, Users, ScanLine, Settings2, Plus, Lock, Shield } from 'lucide-react';
 import ScanQRSheet from './ScanQRSheet';
 import { toast } from 'sonner';
 import type { AccessEventView } from '../../../lovable-bridge/accessAdapter';
@@ -147,8 +147,14 @@ const AccessControlListView = ({ onBack, events = [] }: Props) => {
           </div>
 
           {tabItems.length === 0 && (
-            <div className="rounded-2xl bg-card p-10 text-center text-sm text-muted-foreground shadow-sm">
-              No tienes eventos en esta categoría.
+            <div className="rounded-2xl bg-card p-10 text-center shadow-sm">
+              <Shield className="mx-auto h-10 w-10 text-muted-foreground/40" />
+              <p className="mt-3 text-sm font-medium text-foreground">Sin eventos en esta categoría</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {tab === 'mios'
+                  ? 'Publica un evento o espera asignación de staff para controlar accesos.'
+                  : 'Aún no tienes eventos asignados como staff de acceso.'}
+              </p>
             </div>
           )}
 
@@ -215,6 +221,7 @@ const AccessControlListView = ({ onBack, events = [] }: Props) => {
         open={!!scanFor}
         onOpenChange={(v) => !v && setScanFor(null)}
         eventTitle={scanFor?.title || ''}
+        eventId={scanFor?.id || ''}
       />
     </div>
   );

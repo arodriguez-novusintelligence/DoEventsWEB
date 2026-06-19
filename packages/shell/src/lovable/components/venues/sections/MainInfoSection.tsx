@@ -89,7 +89,12 @@ const MainInfoSection = () => {
   const MAX_DESC = 500;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-base font-extrabold text-foreground mb-1">Información principal</h2>
+        <p className="text-xs text-muted-foreground">Datos básicos del lugar que verán los organizadores</p>
+      </div>
+
       <MediaUpload />
 
       <div>

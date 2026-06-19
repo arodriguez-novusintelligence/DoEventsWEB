@@ -1,54 +1,111 @@
-import { useState } from 'react';
-import { ChevronLeft } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { ChevronLeft, Loader2 } from 'lucide-react';
+import {
+  createBankAccount,
+  fetchBankAccountsByUser,
+  RootState,
+  setDefaultBankAccount,
+} from '@doevents/shared';
+import { toast } from '@lovable/components/ui/sonner';
 import BankingForm, { type SavedPaymentMethod } from './BankingForm';
 import PaymentMethodsDashboard from './PaymentMethodsDashboard';
+import { mapBankAccounts, savedMethodToCreateInput } from '../../../lovable-bridge/bankingAdapter';
 
 interface BankingHubProps {
   onBack: () => void;
 }
 
 const BankingHub = ({ onBack }: BankingHubProps) => {
+  const userId = useSelector((s: RootState) => s.auth.idUser);
   const [view, setView] = useState<'dashboard' | 'form'>('dashboard');
   const [editingMethod, setEditingMethod] = useState<SavedPaymentMethod | undefined>(undefined);
-  const [methods, setMethods] = useState<SavedPaymentMethod[]>([
-    { id: '1', type: 'nequi', name: 'Nequi', details: '3001234567', currency: 'COP', status: 'default' },
-    { id: '2', type: 'international', name: 'Luis Motta', details: 'IBAN 1324', currency: 'USD', status: 'pending' },
-  ]);
+  const [methods, setMethods] = useState<SavedPaymentMethod[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const loadMethods = useCallback(async () => {
+    if (!userId) {
+      setMethods([]);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    try {
+      const accounts = await fetchBankAccountsByUser(userId);
+      setMethods(mapBankAccounts(accounts));
+    } catch {
+      setMethods([]);
+      toast.error('No se pudieron cargar tus métodos de cobro');
+    } finally {
+      setLoading(false);
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    void loadMethods();
+  }, [loadMethods]);
 
   const handleAddMethod = () => { setEditingMethod(undefined); setView('form'); };
   const handleEditMethod = (id: string) => {
     const m = methods.find((x) => x.id === id);
     if (m) { setEditingMethod(m); setView('form'); }
   };
-  const handleFormComplete = (newMethod?: SavedPaymentMethod) => {
-    if (newMethod) {
-      if (editingMethod) {
-        setMethods((p) => p.map((m) => (m.id === editingMethod.id ? { ...newMethod, id: editingMethod.id } : m)));
+
+  const handleFormComplete = async (newMethod?: SavedPaymentMethod) => {
+    if (newMethod && userId) {
+      if (newMethod.type === 'paypal') {
+        toast.error('PayPal requiere integración backend pendiente');
       } else {
-        setMethods((p) => [...p, newMethod]);
+        const input = savedMethodToCreateInput(newMethod, userId);
+        if (input) {
+          try {
+            await createBankAccount(input);
+            toast.success('Método de cobro registrado');
+            await loadMethods();
+          } catch (err) {
+            toast.error(err instanceof Error ? err.message : 'No se pudo guardar el método');
+          }
+        }
       }
     }
     setEditingMethod(undefined);
     setView('dashboard');
   };
-  const handleSetDefault = (id: string) => {
-    setMethods((p) => p.map((m) => ({
-      ...m,
-      status: m.id === id ? 'default' : m.status === 'default' ? 'active' : m.status,
-    })));
+
+  const handleSetDefault = async (id: string) => {
+    try {
+      await setDefaultBankAccount(id);
+      setMethods((p) => p.map((m) => ({
+        ...m,
+        status: m.id === id ? 'default' : m.status === 'default' ? 'active' : m.status,
+      })));
+      toast.success('Método predeterminado actualizado');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'No se pudo actualizar');
+    }
   };
-  const handleDelete = (id: string) => setMethods((p) => p.filter((m) => m.id !== id));
+
+  const handleDelete = (id: string) => {
+    setMethods((p) => p.filter((m) => m.id !== id));
+    toast('Eliminar cuenta bancaria requiere endpoint backend', { description: 'Contacta soporte si necesitas retirar un método.' });
+  };
 
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-4xl px-4 pt-4">
-        <button onClick={view === 'form' ? () => setView('dashboard') : onBack}
-          className="flex items-center text-primary text-sm">
-          <ChevronLeft className="h-5 w-5" /> Atras
+        <button
+          onClick={view === 'form' ? () => setView('dashboard') : onBack}
+          className="flex items-center text-primary text-sm font-medium"
+        >
+          <ChevronLeft className="h-5 w-5" /> Atrás
         </button>
       </div>
       {view === 'form' ? (
         <BankingForm onComplete={handleFormComplete} editingMethod={editingMethod} />
+      ) : loading ? (
+        <div className="flex justify-center py-24">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
       ) : (
         <PaymentMethodsDashboard
           methods={methods}

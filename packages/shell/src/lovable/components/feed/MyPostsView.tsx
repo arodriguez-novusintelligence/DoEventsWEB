@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { ChevronLeft, Trash2 } from 'lucide-react';
+import { ChevronLeft, Trash2, FileText } from 'lucide-react';
 import PostCard from './PostCard';
-import type { Post } from '@lovable/data/mockData';
+import type { FeedUiPost as Post } from '@doevents/shared';
 import { toast } from 'sonner';
 
 interface MyPostsViewProps {
@@ -38,9 +38,11 @@ const MyPostsView = ({ onBack, posts = [], onDeletePost, onOpenDetail }: MyPosts
 
         <div className="mt-4 space-y-4">
           {posts.length === 0 ? (
-            <p className="py-16 text-center text-sm text-muted-foreground">
-              Aún no has publicado en el muro
-            </p>
+            <div className="flex flex-col items-center gap-3 py-16 text-center">
+              <FileText className="h-10 w-10 text-muted-foreground/50" />
+              <p className="text-sm font-medium text-foreground">Sin publicaciones</p>
+              <p className="text-xs text-muted-foreground">Aún no has publicado en el muro</p>
+            </div>
           ) : (
             posts.map((post) => (
               <div key={post.id} className="relative">

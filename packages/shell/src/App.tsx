@@ -61,6 +61,13 @@ import { ChatPage } from './pages/ChatPage';
 import { PaymentFinallyPage } from './pages/PaymentFinallyPage';
 import { AIAssistantPage } from './pages/AIAssistantPage';
 import { AdminPanelPage, AdminLegacyRedirect } from './pages/admin/AdminPanelPage';
+import { NotFound } from './pages/NotFound';
+import { EventPublished } from './pages/EventPublished';
+import { PurchasesPage } from './pages/PurchasesPage';
+import { PurchasesVenuesPage } from './pages/PurchasesVenuesPage';
+import { PurchasesServicesPage } from './pages/PurchasesServicesPage';
+import VenueReservationDetail from '@lovable/components/purchases/VenueReservationDetail';
+import ServiceReservationDetail from '@lovable/components/purchases/ServiceReservationDetail';
 
 
 
@@ -112,6 +119,12 @@ export const AppRouter: React.FC = () => (
 
       <Route path="tickets" element={<TicketsPage />} />
       <Route path="tickets/:orderId" element={<TicketDetailPage />} />
+      <Route path="purchases" element={<PurchasesPage />} />
+      <Route path="purchases/venues" element={<PurchasesVenuesPage />} />
+      <Route path="purchases/venues/:bookingId" element={<VenueReservationDetail />} />
+      <Route path="purchases/services" element={<PurchasesServicesPage />} />
+      <Route path="purchases/services/:bookingId" element={<ServiceReservationDetail />} />
+      <Route path="events/published" element={<EventPublished />} />
       <Route path="access" element={<AccessControlPage />} />
       <Route path="guests" element={<GuestsHubPage />} />
       <Route path="profile/invitations" element={<MyInvitationsPage />} />
@@ -166,11 +179,13 @@ export const AppRouter: React.FC = () => (
 
       <Route path="feed" element={<Navigate to="/" replace />} />
 
+      <Route path="*" element={<NotFound />} />
+
     </Route>
 
     <Route path="/auth/*" element={<AuthMicrofrontend />} />
 
-    <Route path="*" element={<Navigate to="/auth/login" replace />} />
+    <Route path="*" element={<NotFound />} />
 
   </Routes>
 

@@ -1,23 +1,31 @@
 import { useEffect, useRef, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@lovable/components/ui/dialog';
-import { ScanLine, ShieldCheck, CameraOff, KeyRound } from 'lucide-react';
+import { ScanLine, ShieldCheck, CameraOff, KeyRound, Loader2, CheckCircle2, XCircle } from 'lucide-react';
+import { scanTicketFromQr } from '@doevents/shared';
 import { toast } from 'sonner';
 
 interface ScanQRSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   eventTitle: string;
+  eventId: string;
 }
 
-const ScanQRSheet = ({ open, onOpenChange, eventTitle }: ScanQRSheetProps) => {
+const ScanQRSheet = ({ open, onOpenChange, eventTitle, eventId }: ScanQRSheetProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [cameraReady, setCameraReady] = useState(false);
   const [manualCode, setManualCode] = useState('');
+  const [validating, setValidating] = useState(false);
+  const [lastResult, setLastResult] = useState<'success' | 'error' | null>(null);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      setManualCode('');
+      setLastResult(null);
+      return;
+    }
     let stream: MediaStream | null = null;
-    (async () => {
+    void (async () => {
       try {
         stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
         if (videoRef.current) {
@@ -34,14 +42,30 @@ const ScanQRSheet = ({ open, onOpenChange, eventTitle }: ScanQRSheetProps) => {
     };
   }, [open]);
 
-  const validate = () => {
-    if (!manualCode.trim()) {
-      toast('Ingresa un código manualmente');
+  const validate = async () => {
+    const code = manualCode.trim();
+    if (!code) {
+      toast.error('Ingresa un código manualmente');
       return;
     }
-    toast.success(`✓ Acceso concedido • ${eventTitle}`);
-    setManualCode('');
-    onOpenChange(false);
+    if (!eventId) {
+      toast.error('Evento no identificado');
+      return;
+    }
+    setValidating(true);
+    setLastResult(null);
+    try {
+      const result = await scanTicketFromQr(code, eventId);
+      setLastResult('success');
+      toast.success(`✓ Acceso concedido • ${result.ticket_id || eventTitle}`);
+      setManualCode('');
+      setTimeout(() => onOpenChange(false), 1200);
+    } catch (err) {
+      setLastResult('error');
+      toast.error(err instanceof Error ? err.message : 'Código inválido o acceso denegado');
+    } finally {
+      setValidating(false);
+    }
   };
 
   return (
@@ -56,7 +80,6 @@ const ScanQRSheet = ({ open, onOpenChange, eventTitle }: ScanQRSheetProps) => {
         </DialogHeader>
 
         <div className="px-5 pb-5">
-          {/* Camera viewfinder */}
           <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-black">
             <video
               ref={videoRef}
@@ -68,11 +91,10 @@ const ScanQRSheet = ({ open, onOpenChange, eventTitle }: ScanQRSheetProps) => {
             {!cameraReady && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-muted text-muted-foreground">
                 <CameraOff className="h-8 w-8" />
-                <span className="text-xs">Cámara no disponible</span>
+                <span className="text-xs">Cámara no disponible — usa código manual</span>
               </div>
             )}
 
-            {/* Scan frame overlay */}
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
               <div className="relative h-3/5 w-3/5 rounded-2xl border-2 border-white/90 shadow-[0_0_0_9999px_rgba(0,0,0,0.35)]">
                 <span className="absolute -top-px -left-px h-6 w-6 border-t-4 border-l-4 border-primary rounded-tl-2xl" />
@@ -92,7 +114,6 @@ const ScanQRSheet = ({ open, onOpenChange, eventTitle }: ScanQRSheetProps) => {
             </div>
           </div>
 
-          {/* Manual entry */}
           <div className="mt-4 rounded-2xl border border-border bg-secondary/60 p-4">
             <p className="text-[11px] text-muted-foreground mb-2">
               ¿No se detecta? Ingresa el código manualmente.
@@ -103,17 +124,39 @@ const ScanQRSheet = ({ open, onOpenChange, eventTitle }: ScanQRSheetProps) => {
             <input
               value={manualCode}
               onChange={(e) => setManualCode(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && validate()}
+              onKeyDown={(e) => e.key === 'Enter' && !validating && void validate()}
               placeholder="Pega el código QR"
-              className="w-full rounded-xl border border-border bg-card px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
+              disabled={validating}
+              className="w-full rounded-xl border border-border bg-card px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-60"
             />
           </div>
 
+          {lastResult === 'success' && (
+            <div className="mt-3 flex items-center gap-2 rounded-xl bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+              <CheckCircle2 className="h-4 w-4 shrink-0" />
+              Acceso validado correctamente
+            </div>
+          )}
+          {lastResult === 'error' && (
+            <div className="mt-3 flex items-center gap-2 rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              <XCircle className="h-4 w-4 shrink-0" />
+              Código inválido — intenta de nuevo
+            </div>
+          )}
+
           <button
-            onClick={validate}
-            className="mt-4 w-full rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground shadow hover:bg-primary/90"
+            onClick={() => void validate()}
+            disabled={validating}
+            className="mt-4 w-full rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground shadow hover:bg-primary/90 disabled:opacity-60 flex items-center justify-center gap-2"
           >
-            Validar código
+            {validating ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Validando…
+              </>
+            ) : (
+              'Validar código'
+            )}
           </button>
         </div>
       </DialogContent>

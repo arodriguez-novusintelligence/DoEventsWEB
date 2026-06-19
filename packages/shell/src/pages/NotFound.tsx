@@ -1,20 +1,30 @@
 import { Link } from 'react-router-dom';
-import { Home } from 'lucide-react';
+import { Home, Search } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
 
 export const NotFound = () => (
-  <div className="mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center bg-background px-6 text-center">
-    <p className="text-6xl font-extrabold text-primary">404</p>
-    <h1 className="mt-4 text-xl font-bold text-foreground">Página no encontrada</h1>
-    <p className="mt-2 text-sm text-muted-foreground">
-      La ruta que buscas no existe o fue movida.
+  <div className="mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center bg-secondary px-6 text-center pb-24">
+    <div className="rounded-full bg-primary/10 p-6">
+      <p className="text-5xl font-extrabold text-primary">404</p>
+    </div>
+    <h1 className="mt-6 text-xl font-extrabold text-foreground">Página no encontrada</h1>
+    <p className="mt-2 text-sm text-muted-foreground max-w-sm">
+      La ruta que buscas no existe o fue movida. Vuelve al inicio o explora eventos.
     </p>
-    <Button type="button" className="mt-8 rounded-full" asChild>
-      <Link to="/">
-        <Home className="mr-2 h-4 w-4" />
-        Ir al inicio
-      </Link>
-    </Button>
+    <div className="mt-8 flex w-full max-w-xs flex-col gap-3">
+      <Button type="button" className="w-full rounded-full" asChild>
+        <Link to="/">
+          <Home className="mr-2 h-4 w-4" />
+          Ir al inicio
+        </Link>
+      </Button>
+      <Button type="button" variant="outline" className="w-full rounded-full" asChild>
+        <Link to="/events">
+          <Search className="mr-2 h-4 w-4" />
+          Explorar eventos
+        </Link>
+      </Button>
+    </div>
   </div>
 );
 

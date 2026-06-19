@@ -52,7 +52,10 @@ export const BookingReviewSheet = ({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="max-w-lg mx-auto rounded-t-2xl">
         <SheetHeader>
-          <SheetTitle>Revisar reserva</SheetTitle>
+          <SheetTitle className="flex items-center gap-2">
+            <Calendar className="h-5 w-5 text-primary" />
+            Revisar reserva
+          </SheetTitle>
         </SheetHeader>
 
         <div className="mt-4 space-y-4">

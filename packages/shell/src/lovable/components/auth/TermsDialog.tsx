@@ -21,7 +21,7 @@ export const TermsDialog = ({ open, onClose, onAccept }: TermsDialogProps) => (
         <DialogTitle>Términos y Condiciones</DialogTitle>
         <DialogDescription>Do.Events — Versión actualizada</DialogDescription>
       </DialogHeader>
-      <div className="space-y-3 text-sm text-muted-foreground">
+      <div className="space-y-3 text-sm text-muted-foreground max-h-[50vh] overflow-y-auto pr-1">
         <p>
           Bienvenidos a Do.Events. Estos términos describen las reglas para el uso de la aplicación móvil y/o web
           Do.Events. Al acceder a la aplicación aceptas estos términos en su totalidad.

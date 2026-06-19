@@ -92,6 +92,8 @@ import {
 
 import FeedHero from '@lovable/components/feed/FeedHero';
 import FeedVenuesCarousel from '@lovable/components/feed/FeedVenuesCarousel';
+import { ReportPostDialog } from '@lovable/components/feed/ReportPostDialog';
+import { ChangeLocationSheet } from '@lovable/components/feed/ChangeLocationSheet';
 import { useNearbyVenues } from '../lovable-bridge/useNearbyVenues';
 import { CreatePostSheet } from '@doevents/shared';
 import { LovablePostCardBridge } from '../lovable-bridge/LovablePostCardBridge';
@@ -189,6 +191,8 @@ export const SocialWallTab: React.FC = () => {
   const [storiesRefreshKey, setStoriesRefreshKey] = useState(0);
   const [editingPost, setEditingPost] = useState<FeedPublication | null>(null);
   const [repostingPost, setRepostingPost] = useState<FeedPublication | null>(null);
+  const [reportPostId, setReportPostId] = useState<string | null>(null);
+  const [showLocationSheet, setShowLocationSheet] = useState(false);
   const recentLocalPostIds = useRef<Set<string>>(new Set());
 
   const { refreshStories } = useActiveStoryAuthors();
@@ -820,16 +824,10 @@ export const SocialWallTab: React.FC = () => {
       <FeedHero
         stories={feedStories}
         storiesLoading={storiesLoading}
+        showBuiltInStories={false}
         userName={profileName?.split(' ')[0] || 'Eventer'}
         location={locationLabel || profileCity || 'Indica tu ubicación'}
-        onChangeLocation={async () => {
-          try {
-            const loc = await resolveUserLocation({ prompt: true, force: true, deviceOnly: true });
-            if (loc) handleLocationResolved(loc);
-          } catch {
-            showToast('No pudimos obtener tu ubicación', 'error');
-          }
-        }}
+        onChangeLocation={() => setShowLocationSheet(true)}
         selectedCategories={selectedFeedCategories}
         onSelectCategory={(label) => {
           setSelectedFeedCategories((prev) => (
@@ -892,8 +890,12 @@ export const SocialWallTab: React.FC = () => {
                   showToast('Publicación guardada', 'success');
                   return;
                 }
-                if (action === 'block' || action === 'report') {
-                  showToast('Gracias. Revisaremos tu reporte.', 'success');
+                if (action === 'block') {
+                  showToast('Usuario bloqueado', 'success');
+                  return;
+                }
+                if (action === 'report') {
+                  setReportPostId(post.id);
                 }
               }}
               onOpen={detailPath ? () => navigate(detailPath) : undefined}
@@ -984,6 +986,20 @@ export const SocialWallTab: React.FC = () => {
           onPublishRepost={handlePublishRepost}
         />
       )}
+
+      <ReportPostDialog
+        open={Boolean(reportPostId)}
+        onOpenChange={(open) => { if (!open) setReportPostId(null); }}
+        publicationId={reportPostId}
+      />
+
+      <ChangeLocationSheet
+        open={showLocationSheet}
+        onOpenChange={setShowLocationSheet}
+        label={locationLabel}
+        fallbackCity={profileCity}
+        onLocationResolved={handleLocationResolved}
+      />
 
     </>
 

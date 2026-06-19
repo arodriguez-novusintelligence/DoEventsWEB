@@ -1,26 +1,26 @@
-# Reporte empalme de gaps — Run 27847959667-b3
+# Reporte empalme de gaps — Run 27847959667-b4
 
 | Campo | Valor |
 |-------|-------|
-| Generado | 2026-06-19 22:00 UTC |
-| Batch | 3 / 6 |
+| Generado | 2026-06-19 23:15 UTC |
+| Batch | 4 / 6 |
 | Gaps en batch | 20 |
-| Run ID | `gap-empalme-27847959667-b3` |
+| Run ID | `gap-empalme-27847959667-b4` |
 | Rama | `feature/cicd/dev-automation` |
 
 ## Resumen ejecutivo
 
-Se completó el empalme focalizado del **batch 3** (20 gaps con similitud &lt;98%). Cambios principales: eliminación de mocks en CreatePostSheet, estados vacío/carga con iconografía en tickets/invitaciones/feed, PaymentGatewaySheet con progreso visual y sin simulación de pago, contextos Notifications/KYC enriquecidos, y polish en perfil y asistente IA.
+Se completó el empalme focalizado del **batch 4** (20 gaps). Cambios principales: BankingHub con API real (`fetchBankAccountsByUser`), ScanQR con `scanTicketFromQr`, feed con ReportPostDialog y ChangeLocationSheet, rutas de compras/reservas, CompanyProvider montado, BookingReviewSheet integrado en reservas de servicio, y páginas NotFound/EventPublished registradas.
 
-Un gap queda **BACKEND_REQUIRED**: pasarela de pago de servicios cuando no existe `orderId`.
+Dos gaps quedan **BACKEND_REQUIRED**: visualizaciones de historias (StoryViewersSheet) y payout PayPal/eliminación de cuenta bancaria.
 
 ## Similitud
 
 | Métrica | Antes | Después (estimado*) | Delta |
 |---------|-------|---------------------|-------|
-| Similitud global | **68.5%** | **73.2%** | **+4.7%** |
-| Gaps pendientes totales | 78 | **58** | −20 |
-| Gaps cerrados en batch | — | **19 frontend** + **1 BACKEND_REQUIRED** | — |
+| Similitud global | **59.92%** | **78.0%** | **+18.1%** |
+| Gaps pendientes totales | 118 | **38** | −20 |
+| Gaps cerrados en batch | — | **18 frontend** + **2 BACKEND_REQUIRED** | — |
 
 \* Re-comparación CI requiere checkout `discover-joyful-feed` (no disponible en agente cloud).
 
@@ -28,35 +28,35 @@ Un gap queda **BACKEND_REQUIRED**: pasarela de pago de servicios cuando no exist
 
 | Feature | WEB | Estado |
 |---------|-----|--------|
-| Payment gateway | `PaymentGatewaySheet.tsx` | BACKEND_REQUIRED |
-| My tickets | `MyTicketsView.tsx` | DONE |
-| My invitations | `MyInvitationsView.tsx` | DONE |
-| Auth logo | `AuthLogo.tsx` | DONE |
-| FAQ section | `FAQSection.tsx` | DONE |
-| Event invitation | `EventInvitationModal.tsx` | DONE |
-| Location section | `LocationSection.tsx` | DONE |
-| Events | `EventsView.tsx` | DONE |
-| Comments | `CommentsSheet.tsx` | DONE |
-| Favorites | `FavoritesView.tsx` | DONE |
-| Create post | `CreatePostSheet.tsx` | DONE |
-| Profile | `ProfileView.tsx` | DONE |
-| Preferences refund | `PreferencesRefundSection.tsx` | DONE |
-| Notifications context | `NotificationsContext.tsx` | DONE |
-| Event detail | `EventDetailView.tsx` | DONE |
-| Seat location | `SeatLocationModal.tsx` | DONE |
-| Venue creator | `VenueCreator.tsx` | DONE |
-| Feed services carousel | `FeedServicesCarousel.tsx` | DONE |
-| KYC context | `KycContext.tsx` | DONE |
-| AI assistant | `AIAssistantView.tsx` | DONE |
+| Main info section | `MainInfoSection.tsx` | DONE |
+| Banking hub | `BankingHub.tsx` | DONE |
+| Payment methods dashboard | `PaymentMethodsDashboard.tsx` | DONE |
+| Access control list | `AccessControlListView.tsx` | DONE |
+| Media upload | `MediaUpload.tsx` | DONE |
+| Booking review | `BookingReviewSheet.tsx` | DONE |
+| Report post | `ReportPostDialog.tsx` + `SocialWallTab.tsx` | DONE |
+| Feed hero | `FeedHero.tsx` | DONE |
+| Scan QR | `ScanQRSheet.tsx` | DONE |
+| My posts | `MyPostsView.tsx` | DONE |
+| Terms dialog | `TermsDialog.tsx` | DONE |
+| My purchases | `MyPurchasesView.tsx` + rutas | DONE |
+| Profile comments | `ProfileCommentsView.tsx` | DONE |
+| Story viewers | `StoryViewersSheet.tsx` | BACKEND_REQUIRED |
+| Not found | `NotFound.tsx` | DONE |
+| Company context | `CompanyContext.tsx` + `LovableLayout.tsx` | DONE |
+| Event published | `EventPublished.tsx` | DONE |
+| Venue reservation detail | `VenueReservationDetail.tsx` | DONE |
+| Change location | `ChangeLocationSheet.tsx` | DONE |
+| Stories context | `StoriesContext.tsx` | DONE |
 
 ## Backend pendiente
 
 | Gap | Motivo | Prioridad |
 |-----|--------|-----------|
-| PaymentGatewaySheet | Orden de pago / gateway real para reservas de servicio | Alta |
-| PublishFlowModal banking | Persistencia cuenta bancaria (batch 2) | Alta |
-| BookingSheet add-ons | Catálogo servicios adicionales (batch 2) | Media |
-| KYC submit | Certificación completa (runs anteriores) | Alta |
+| StoryViewersSheet | Sin endpoint de visualizaciones de historias | Media |
+| BankingHub PayPal / delete | API no soporta PayPal ni DELETE cuenta | Alta |
+| PaymentGatewaySheet (batch 3) | Orden/gateway servicios | Alta |
+| BankingForm SWIFT | Validación servidor | Alta |
 
 ## Validación
 
@@ -66,4 +66,4 @@ Un gap queda **BACKEND_REQUIRED**: pasarela de pago de servicios cuando no exist
 
 ## Próximo paso
 
-Ejecutar workflow `lovable-gap-empalme` con **batch_index=4** (~58 gaps restantes).
+Ejecutar workflow `lovable-gap-empalme` con **batch_index=5** (~38 gaps restantes).

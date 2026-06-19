@@ -14,6 +14,53 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-19 23:15 UTC] gap-empalme-27847959667-b4
+
+### 1. Resumen del empalme
+Batch 4 (20 gaps): empalme focalizado en banca, control de acceso QR, feed (hero, reporte, ubicación), compras/reservas, contextos y páginas 404/publicación. Eliminados mocks en BankingHub; ScanQRSheet conectado a `scanTicketFromQr`; ReportPostDialog y ChangeLocationSheet cableados en SocialWallTab; rutas `/purchases/*` y NotFound registradas; CompanyProvider montado en layout.
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Main info section | `packages/shell/src/lovable/components/venues/sections/MainInfoSection.tsx` | DONE |
+| Banking hub | `packages/shell/src/lovable/components/banking/BankingHub.tsx` | DONE |
+| Payment methods dashboard | `packages/shell/src/lovable/components/banking/PaymentMethodsDashboard.tsx` | DONE |
+| Access control list | `packages/shell/src/lovable/components/access/AccessControlListView.tsx` | DONE |
+| Media upload | `packages/shell/src/lovable/components/venues/MediaUpload.tsx` | DONE |
+| Booking review | `packages/shell/src/lovable/components/services/BookingReviewSheet.tsx` | DONE |
+| Report post | `packages/shell/src/lovable/components/feed/ReportPostDialog.tsx` | DONE |
+| Feed hero | `packages/shell/src/lovable/components/feed/FeedHero.tsx` | DONE |
+| Scan QR | `packages/shell/src/lovable/components/access/ScanQRSheet.tsx` | DONE |
+| My posts | `packages/shell/src/lovable/components/feed/MyPostsView.tsx` | DONE |
+| Terms dialog | `packages/shell/src/lovable/components/auth/TermsDialog.tsx` | DONE |
+| My purchases | `packages/shell/src/lovable/components/purchases/MyPurchasesView.tsx` | DONE |
+| Profile comments | `packages/shell/src/lovable/components/feed/ProfileCommentsView.tsx` | DONE |
+| Story viewers | `packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx` | BACKEND_REQUIRED |
+| Not found | `packages/shell/src/pages/NotFound.tsx` | DONE |
+| Company context | `packages/shell/src/lovable/contexts/CompanyContext.tsx` | DONE |
+| Event published | `packages/shell/src/pages/EventPublished.tsx` | DONE |
+| Venue reservation detail | `packages/shell/src/lovable/components/purchases/VenueReservationDetail.tsx` | DONE |
+| Change location | `packages/shell/src/lovable/components/feed/ChangeLocationSheet.tsx` | DONE |
+| Stories context | `packages/shell/src/contexts/StoriesContext.tsx` | DONE |
+
+### 3. Similitud diseño
+- **Antes:** 59.92% (manifiesto batch 4) / 73.2% post batch 3
+- **Después (estimado):** 78.0% — re-comparación CI pendiente
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- BankingHub sin array hardcodeado Nequi/IBAN; FeedHero sin `defaultStories` en producción
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias
+
+### 6. Decisión
+**APPLIED**
+
+---
+
 ## [2026-06-19 22:00 UTC] gap-empalme-27847959667-b3
 
 ### 1. Resumen del empalme

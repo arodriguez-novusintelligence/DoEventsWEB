@@ -10,6 +10,7 @@ import {
   fetchServiceBookingAvailability,
 } from '@doevents/shared';
 import { toast } from 'sonner';
+import BookingReviewSheet from './BookingReviewSheet';
 
 interface LiveServiceBookingConfig {
   serviceId: string;
@@ -92,6 +93,7 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
   const [reservedDates, setReservedDates] = useState<Set<string>>(new Set());
   const [loadingAvailability, setLoadingAvailability] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [showReview, setShowReview] = useState(false);
 
   const blockedSet = useMemo(() => {
     const set = new Set(service.blockedDates || []);
@@ -484,7 +486,10 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
           <Button
             className="w-full rounded-full py-6 text-base font-semibold gap-2"
             disabled={!startDate || !endDate || submitting}
-            onClick={() => { void handleProceed(); }}
+            onClick={() => {
+              if (isLive && liveBooking) setShowReview(true);
+              else void handleProceed();
+            }}
           >
             <CreditCard className="h-5 w-5" />
             {submitting
@@ -495,6 +500,29 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
           </Button>
         </div>
       </SheetContent>
+
+      <BookingReviewSheet
+        open={showReview}
+        onOpenChange={setShowReview}
+        confirming={submitting}
+        summary={{
+          title: serviceName,
+          subtitle: `${service.globalStartTime} — ${service.globalEndTime}`,
+          startDate,
+          endDate,
+          total: bookingTotal,
+          currency,
+          lines: [
+            { label: 'Días reservados', value: String(totalDays) },
+            { label: 'Subtotal', value: formatCurrency(subtotal, currency) },
+            { label: 'Comisión + IVA', value: formatCurrency(commission + commissionIva, currency) },
+          ],
+        }}
+        onConfirm={() => {
+          setShowReview(false);
+          void handleProceed();
+        }}
+      />
     </Sheet>
   );
 };

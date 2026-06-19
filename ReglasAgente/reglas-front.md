@@ -83,6 +83,22 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-19 gap-empalme batch 4 (run 27847959667-b4)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| BankingHub sin métodos hardcodeados | Bloqueo | Sí | `banking/BankingHub.tsx` | `fetchBankAccountsByUser` + `bankingAdapter` |
+| ScanQR API real | Integración | Sí | `access/ScanQRSheet.tsx` | `scanTicketFromQr` con `eventId` |
+| ReportPostDialog en feed | Integración | Sí | `pages/SocialWallTab.tsx` | Reemplaza toast ficticio |
+| ChangeLocationSheet en feed | Integración | Sí | `pages/SocialWallTab.tsx` | Sheet manual + geolocalización |
+| FeedHero sin defaultStories prod | Bloqueo | Sí | `feed/FeedHero.tsx` | `showBuiltInStories={false}` |
+| Rutas purchases + NotFound | Navegación | Sí | `App.tsx` | `/purchases/*`, `EventPublished`, 404 |
+| CompanyProvider montado | Integración | Sí | `lovable-bridge/LovableLayout.tsx` | `fetchUserById` |
+| BookingReviewSheet en reserva | FRONTEND_LOGIC | Sí | `services/BookingSheet.tsx` | Paso revisión antes de API |
+| StoryViewersSheet | Bloqueo | Parcial | `feed/StoryViewersSheet.tsx` | BACKEND_REQUIRED — sin endpoint viewers |
+| PayPal payout / delete cuenta | Bloqueo | Parcial | `banking/BankingHub.tsx` | BACKEND_REQUIRED documentado |
+| Batch 4 gaps (20) | Empalme | Sí | ver `decision-log.md` | 18 DONE + 2 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-19 gap-empalme batch 3 (run 27847959667-b3)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

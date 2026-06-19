@@ -762,6 +762,83 @@
         "Flujos pago servicios RISKY — revisión humana recomendada"
       ],
       "agentStatus": "finished"
+    },
+    {
+      "id": "gap-empalme-27847959667-b4",
+      "timestamp": "2026-06-19 23:15 UTC",
+      "workflowRunId": "27847959667-b4",
+      "changeTypes": [
+        "VISUAL",
+        "FRONTEND_LOGIC",
+        "BACKEND_REQUIRED"
+      ],
+      "gapBatch": 20,
+      "batchIndex": 4,
+      "designSimilarityPercentBefore": 59.92,
+      "designSimilarityPercentAfter": 78.0,
+      "designSimilarityTarget": 98.0,
+      "summary": "Batch 4: 18 gaps DONE frontend + 2 BACKEND_REQUIRED (StoryViewersSheet, PayPal payout)",
+      "gapsClosed": [
+        "src/components/venues/sections/MainInfoSection.tsx",
+        "src/components/banking/BankingHub.tsx",
+        "src/components/banking/PaymentMethodsDashboard.tsx",
+        "src/components/access/AccessControlListView.tsx",
+        "src/components/venues/MediaUpload.tsx",
+        "src/components/services/BookingReviewSheet.tsx",
+        "src/components/feed/ReportPostDialog.tsx",
+        "src/components/feed/FeedHero.tsx",
+        "src/components/access/ScanQRSheet.tsx",
+        "src/components/feed/MyPostsView.tsx",
+        "src/components/auth/TermsDialog.tsx",
+        "src/components/purchases/MyPurchasesView.tsx",
+        "src/components/feed/ProfileCommentsView.tsx",
+        "src/pages/NotFound.tsx",
+        "src/contexts/CompanyContext.tsx",
+        "src/pages/EventPublished.tsx",
+        "src/components/purchases/VenueReservationDetail.tsx",
+        "src/components/feed/ChangeLocationSheet.tsx",
+        "src/contexts/StoriesContext.tsx"
+      ],
+      "gapsBackendRequired": [
+        "src/components/feed/StoryViewersSheet.tsx",
+        "src/components/banking/BankingHub.tsx"
+      ],
+      "webFilesModified": [
+        "packages/shell/src/lovable-bridge/bankingAdapter.ts",
+        "packages/shell/src/lovable/components/banking/BankingHub.tsx",
+        "packages/shell/src/lovable/components/banking/PaymentMethodsDashboard.tsx",
+        "packages/shell/src/lovable/components/access/AccessControlListView.tsx",
+        "packages/shell/src/lovable/components/access/ScanQRSheet.tsx",
+        "packages/shell/src/lovable/components/venues/sections/MainInfoSection.tsx",
+        "packages/shell/src/lovable/components/venues/MediaUpload.tsx",
+        "packages/shell/src/lovable/components/services/BookingReviewSheet.tsx",
+        "packages/shell/src/lovable/components/services/BookingSheet.tsx",
+        "packages/shell/src/lovable/components/feed/FeedHero.tsx",
+        "packages/shell/src/lovable/components/feed/MyPostsView.tsx",
+        "packages/shell/src/lovable/components/auth/TermsDialog.tsx",
+        "packages/shell/src/lovable/components/purchases/MyPurchasesView.tsx",
+        "packages/shell/src/lovable/components/purchases/VenueReservationDetail.tsx",
+        "packages/shell/src/pages/SocialWallTab.tsx",
+        "packages/shell/src/pages/NotFound.tsx",
+        "packages/shell/src/pages/PurchasesPage.tsx",
+        "packages/shell/src/pages/PurchasesVenuesPage.tsx",
+        "packages/shell/src/pages/PurchasesServicesPage.tsx",
+        "packages/shell/src/contexts/StoriesContext.tsx",
+        "packages/shell/src/lovable-bridge/LovableLayout.tsx",
+        "packages/shell/src/App.tsx"
+      ],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "testStatus": "SKIPPED",
+      "pendingRisks": [
+        "Similitud global estimada 78.0% vs objetivo 98%",
+        "Re-comparación CI con discover-joyful-feed pendiente",
+        "StoryViewersSheet y PayPal payout requieren backend",
+        "Scan QR cámara sin librería decode — solo manual",
+        "Flujos acceso/pago RISKY — revisión humana recomendada"
+      ],
+      "agentStatus": "finished"
     }
   ]
 }

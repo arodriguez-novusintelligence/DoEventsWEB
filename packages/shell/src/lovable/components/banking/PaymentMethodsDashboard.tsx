@@ -104,6 +104,15 @@ export default function PaymentMethodsDashboard({ onAddMethod, methods, onSetDef
 
           {/* Methods List */}
           <div className="divide-y divide-border">
+            {methods.length === 0 && (
+              <div className="py-12 text-center">
+                <Wallet className="mx-auto h-10 w-10 text-muted-foreground/40" />
+                <p className="mt-3 text-sm font-medium text-foreground">Sin métodos de cobro</p>
+                <p className="mt-1 text-xs text-muted-foreground max-w-sm mx-auto">
+                  Agrega una cuenta en Colombia, internacional o PayPal para recibir tus cobros.
+                </p>
+              </div>
+            )}
             {methods.map((method) => (
               <div key={method.id} className="flex items-center justify-between py-5">
                 <div className="flex items-center gap-4">

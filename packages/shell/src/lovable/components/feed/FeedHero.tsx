@@ -52,8 +52,8 @@ interface FeedHeroProps {
 }
 
 const FeedHero = ({
-  userName = 'Andrés',
-  location = 'Ricaurte, Cundinamarca',
+  userName = 'Eventer',
+  location = 'Indica tu ubicación',
   onChangeLocation,
   onSelectCategory,
   selectedCategories = [],
@@ -150,6 +150,9 @@ const FeedHero = ({
             <div className="flex items-start gap-3 overflow-x-auto no-scrollbar pb-1">
               {storiesLoading && (
                 <p className="text-xs text-muted-foreground py-4">Cargando historias…</p>
+              )}
+              {!storiesLoading && useApiStories && apiStories!.length === 0 && (
+                <p className="text-xs text-muted-foreground py-4">No hay historias cerca de ti aún.</p>
               )}
               {!storiesLoading && useApiStories && apiStories!.map((s) => (
                 <button

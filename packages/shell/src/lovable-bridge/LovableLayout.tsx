@@ -14,6 +14,7 @@ import TopHeader from '@lovable/components/feed/TopHeader';
 import BottomNav from '@lovable/components/feed/BottomNav';
 import { NotificationsProvider } from '@lovable/contexts/NotificationsContext';
 import { PrivacyProvider } from '@lovable/contexts/PrivacyContext';
+import { CompanyProvider } from '@lovable/contexts/CompanyContext';
 import { StoriesProvider } from '../contexts/StoriesContext';
 import { Toaster } from '@lovable/components/ui/sonner';
 import CreateFAB from '@lovable/components/feed/CreateFAB';
@@ -174,6 +175,7 @@ export const LovableLayout: React.FC = () => {
 
   return (
     <StoriesProvider currentUserId={userId}>
+    <CompanyProvider userId={userId}>
     <NotificationsProvider userId={userId || undefined}>
       <PrivacyProvider>
         <div className="min-h-screen bg-secondary overflow-x-hidden">
@@ -233,6 +235,7 @@ export const LovableLayout: React.FC = () => {
         <Toaster position="top-center" richColors closeButton />
       </PrivacyProvider>
     </NotificationsProvider>
+    </CompanyProvider>
     </StoriesProvider>
   );
 };
