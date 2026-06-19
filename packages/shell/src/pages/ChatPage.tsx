@@ -1809,7 +1809,7 @@ export const ChatPage: React.FC = () => {
         profileAvatar={profileAvatar}
         profileInitials={profileInitials}
         archivedIds={archivedChatIds}
-        onBack={() => navigate(-1)}
+        onBack={() => navigate('/')}
         onBlockedClick={() => setShowBlockedPanel(true)}
         onCreateConversation={() => setShowCreateGroup(true)}
         onStartDirectChat={(targetId) => void openDirectChat(targetId)}

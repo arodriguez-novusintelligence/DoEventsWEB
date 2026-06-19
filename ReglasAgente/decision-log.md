@@ -14,6 +14,49 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-19 19:15 UTC] agent-b6c89604
+
+### 1. Resumen del cambio detectado
+Lovable añadió prop `onBack` en `MessagesListView` y lo conectó en `Index.tsx` para volver al tab `wall`. En DoEventsWEB el chat vive en ruta `/chat` (`ChatPage`); el componente ya tenía `onBack` cableado al botón ChevronLeft. Se empaló la intención UX: `onBack` navega a `/` (feed) en lugar de `navigate(-1)`.
+
+### 2. Tipo de cambio
+- [x] VISUAL (botón atrás funcional)
+- [x] FRONTEND_LOGIC (navegación al feed)
+- [ ] BACKEND_REQUIRED
+- [ ] RISKY
+
+### 3. Archivos modificados en DoEventsWEB
+- `packages/shell/src/pages/ChatPage.tsx` — `onBack={() => navigate('/')}`
+- `ReglasAgente/cambios-lovable.json`
+- `ReglasAgente/decision-log.md`
+- `ReglasAgente/impacto-backend.md`
+- `ReglasAgente/reglas-front.md`
+- `Reports/2026-06-19-design-comparison-b6c89604.md`
+
+### 4. Archivos modificados en DoEventsBack
+- Ninguno
+
+### 5. Evidencia de que no se usaron mocks
+- `mocksUsed: false`
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages` — solo imports de tipos en `SocialWallTab`/`ProfilePublicationsPage`, sin arrays estáticos en runtime.
+
+### 6. Resultado build/test
+- `npm run build:devaws`: **SUCCESS**
+- Tests: no ejecutados (no solicitados en run)
+
+### 7. Riesgos pendientes
+- Similitud global diseño sigue ~59.92% (104 archivos `needs_adaptation`); este run solo cierra el delta del manifiesto b6c89604.
+- Re-comparación CI con `compare-design-similarity.py` pendiente para % post-empalme de `MessagesListView`.
+
+### 8. Similitud diseño
+- **Antes:** 59.92% (`MessagesListView` 52.49%)
+- **Después (estimado):** ~60.1% global; `MessagesListView` ~55% (onBack alineado; gap estructural por integración API real)
+
+### 9. Decisión final
+**APPLIED**
+
+---
+
 ## [2026-06-19 18:49 UTC] prepare-b6c89604
 
 ### 1. Resumen del cambio detectado
