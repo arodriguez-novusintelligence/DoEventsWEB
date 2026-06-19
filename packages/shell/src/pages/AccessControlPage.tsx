@@ -65,6 +65,8 @@ export const AccessControlPage: React.FC = () => {
     <AccessControlListView
       events={events}
       onBack={() => navigate('/')}
+      onConfigureEvent={(ev) => navigate(`/events/${ev.id}`)}
+      onAssignEvent={() => navigate('/events/create')}
     />
   );
 };

@@ -21,6 +21,7 @@ import {
   Info,
   Eye,
   EyeOff,
+  Building2,
 } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
 import { Input } from '@lovable/components/ui/input';
@@ -31,6 +32,7 @@ import PlanDetailView, { type PlanId } from '@lovable/components/legal/PlanDetai
 import BankingHub from '@lovable/components/banking/BankingHub';
 import { toast } from 'sonner';
 import { usePrivacy } from '@lovable/contexts/PrivacyContext';
+import { useCompany } from '@lovable/contexts/CompanyContext';
 
 interface Props {
   onBack: () => void;
@@ -79,6 +81,7 @@ const EditProfileView = ({
   const [contactOpen, setContactOpen] = useState(true);
   const [subOpen, setSubOpen] = useState(false);
   const { privateProfile, setPrivateProfile } = usePrivacy();
+  const { company, loading: companyLoading } = useCompany();
 
   // Contact form
   const nameParts = profileName.split(' ').filter(Boolean);
@@ -421,6 +424,45 @@ const EditProfileView = ({
           </div>
         )}
       </div>
+
+      {(company?.companyName || company?.accountType === 'company' || company?.accountType === 'business') && (
+        <div className="rounded-2xl bg-card shadow-sm p-5 space-y-3">
+          <div className="flex items-center gap-2">
+            <Building2 className="h-5 w-5 text-primary" />
+            <span className="font-bold text-foreground">Datos de empresa</span>
+          </div>
+          {companyLoading ? (
+            <p className="text-sm text-muted-foreground">Cargando información…</p>
+          ) : (
+            <>
+              {company?.companyName && (
+                <div>
+                  <p className="text-xs text-muted-foreground">Nombre comercial</p>
+                  <p className="text-sm font-medium text-foreground">{company.companyName}</p>
+                </div>
+              )}
+              {company?.companyIndustry && (
+                <div>
+                  <p className="text-xs text-muted-foreground">Industria</p>
+                  <p className="text-sm font-medium text-foreground">{company.companyIndustry}</p>
+                </div>
+              )}
+              {company?.companyWebsite && (
+                <div>
+                  <p className="text-xs text-muted-foreground">Sitio web</p>
+                  <p className="text-sm font-medium text-primary">{company.companyWebsite}</p>
+                </div>
+              )}
+              {company?.companyDescription && (
+                <div>
+                  <p className="text-xs text-muted-foreground">Descripción</p>
+                  <p className="text-sm text-foreground leading-relaxed">{company.companyDescription}</p>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
 
       {/* Mi suscripción */}
       <div className="rounded-2xl bg-card shadow-sm overflow-hidden">

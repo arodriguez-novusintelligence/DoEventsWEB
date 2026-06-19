@@ -30,6 +30,7 @@ export const MyPurchasesView = ({ onBack }: MyPurchasesViewProps) => {
   const navigate = useNavigate();
   const userId = useSelector((s: RootState) => s.auth.idUser);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [venueBookings, setVenueBookings] = useState<UserVenueBooking[]>([]);
   const [serviceBookings, setServiceBookings] = useState<UserServiceBooking[]>([]);
@@ -49,9 +50,12 @@ export const MyPurchasesView = ({ onBack }: MyPurchasesViewProps) => {
           fetchUserServiceBookings(userId).catch(() => []),
         ]);
         if (cancelled) return;
+        setLoadError(false);
         setTickets(grouped ? groupedTicketsToLovable(grouped) : []);
         setVenueBookings(venues);
         setServiceBookings(services);
+      } catch {
+        if (!cancelled) setLoadError(true);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -74,6 +78,10 @@ export const MyPurchasesView = ({ onBack }: MyPurchasesViewProps) => {
         {loading ? (
           <div className="py-12">
             <Loader />
+          </div>
+        ) : loadError ? (
+          <div className="rounded-2xl bg-destructive/10 p-8 text-center">
+            <p className="text-sm text-destructive">No pudimos cargar tus compras. Intenta de nuevo más tarde.</p>
           </div>
         ) : (
           <>

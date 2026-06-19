@@ -13,6 +13,7 @@ import {
   shareStoryAsPublication,
   useToast,
 } from '@doevents/shared';
+import { StoryViewersSheet } from '@lovable/components/feed/StoryViewersSheet';
 
 export interface StoryViewerProps {
   open: boolean;
@@ -53,6 +54,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   const [loading, setLoading] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [busyAction, setBusyAction] = useState<'delete' | 'share' | null>(null);
+  const [viewersOpen, setViewersOpen] = useState(false);
   const [stories, setStories] = useState<FeedStoryItem[]>([]);
   const [index, setIndex] = useState(0);
   const [mediaFailed, setMediaFailed] = useState(false);
@@ -78,6 +80,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
     setLoading(true);
     setIndex(0);
     setMenuOpen(false);
+    setViewersOpen(false);
     setMediaFailed(false);
     void loadStories(authorUserId, true)
       .finally(() => {
@@ -303,6 +306,18 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
 
             <button
               type="button"
+              className="de-story-viewer__menu-item"
+              onClick={() => {
+                closeMenu();
+                setViewersOpen(true);
+              }}
+              role="menuitem"
+            >
+              Quién vio tu historia
+            </button>
+
+            <button
+              type="button"
               className="de-story-viewer__menu-item de-story-viewer__menu-item--danger"
               onClick={() => void handleDelete()}
               disabled={busyAction === 'delete'}
@@ -343,6 +358,12 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
           </button>
         </div>
       )}
+
+      <StoryViewersSheet
+        open={viewersOpen}
+        onOpenChange={setViewersOpen}
+        storyId={current?.id || null}
+      />
     </div>
   );
 };

@@ -42,8 +42,8 @@ const ScanQRSheet = ({ open, onOpenChange, eventTitle, eventId }: ScanQRSheetPro
     };
   }, [open]);
 
-  const validate = async () => {
-    const code = manualCode.trim();
+  const validateCode = async (rawCode: string) => {
+    const code = rawCode.trim();
     if (!code) {
       toast.error('Ingresa un código manualmente');
       return;
@@ -67,6 +67,44 @@ const ScanQRSheet = ({ open, onOpenChange, eventTitle, eventId }: ScanQRSheetPro
       setValidating(false);
     }
   };
+
+  const validate = () => void validateCode(manualCode);
+
+  useEffect(() => {
+    if (!open || !cameraReady || !videoRef.current || validating) return;
+    const BarcodeDetectorCtor = (window as Window & {
+      BarcodeDetector?: new (opts: { formats: string[] }) => {
+        detect: (source: HTMLVideoElement) => Promise<Array<{ rawValue: string }>>;
+      };
+    }).BarcodeDetector;
+    if (!BarcodeDetectorCtor) return;
+
+    const detector = new BarcodeDetectorCtor({ formats: ['qr_code'] });
+    let cancelled = false;
+    let raf = 0;
+
+    const tick = async () => {
+      if (cancelled || !videoRef.current || validating) return;
+      try {
+        const codes = await detector.detect(videoRef.current);
+        if (codes.length > 0 && !cancelled) {
+          cancelled = true;
+          setManualCode(codes[0].rawValue);
+          void validateCode(codes[0].rawValue);
+          return;
+        }
+      } catch {
+        // ignore frame errors
+      }
+      raf = requestAnimationFrame(() => { void tick(); });
+    };
+
+    raf = requestAnimationFrame(() => { void tick(); });
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(raf);
+    };
+  }, [open, cameraReady, eventId, validating]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

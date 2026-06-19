@@ -83,6 +83,20 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-19 gap-empalme batch 4 (run 27849872403-b4)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| AccessControlListView navegación | Navegación | Sí | `access/AccessControlListView.tsx`, `AccessControlPage.tsx` | Configurar → evento; asignar → crear |
+| ScanQR BarcodeDetector | Integración | Sí | `access/ScanQRSheet.tsx` | Detección nativa + fallback manual |
+| FeedHero Ver todas | Navegación | Sí | `feed/FeedHero.tsx`, `SocialWallTab.tsx` | `/events`; mock stories solo DEV |
+| ForgotPassword Lovable UI | VISUAL | Sí | `auth/ForgotPasswordView.tsx`, `pages/ForgotPassword.tsx` | APIs reales shared |
+| EventPublished routing | Navegación | Sí | `CreateEventPage.tsx` | Post-publicación → `/events/published` |
+| StoryViewersSheet wire | Bloqueo | Parcial | `StoryViewer.tsx`, `StoryViewersSheet.tsx` | BACKEND_REQUIRED viewers API |
+| CompanyContext consumer | Integración | Sí | `EditProfileView.tsx` | Datos empresa desde `fetchUserById` |
+| Booking status labels | VISUAL | Sí | `purchases/*ReservationDetail.tsx` | `formatBookingStatus` |
+| Batch 4 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-19 gap-empalme batch 3 (run 27849872403-b3)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

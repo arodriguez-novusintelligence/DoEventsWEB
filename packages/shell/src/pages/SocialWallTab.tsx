@@ -837,6 +837,7 @@ export const SocialWallTab: React.FC = () => {
             prev.includes(label) ? prev.filter((id) => id !== label) : [...prev, label]
           ));
         }}
+        onViewAllCategories={() => navigate('/events')}
         onCreateStory={() => setShowCreateStory(true)}
         onStoryClick={(story) => {
           const authorId = story.authorId || (story.own ? userId : undefined);

@@ -1151,6 +1151,82 @@
         "Delete bank account y PayPal payout requieren DoEventsBack"
       ],
       "agentStatus": "finished"
+    },
+    {
+      "id": "gap-empalme-27849872403-b4",
+      "fecha": "2026-06-19",
+      "timestamp": "2026-06-19 22:30 UTC",
+      "workflowRunId": "27849872403-b4",
+      "gapBatch": 20,
+      "designSimilarityPercentBefore": 58.03,
+      "designSimilarityPercentAfter": 82.5,
+      "designSimilarityTarget": 98.0,
+      "gapsClosed": [
+        "src/components/access/AccessControlListView.tsx",
+        "src/components/services/BookingReviewSheet.tsx",
+        "src/components/venues/sections/FAQSection.tsx",
+        "src/components/venues/MediaUpload.tsx",
+        "src/components/feed/ReportPostDialog.tsx",
+        "src/components/access/ScanQRSheet.tsx",
+        "src/components/feed/FeedHero.tsx",
+        "src/contexts/KycContext.tsx",
+        "src/components/purchases/MyPurchasesView.tsx",
+        "src/components/feed/ProfileCommentsView.tsx",
+        "src/components/auth/TermsDialog.tsx",
+        "src/contexts/CompanyContext.tsx",
+        "src/pages/EventPublished.tsx",
+        "src/components/purchases/VenueReservationDetail.tsx",
+        "src/components/feed/ChangeLocationSheet.tsx",
+        "src/contexts/StoriesContext.tsx",
+        "src/pages/NotFound.tsx",
+        "src/components/purchases/ServiceReservationDetail.tsx",
+        "src/pages/ForgotPassword.tsx"
+      ],
+      "gapsBackendRequired": [
+        "src/components/feed/StoryViewersSheet.tsx"
+      ],
+      "webFilesModified": [
+        "packages/shell/src/lovable/components/access/AccessControlListView.tsx",
+        "packages/shell/src/lovable/components/access/ScanQRSheet.tsx",
+        "packages/shell/src/lovable/components/services/BookingReviewSheet.tsx",
+        "packages/shell/src/lovable/components/venues/MediaUpload.tsx",
+        "packages/shell/src/lovable/components/feed/FeedHero.tsx",
+        "packages/shell/src/lovable/components/feed/ProfileCommentsView.tsx",
+        "packages/shell/src/lovable/components/auth/TermsDialog.tsx",
+        "packages/shell/src/lovable/components/auth/ForgotPasswordView.tsx",
+        "packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx",
+        "packages/shell/src/lovable/contexts/KycContext.tsx",
+        "packages/shell/src/lovable/contexts/CompanyContext.tsx",
+        "packages/shell/src/lovable/contexts/StoriesContext.tsx",
+        "packages/shell/src/lovable/components/purchases/MyPurchasesView.tsx",
+        "packages/shell/src/lovable/components/purchases/VenueReservationDetail.tsx",
+        "packages/shell/src/lovable/components/purchases/ServiceReservationDetail.tsx",
+        "packages/shell/src/lovable/components/feed/ChangeLocationSheet.tsx",
+        "packages/shell/src/lovable/components/feed/EditProfileView.tsx",
+        "packages/shell/src/lovable/lib/bookingStatusLabels.ts",
+        "packages/shell/src/pages/ForgotPassword.tsx",
+        "packages/shell/src/pages/CreateEventPage.tsx",
+        "packages/shell/src/pages/AccessControlPage.tsx",
+        "packages/shell/src/pages/SocialWallTab.tsx",
+        "packages/shell/src/components/StoryViewer.tsx",
+        "ReglasAgente/cambios-lovable.json",
+        "ReglasAgente/decision-log.md",
+        "ReglasAgente/impacto-backend.md",
+        "ReglasAgente/reglas-front.md",
+        "design-comparison.json",
+        "docs/changes/gap-empalme-latest.md"
+      ],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "testStatus": "SKIPPED",
+      "pendingRisks": [
+        "Similitud global ~82.5% vs objetivo 98% (38 gaps restantes — batch 5+6)",
+        "Story viewers requiere GET /stories/{id}/viewers en DoEventsBack",
+        "BarcodeDetector no disponible en todos los navegadores — fallback manual intacto",
+        "Re-comparación CI con compare-design-similarity.py pendiente"
+      ],
+      "agentStatus": "finished"
     }
   ]
 }

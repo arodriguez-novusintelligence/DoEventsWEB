@@ -13,6 +13,7 @@ export const KYC_STATUS_LABELS: Record<KycStatus, string> = {
 interface KycContextValue {
   status: KycStatus;
   loading: boolean;
+  loadError: boolean;
   isCertified: boolean;
   statusLabel: string;
   refresh: () => void;
@@ -21,6 +22,7 @@ interface KycContextValue {
 const KycContext = createContext<KycContextValue>({
   status: 'pending',
   loading: false,
+  loadError: false,
   isCertified: false,
   statusLabel: KYC_STATUS_LABELS.pending,
   refresh: () => undefined,
@@ -51,6 +53,7 @@ function resolveKycStatus(profile: Record<string, unknown> | null): KycStatus {
 export const KycProvider = ({ userId, children }: KycProviderProps) => {
   const [status, setStatus] = useState<KycStatus>('pending');
   const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const refresh = () => setRefreshKey((k) => k + 1);
@@ -58,10 +61,12 @@ export const KycProvider = ({ userId, children }: KycProviderProps) => {
   useEffect(() => {
     if (!userId) {
       setStatus('pending');
+      setLoadError(false);
       return;
     }
     let cancelled = false;
     setLoading(true);
+    setLoadError(false);
     void fetchUserById(userId)
       .then((profile) => {
         if (!cancelled) {
@@ -69,7 +74,10 @@ export const KycProvider = ({ userId, children }: KycProviderProps) => {
         }
       })
       .catch(() => {
-        if (!cancelled) setStatus('pending');
+        if (!cancelled) {
+          setStatus('pending');
+          setLoadError(true);
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -81,11 +89,12 @@ export const KycProvider = ({ userId, children }: KycProviderProps) => {
     () => ({
       status,
       loading,
+      loadError,
       isCertified: status === 'verified',
       statusLabel: KYC_STATUS_LABELS[status],
       refresh,
     }),
-    [status, loading],
+    [status, loading, loadError],
   );
 
   return (

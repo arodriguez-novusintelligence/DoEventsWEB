@@ -288,9 +288,9 @@ export const CreateEventPage: React.FC = () => {
         onPublish={handlePublish}
         onPublished={(eventId) => {
           void finishPublishAndGoToFeed(eventId, {
-            onNavigate: (state) => {
-              showToast('¡Evento publicado en el Feed!', 'success');
-              navigate('/', { replace: true, state });
+            onNavigate: () => {
+              showToast('¡Evento publicado!', 'success');
+              navigate(`/events/published?eventId=${eventId}`, { replace: true });
             },
           });
         }}

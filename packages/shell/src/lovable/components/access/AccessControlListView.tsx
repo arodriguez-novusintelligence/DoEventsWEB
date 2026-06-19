@@ -8,6 +8,8 @@ import { isAccessControlEnabled } from '../../../lovable-bridge/accessAdapter';
 interface Props {
   onBack: () => void;
   events?: AccessEventView[];
+  onConfigureEvent?: (event: AccessEventView) => void;
+  onAssignEvent?: () => void;
 }
 
 const statusStyles: Record<AccessEventView['status'], string> = {
@@ -29,9 +31,11 @@ const statusLabels: Record<AccessEventView['status'], string> = {
 const EventCard = ({
   ev,
   onScan,
+  onConfigure,
 }: {
   ev: AccessEventView;
   onScan: (ev: AccessEventView) => void;
+  onConfigure?: (ev: AccessEventView) => void;
 }) => {
   const canControl = isAccessControlEnabled(ev.status);
 
@@ -75,7 +79,7 @@ const EventCard = ({
             <ScanLine className="h-4 w-4" /> Escanear código
           </button>
           <button
-            onClick={() => toast('Configuración del evento')}
+            onClick={() => onConfigure?.(ev)}
             className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl py-2.5 text-sm font-semibold text-primary hover:bg-primary/5 transition-colors"
           >
             <Settings2 className="h-4 w-4" /> Configurar
@@ -93,7 +97,12 @@ const EventCard = ({
   );
 };
 
-const AccessControlListView = ({ onBack, events = [] }: Props) => {
+const AccessControlListView = ({
+  onBack,
+  events = [],
+  onConfigureEvent,
+  onAssignEvent,
+}: Props) => {
   const [tab, setTab] = useState<'mios' | 'asignados'>('mios');
   const [scanFor, setScanFor] = useState<AccessEventView | null>(null);
 
@@ -168,7 +177,7 @@ const AccessControlListView = ({ onBack, events = [] }: Props) => {
               </div>
               <div className="space-y-4">
                 {activeItems.map((ev) => (
-                  <EventCard key={ev.id} ev={ev} onScan={handleScan} />
+                  <EventCard key={ev.id} ev={ev} onScan={handleScan} onConfigure={onConfigureEvent} />
                 ))}
               </div>
             </section>
@@ -184,7 +193,7 @@ const AccessControlListView = ({ onBack, events = [] }: Props) => {
               </div>
               <div className="space-y-4">
                 {inactiveItems.map((ev) => (
-                  <EventCard key={ev.id} ev={ev} onScan={handleScan} />
+                  <EventCard key={ev.id} ev={ev} onScan={handleScan} onConfigure={onConfigureEvent} />
                 ))}
               </div>
             </section>
@@ -200,7 +209,7 @@ const AccessControlListView = ({ onBack, events = [] }: Props) => {
               </div>
               <div className="space-y-4">
                 {pastItems.map((ev) => (
-                  <EventCard key={ev.id} ev={ev} onScan={handleScan} />
+                  <EventCard key={ev.id} ev={ev} onScan={handleScan} onConfigure={onConfigureEvent} />
                 ))}
               </div>
             </section>
@@ -208,7 +217,10 @@ const AccessControlListView = ({ onBack, events = [] }: Props) => {
 
           {tab === 'mios' && (
             <button
-              onClick={() => toast('Asignar nuevo evento')}
+              onClick={() => {
+                if (onAssignEvent) onAssignEvent();
+                else toast.info('La asignación de staff requiere invitación del organizador');
+              }}
               className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-primary/40 bg-primary/5 px-4 py-3 text-sm font-semibold text-primary"
             >
               <Plus className="h-4 w-4" /> Asignar evento

@@ -8,7 +8,7 @@ import {
   RootState,
   type UserServiceBooking,
 } from '@doevents/shared';
-import { Button } from '@lovable/components/ui/button';
+import { formatBookingStatus } from '@lovable/lib/bookingStatusLabels';
 
 function formatDateRange(start?: string, end?: string) {
   if (!start) return '—';
@@ -87,7 +87,7 @@ export const ServiceReservationDetail = () => {
           </div>
           <div>
             <h1 className="text-xl font-extrabold leading-tight">{booking.serviceName}</h1>
-            <p className="text-xs capitalize text-primary-foreground/80">{booking.status}</p>
+            <p className="text-xs text-primary-foreground/80">{formatBookingStatus(booking.status)}</p>
           </div>
         </div>
       </div>

@@ -14,6 +14,53 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-19 22:30 UTC] gap-empalme-27849872403-b4
+
+### 1. Resumen del empalme
+Batch 4 (20 gaps, manifiesto `27849872403-b4`, similitud baseline 58.03%): empalme focalizado en control de acceso, feed, compras/reservas, auth, contextos y páginas de éxito/404. **AccessControlListView** navega a configuración del evento y creación (sin toasts stub). **ScanQRSheet** detecta QR vía `BarcodeDetector` nativo cuando está disponible. **FeedHero** cablea «Ver todas» y elimina historias mock en producción. **ForgotPasswordView** con UI Lovable y APIs reales. **StoryViewersSheet** montado desde `StoryViewer` (BACKEND_REQUIRED). **CreateEventPage** redirige a `/events/published` tras publicar. **CompanyContext** consumido en `EditProfileView`.
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Access control list | `packages/shell/src/lovable/components/access/AccessControlListView.tsx` | DONE |
+| Booking review | `packages/shell/src/lovable/components/services/BookingReviewSheet.tsx` | DONE |
+| FAQ section | `packages/shell/src/lovable/components/venues/sections/FAQSection.tsx` | DONE |
+| Media upload | `packages/shell/src/lovable/components/venues/MediaUpload.tsx` | DONE |
+| Report post | `packages/shell/src/lovable/components/feed/ReportPostDialog.tsx` | DONE |
+| Scan QR | `packages/shell/src/lovable/components/access/ScanQRSheet.tsx` | DONE |
+| Feed hero | `packages/shell/src/lovable/components/feed/FeedHero.tsx` | DONE |
+| KYC context | `packages/shell/src/lovable/contexts/KycContext.tsx` | DONE |
+| My purchases | `packages/shell/src/lovable/components/purchases/MyPurchasesView.tsx` | DONE |
+| Profile comments | `packages/shell/src/lovable/components/feed/ProfileCommentsView.tsx` | DONE |
+| Terms dialog | `packages/shell/src/lovable/components/auth/TermsDialog.tsx` | DONE |
+| Story viewers | `packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx` | BACKEND_REQUIRED |
+| Company context | `packages/shell/src/lovable/contexts/CompanyContext.tsx` | DONE |
+| Event published | `packages/shell/src/pages/EventPublished.tsx` | DONE |
+| Venue reservation detail | `packages/shell/src/lovable/components/purchases/VenueReservationDetail.tsx` | DONE |
+| Change location | `packages/shell/src/lovable/components/feed/ChangeLocationSheet.tsx` | DONE |
+| Stories context | `packages/shell/src/lovable/contexts/StoriesContext.tsx` | DONE |
+| Not found | `packages/shell/src/pages/NotFound.tsx` | DONE |
+| Service reservation detail | `packages/shell/src/lovable/components/purchases/ServiceReservationDetail.tsx` | DONE |
+| Forgot password | `packages/shell/src/pages/ForgotPassword.tsx` | DONE |
+
+### 3. Similitud diseño
+- **Antes:** 58.03% (manifiesto batch 4) / 74.0% post batch 3
+- **Después (estimado):** 82.5% — re-comparación CI pendiente
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- FeedHero sin `defaultStories` en producción; ForgotPassword con APIs reales (`getUserByEmail`, `sendPasswordResetLink`)
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias
+
+### 6. Decisión
+**APPLIED**
+
+---
+
 ## [2026-06-19 23:15 UTC] gap-empalme-27849872403-b3
 
 ### 1. Resumen del empalme

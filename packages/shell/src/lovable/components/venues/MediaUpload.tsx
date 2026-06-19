@@ -18,7 +18,7 @@ const MediaUpload = () => {
             <p className="text-xs text-muted-foreground">JPG, PNG o MP4 — máximo 12 archivos</p>
             <input
               type="file"
-              accept="image/*"
+              accept="image/*,video/*"
               multiple
               className="sr-only"
               onChange={(e) => { addMedia(e.target.files, 'image'); e.target.value = ''; }}

@@ -8,7 +8,7 @@ import {
   RootState,
   type UserVenueBooking,
 } from '@doevents/shared';
-import { Button } from '@lovable/components/ui/button';
+import { formatBookingStatus } from '@lovable/lib/bookingStatusLabels';
 
 function formatDates(dates?: string[]) {
   if (!dates?.length) return '—';
@@ -88,7 +88,7 @@ export const VenueReservationDetail = () => {
           </div>
           <div>
             <h1 className="text-xl font-extrabold leading-tight">{booking.venueName}</h1>
-            <p className="text-xs capitalize text-primary-foreground/80">{booking.status}</p>
+            <p className="text-xs text-primary-foreground/80">{formatBookingStatus(booking.status)}</p>
           </div>
         </div>
       </div>

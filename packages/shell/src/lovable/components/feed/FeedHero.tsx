@@ -49,6 +49,7 @@ interface FeedHeroProps {
   onStoryClick?: (story: FeedStoryItem) => void;
   onCreateStory?: () => void;
   showBuiltInStories?: boolean;
+  onViewAllCategories?: () => void;
 }
 
 const FeedHero = ({
@@ -61,10 +62,12 @@ const FeedHero = ({
   storiesLoading = false,
   onStoryClick,
   onCreateStory,
-  showBuiltInStories = true,
+  showBuiltInStories = import.meta.env.DEV,
+  onViewAllCategories,
 }: FeedHeroProps) => {
   const useApiStories = apiStories !== undefined;
   const showStories = useApiStories || showBuiltInStories;
+  const showDevStories = !useApiStories && showBuiltInStories && import.meta.env.DEV;
   return (
     <div className="relative pb-4">
       {/* Darker hero */}
@@ -108,7 +111,13 @@ const FeedHero = ({
         <div className="mx-auto max-w-lg rounded-2xl bg-card p-4 shadow-lg">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-base font-extrabold text-foreground">Categorías</h2>
-            <button className="text-xs font-semibold text-primary hover:underline">Ver todas</button>
+            <button
+              type="button"
+              onClick={onViewAllCategories}
+              className="text-xs font-semibold text-primary hover:underline"
+            >
+              Ver todas
+            </button>
           </div>
           <div className="grid grid-cols-6 gap-2">
             {categories.map((c) => {
@@ -209,7 +218,7 @@ const FeedHero = ({
                   <span className="text-[10px] font-medium text-foreground truncate w-full text-center">{s.name}</span>
                 </button>
               ))}
-              {!storiesLoading && !useApiStories && defaultStories.map((s) => (
+              {!storiesLoading && showDevStories && defaultStories.map((s) => (
                 <button key={s.id} type="button" className="flex flex-col items-center gap-1 shrink-0 w-16">
                   <div className={cn(
                     'relative h-16 w-16 rounded-full p-[2.5px]',

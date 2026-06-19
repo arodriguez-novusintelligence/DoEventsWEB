@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27849872403-b4`: batch 4 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`StoryViewersSheet`).
+
 Run `gap-empalme-27849872403-b3`: batch 3 (20 gaps) — 18 DONE frontend; 2 BACKEND_REQUIRED (`BankingHub` delete, `PaymentMethodsDashboard` delete).
 
 Run `gap-empalme-27849872403-b2`: batch 2 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`PublishFlowModal`, `BookingSheet` add-ons, `PaymentGatewaySheet`).
@@ -24,7 +26,18 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27849872403-b3)
+## Empalme realizado (última ejecución — gap-empalme-27849872403-b4)
+
+- **AccessControlListView:** navegación real a `/events/{id}` y `/events/create`; sin toasts stub.
+- **ScanQRSheet:** detección QR vía `BarcodeDetector` nativo + validación `scanTicketFromQr`.
+- **FeedHero:** «Ver todas» → `/events`; `defaultStories` solo en DEV.
+- **ForgotPasswordView:** UI Lovable con `getUserByEmail` + `sendPasswordResetLink`.
+- **CreateEventPage:** redirección a `/events/published?eventId=` tras publicación.
+- **StoryViewersSheet:** montado en `StoryViewer`; empty state documentado (BACKEND_REQUIRED).
+- **CompanyContext:** datos empresa visibles en `EditProfileView`.
+- **Reservas:** etiquetas de estado localizadas en detalle venue/servicio.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27849872403-b3)
 
 - **EventDetailView:** carga real vía `fetchEventDetail` + `eventDetailToInvitationEvent`; eliminado stub con organizador ficticio.
 - **ProfileView:** fix `showComments` (`useState`); favoritos con `toggleEventLike` y navegación a evento.

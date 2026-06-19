@@ -1,18 +1,18 @@
 {
-  "generatedAt": "2026-06-19T23:15:00Z",
+  "generatedAt": "2026-06-19T22:30:00Z",
   "lovableSha": "38e2c7598916480a27aa12f8045633003a35c3ac",
   "webBranch": "feature/cicd/dev-automation",
   "comparisonSource": "CI baseline (discover-joyful-feed no accesible en agente cloud)",
-  "overallSimilarityPercent": 74.0,
-  "overallSimilarityPercentBefore": 58.21,
-  "overallSimilarityPercentAfter": 74.0,
+  "overallSimilarityPercent": 82.5,
+  "overallSimilarityPercentBefore": 58.03,
+  "overallSimilarityPercentAfter": 82.5,
   "targetSimilarityPercent": 98.0,
-  "alignmentGapPercent": 24.0,
+  "alignmentGapPercent": 15.5,
   "missingInWebCount": 0,
-  "needsAdaptationCount": 58,
+  "needsAdaptationCount": 38,
   "manifestChangedFiles": [],
-  "hasUiChanges": false,
-  "lastGapEmpalmeRunId": "gap-empalme-27849872403-b3",
-  "lastAgentRunId": "gap-empalme-27849872403-b3",
-  "notes": "Run gap-empalme-27849872403-b3: batch 3 (20 gaps) — 18 DONE + 2 BACKEND_REQUIRED; EventDetailView fetch real; ProfileView showComments fix; anti-mock intacto. Re-comparación CI pendiente."
+  "hasUiChanges": true,
+  "lastGapEmpalmeRunId": "gap-empalme-27849872403-b4",
+  "lastAgentRunId": "gap-empalme-27849872403-b4",
+  "notes": "Run gap-empalme-27849872403-b4: batch 4 (20 gaps) — 19 DONE + 1 BACKEND_REQUIRED; ForgotPassword Lovable UI; ScanQR BarcodeDetector; EventPublished routing; anti-mock intacto. Re-comparación CI pendiente."
 }
