@@ -302,6 +302,61 @@
         "Adaptacion pendiente por agente Cursor"
       ],
       "agentStatus": "pending"
+    },
+    {
+      "id": "agent-1122a4f3",
+      "lovableSha": "1122a4f3649f8c47942f5d5d022cd115f4ad7f4a",
+      "before": "HEAD",
+      "timestamp": "2026-06-19 17:30 UTC",
+      "workflowRunId": "27839204054",
+      "changeTypes": [
+        "VISUAL",
+        "FRONTEND_LOGIC",
+        "BACKEND_REQUIRED"
+      ],
+      "designSimilarityPercentBefore": 59.27,
+      "designSimilarityPercentAfter": null,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 38.73,
+      "requiresDesignAlignment": true,
+      "summary": "Empalme: 36 archivos missing_in_web implementados en rutas mapeadas; build:devaws OK; similitud ≥98% pendiente re-comparación CI",
+      "changedFilesLovable": [],
+      "webFilesModified": [
+        "packages/shell/src/lovable/components/admin/*",
+        "packages/shell/src/lovable/components/auth/*",
+        "packages/shell/src/lovable/components/feed/AddStorySheet.tsx",
+        "packages/shell/src/lovable/components/feed/ChangeLocationSheet.tsx",
+        "packages/shell/src/lovable/components/feed/FeedBanner.tsx",
+        "packages/shell/src/lovable/components/feed/GlobalSearchView.tsx",
+        "packages/shell/src/lovable/components/feed/KycCertificationView.tsx",
+        "packages/shell/src/lovable/components/feed/ReportPostDialog.tsx",
+        "packages/shell/src/lovable/components/feed/StoryViewer.tsx",
+        "packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx",
+        "packages/shell/src/lovable/components/purchases/*",
+        "packages/shell/src/lovable/components/services/BookingReviewSheet.tsx",
+        "packages/shell/src/lovable/contexts/*",
+        "packages/shell/src/lovable/hooks/useGuests.ts",
+        "packages/shell/src/pages/Index.tsx",
+        "packages/shell/src/pages/Login.tsx",
+        "packages/shell/src/pages/SignUp.tsx",
+        "packages/shell/src/pages/ForgotPassword.tsx",
+        "packages/shell/src/pages/ResetPassword.tsx",
+        "packages/shell/src/pages/NotFound.tsx",
+        "packages/shell/src/pages/EventPublished.tsx",
+        "packages/shell/src/pages/VenueDetail.tsx",
+        "packages/shared/src/api/feedService.ts",
+        "Reports/2026-06-19-design-comparison-agent.md"
+      ],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "testStatus": "SKIPPED",
+      "pendingRisks": [
+        "Similitud diseño <98% hasta empalmar 68 componentes needs_adaptation",
+        "Validar endpoint reportPublication en API DEV",
+        "KYC completo requiere backend"
+      ],
+      "agentStatus": "PARTIAL"
     }
   ]
 }

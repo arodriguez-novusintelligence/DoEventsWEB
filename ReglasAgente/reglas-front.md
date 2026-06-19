@@ -83,4 +83,23 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-19 (agente cloud)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| Reservas usuario vía API real | Integración | Sí | `lovable/components/purchases/*` | `fetchUserVenueBookings` / `fetchUserServiceBookings` |
+| Reportar publicación | Integración | Sí | `feed/ReportPostDialog.tsx` | `reportPublication` en shared |
+| KYC sin mocks | Bloqueo | Parcial | `feed/KycCertificationView.tsx` | BACKEND_REQUIRED documentado |
+| Páginas auth mapeadas | Navegación | Sí | `pages/Login.tsx` etc. | Re-export mfe-auth sin duplicar lógica |
+
+## Validaciones
+
+- [x] Validación frontend implementada (formularios reporte, ubicación)
+- [x] Mensaje de error implementado
+- [x] Submit bloqueado si la regla falla (reporte sin id)
+- [x] Error backend manejado (toast)
+- [x] Redirección posterior al éxito real (reservas/listados desde API)
+
+---
+
 Reglamento completo: `DoEventsCICD/Reglas/operativas/reglamento-cursor-api.md`
