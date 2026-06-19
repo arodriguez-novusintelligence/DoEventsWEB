@@ -87,6 +87,26 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+---
+
+## Ejecución 2026-06-19 gap-empalme batch 2 (run 27850000711-b2)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| EditGuestModal async | FRONTEND_LOGIC | Sí | `guests/EditGuestModal.tsx` | Loading + await API |
+| PostCard owner follow | VISUAL | Sí | `feed/PostCard.tsx` | Sin botón Seguir al dueño |
+| TopHeader perfil | Navegación | Sí | `feed/TopHeader.tsx`, `LovableLayout.tsx` | Avatar + deep-link user |
+| StepAccessControl hosts | Integración | Sí | `events/StepAccessControl.tsx` | Cache desde formData.hosts |
+| FollowersSheet solicitudes | Integración | Sí | `feed/FollowersSheet.tsx` | RequestRow Aceptar |
+| TransferTicketFlow self | FRONTEND_LOGIC | Sí | `tickets/TransferTicketFlow.tsx` | Filtra currentUserId |
+| PublishFlow banking | Bloqueo | Parcial | `events/PublishFlowModal.tsx` | BACKEND_REQUIRED onSubmitBank |
+| BookingSheet add-ons | Bloqueo | Parcial | `services/BookingSheet.tsx` | BACKEND_REQUIRED catálogo |
+| PaymentGateway PSP | Bloqueo | Parcial | `services/PaymentGatewaySheet.tsx` | BACKEND_REQUIRED confirm orderId only |
+| MyTickets refresh | VISUAL | Sí | `tickets/MyTicketsView.tsx` | onRefresh + explore |
+| Stats loading/error | VISUAL | Sí | `stats/StatsEventListView.tsx` | Props loading/loadError |
+| VenueDetail precio | Integración | Sí | `venues/VenueDetailReservation.tsx` | parseVenuePrice amenities |
+| Batch 2 gaps (20) | Empalme | Sí | ver `decision-log.md` | 17 DONE + 3 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-19 gap-empalme batch 1 (run 27850000711-b1)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

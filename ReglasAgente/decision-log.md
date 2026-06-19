@@ -14,6 +14,57 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-19 23:55 UTC] gap-empalme-27850000711-b2
+
+### 1. Resumen del empalme
+Batch 2 (20 gaps, manifiesto `27850000711-b2`, similitud baseline 72.5%): empalme focalizado en invitados, feed, crear evento, servicios, tickets, chat y stats. **EditGuestModal** submit async con loading. **PostCard** oculta «Seguir» al dueño. **TopHeader** avatar → perfil; notificaciones con deep-link usuario. **StepAccessControl** hidrata cache desde `formData.hosts`. **CreateEventView** subtítulo de paso. **FollowersSheet** tab Solicitudes con botón Aceptar. **TransferTicketFlow** filtra usuario actual. **MyTicketsView** refresh + explore events. **StatsEventListView** loading/error inline. **VenueDetailReservation** precio desde `parseVenuePrice`. **PublishFlowModal**, **BookingSheet**, **PaymentGatewaySheet** → BACKEND_REQUIRED documentado.
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Edit guest | `packages/shell/src/lovable/components/guests/EditGuestModal.tsx` | DONE |
+| Profile gallery | `packages/shell/src/lovable/components/feed/ProfileGallery.tsx` | DONE |
+| Post card | `packages/shell/src/lovable/components/feed/PostCard.tsx` | DONE |
+| Create event | `packages/shell/src/lovable/components/events/CreateEventView.tsx` | DONE |
+| Step access control | `packages/shell/src/lovable/components/events/StepAccessControl.tsx` | DONE |
+| Top header | `packages/shell/src/lovable/components/feed/TopHeader.tsx` | DONE |
+| Service detail | `packages/shell/src/lovable/components/services/ServiceDetailView.tsx` | DONE |
+| Transfer ticket flow | `packages/shell/src/lovable/components/tickets/TransferTicketFlow.tsx` | DONE |
+| AI assistant FAB | `packages/shell/src/lovable/components/ai/AIAssistantFAB.tsx` | DONE |
+| Publish flow | `packages/shell/src/lovable/components/events/PublishFlowModal.tsx` | BACKEND_REQUIRED |
+| Venue detail reservation | `packages/shell/src/lovable/components/venues/VenueDetailReservation.tsx` | DONE |
+| Booking sheet | `packages/shell/src/lovable/components/services/BookingSheet.tsx` | BACKEND_REQUIRED |
+| Contact import | `packages/shell/src/lovable/components/guests/ContactImportModal.tsx` | DONE |
+| Stats event list | `packages/shell/src/lovable/components/stats/StatsEventListView.tsx` | DONE |
+| Ticket detail | `packages/shell/src/lovable/components/tickets/TicketDetailView.tsx` | DONE |
+| Refund ticket flow | `packages/shell/src/lovable/components/tickets/RefundTicketFlow.tsx` | DONE |
+| Messages list | `packages/shell/src/lovable/components/chat/MessagesListView.tsx` | DONE |
+| Followers sheet | `packages/shell/src/lovable/components/feed/FollowersSheet.tsx` | DONE |
+| Payment gateway | `packages/shell/src/lovable/components/services/PaymentGatewaySheet.tsx` | BACKEND_REQUIRED |
+| My tickets | `packages/shell/src/lovable/components/tickets/MyTicketsView.tsx` | DONE |
+
+### 3. Similitud antes/después
+- **Antes:** 72.5%
+- **Después:** ~78.0% (estimado; re-comparación CI pendiente)
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias
+
+### 6. Riesgos pendientes
+- 98 gaps restantes (batches 3–6) para alcanzar 98% similitud
+- BACKEND_REQUIRED: banking publish flow, booking add-ons, PSP gateway
+- `discover-joyful-feed` privado — re-comparación CI pendiente
+
+### Decisión
+**APPLIED**
+
+---
+
 ## [2026-06-19 23:30 UTC] gap-empalme-27850000711-b1
 
 ### 1. Resumen del empalme

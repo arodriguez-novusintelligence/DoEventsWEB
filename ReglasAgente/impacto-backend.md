@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27850000711-b2`: batch 2 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`PublishFlowModal`, `BookingSheet`, `PaymentGatewaySheet`).
+
 Run `gap-empalme-27850000711-b1`: batch 1 (20 gaps) — 18 DONE frontend; 2 BACKEND_REQUIRED (`EditProfileView`, `BankingForm`).
 
 Run `agent-38e2c759-27850000711`: validación sin diff UI; build:devaws OK; sin cambios backend ni frontend de lógica; batch 6 (~18 gaps) pendiente.
@@ -32,7 +34,27 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27850000711-b1)
+## Empalme realizado (última ejecución — gap-empalme-27850000711-b2)
+
+- **EditGuestModal:** submit async con loading; sin toast prematuro antes de API.
+- **ProfileGalleryPage:** prop `loadError` cableada desde fetch.
+- **PostCard:** oculta «Seguir» cuando `isOwner`.
+- **TopHeader / LovableLayout:** avatar → perfil; deep-link `user-{id}` desde notificaciones.
+- **CreateEventView:** subtítulo «Paso N de 7» bajo stepper.
+- **StepAccessControl:** hidrata `userCache` desde `formData.hosts`.
+- **FollowersSheet:** tab Solicitudes con `RequestRow` + Aceptar vía `followUser`.
+- **TransferTicketFlow / TicketDetailView:** filtra `currentUserId` en búsqueda destinatario.
+- **RefundTicketFlow:** prop `platformFeeRate` configurable.
+- **MyTicketsView / TicketsPage:** `onRefresh` + `onExploreEvents`.
+- **StatsEventListView / ProfileStatsPage:** loading/error inline sin Loader full-page.
+- **VenueDetailReservation:** `parseVenuePrice` desde amenities en preview.
+- **ServiceDetailView:** CTA «Inicia sesión para reservar» sin liveBooking.
+- **BookingSheet:** banner vista previa cuando `!isLive`.
+- **PaymentGatewaySheet:** título «Confirmar orden» + badge orderId; guard sin orderId.
+- **PublishFlowModal:** prop `onSubmitBank` opcional; guard sin simular persistencia.
+- **MessagesListView / AIAssistantFAB / ContactImportModal:** UX alineada Lovable.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27850000711-b1)
 
 - **StepAgenda:** validación horarios fin ≥ inicio; empty state por día sin actividades; timeline intacto.
 - **StepEventSummary:** secciones `main` y `location` abiertas por defecto.

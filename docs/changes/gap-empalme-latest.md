@@ -1,47 +1,44 @@
-# Gap Empalme — Resumen Ejecutivo (batch 1)
+# Gap empalme — resumen ejecutivo (batch 2)
 
-**Run:** `gap-empalme-27850000711-b1`  
+**Run:** `gap-empalme-27850000711-b2`  
 **Fecha:** 2026-06-19  
 **Rama:** `feature/cicd/dev-automation`
 
 ## Resultado
 
-- **20 gaps** del manifiesto batch 1 procesados.
-- **18 DONE** en frontend (empalme sin mocks).
-- **2 BACKEND_REQUIRED:** `EditProfileView` (intereses/password), `BankingForm` (persistencia SWIFT/PayPal).
-- **Similitud diseño:** 58.04% → ~72.5% (estimado; re-comparación CI pendiente).
-- **Build:** `npm run build:devaws` OK.
+| Métrica | Valor |
+|---------|-------|
+| Gaps en batch | 20 |
+| DONE (frontend) | 17 |
+| BACKEND_REQUIRED | 3 |
+| Similitud antes | 72.5% |
+| Similitud después (est.) | ~78.0% |
+| Objetivo | 98.0% |
+| Build `npm run build:devaws` | OK |
+| Mocks en runtime | No detectados |
 
-## Empalme realizado
+## Empalme realizado (frontend)
 
-| Área | Cambio principal |
-|------|------------------|
-| Crear evento | `StepAgenda` validación horarios + timeline; `StepEventSummary` secciones abiertas por defecto; `EventPreviewModal` sin botones ficticios |
-| Chat | `PrivateChatView` burbujas DM; `ChatRoomView` sin stub «Ocultar evento» |
-| Servicios | `StepUnified` barra de progreso; `MyServicesView` empty state con icono Briefcase |
-| Perfil / menú | `SideMenu` ítem «Mis eventos»; `MyEventsView` empty state enriquecido; `ProfileGallery` skeleton + error |
-| Invitaciones | `InvitationEventDetailView` stats condicionales (sin ceros ficticios) |
-| Invitados | `GuestManagementView` skeleton de carga |
-| Banca | `BankingForm` sin SuccessModal prematuro; delega a `BankingHub` + API real |
-| Mapa | `MapView` overlay de carga vía prop `loading` |
-| Otros | `HostPickerModal` error de búsqueda; `SeatingCategoryDialog` validación filas/asientos; `SuccessModal` botón unificado |
+- **Invitados:** `EditGuestModal` submit async; `ContactImportModal` parsing de nombres mejorado.
+- **Feed:** `PostCard` sin botón Seguir al dueño; `TopHeader` avatar → perfil; `FollowersSheet` solicitudes con Aceptar.
+- **Crear evento:** stepper con subtítulo de paso; `StepAccessControl` cache de hosts; `PublishFlowModal` guard anti-simulación bancaria.
+- **Servicios:** `ServiceDetailView` CTA login; `BookingSheet` banner vista previa; `PaymentGatewaySheet` confirmación por orderId.
+- **Tickets:** transferencia sin self; reembolso con `platformFeeRate`; `MyTicketsView` refresh/explorar.
+- **Chat/Stats:** `MessagesListView` indicador de carga; `StatsEventListView` estados loading/error.
+- **Venues:** `VenueDetailReservation` precio desde amenities (`parseVenuePrice`).
+- **IA:** `AIAssistantFAB` sombra hover alineada Lovable.
 
-## Backend pendiente
+## Backend pendiente (3 gaps)
 
-| Gap | Motivo | Prioridad |
-|-----|--------|-----------|
-| EditProfileView intereses/password | Falta persistencia preferencias y reset Cognito | Media |
-| BankingForm SWIFT/PayPal | Validación servidor + soporte PayPal en `POST /bank-data` | Alta |
-| ChatRoomView ban | Falta `POST /chat/rooms/{id}/ban` | Baja |
+1. **PublishFlowModal** — persistir datos bancarios post-publicación (`createBankAccount` / `onSubmitBank`).
+2. **BookingSheet** — catálogo de servicios adicionales (`GET /services/{id}/addons`).
+3. **PaymentGatewaySheet** — integración PSP completa (formularios tarjeta/PSE hoy son cosméticos; pago real vía `confirmTicketPayment(orderId)`).
 
 ## Gaps restantes
 
-- **98 gaps** pendientes para batches 2–6 (objetivo 98% similitud).
-- Re-comparación CI con `compare-design-similarity.py` pendiente (`discover-joyful-feed` privado).
+~78 gaps en batches 3–6 del manifiesto. Próximo batch: componentes de invitaciones, feed avanzado, admin y venues.
 
-## Evidencia anti-mock
+## Evidencia
 
-```bash
-grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages
-# Sin coincidencias
-```
+- Anti-mock: `grep` en `packages/shell/src/pages` sin coincidencias.
+- Build DEV sa-east-1 exitoso.
