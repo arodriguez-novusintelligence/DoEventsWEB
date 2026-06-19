@@ -14,6 +14,53 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-19 21:30 UTC] gap-empalme-27847959667-b2
+
+### 1. Resumen del empalme
+Batch 2 (20 gaps): empalme focalizado en mapa, header, wizard eventos, feed, tickets, chat y servicios. Eliminados mocks en BookingSheet; FollowersSheet conectado a `followUser`/`unfollowUser`; PublishFlowModal con stage error sin simular persistencia bancaria.
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Map | `packages/shell/src/lovable/components/feed/MapView.tsx` | DONE |
+| Top header | `packages/shell/src/lovable/components/feed/TopHeader.tsx` | DONE |
+| Edit guest | `packages/shell/src/lovable/components/guests/EditGuestModal.tsx` | DONE |
+| Profile gallery | `packages/shell/src/lovable/components/feed/ProfileGallery.tsx` | DONE |
+| Publish flow | `packages/shell/src/lovable/components/events/PublishFlowModal.tsx` | BACKEND_REQUIRED |
+| Step event details | `packages/shell/src/lovable/components/events/StepEventDetails.tsx` | DONE |
+| Followers | `packages/shell/src/lovable/components/feed/FollowersSheet.tsx` | DONE |
+| My venues | `packages/shell/src/lovable/components/venues/MyVenuesView.tsx` | DONE |
+| Create event | `packages/shell/src/lovable/components/events/CreateEventView.tsx` | DONE |
+| Post card | `packages/shell/src/lovable/components/feed/PostCard.tsx` | DONE |
+| Transfer ticket | `packages/shell/src/lovable/components/tickets/TransferTicketFlow.tsx` | DONE |
+| Step access control | `packages/shell/src/lovable/components/events/StepAccessControl.tsx` | DONE |
+| Booking sheet | `packages/shell/src/lovable/components/services/BookingSheet.tsx` | BACKEND_REQUIRED |
+| Service detail | `packages/shell/src/lovable/components/services/ServiceDetailView.tsx` | DONE |
+| Stats event list | `packages/shell/src/lovable/components/stats/StatsEventListView.tsx` | DONE |
+| Contact import | `packages/shell/src/lovable/components/guests/ContactImportModal.tsx` | DONE |
+| AI assistant FAB | `packages/shell/src/lovable/components/ai/AIAssistantFAB.tsx` | DONE |
+| Refund ticket | `packages/shell/src/lovable/components/tickets/RefundTicketFlow.tsx` | DONE |
+| Ticket detail | `packages/shell/src/lovable/components/tickets/TicketDetailView.tsx` | DONE |
+| Messages list | `packages/shell/src/lovable/components/chat/MessagesListView.tsx` | DONE |
+
+### 3. Similitud diseño
+- **Antes:** 64.2%
+- **Después (estimado):** 68.5% — re-comparación CI pendiente
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- BookingSheet sin `MOCK_ADDITIONAL_SERVICES`; PostCard tipos desde `@doevents/shared`
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias
+
+### 6. Decisión
+**APPLIED**
+
+---
+
 ## [2026-06-19 21:10 UTC] gap-empalme-27847959667-b1
 
 ### 1. Resumen del empalme

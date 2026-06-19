@@ -83,6 +83,17 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-19 gap-empalme batch 2 (run 27847959667-b2)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| BookingSheet sin MOCK add-ons | Bloqueo | Sí | `services/BookingSheet.tsx` | Solo `additionalServiceOptions` props/API |
+| FollowersSheet API seguimiento | Integración | Sí | `feed/FollowersSheet.tsx` | `followUser` / `unfollowUser` |
+| PublishFlowModal sin simular banco | Bloqueo | Parcial | `events/PublishFlowModal.tsx` | BACKEND_REQUIRED persistencia |
+| MapView estados vacío/carga | VISUAL | Sí | `feed/MapView.tsx` | Sin datos ficticios en pins |
+| PostCard tipos shared | Integración | Sí | `feed/PostCard.tsx` | `FeedUiPost` desde `@doevents/shared` |
+| Batch 2 gaps (20) | Empalme | Sí | ver `decision-log.md` | 18 DONE + 2 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-19 gap-empalme batch 1 (run 27847959667-b1)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

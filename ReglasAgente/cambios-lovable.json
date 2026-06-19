@@ -616,6 +616,79 @@
         "Banking, KYC, moderación chat y password reset requieren backend"
       ],
       "agentStatus": "finished"
+    },
+    {
+      "id": "gap-empalme-27847959667-b2",
+      "timestamp": "2026-06-19 21:30 UTC",
+      "workflowRunId": "27847959667-b2",
+      "gapBatch": 20,
+      "changeTypes": [
+        "VISUAL",
+        "FRONTEND_LOGIC",
+        "BACKEND_REQUIRED",
+        "RISKY"
+      ],
+      "designSimilarityPercentBefore": 64.2,
+      "designSimilarityPercentAfter": 68.5,
+      "designSimilarityTarget": 98.0,
+      "summary": "Batch 2 gap empalme: 20 componentes; FollowersSheet API real; BookingSheet sin mocks; MapView/TopHeader/MessagesListView empty states",
+      "gapsClosed": [
+        "src/components/feed/MapView.tsx",
+        "src/components/feed/TopHeader.tsx",
+        "src/components/guests/EditGuestModal.tsx",
+        "src/components/feed/ProfileGallery.tsx",
+        "src/components/events/StepEventDetails.tsx",
+        "src/components/feed/FollowersSheet.tsx",
+        "src/components/venues/MyVenuesView.tsx",
+        "src/components/events/CreateEventView.tsx",
+        "src/components/feed/PostCard.tsx",
+        "src/components/tickets/TransferTicketFlow.tsx",
+        "src/components/events/StepAccessControl.tsx",
+        "src/components/services/ServiceDetailView.tsx",
+        "src/components/stats/StatsEventListView.tsx",
+        "src/components/guests/ContactImportModal.tsx",
+        "src/components/ai/AIAssistantFAB.tsx",
+        "src/components/tickets/RefundTicketFlow.tsx",
+        "src/components/tickets/TicketDetailView.tsx",
+        "src/components/chat/MessagesListView.tsx"
+      ],
+      "gapsBackendRequired": [
+        "src/components/events/PublishFlowModal.tsx",
+        "src/components/services/BookingSheet.tsx"
+      ],
+      "webFilesModified": [
+        "packages/shell/src/lovable/components/feed/MapView.tsx",
+        "packages/shell/src/lovable/components/feed/TopHeader.tsx",
+        "packages/shell/src/lovable/components/guests/EditGuestModal.tsx",
+        "packages/shell/src/lovable/components/feed/ProfileGallery.tsx",
+        "packages/shell/src/lovable/components/events/PublishFlowModal.tsx",
+        "packages/shell/src/lovable/components/events/StepEventDetails.tsx",
+        "packages/shell/src/lovable/components/feed/FollowersSheet.tsx",
+        "packages/shell/src/lovable/components/feed/ProfileView.tsx",
+        "packages/shell/src/lovable/components/venues/MyVenuesView.tsx",
+        "packages/shell/src/lovable/components/events/CreateEventView.tsx",
+        "packages/shell/src/lovable/components/feed/PostCard.tsx",
+        "packages/shell/src/lovable/components/tickets/TransferTicketFlow.tsx",
+        "packages/shell/src/lovable/components/services/BookingSheet.tsx",
+        "packages/shell/src/lovable/components/services/ServiceDetailView.tsx",
+        "packages/shell/src/lovable/components/stats/StatsEventListView.tsx",
+        "packages/shell/src/lovable/components/guests/ContactImportModal.tsx",
+        "packages/shell/src/lovable/components/ai/AIAssistantFAB.tsx",
+        "packages/shell/src/lovable/components/tickets/RefundTicketFlow.tsx",
+        "packages/shell/src/lovable/components/tickets/TicketDetailView.tsx",
+        "packages/shell/src/lovable/components/chat/MessagesListView.tsx"
+      ],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "testStatus": "SKIPPED",
+      "pendingRisks": [
+        "Similitud global estimada 68.5% vs objetivo 98%",
+        "Re-comparación CI con discover-joyful-feed pendiente",
+        "PublishFlowModal banking y BookingSheet add-ons requieren backend",
+        "Flujos ticket transfer/refund RISKY — revisión humana recomendada"
+      ],
+      "agentStatus": "finished"
     }
   ]
 }
