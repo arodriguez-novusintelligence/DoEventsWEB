@@ -38,6 +38,7 @@ import { PlaceEditPage } from './pages/PlaceEditPage';
 import { EventEditPage } from './pages/EventEditPage';
 import { ServiceEditPage } from './pages/ServiceEditPage';
 import { SearchEventsPage } from './pages/SearchEventsPage';
+import { KycPage } from './pages/KycPage';
 
 import { MyEventsPage } from './pages/MyEventsPage';
 
@@ -60,7 +61,9 @@ import { NotificationsPage } from './pages/NotificationsPage';
 import { ChatPage } from './pages/ChatPage';
 import { PaymentFinallyPage } from './pages/PaymentFinallyPage';
 import { AIAssistantPage } from './pages/AIAssistantPage';
-import { AdminPanelPage, AdminLegacyRedirect } from './pages/admin/AdminPanelPage';
+import { AdminPanelView, AdminLegacyRedirect } from '@lovable/components/admin/AdminPanelView';
+import AdminRefundsPanel from '@lovable/components/admin/AdminRefundsPanel';
+import AdminReportsPanel from '@lovable/components/admin/AdminReportsPanel';
 import { NotFound } from './pages/NotFound';
 import { EventPublished } from './pages/EventPublished';
 import { PurchasesPage } from './pages/PurchasesPage';
@@ -138,6 +141,7 @@ export const AppRouter: React.FC = () => (
       <Route path="profile/stats" element={<ProfileStatsPage />} />
       <Route path="profile/venues" element={<ProfileVenuesPage />} />
       <Route path="profile/publications" element={<ProfilePublicationsPage />} />
+      <Route path="profile/kyc" element={<KycPage />} />
       <Route path="profile" element={<ProfilePage />} />
       <Route path="users/:userId" element={<PublicUserProfilePage />} />
       <Route path="users/:userId/services" element={<UserServicesPage />} />
@@ -169,8 +173,10 @@ export const AppRouter: React.FC = () => (
 
       <Route path="assistant" element={<AIAssistantPage />} />
 
-      <Route path="admin" element={<AdminPanelPage />} />
+      <Route path="admin" element={<AdminPanelView />} />
       <Route path="admin/users" element={<AdminLegacyRedirect section="users" />} />
+      <Route path="admin/refunds" element={<AdminRefundsPanel />} />
+      <Route path="admin/reports" element={<AdminReportsPanel />} />
       <Route path="admin/events" element={<AdminLegacyRedirect section="events" />} />
       <Route path="admin/orders" element={<AdminLegacyRedirect section="orders" />} />
       <Route path="admin/venues" element={<AdminLegacyRedirect section="venues" />} />

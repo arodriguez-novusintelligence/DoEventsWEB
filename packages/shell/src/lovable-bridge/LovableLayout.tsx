@@ -15,6 +15,7 @@ import BottomNav from '@lovable/components/feed/BottomNav';
 import { NotificationsProvider } from '@lovable/contexts/NotificationsContext';
 import { PrivacyProvider } from '@lovable/contexts/PrivacyContext';
 import { CompanyProvider } from '@lovable/contexts/CompanyContext';
+import { KycProvider } from '@lovable/contexts/KycContext';
 import { StoriesProvider } from '../contexts/StoriesContext';
 import { Toaster } from '@lovable/components/ui/sonner';
 import CreateFAB from '@lovable/components/feed/CreateFAB';
@@ -175,6 +176,7 @@ export const LovableLayout: React.FC = () => {
 
   return (
     <StoriesProvider currentUserId={userId}>
+    <KycProvider userId={userId}>
     <CompanyProvider userId={userId}>
     <NotificationsProvider userId={userId || undefined}>
       <PrivacyProvider>
@@ -236,6 +238,7 @@ export const LovableLayout: React.FC = () => {
       </PrivacyProvider>
     </NotificationsProvider>
     </CompanyProvider>
+    </KycProvider>
     </StoriesProvider>
   );
 };

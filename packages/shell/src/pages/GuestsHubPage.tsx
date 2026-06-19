@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '@doevents/shared';
 import GuestManagementView from '@lovable/components/guests/GuestManagementView';
-import { useApiGuests } from '../lovable-bridge/useApiGuests';
+import { useGuests } from '@lovable/hooks/useGuests';
 
 interface GuestsLocationState {
   eventId?: string;
@@ -14,7 +14,7 @@ export const GuestsHubPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const userId = useSelector((s: RootState) => s.auth.idUser);
-  const guestsController = useApiGuests(userId || undefined);
+  const guestsController = useGuests(userId || undefined);
   const [navState] = useState<GuestsLocationState>(
     () => (location.state as GuestsLocationState | null) || {},
   );

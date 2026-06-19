@@ -5,12 +5,12 @@ import { fetchAdminDashboard, RootState, useToast, type AdminDashboardStats } fr
 import AdminLayout, { type AdminTabId } from './AdminLayout';
 import { AdminLoading, useAdminGuard } from './useAdminGuard';
 import { AdminHomeTab } from './tabs/AdminHomeTab';
-import { AdminSupportTab } from './tabs/AdminSupportTab';
-import { AdminPaymentsTab } from './tabs/AdminPaymentsTab';
-import { AdminStaffTab } from './tabs/AdminStaffTab';
-import { AdminNewUsersTab } from './tabs/AdminNewUsersTab';
 import { AdminContentTab } from './tabs/AdminContentTab';
 import { AdminAITab } from './tabs/AdminAITab';
+import AdminUsersPanel from '@lovable/components/admin/AdminUsersPanel';
+import PaymentsPanel from '@lovable/components/admin/PaymentsPanel';
+import NewUsersPanel from '@lovable/components/admin/NewUsersPanel';
+import SupportSearchPanel from '@lovable/components/admin/SupportSearchPanel';
 
 const TAB_IDS: AdminTabId[] = ['home', 'content', 'ai', 'support', 'payments', 'admin', 'newusers'];
 
@@ -55,10 +55,10 @@ export const AdminPanelPage: React.FC = () => {
       {activeTab === 'home' && <AdminHomeTab stats={stats} />}
       {activeTab === 'content' && <AdminContentTab />}
       {activeTab === 'ai' && <AdminAITab />}
-      {activeTab === 'support' && <AdminSupportTab />}
-      {activeTab === 'payments' && <AdminPaymentsTab />}
-      {activeTab === 'admin' && <AdminStaffTab />}
-      {activeTab === 'newusers' && <AdminNewUsersTab />}
+      {activeTab === 'support' && <SupportSearchPanel />}
+      {activeTab === 'payments' && <PaymentsPanel />}
+      {activeTab === 'admin' && <AdminUsersPanel />}
+      {activeTab === 'newusers' && <NewUsersPanel />}
     </AdminLayout>
   );
 };

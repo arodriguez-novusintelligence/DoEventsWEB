@@ -1,5 +1,6 @@
-import { ShieldCheck, Mail, AlertCircle } from 'lucide-react';
+import { ShieldCheck, Mail, AlertCircle, CheckCircle2, Clock, XCircle, Loader2 } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
+import { useKyc, type KycStatus } from '@lovable/contexts/KycContext';
 
 interface KycCertificationViewProps {
   onBack?: () => void;
@@ -7,66 +8,114 @@ interface KycCertificationViewProps {
 
 const SUPPORT_EMAIL = 'support@doeventsapp.com';
 
-export const KycCertificationView = ({ onBack }: KycCertificationViewProps) => (
-  <div className="mx-auto min-h-screen max-w-lg bg-secondary pb-24">
-    <div className="rounded-b-3xl bg-gradient-to-br from-primary via-primary to-accent px-4 pb-10 pt-5 text-primary-foreground">
-      <div className="flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-foreground/15 backdrop-blur">
-          <ShieldCheck className="h-6 w-6" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-extrabold leading-tight">Organizador certificado (KYC)</h1>
-          <p className="text-xs text-primary-foreground/80">Verificación de identidad</p>
-        </div>
-      </div>
-    </div>
+const STATUS_ICONS: Record<KycStatus, typeof ShieldCheck> = {
+  pending: ShieldCheck,
+  in_review: Clock,
+  verified: CheckCircle2,
+  rejected: XCircle,
+};
 
-    <div className="px-4 pt-6 space-y-4">
-      <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-        <div className="flex items-start gap-3">
-          <AlertCircle className="h-5 w-5 shrink-0 text-amber-600 mt-0.5" />
+const STATUS_COLORS: Record<KycStatus, string> = {
+  pending: 'text-muted-foreground/40',
+  in_review: 'text-amber-500',
+  verified: 'text-emerald-500',
+  rejected: 'text-destructive',
+};
+
+export const KycCertificationView = ({ onBack }: KycCertificationViewProps) => {
+  const { status, loading, isCertified, statusLabel, refresh } = useKyc();
+  const StatusIcon = STATUS_ICONS[status];
+
+  return (
+    <div className="mx-auto min-h-screen max-w-lg bg-secondary pb-24">
+      <div className="rounded-b-3xl bg-gradient-to-br from-primary via-primary to-accent px-4 pb-10 pt-5 text-primary-foreground">
+        {onBack && (
+          <button
+            type="button"
+            onClick={onBack}
+            className="mb-3 text-sm font-medium text-primary-foreground/90"
+          >
+            ← Volver
+          </button>
+        )}
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-foreground/15 backdrop-blur">
+            <ShieldCheck className="h-6 w-6" />
+          </div>
           <div>
-            <p className="text-sm font-semibold text-amber-900">BACKEND_REQUIRED</p>
-            <p className="mt-1 text-xs text-amber-800">
-              El flujo completo de verificación KYC (documento, selfie y sello de organizador certificado)
-              requiere integración con el proveedor de identidad en backend. Esta pantalla no muestra datos simulados.
-            </p>
+            <h1 className="text-2xl font-extrabold leading-tight">Organizador certificado (KYC)</h1>
+            <p className="text-xs text-primary-foreground/80">Verificación de identidad</p>
           </div>
         </div>
       </div>
 
-      <div className="rounded-2xl bg-card p-6 text-center shadow-sm">
-        <ShieldCheck className="mx-auto h-12 w-12 text-muted-foreground/40" />
-        <h2 className="mt-4 text-base font-bold text-foreground">Certificación pendiente</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          No hay un estado de certificación disponible en tu perfil. Cuando el backend exponga el estado KYC,
-          aparecerá aquí automáticamente.
-        </p>
-        <p className="mt-3 text-xs text-muted-foreground">
-          La verificación KYC es opcional para publicar eventos, pero puede ser requerida para eventos de gran escala
-          o para obtener el sello ORGANIZADOR CERTIFICADO.
-        </p>
+      <div className="px-4 pt-6 space-y-4">
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        ) : (
+          <>
+            <div className="rounded-2xl bg-card p-6 text-center shadow-sm">
+              <StatusIcon className={`mx-auto h-12 w-12 ${STATUS_COLORS[status]}`} />
+              <h2 className="mt-4 text-base font-bold text-foreground">{statusLabel}</h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {isCertified
+                  ? 'Tu perfil muestra el sello de organizador certificado. Puedes publicar eventos de gran escala.'
+                  : status === 'in_review'
+                    ? 'Tu solicitud está siendo revisada. Te notificaremos cuando esté lista.'
+                    : status === 'rejected'
+                      ? 'Tu solicitud fue rechazada. Contacta soporte para más información.'
+                      : 'Completa la verificación para obtener el sello ORGANIZADOR CERTIFICADO.'}
+              </p>
+              {!isCertified && (
+                <p className="mt-3 text-xs text-muted-foreground">
+                  La certificación KYC es opcional para publicar eventos, pero puede ser requerida
+                  para eventos de gran escala.
+                </p>
+              )}
+            </div>
+
+            {!isCertified && (
+              <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 shrink-0 text-amber-600 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-semibold text-amber-900">BACKEND_REQUIRED</p>
+                    <p className="mt-1 text-xs text-amber-800">
+                      El envío de documentos (cédula, selfie) requiere integración con el proveedor
+                      KYC en backend. Esta pantalla muestra el estado real de tu perfil sin datos simulados.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full rounded-full"
+              onClick={() => refresh()}
+            >
+              Actualizar estado
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full rounded-full"
+              asChild
+            >
+              <a href={`mailto:${SUPPORT_EMAIL}?subject=Solicitud%20KYC%20Do.Events`}>
+                <Mail className="mr-2 h-4 w-4" />
+                Contactar soporte
+              </a>
+            </Button>
+          </>
+        )}
       </div>
-
-      <Button
-        type="button"
-        variant="outline"
-        className="w-full rounded-full"
-        asChild
-      >
-        <a href={`mailto:${SUPPORT_EMAIL}?subject=Solicitud%20KYC%20Do.Events`}>
-          <Mail className="mr-2 h-4 w-4" />
-          Contactar soporte
-        </a>
-      </Button>
-
-      {onBack && (
-        <Button type="button" variant="ghost" className="w-full" onClick={onBack}>
-          Volver
-        </Button>
-      )}
     </div>
-  </div>
-);
+  );
+};
 
 export default KycCertificationView;

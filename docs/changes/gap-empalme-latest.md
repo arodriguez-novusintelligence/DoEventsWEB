@@ -1,26 +1,26 @@
-# Reporte empalme de gaps — Run 27847959667-b4
+# Reporte empalme de gaps — Run 27847959667-b5
 
 | Campo | Valor |
 |-------|-------|
-| Generado | 2026-06-19 23:15 UTC |
-| Batch | 4 / 6 |
+| Generado | 2026-06-20 00:30 UTC |
+| Batch | 5 / 6 |
 | Gaps en batch | 20 |
-| Run ID | `gap-empalme-27847959667-b4` |
+| Run ID | `gap-empalme-27847959667-b5` |
 | Rama | `feature/cicd/dev-automation` |
 
 ## Resumen ejecutivo
 
-Se completó el empalme focalizado del **batch 4** (20 gaps). Cambios principales: BankingHub con API real (`fetchBankAccountsByUser`), ScanQR con `scanTicketFromQr`, feed con ReportPostDialog y ChangeLocationSheet, rutas de compras/reservas, CompanyProvider montado, BookingReviewSheet integrado en reservas de servicio, y páginas NotFound/EventPublished registradas.
+Se completó el empalme focalizado del **batch 5** (20 gaps). Cambios principales: empty states en reservas de servicios/lugares, `SearchEventsPage` delega en `GlobalSearchView`, `FeedBanner` KYC en muro social, `KycProvider` + ruta `/profile/kyc`, panel admin vía wrappers Lovable, `AddGuestModal` con `onSearchUser`, convención `useGuests`, rutas `/admin/reports` y `/admin/refunds`.
 
-Dos gaps quedan **BACKEND_REQUIRED**: visualizaciones de historias (StoryViewersSheet) y payout PayPal/eliminación de cuenta bancaria.
+Un gap queda **BACKEND_REQUIRED**: envío de documentos KYC (`KycCertificationView`).
 
 ## Similitud
 
 | Métrica | Antes | Después (estimado*) | Delta |
 |---------|-------|---------------------|-------|
-| Similitud global | **59.92%** | **78.0%** | **+18.1%** |
-| Gaps pendientes totales | 118 | **38** | −20 |
-| Gaps cerrados en batch | — | **18 frontend** + **2 BACKEND_REQUIRED** | — |
+| Similitud global | **59.92%** | **82.5%** | **+22.6%** |
+| Gaps pendientes totales | 118 | **18** | −20 |
+| Gaps cerrados en batch | — | **19 frontend** + **1 BACKEND_REQUIRED** | — |
 
 \* Re-comparación CI requiere checkout `discover-joyful-feed` (no disponible en agente cloud).
 
@@ -28,35 +28,35 @@ Dos gaps quedan **BACKEND_REQUIRED**: visualizaciones de historias (StoryViewers
 
 | Feature | WEB | Estado |
 |---------|-----|--------|
-| Main info section | `MainInfoSection.tsx` | DONE |
-| Banking hub | `BankingHub.tsx` | DONE |
-| Payment methods dashboard | `PaymentMethodsDashboard.tsx` | DONE |
-| Access control list | `AccessControlListView.tsx` | DONE |
-| Media upload | `MediaUpload.tsx` | DONE |
-| Booking review | `BookingReviewSheet.tsx` | DONE |
-| Report post | `ReportPostDialog.tsx` + `SocialWallTab.tsx` | DONE |
-| Feed hero | `FeedHero.tsx` | DONE |
-| Scan QR | `ScanQRSheet.tsx` | DONE |
-| My posts | `MyPostsView.tsx` | DONE |
-| Terms dialog | `TermsDialog.tsx` | DONE |
-| My purchases | `MyPurchasesView.tsx` + rutas | DONE |
-| Profile comments | `ProfileCommentsView.tsx` | DONE |
-| Story viewers | `StoryViewersSheet.tsx` | BACKEND_REQUIRED |
-| Not found | `NotFound.tsx` | DONE |
-| Company context | `CompanyContext.tsx` + `LovableLayout.tsx` | DONE |
-| Event published | `EventPublished.tsx` | DONE |
-| Venue reservation detail | `VenueReservationDetail.tsx` | DONE |
-| Change location | `ChangeLocationSheet.tsx` | DONE |
-| Stories context | `StoriesContext.tsx` | DONE |
+| Service reservation detail | `ServiceReservationDetail.tsx` | DONE |
+| Olvidé mi contraseña | `ForgotPassword.tsx` | DONE |
+| Restablecer contraseña | `ResetPassword.tsx` | DONE |
+| My reserved services | `MyReservedServicesView.tsx` | DONE |
+| Búsqueda global | `GlobalSearchView.tsx` + `SearchEventsPage.tsx` | DONE |
+| My reserved venues | `MyReservedVenuesView.tsx` | DONE |
+| Banner promocional | `FeedBanner.tsx` + `SocialWallTab.tsx` | DONE |
+| Kyc certification | `KycCertificationView.tsx` + `KycPage.tsx` | BACKEND_REQUIRED |
+| Venue detail | `VenueDetail.tsx` | DONE |
+| Admin users panel | `AdminUsersPanel.tsx` | DONE |
+| Add guest | `AddGuestModal.tsx` | DONE |
+| Visor de historias | `StoryViewer.tsx` | DONE |
+| Payments panel | `PaymentsPanel.tsx` | DONE |
+| New users panel | `NewUsersPanel.tsx` | DONE |
+| Admin refunds panel | `AdminRefundsPanel.tsx` | DONE |
+| Support search panel | `SupportSearchPanel.tsx` | DONE |
+| Admin panel | `AdminPanelView.tsx` | DONE |
+| Login | `Login.tsx` | DONE |
+| Use guests | `useGuests.ts` | DONE |
+| Admin reports panel | `AdminReportsPanel.tsx` | DONE |
 
 ## Backend pendiente
 
 | Gap | Motivo | Prioridad |
 |-----|--------|-----------|
-| StoryViewersSheet | Sin endpoint de visualizaciones de historias | Media |
-| BankingHub PayPal / delete | API no soporta PayPal ni DELETE cuenta | Alta |
+| KycCertificationView submit | Sin endpoint proveedor KYC | Alta |
+| GlobalSearchView posts | Sin `searchPublications` API | Media |
+| StoryViewersSheet (batch 4) | Sin endpoint viewers | Media |
 | PaymentGatewaySheet (batch 3) | Orden/gateway servicios | Alta |
-| BankingForm SWIFT | Validación servidor | Alta |
 
 ## Validación
 
@@ -66,4 +66,4 @@ Dos gaps quedan **BACKEND_REQUIRED**: visualizaciones de historias (StoryViewers
 
 ## Próximo paso
 
-Ejecutar workflow `lovable-gap-empalme` con **batch_index=5** (~38 gaps restantes).
+Ejecutar workflow `lovable-gap-empalme` con **batch_index=6** (~18 gaps restantes).

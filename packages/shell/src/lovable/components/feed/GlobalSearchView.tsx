@@ -206,7 +206,7 @@ export const GlobalSearchView = ({ onBack }: GlobalSearchViewProps) => {
                     <button
                       type="button"
                       className="flex flex-1 min-w-0 items-center gap-3 text-left"
-                      onClick={() => userId && navigate(`/profile/${userId}`)}
+                      onClick={() => userId && navigate(`/users/${userId}`)}
                     >
                       <UserAvatar
                         name={displayName}

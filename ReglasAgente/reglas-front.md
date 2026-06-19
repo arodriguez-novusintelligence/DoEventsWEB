@@ -83,6 +83,22 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-20 gap-empalme batch 5 (run 27847959667-b5)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| ServiceReservationDetail empty state | VISUAL | Sí | `purchases/ServiceReservationDetail.tsx` | Paridad con VenueReservationDetail |
+| MyReserved* empty states | VISUAL | Sí | `purchases/MyReservedServicesView.tsx`, `MyReservedVenuesView.tsx` | Icono + copy descriptivo |
+| GlobalSearchView cableado | Navegación | Sí | `SearchEventsPage.tsx` | Delega en componente Lovable |
+| FeedBanner KYC en feed | Integración | Sí | `SocialWallTab.tsx` | CTA `/profile/kyc` sin mocks |
+| KycProvider montado | Integración | Sí | `LovableLayout.tsx`, `KycPage.tsx` | Estado real `fetchUserById` |
+| KYC submit BACKEND_REQUIRED | Bloqueo | Parcial | `feed/KycCertificationView.tsx` | Sin simulación de envío |
+| Admin panels Lovable | Navegación | Sí | `AdminPanelPage.tsx`, `App.tsx` | Wrappers + rutas legacy |
+| AddGuestModal onSearchUser | FRONTEND_LOGIC | Sí | `guests/AddGuestModal.tsx` | Matching vía hook bridge |
+| useGuests convención | Integración | Sí | `GuestsHubPage.tsx` | `@lovable/hooks/useGuests` |
+| Auth re-export mfe-auth | Navegación | Sí | `Login.tsx`, `ForgotPassword.tsx`, `ResetPassword.tsx` | Sin duplicar lógica RISKY |
+| Batch 5 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-19 gap-empalme batch 4 (run 27847959667-b4)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

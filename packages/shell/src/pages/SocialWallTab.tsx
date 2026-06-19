@@ -91,6 +91,8 @@ import {
 } from '@doevents/shared';
 
 import FeedHero from '@lovable/components/feed/FeedHero';
+import FeedBanner from '@lovable/components/feed/FeedBanner';
+import { useKyc } from '@lovable/contexts/KycContext';
 import FeedVenuesCarousel from '@lovable/components/feed/FeedVenuesCarousel';
 import { ReportPostDialog } from '@lovable/components/feed/ReportPostDialog';
 import { ChangeLocationSheet } from '@lovable/components/feed/ChangeLocationSheet';
@@ -105,7 +107,7 @@ import RepostSheet from '@lovable/components/feed/RepostSheet';
 import { useFeedStories } from '../lovable-bridge/useFeedStories';
 import { useActiveStoryAuthors } from '../contexts/StoriesContext';
 import { CreateStorySheet } from '../components/CreateStorySheet';
-import { StoryViewer } from '../components/StoryViewer';
+import { StoryViewer } from '@lovable/components/feed/StoryViewer';
 
 
 
@@ -152,6 +154,7 @@ export const SocialWallTab: React.FC = () => {
   const { showToast } = useToast();
 
   const userId = useSelector((s: RootState) => s.auth.idUser);
+  const { isCertified, loading: kycLoading } = useKyc();
 
   const storedLocation = getStoredUserLocation();
   const cacheKey = useMemo(
@@ -840,6 +843,16 @@ export const SocialWallTab: React.FC = () => {
           if (authorId) setStoryViewerUserId(authorId);
         }}
       />
+
+      {!kycLoading && !isCertified && userId && (
+        <FeedBanner
+          title="Organizador certificado"
+          message="Obtén el sello KYC y desbloquea eventos de gran escala con mayor visibilidad."
+          actionLabel="Ver certificación"
+          onAction={() => navigate('/profile/kyc')}
+          className="mt-3"
+        />
+      )}
 
       <div className="mx-auto max-w-lg">
         <FeedVenuesCarousel

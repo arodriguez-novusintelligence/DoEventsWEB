@@ -313,9 +313,12 @@ export function AddGuestModal({
     }
     setIsSearching(true);
     try {
-      const results = searchResultsToGuests(await searchUsers(searchUsername.trim()));
+      const matched = await onSearchUser(searchUsername.trim());
+      const results = matched
+        ? [matched]
+        : searchResultsToGuests(await searchUsers(searchUsername.trim()));
       setSearchResults(results);
-      setFoundUser(results[0] ?? null);
+      setFoundUser(matched ?? results[0] ?? null);
       setSelectedSearchIds(new Set());
       if (!results.length) {
         toast({

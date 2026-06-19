@@ -1,1 +1,5 @@
-export { AdminPanelPage as AdminPanelView, default } from '../../../pages/admin/AdminPanelPage';
+export {
+  AdminPanelPage as AdminPanelView,
+  AdminLegacyRedirect,
+  default,
+} from '../../../pages/admin/AdminPanelPage';

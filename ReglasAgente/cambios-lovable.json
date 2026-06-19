@@ -838,6 +838,68 @@
         "Scan QR cámara sin librería decode — solo manual",
         "Flujos acceso/pago RISKY — revisión humana recomendada"
       ],
+    {
+      "id": "gap-empalme-27847959667-b5",
+      "timestamp": "2026-06-20 00:30 UTC",
+      "workflowRunId": "27847959667-b5",
+      "gapBatch": 20,
+      "designSimilarityPercentBefore": 59.92,
+      "designSimilarityPercentAfter": 82.5,
+      "designSimilarityTarget": 98.0,
+      "summary": "Batch 5: compras/reservas, búsqueda global, feed KYC banner, admin panels, guests hook, rutas KYC/admin legacy",
+      "changeTypes": ["VISUAL", "FRONTEND_LOGIC"],
+      "gapsClosed": [
+        "src/components/purchases/ServiceReservationDetail.tsx",
+        "src/pages/ForgotPassword.tsx",
+        "src/pages/ResetPassword.tsx",
+        "src/components/purchases/MyReservedServicesView.tsx",
+        "src/components/feed/GlobalSearchView.tsx",
+        "src/components/purchases/MyReservedVenuesView.tsx",
+        "src/components/feed/FeedBanner.tsx",
+        "src/pages/VenueDetail.tsx",
+        "src/components/admin/AdminUsersPanel.tsx",
+        "src/components/guests/AddGuestModal.tsx",
+        "src/components/feed/StoryViewer.tsx",
+        "src/components/admin/PaymentsPanel.tsx",
+        "src/components/admin/NewUsersPanel.tsx",
+        "src/components/admin/AdminRefundsPanel.tsx",
+        "src/components/admin/SupportSearchPanel.tsx",
+        "src/components/admin/AdminPanelView.tsx",
+        "src/pages/Login.tsx",
+        "src/hooks/useGuests.ts",
+        "src/components/admin/AdminReportsPanel.tsx"
+      ],
+      "gapsBackendRequired": [
+        "src/components/feed/KycCertificationView.tsx"
+      ],
+      "webFilesModified": [
+        "packages/shell/src/lovable/components/purchases/ServiceReservationDetail.tsx",
+        "packages/shell/src/lovable/components/purchases/MyReservedServicesView.tsx",
+        "packages/shell/src/lovable/components/purchases/MyReservedVenuesView.tsx",
+        "packages/shell/src/lovable/components/feed/GlobalSearchView.tsx",
+        "packages/shell/src/lovable/components/feed/FeedBanner.tsx",
+        "packages/shell/src/lovable/components/feed/KycCertificationView.tsx",
+        "packages/shell/src/lovable/components/admin/AdminPanelView.tsx",
+        "packages/shell/src/lovable/components/guests/AddGuestModal.tsx",
+        "packages/shell/src/pages/SearchEventsPage.tsx",
+        "packages/shell/src/pages/KycPage.tsx",
+        "packages/shell/src/pages/SocialWallTab.tsx",
+        "packages/shell/src/pages/GuestsHubPage.tsx",
+        "packages/shell/src/pages/admin/AdminPanelPage.tsx",
+        "packages/shell/src/lovable-bridge/LovableLayout.tsx",
+        "packages/shell/src/App.tsx"
+      ],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "testStatus": "SKIPPED",
+      "pendingRisks": [
+        "Similitud global estimada 82.5% vs objetivo 98%",
+        "Re-comparación CI con discover-joyful-feed pendiente",
+        "KYC submit flow requiere endpoint proveedor identidad",
+        "Búsqueda publicaciones sin endpoint dedicado (filtro cliente)",
+        "Auth pages re-export mfe-auth — similitud visual limitada por diseño"
+      ],
       "agentStatus": "finished"
     }
   ]
