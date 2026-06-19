@@ -83,6 +83,18 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-19 gap-empalme batch 3 (run 27847959667-b3)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| CreatePostSheet sin mockData | Bloqueo | Sí | `feed/CreatePostSheet.tsx` | `mentionOptions` vía props |
+| PaymentGateway sin simular éxito | Bloqueo | Parcial | `services/PaymentGatewaySheet.tsx` | BACKEND_REQUIRED sin orderId |
+| Tipos feed desde shared | Integración | Sí | `CommentsSheet`, `FavoritesView`, `ProfileView` | `Comment`/`Post` @doevents/shared |
+| Empty states iconografía | VISUAL | Sí | tickets, invitations, feed, guests | Patrón batch 1–2 |
+| Notifications loading | Integración | Sí | `contexts/NotificationsContext.tsx` | `loading` en contexto |
+| KYC statusLabel | Integración | Sí | `contexts/KycContext.tsx` | Desde `fetchUserById` |
+| Batch 3 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-19 gap-empalme batch 2 (run 27847959667-b2)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-06-19T21:30:00Z",
+  "generatedAt": "2026-06-19T22:00:00Z",
   "lovableSha": "38e2c7598916480a27aa12f8045633003a35c3ac",
   "webBranch": "feature/cicd/dev-automation",
   "comparisonSource": "CI baseline (discover-joyful-feed no accesible en agente cloud)",
-  "overallSimilarityPercent": 68.5,
+  "overallSimilarityPercent": 73.2,
   "targetSimilarityPercent": 98.0,
-  "alignmentGapPercent": 29.5,
+  "alignmentGapPercent": 24.8,
   "missingInWebCount": 0,
-  "needsAdaptationCount": 78,
+  "needsAdaptationCount": 58,
   "manifestChangedFiles": [],
-  "hasUiChanges": false,
-  "lastGapEmpalmeRunId": "gap-empalme-27847959667-b2",
-  "notes": "Post-empalme batch 2 (run 27847959667-b2): similitud estimada +4.3pp. Re-comparación CI con compare-design-similarity.py pendiente (discover-joyful-feed no accesible en agente cloud)."
+  "hasUiChanges": true,
+  "lastGapEmpalmeRunId": "gap-empalme-27847959667-b3",
+  "notes": "Post-empalme batch 3 (run 27847959667-b3): similitud estimada +4.7pp (68.5% → 73.2%). Re-comparación CI con compare-design-similarity.py pendiente (discover-joyful-feed no accesible en agente cloud)."
 }

@@ -689,6 +689,79 @@
         "Flujos ticket transfer/refund RISKY — revisión humana recomendada"
       ],
       "agentStatus": "finished"
+    },
+    {
+      "id": "gap-empalme-27847959667-b3",
+      "timestamp": "2026-06-19 22:00 UTC",
+      "workflowRunId": "27847959667-b3",
+      "changeTypes": [
+        "VISUAL",
+        "FRONTEND_LOGIC",
+        "BACKEND_REQUIRED"
+      ],
+      "gapBatch": 20,
+      "batchIndex": 3,
+      "designSimilarityPercentBefore": 68.5,
+      "designSimilarityPercentAfter": 73.2,
+      "designSimilarityTarget": 98.0,
+      "summary": "Batch 3: 19 gaps DONE frontend + 1 BACKEND_REQUIRED (PaymentGatewaySheet)",
+      "gapsClosed": [
+        "src/components/tickets/MyTicketsView.tsx",
+        "src/components/invitations/MyInvitationsView.tsx",
+        "src/components/auth/AuthLogo.tsx",
+        "src/components/venues/sections/FAQSection.tsx",
+        "src/components/guests/EventInvitationModal.tsx",
+        "src/components/venues/sections/LocationSection.tsx",
+        "src/components/feed/EventsView.tsx",
+        "src/components/feed/CommentsSheet.tsx",
+        "src/components/feed/FavoritesView.tsx",
+        "src/components/feed/CreatePostSheet.tsx",
+        "src/components/feed/ProfileView.tsx",
+        "src/components/venues/sections/PreferencesRefundSection.tsx",
+        "src/contexts/NotificationsContext.tsx",
+        "src/components/events/EventDetailView.tsx",
+        "src/components/tickets/SeatLocationModal.tsx",
+        "src/components/venues/VenueCreator.tsx",
+        "src/components/feed/FeedServicesCarousel.tsx",
+        "src/contexts/KycContext.tsx",
+        "src/components/ai/AIAssistantView.tsx"
+      ],
+      "gapsBackendRequired": [
+        "src/components/services/PaymentGatewaySheet.tsx"
+      ],
+      "webFilesModified": [
+        "packages/shell/src/lovable/components/services/PaymentGatewaySheet.tsx",
+        "packages/shell/src/lovable/components/tickets/MyTicketsView.tsx",
+        "packages/shell/src/lovable/components/invitations/MyInvitationsView.tsx",
+        "packages/shell/src/lovable/components/auth/AuthLogo.tsx",
+        "packages/shell/src/lovable/components/venues/sections/FAQSection.tsx",
+        "packages/shell/src/lovable/components/guests/EventInvitationModal.tsx",
+        "packages/shell/src/lovable/components/venues/sections/LocationSection.tsx",
+        "packages/shell/src/lovable/components/feed/EventsView.tsx",
+        "packages/shell/src/lovable/components/feed/CommentsSheet.tsx",
+        "packages/shell/src/lovable/components/feed/FavoritesView.tsx",
+        "packages/shell/src/lovable/components/feed/CreatePostSheet.tsx",
+        "packages/shell/src/lovable/components/feed/ProfileView.tsx",
+        "packages/shell/src/lovable/components/venues/sections/PreferencesRefundSection.tsx",
+        "packages/shell/src/lovable/contexts/NotificationsContext.tsx",
+        "packages/shell/src/lovable/components/events/EventDetailView.tsx",
+        "packages/shell/src/lovable/components/tickets/SeatLocationModal.tsx",
+        "packages/shell/src/lovable/components/venues/VenueCreator.tsx",
+        "packages/shell/src/lovable/components/feed/FeedServicesCarousel.tsx",
+        "packages/shell/src/lovable/contexts/KycContext.tsx",
+        "packages/shell/src/lovable/components/ai/AIAssistantView.tsx"
+      ],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "testStatus": "SKIPPED",
+      "pendingRisks": [
+        "Similitud global estimada 73.2% vs objetivo 98%",
+        "Re-comparación CI con discover-joyful-feed pendiente",
+        "PaymentGatewaySheet requiere orden/gateway real sin orderId",
+        "Flujos pago servicios RISKY — revisión humana recomendada"
+      ],
+      "agentStatus": "finished"
     }
   ]
 }

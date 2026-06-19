@@ -1,26 +1,26 @@
-# Reporte empalme de gaps — Run 27847959667-b2
+# Reporte empalme de gaps — Run 27847959667-b3
 
 | Campo | Valor |
 |-------|-------|
-| Generado | 2026-06-19 21:30 UTC |
-| Batch | 2 / 6 |
+| Generado | 2026-06-19 22:00 UTC |
+| Batch | 3 / 6 |
 | Gaps en batch | 20 |
-| Run ID | `gap-empalme-27847959667-b2` |
+| Run ID | `gap-empalme-27847959667-b3` |
 | Rama | `feature/cicd/dev-automation` |
 
 ## Resumen ejecutivo
 
-Se completó el empalme focalizado del **batch 2** (20 gaps con similitud &lt;98%). Cambios principales: estados vacío/carga en mapa y chat, header con avatar, wizard con pasos completados, FollowersSheet con API real de seguimiento, eliminación de mocks en BookingSheet, y flujos de tickets con indicadores de progreso visual.
+Se completó el empalme focalizado del **batch 3** (20 gaps con similitud &lt;98%). Cambios principales: eliminación de mocks en CreatePostSheet, estados vacío/carga con iconografía en tickets/invitaciones/feed, PaymentGatewaySheet con progreso visual y sin simulación de pago, contextos Notifications/KYC enriquecidos, y polish en perfil y asistente IA.
 
-Dos gaps quedan **BACKEND_REQUIRED**: persistencia bancaria en PublishFlowModal y catálogo de servicios adicionales en BookingSheet.
+Un gap queda **BACKEND_REQUIRED**: pasarela de pago de servicios cuando no existe `orderId`.
 
 ## Similitud
 
 | Métrica | Antes | Después (estimado*) | Delta |
 |---------|-------|---------------------|-------|
-| Similitud global | **64.2%** | **68.5%** | **+4.3%** |
-| Gaps pendientes totales | 98 | **78** | −20 |
-| Gaps cerrados en batch | — | **18 frontend** + **2 BACKEND_REQUIRED** | — |
+| Similitud global | **68.5%** | **73.2%** | **+4.7%** |
+| Gaps pendientes totales | 78 | **58** | −20 |
+| Gaps cerrados en batch | — | **19 frontend** + **1 BACKEND_REQUIRED** | — |
 
 \* Re-comparación CI requiere checkout `discover-joyful-feed` (no disponible en agente cloud).
 
@@ -28,35 +28,35 @@ Dos gaps quedan **BACKEND_REQUIRED**: persistencia bancaria en PublishFlowModal 
 
 | Feature | WEB | Estado |
 |---------|-----|--------|
-| Map | `MapView.tsx` | DONE |
-| Top header | `TopHeader.tsx` | DONE |
-| Edit guest | `EditGuestModal.tsx` | DONE |
-| Profile gallery | `ProfileGallery.tsx` | DONE |
-| Publish flow | `PublishFlowModal.tsx` | BACKEND_REQUIRED |
-| Step event details | `StepEventDetails.tsx` | DONE |
-| Followers | `FollowersSheet.tsx` | DONE |
-| My venues | `MyVenuesView.tsx` | DONE |
-| Create event | `CreateEventView.tsx` | DONE |
-| Post card | `PostCard.tsx` | DONE |
-| Transfer ticket | `TransferTicketFlow.tsx` | DONE |
-| Step access control | `StepAccessControl.tsx` | DONE |
-| Booking sheet | `BookingSheet.tsx` | BACKEND_REQUIRED |
-| Service detail | `ServiceDetailView.tsx` | DONE |
-| Stats event list | `StatsEventListView.tsx` | DONE |
-| Contact import | `ContactImportModal.tsx` | DONE |
-| AI assistant FAB | `AIAssistantFAB.tsx` | DONE |
-| Refund ticket | `RefundTicketFlow.tsx` | DONE |
-| Ticket detail | `TicketDetailView.tsx` | DONE |
-| Messages list | `MessagesListView.tsx` | DONE |
+| Payment gateway | `PaymentGatewaySheet.tsx` | BACKEND_REQUIRED |
+| My tickets | `MyTicketsView.tsx` | DONE |
+| My invitations | `MyInvitationsView.tsx` | DONE |
+| Auth logo | `AuthLogo.tsx` | DONE |
+| FAQ section | `FAQSection.tsx` | DONE |
+| Event invitation | `EventInvitationModal.tsx` | DONE |
+| Location section | `LocationSection.tsx` | DONE |
+| Events | `EventsView.tsx` | DONE |
+| Comments | `CommentsSheet.tsx` | DONE |
+| Favorites | `FavoritesView.tsx` | DONE |
+| Create post | `CreatePostSheet.tsx` | DONE |
+| Profile | `ProfileView.tsx` | DONE |
+| Preferences refund | `PreferencesRefundSection.tsx` | DONE |
+| Notifications context | `NotificationsContext.tsx` | DONE |
+| Event detail | `EventDetailView.tsx` | DONE |
+| Seat location | `SeatLocationModal.tsx` | DONE |
+| Venue creator | `VenueCreator.tsx` | DONE |
+| Feed services carousel | `FeedServicesCarousel.tsx` | DONE |
+| KYC context | `KycContext.tsx` | DONE |
+| AI assistant | `AIAssistantView.tsx` | DONE |
 
 ## Backend pendiente
 
 | Gap | Motivo | Prioridad |
 |-----|--------|-----------|
-| PublishFlowModal banking | Persistencia cuenta bancaria post-publicación | Alta |
-| BookingSheet add-ons | Catálogo servicios adicionales por API | Media |
-| Banking form / hub | Persistencia métodos de pago (batch 1) | Alta |
-| KYC, chat moderation, password reset | Documentados en runs anteriores | Alta/Media |
+| PaymentGatewaySheet | Orden de pago / gateway real para reservas de servicio | Alta |
+| PublishFlowModal banking | Persistencia cuenta bancaria (batch 2) | Alta |
+| BookingSheet add-ons | Catálogo servicios adicionales (batch 2) | Media |
+| KYC submit | Certificación completa (runs anteriores) | Alta |
 
 ## Validación
 
@@ -66,4 +66,4 @@ Dos gaps quedan **BACKEND_REQUIRED**: persistencia bancaria en PublishFlowModal 
 
 ## Próximo paso
 
-Ejecutar workflow `lovable-gap-empalme` con **batch_index=3** (20 gaps restantes de ~78).
+Ejecutar workflow `lovable-gap-empalme` con **batch_index=4** (~58 gaps restantes).
