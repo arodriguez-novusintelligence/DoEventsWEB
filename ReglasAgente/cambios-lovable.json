@@ -491,6 +491,30 @@
         "Re-comparación CI con compare-design-similarity.py no disponible en agente cloud"
       ],
       "agentStatus": "APPLIED"
+    },
+    {
+      "id": "prepare-e1cc7eaf",
+      "lovableSha": "e1cc7eafff46b30f5210f46cbcc2e6eb14687053",
+      "before": "HEAD~1",
+      "timestamp": "2026-06-19 20:53 UTC",
+      "workflowRunId": "27847959667",
+      "changeTypes": [
+        "VISUAL"
+      ],
+      "designSimilarityPercent": 59.92,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 38.08,
+      "requiresDesignAlignment": true,
+      "summary": "Manifiesto: UI=False, reglas=False, 0 archivo(s); similitud diseño=59.92%",
+      "changedFilesLovable": [],
+      "webFilesModified": [],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "pending",
+      "pendingRisks": [
+        "Adaptacion pendiente por agente Cursor"
+      ],
+      "agentStatus": "pending"
     }
   ]
 }
