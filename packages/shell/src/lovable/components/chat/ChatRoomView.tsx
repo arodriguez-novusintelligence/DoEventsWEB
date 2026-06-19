@@ -23,6 +23,7 @@ interface ChatRoomViewProps {
   canMessage?: boolean;
   canBroadcast?: boolean;
   isReadOnly?: boolean;
+  canModerate?: boolean;
 }
 
 /* ── Attendee bubble ── */
@@ -109,7 +110,7 @@ const MessageContextMenu = ({ message, position, isAdmin, onClose, onReply, onCo
           <Trash2 className="h-4 w-4" /> Eliminar
         </button>
       )}
-      {!message.isOwn && isAdmin && (
+      {!message.isOwn && isAdmin && canModerate && (
         <button onClick={onKick} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-destructive hover:bg-accent">
           <UserMinus className="h-4 w-4" /> Expulsar usuario
         </button>
@@ -138,6 +139,7 @@ const ChatRoomView = ({
   canMessage = true,
   canBroadcast,
   isReadOnly = false,
+  canModerate = false,
 }: ChatRoomViewProps) => {
   const [newMessage, setNewMessage] = useState('');
   const [contextMenu, setContextMenu] = useState<{ message: ChatMessage; position: { x: number; y: number } } | null>(null);
@@ -331,7 +333,7 @@ const ChatRoomView = ({
         </div>
 
         {/* Admin settings panel */}
-        {showSettings && currentUserIsAdmin && !isReadOnly && (
+        {showSettings && currentUserIsAdmin && !isReadOnly && canModerate && (
           <div className="mb-4 rounded-2xl border border-border bg-card p-4 shadow-sm">
             <h3 className="mb-3 text-sm font-bold text-foreground">Gestión de participantes</h3>
             <div className="space-y-2">
@@ -450,7 +452,11 @@ const ChatRoomView = ({
           onCopy={handleCopy}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          onKick={() => { toast(`${contextMenu.message.senderName} ha sido expulsado del chat`); setContextMenu(null); }}
+          onKick={() => {
+            if (!canModerate) return;
+            toast(`${contextMenu.message.senderName} ha sido expulsado del chat`);
+            setContextMenu(null);
+          }}
         />
       )}
     </div>

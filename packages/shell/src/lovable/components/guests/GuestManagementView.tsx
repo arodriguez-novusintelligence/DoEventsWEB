@@ -44,6 +44,7 @@ const GuestManagementView = ({ onBack, guestsController, userId, initialEventId,
   );
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [dragged, setDragged] = useState<Guest | null>(null);
+  // Invitaciones enviadas en esta sesión (sin persistencia local ficticia)
   const [invitedCounts, setInvitedCounts] = useState<Record<string, number>>({});
   const [addGuestOpen, setAddGuestOpen] = useState(false);
   const [junkPurged, setJunkPurged] = useState(false);
@@ -65,17 +66,6 @@ const GuestManagementView = ({ onBack, guestsController, userId, initialEventId,
       if (initialEventId) setPresetEventId(initialEventId);
     }
   }, [autoOpenInvitation, initialEventId]);
-
-  // Load persisted invited counts
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem('guest-invited-counts-v1');
-      if (raw) setInvitedCounts(JSON.parse(raw));
-    } catch {}
-  }, []);
-  useEffect(() => {
-    try { localStorage.setItem('guest-invited-counts-v1', JSON.stringify(invitedCounts)); } catch {}
-  }, [invitedCounts]);
 
   const handleInvitationsSent = (ids: string[], _eventId: string) => {
     setInvitedCounts(prev => {

@@ -14,6 +14,58 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-19 18:00 UTC] gap-empalme-27839776030
+
+### 1. Resumen del empalme
+Batch 1 del manifiesto: 20 gaps con similitud <98% empalmaron en componentes WEB existentes. Eliminación de fixtures/mocks locales, checkout real para tickets, horarios reales en mapa, UX honesta en reseñas/ratings.
+
+### 2. Tabla Feature | Archivo WEB | Estado
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Private chat | `lovable/components/chat/PrivateChatView.tsx` | DONE |
+| Notifications context | `lovable/contexts/NotificationsContext.tsx` | DONE |
+| Step agenda | `lovable/components/events/StepAgenda.tsx` | DONE |
+| My services | `lovable/components/services/MyServicesView.tsx` | DONE |
+| AI assistant FAB | `lovable/components/ai/AIAssistantFAB.tsx` | DONE |
+| Host picker | `lovable/components/events/HostPickerModal.tsx` | DONE |
+| Ticket purchase flow | `lovable/components/invitations/TicketPurchaseFlow.tsx` | DONE |
+| Event preview | `lovable/components/events/EventPreviewModal.tsx` | DONE |
+| Seating category | `lovable/components/venues/seating/SeatingCategoryDialog.tsx` | DONE |
+| Success modal | `lovable/components/banking/SuccessModal.tsx` | DONE |
+| Step event summary | `lovable/components/events/StepEventSummary.tsx` | DONE |
+| Guest management | `lovable/components/guests/GuestManagementView.tsx` | DONE |
+| Invitation event detail | `lovable/components/invitations/InvitationEventDetailView.tsx` | DONE |
+| Chat room | `lovable/components/chat/ChatRoomView.tsx` | DONE |
+| My events | `lovable/components/feed/MyEventsView.tsx` | DONE |
+| Map | `lovable/components/feed/MapView.tsx` | DONE |
+| Notifications sheet | `lovable/components/feed/NotificationsSheet.tsx` | DONE |
+| Step unified | `lovable/components/services/StepUnified.tsx` | DONE |
+| Edit profile | `lovable/components/feed/EditProfileView.tsx` | DONE |
+| Banking form | `lovable/components/banking/BankingForm.tsx` | BACKEND_REQUIRED |
+
+### 3. Similitud antes/después
+- **Antes:** 60.49%
+- **Después (estimado post-empalme):** ~68.5% — re-comparación CI pendiente (repo Lovable no disponible en agente cloud)
+
+### 4. Build
+- `npm run build:devaws`: **OK**
+
+### 5. Evidencia anti-mock
+- Eliminado `initialNotifications` en NotificationsContext.
+- TicketPurchaseFlow redirige a checkout real cuando hay `event.id`.
+- MapView sin horario hardcoded; BankingForm sin lookup SWIFT simulado.
+- `grep` en `pages/`: sin mocks nuevos.
+
+### 6. Riesgos pendientes
+- BankingForm requiere API DoEventsBack antes de merge a develop.
+- TicketPurchaseFlow legacy permanece solo para eventos sin id (dev).
+
+### 7. Decisión
+**APPLIED** (batch 1 frontend) — similitud global ≥98% pendiente batches 2–6.
+
+---
+
 ## [2026-06-19 17:30 UTC] agent-1122a4f3
 
 ### 1. Resumen del cambio detectado

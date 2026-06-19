@@ -161,9 +161,11 @@ const Card = ({
         </p>
 
         <div className="mt-2 flex items-center justify-between border-t border-border/60 pt-2">
+          {ratingCount > 0 ? (
+          <>
           <div className="flex items-center gap-1 text-primary">
             <Star className="h-3.5 w-3.5 fill-primary" strokeWidth={2} />
-            <span className="text-xs font-bold">{ratingCount ? avgRating.toFixed(1) : '0.0'}</span>
+            <span className="text-xs font-bold">{avgRating.toFixed(1)}</span>
           </div>
           <button
             type="button"
@@ -174,6 +176,10 @@ const Card = ({
             <MessageSquare className="h-3.5 w-3.5" strokeWidth={2} />
             <span className="text-xs font-semibold">{commentCount}</span>
           </button>
+          </>
+          ) : (
+          <p className="text-[11px] text-muted-foreground">Sin calificaciones aún</p>
+          )}
         </div>
       </div>
     </article>

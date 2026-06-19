@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { ChevronLeft, CornerUpLeft, Copy, Pencil, Trash2 } from 'lucide-react';
+import { ChevronLeft, CornerUpLeft, Copy, Pencil, Trash2, X } from 'lucide-react';
 import ChatRichMessage from './ChatRichMessage';
 import ChatComposeBar from './ChatComposeBar';
 import { Avatar, AvatarFallback, AvatarImage } from '@lovable/components/ui/avatar';
@@ -227,7 +227,11 @@ const PrivateChatView = ({
           {contextMenu.message.isOwn && (
             <button
               onClick={() => {
-                onUpdateMessages(chat.id, chat.messages.filter((m) => m.id !== contextMenu.message.id));
+                if (onDeleteMessage) {
+                  onDeleteMessage(contextMenu.message.id);
+                } else if (onUpdateMessages) {
+                  onUpdateMessages(chat.id, chat.messages.filter((m) => m.id !== contextMenu.message.id));
+                }
                 toast('Mensaje eliminado');
                 setContextMenu(null);
               }}

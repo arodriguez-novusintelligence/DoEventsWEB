@@ -11,6 +11,7 @@ export interface MapItemData {
   lat: number;
   lng: number;
   date?: string;
+  timeRange?: string;
   location?: string;
   rating?: number;
   handle?: string;
@@ -51,6 +52,9 @@ export function feedEventsToMapItems(events: FeedEventItem[]): MapItemData[] {
         lat: pos.lat,
         lng: pos.lng,
         date: event.fechaIni,
+        timeRange: event.horaIni && event.horaFin
+          ? `${event.horaIni} - ${event.horaFin}`
+          : event.horaIni || undefined,
         location,
         refId: event.id,
       };

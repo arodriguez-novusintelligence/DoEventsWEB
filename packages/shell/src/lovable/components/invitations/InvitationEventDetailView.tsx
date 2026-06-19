@@ -150,6 +150,7 @@ const InvitationEventDetailView = ({
   contentBottomPadding = 'pb-32',
   servicesSection,
 }: Props) => {
+  const navigate = useNavigate();
   const images = event.images?.length ? event.images : (event.image ? [event.image] : []);
   const agenda = event.agenda ?? [];
   const venue = event.venue ?? { name: 'Lugar del evento', address: '—', images: [] as string[] };
@@ -168,7 +169,7 @@ const InvitationEventDetailView = ({
 
   if (showFAQ) return <EventFAQView onBack={() => setShowFAQ(false)} />;
   if (showPolicy) return <RefundPolicyView onBack={() => setShowPolicy(false)} />;
-  if (showPurchase && !onPurchase) {
+  if (showPurchase && !onPurchase && !event.id) {
     return <TicketPurchaseFlow event={event} onBack={() => { setShowPurchase(false); onPurchaseEnd?.(); }} onSuccess={onSuccess} />;
   }
 
@@ -493,6 +494,10 @@ const InvitationEventDetailView = ({
                 if (onPurchase) {
                   onPurchaseStart?.();
                   onPurchase();
+                  onPurchaseEnd?.();
+                } else if (event.id) {
+                  onPurchaseStart?.();
+                  navigate(`/events/${event.id}/checkout`);
                   onPurchaseEnd?.();
                 } else {
                   setShowPurchase(true);

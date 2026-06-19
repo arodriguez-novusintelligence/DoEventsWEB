@@ -153,7 +153,7 @@ const NotificationRow = ({
         }
       }}
     >
-      <div className={cn('flex h-10 w-10 shrink-0 items-center justify-center rounded-full', bg)}>
+      <div className={cn('flex h-10 w-10 shrink-0 items-center justify-center rounded-full', bg, !notification.read && 'ring-2 ring-primary/40')}>
         <Icon className={cn('h-5 w-5', color)} fill={notification.type === 'like' ? 'currentColor' : 'none'} />
       </div>
 

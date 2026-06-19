@@ -309,6 +309,7 @@ const StepUnified = ({
     <CollapsibleTrigger
       className="flex w-full items-center gap-3 rounded-2xl bg-card px-4 py-4 shadow-sm transition-colors hover:bg-accent/50"
       onClick={() => toggleSection(sectionKey)}
+      aria-expanded={openSections[sectionKey]}
     >
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
         <Icon className="h-5 w-5 text-primary" />

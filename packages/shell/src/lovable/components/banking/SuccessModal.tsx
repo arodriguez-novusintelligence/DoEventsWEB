@@ -15,9 +15,10 @@ interface SuccessModalProps {
   isOpen: boolean;
   onClose: () => void;
   isInternational?: boolean;
+  onSetDefault?: (isDefault: boolean) => void;
 }
 
-export default function SuccessModal({ isOpen, onClose, isInternational = false }: SuccessModalProps) {
+export default function SuccessModal({ isOpen, onClose, isInternational = false, onSetDefault }: SuccessModalProps) {
   const [isDefault, setIsDefault] = useState(false);
 
   return (
@@ -53,7 +54,10 @@ export default function SuccessModal({ isOpen, onClose, isInternational = false 
             <Switch
               id="default-method"
               checked={isDefault}
-              onCheckedChange={setIsDefault}
+              onCheckedChange={(checked) => {
+                setIsDefault(checked);
+                onSetDefault?.(checked);
+              }}
             />
           </div>
         ) : (

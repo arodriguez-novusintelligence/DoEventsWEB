@@ -89,7 +89,7 @@ const EditProfileView = ({
   const [phone, setPhone] = useState(profilePhone || '');
   const [email] = useState(profileEmail || '');
   const [username, setUsername] = useState(profileUsername || '');
-  const [usernameOk] = useState(true);
+  const usernameOk = username.trim().length >= 3 && /^[a-zA-Z0-9_.-]+$/.test(username.trim());
   const [descripcion, setDescripcion] = useState(profileBio || '');
 
   // Password recovery flow

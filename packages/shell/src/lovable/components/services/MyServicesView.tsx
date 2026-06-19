@@ -35,9 +35,7 @@ interface ServiceReview {
   comment: string;
 }
 
-const MOCK_SERVICE_REVIEWS: ServiceReview[] = [];
-
-function getReviewsForService(_index: number): ServiceReview[] {
+function getReviewsForService(_service: ServiceFormData): ServiceReview[] {
   return [];
 }
 
@@ -338,10 +336,10 @@ const MyServicesView = ({
               }, null);
               const img = getServiceImage(service);
               const statusLabel = publishStatusLabel((service as ServiceFormData & { status?: string }).status);
-              const reviewsList = getReviewsForService(i);
+              const reviewsList = getReviewsForService(service);
               const reviewsAvg = reviewsList.length
                 ? (reviewsList.reduce((s, r) => s + r.rating, 0) / reviewsList.length).toFixed(1)
-                : '0.0';
+                : null;
 
               return (
                 <div
@@ -416,6 +414,7 @@ const MyServicesView = ({
                         <DollarSign className="h-3 w-3" /> {highestPricing.currency} {highestPricing.cost.toLocaleString()}
                       </p>
                     )}
+                    {reviewsAvg ? (
                     <div className="mt-2 flex items-center justify-between border-t border-border/60 pt-2">
                       <div className="flex items-center gap-1 text-primary">
                         <Star className="h-3.5 w-3.5 fill-primary" strokeWidth={2} />
@@ -433,6 +432,11 @@ const MyServicesView = ({
                         <span className="text-xs font-semibold">{reviewsList.length}</span>
                       </button>
                     </div>
+                    ) : (
+                    <p className="mt-2 border-t border-border/60 pt-2 text-[11px] text-muted-foreground">
+                      Sin reseñas aún
+                    </p>
+                    )}
                   </div>
                 </div>
               );
@@ -495,12 +499,14 @@ const MyServicesView = ({
                 </div>
 
                 {(() => {
-                  const list = getReviewsForService(reviewsFor);
+                  const service = reviewsFor !== null ? servicesList[reviewsFor] : null;
+                  const list = service ? getReviewsForService(service) : [];
                   const avg = list.length
                     ? (list.reduce((s, r) => s + r.rating, 0) / list.length).toFixed(1)
-                    : '0.0';
+                    : null;
                   return (
                     <>
+                      {avg ? (
                       <div className="mb-4 flex items-center gap-3 rounded-2xl bg-secondary p-4">
                         <div className="text-3xl font-bold text-foreground">{avg}</div>
                         <div className="flex flex-col gap-0.5">
@@ -508,6 +514,11 @@ const MyServicesView = ({
                           <p className="text-xs text-muted-foreground">{list.length} reseña(s)</p>
                         </div>
                       </div>
+                      ) : (
+                      <p className="mb-4 rounded-2xl bg-secondary p-4 text-center text-sm text-muted-foreground">
+                        Aún no hay reseñas para este servicio.
+                      </p>
+                      )}
                       <div className="flex flex-col gap-3">
                         {list.map((r, idx) => (
                           <div key={idx} className="rounded-2xl bg-secondary p-4">

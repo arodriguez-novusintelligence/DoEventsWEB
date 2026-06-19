@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   ChevronLeft,
   Home as HomeIcon,
@@ -66,7 +67,19 @@ type AuthOption = 'knows' | 'unknown';
 const seatLabel = (row: number, col: number) =>
   `${String.fromCharCode(64 + row)}${col}`;
 
+/** @deprecated Usar `/events/:id/checkout` (LovableTicketCheckout). Solo fallback sin event.id. */
 const TicketPurchaseFlow = ({ event, onBack, onSuccess, onPurchaseEnd }: Props) => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (event.id) {
+      navigate(`/events/${event.id}/checkout`, { replace: true });
+    }
+  }, [event.id, navigate]);
+
+  if (event.id) {
+    return null;
+  }
   const notifyPurchase = useNotifyPurchase();
   const [step, setStep] = useState<Step>('seatmap');
   const [activeCat, setActiveCat] = useState<string>(CATEGORIES[0].id);

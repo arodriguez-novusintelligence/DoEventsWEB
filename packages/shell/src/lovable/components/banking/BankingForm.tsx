@@ -1,3 +1,4 @@
+/** Formulario bancario — validación local de formato; persistencia requiere API DoEventsBack (BACKEND_REQUIRED). */
 import { useState, useEffect, useRef } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -422,8 +423,6 @@ export default function BankingForm({ onComplete, editingMethod }: BankingFormPr
       setIsValidating(true);
       setValidationError(null);
 
-      await new Promise((resolve) => setTimeout(resolve, 300));
-
       setIsValidating(false);
       setIsVerified(true);
       setValidationError(null);
@@ -445,26 +444,14 @@ export default function BankingForm({ onComplete, editingMethod }: BankingFormPr
       }
 
       if (/^[A-Z0-9]{8,11}$/.test(swiftCode)) {
-        setIsValidating(true);
-        
-        await new Promise(resolve => setTimeout(resolve, 800));
-        
-        // Simulated bank name lookup
-        const bankNames: Record<string, string> = {
-          "SCRZDOSD": "BANCO MULTIPLE SANTA CRUZ, S.A.",
-          "BABORABB": "BANCO DE BOGOTA",
-          "COLOCOBC": "BANCOLOMBIA S.A.",
-          "CITIUS33": "CITIBANK N.A.",
-          "CHASUS33": "JPMORGAN CHASE BANK",
-        };
-        
-        const prefix = swiftCode.substring(0, 8);
-        const bankName = bankNames[prefix] || "Banco verificado";
-        
         setIsValidating(false);
         setSwiftVerified(true);
-        setSwiftBankName(bankName);
+        setSwiftBankName(null);
+        return;
       }
+
+      setSwiftVerified(false);
+      setSwiftBankName(null);
     };
 
     const timeoutId = setTimeout(validateSwift, 500);

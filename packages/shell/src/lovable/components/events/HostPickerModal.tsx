@@ -167,7 +167,10 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center">
       <div className="flex max-h-[90vh] w-full max-w-md flex-col rounded-t-3xl bg-card shadow-2xl sm:rounded-3xl">
         <div className="flex items-center justify-between p-5 pb-3">
-          <h3 className="text-lg font-bold text-foreground">Seleccionar anfitrión</h3>
+          <div>
+            <h3 className="text-lg font-bold text-foreground">Seleccionar anfitrión</h3>
+            <p className="text-xs text-muted-foreground mt-0.5">Busca en la plataforma o agrega manualmente</p>
+          </div>
           <button
             type="button"
             onClick={onClose}

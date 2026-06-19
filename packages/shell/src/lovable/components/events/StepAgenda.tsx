@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Calendar, Clock, Pencil, Plus, User, UserPlus, X } from 'lucide-react';
+import { Calendar, Clock, Pencil, Plus, User, X } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
 import { Input } from '@lovable/components/ui/input';
 import {

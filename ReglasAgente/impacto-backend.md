@@ -2,35 +2,41 @@
 
 ## Resumen
 
-Empalme de 36 componentes/páginas faltantes en rutas mapeadas Lovable. Se añadió `reportPublication` en el cliente shared (endpoint wall feed). KYC completo y company profile requieren contratos backend adicionales.
+Empalme batch 1 (20 gaps): checkout real para tickets, mapa con horarios API, notificaciones sin fixture local. Banking, reseñas de servicios, moderación chat e intereses/perfil requieren contratos backend.
 
 ## ¿Requiere backend?
 
 Sí (parcial)
 
-## Motivo
+## Empalme realizado (última ejecución — gap-empalme-27839776030)
 
-- **Report post**: cliente `reportPublication` asume `POST /wall/feed/publications/{id}/report` — validar en DoEventsBack DEV.
-- **KYC**: `KycCertificationView` documenta flujo sin datos simulados; persistencia KYC no verificada en API actual.
-- **Company context**: datos de empresa/organizador dependen de campos en perfil de usuario existentes.
+- **Checkout tickets:** `InvitationEventDetailView` + `MyInvitationsPage` navegan a `/events/:id/checkout`; `TicketPurchaseFlow` redirige si hay `event.id`.
+- **Mapa:** `mapAdapter` expone `timeRange` desde `horaIni`/`horaFin`; `MapView` abre Google Maps directions.
+- **Notificaciones:** `NotificationsContext` solo API (`fetchUserNotifications`); fixture `initialNotifications` eliminado.
+- **Invitados:** conteos de invitación solo en sesión (sin localStorage ficticio).
+- **Reseñas servicios/eventos:** UI oculta ratings 0.0 cuando no hay datos API.
+
+## Backend pendiente para 100%
+
+| Gap / Feature | lovablePath | webPath | Motivo | Endpoint / Lambda | Tabla DynamoDB | Acción | Prioridad |
+|---------------|-------------|---------|--------|-------------------|----------------|--------|-----------|
+| Banking form | `src/components/banking/BankingForm.tsx` | `packages/shell/src/lovable/components/banking/BankingForm.tsx` | Persistencia métodos de pago y verificación cuenta | `POST/GET /users/{id}/payment-methods` (TBD) | `UserPaymentMethods` (TBD) | Implementar en DoEventsBack | Alta |
+| Banking hub | `src/components/banking/BankingHub.tsx` | `packages/shell/src/lovable/components/banking/BankingHub.tsx` | Listado métodos guardados | Mismo contrato banking | Mismo | Bridge frontend cuando exista API | Alta |
+| Service reviews | `src/components/services/MyServicesView.tsx` | `packages/shell/src/lovable/components/services/MyServicesView.tsx` | Ratings reales por servicio | `GET /services/{id}/reviews` (TBD) | TBD | Ocultar UI hasta API | Media |
+| Chat moderation | `src/components/chat/ChatRoomView.tsx` | `packages/shell/src/lovable/components/chat/ChatRoomView.tsx` | Kick/ban participantes | `POST /chat/rooms/{id}/moderate` (TBD) | TBD | Habilitar `canModerate` con API | Media |
+| Edit profile interests | `src/components/feed/EditProfileView.tsx` | `packages/shell/src/lovable/components/feed/EditProfileView.tsx` | Intereses y password reset | Auth/profile endpoints existentes | Users | Conectar flujos UI-only | Media |
+| KYC | `src/components/feed/KycCertificationView.tsx` | `packages/shell/src/lovable/components/feed/KycCertificationView.tsx` | Certificación KYC | KYC endpoint (TBD) | TBD | Documentado run anterior | Alta |
 
 ## Contrato actual encontrado
 
-- `fetchUserVenueBookings`, `fetchUserServiceBookings` — reservas usuario.
-- `fetchGroupedUserTickets` — tickets comprados.
-- `reportPublicationComment` — ya existente; `reportPublication` añadido en cliente.
-
-## Brecha detectada
-
-- Endpoint report publicación: debe existir y aceptar `reason`, `details` en DEV.
-- KYC: sin endpoint dedicado confirmado para certificación en DEV.
-- Story viewers: lista de viewers por historia si Lovable lo exige (sheet con estado vacío si no hay API).
+- `fetchUserNotifications`, `markNotificationRead`, `respondFollowRequest`
+- `searchUsers`, `fetchUserInvitations`, `fetchEventDetail`
+- `fetchUserVenueBookings`, `fetchUserServiceBookings`, `fetchGroupedUserTickets`
+- Checkout: `useTicketCheckout` + rutas `/events/:id/checkout`
 
 ## Acción realizada
 
-- Cliente `reportPublication` en `packages/shared/src/api/feedService.ts`.
-- UI KYC con estado vacío y clasificación BACKEND_REQUIRED en `decision-log.md`.
-- No despliegue backend.
+- Cliente frontend alineado; **no despliegue backend**.
 
 ## Archivos modificados en DoEventsBack
 
@@ -42,9 +48,9 @@ NO DESPLEGADO
 
 ## Riesgos
 
-- Si `reportPublication` no existe en API DEV, el diálogo de reporte fallará en runtime (manejo de error en UI).
+- BankingForm compila y valida formato local; submit sin API puede confundir al usuario hasta integrar backend.
 
 ## Pendientes
 
-- Confirmar endpoint report en `api-dev.doeventsapp.com`.
-- Definir contrato KYC con producto/backend antes de activar certificación completa.
+- Confirmar contratos banking en producto/backend.
+- Re-comparación diseño ≥98% en CI (batches 2–6).

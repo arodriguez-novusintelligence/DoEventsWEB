@@ -19,6 +19,7 @@ interface MapItem {
   pos: google.maps.LatLngLiteral;
   // event-only
   date?: string;
+  timeRange?: string;
   location?: string;
   rating?: number;
   handle?: string;
@@ -167,6 +168,7 @@ const MapView = ({
       image: it.image,
       pos: { lat: it.lat, lng: it.lng },
       date: it.date,
+      timeRange: it.timeRange,
       location: it.location,
       rating: it.rating,
       handle: it.handle,
@@ -468,10 +470,12 @@ const MapView = ({
                   <Calendar className="h-4 w-4 text-primary shrink-0" />
                   <span>{selectedItem.date}</span>
                 </div>
+                {selectedItem.timeRange && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Clock className="h-4 w-4 text-primary shrink-0" />
-                  <span>07:34 P.M. - 10:00 P.M.</span>
+                  <span>{selectedItem.timeRange}</span>
                 </div>
+                )}
               </>
             )}
             {selectedItem.category === 'lugares' && (
@@ -489,7 +493,14 @@ const MapView = ({
             )}
 
             <div className="border-t border-border pt-3 grid grid-cols-2 gap-2">
-              <button className="flex items-center justify-center gap-1.5 rounded-full bg-primary/10 px-3 py-2 text-sm font-semibold text-primary">
+              <button
+                type="button"
+                onClick={() => {
+                  const dest = `${selectedItem.pos.lat},${selectedItem.pos.lng}`;
+                  window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest)}`, '_blank', 'noopener,noreferrer');
+                }}
+                className="flex items-center justify-center gap-1.5 rounded-full bg-primary/10 px-3 py-2 text-sm font-semibold text-primary"
+              >
                 Cómo llegar <ArrowRight className="h-3.5 w-3.5" />
               </button>
               <button

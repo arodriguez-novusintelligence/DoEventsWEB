@@ -64,8 +64,8 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
 
           <h1 className="mt-4 text-2xl font-extrabold text-primary leading-tight">{data.name || 'Sin nombre'}</h1>
           <div className="mt-2">
-            <span className="inline-block rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
-              Estado: activo
+            <span className="inline-block rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
+              {data.persistedEventId ? 'Borrador guardado' : 'Vista previa — borrador'}
             </span>
           </div>
 
@@ -193,17 +193,14 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
                 <h3 className="text-sm font-bold text-foreground">Organizador del evento</h3>
                 <div className="mt-2 rounded-2xl bg-card p-4 shadow-sm">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/15 text-base font-bold text-primary">TU</div>
-                    <div className="flex-1">
-                      <div className="font-bold text-foreground">Tú</div>
-                      <div className="mt-1 grid grid-cols-2 gap-2 text-xs">
-                        <div><div className="text-muted-foreground">Eventos realizados</div><div className="font-bold text-foreground">0</div></div>
-                        <div><div className="text-muted-foreground">Experiencia</div><div className="font-bold text-foreground">%0</div></div>
-                      </div>
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/15 text-base font-bold text-primary">
+                      {(data.hosts[0]?.initials || 'TU').slice(0, 2)}
                     </div>
-                    <div className="text-right">
-                      <div className="text-xs text-muted-foreground">Calificación</div>
-                      <div className="mt-0.5 flex">{[0,1,2,3,4].map(i => <Star key={i} className="h-3 w-3 text-primary" />)}</div>
+                    <div className="flex-1">
+                      <div className="font-bold text-foreground">{data.hosts[0]?.name || 'Organizador'}</div>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Estadísticas del organizador disponibles tras publicar el evento.
+                      </p>
                     </div>
                   </div>
                 </div>

@@ -72,6 +72,8 @@ export const MyInvitationsPage: React.FC = () => {
         event={selected}
         onBack={() => setSelected(null)}
         onMapClick={() => navigate('/map')}
+        onPurchase={() => selected.id && navigate(`/events/${selected.id}/checkout`)}
+        onSuccess={() => showToast('Compra realizada', 'success')}
       />
     );
   }

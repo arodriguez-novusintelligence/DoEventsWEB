@@ -580,7 +580,7 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
       </div>
 
       {/* Floating Acciones */}
-      <div className="fixed bottom-6 right-6 z-30 flex flex-col items-end gap-3">
+      <div className="fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom,0px))] right-6 z-30 flex flex-col items-end gap-3">
         {fabOpen && (
           <div className="flex flex-col items-end gap-3">
             <button

@@ -133,8 +133,8 @@ const SeatingCategoryDialog = ({
             </div>
           ))}
         </div>
-        <p className="text-xs text-muted-foreground mt-2 text-center">
-          Posición inicial: Superior izquierda
+        <p className="text-xs text-muted-foreground mt-2 text-center" aria-label="Vista previa de distribución de asientos">
+          Vista previa · posición inicial superior izquierda
         </p>
       </div>
     );
