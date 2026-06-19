@@ -135,6 +135,36 @@
         "Adaptacion pendiente por agente Cursor"
       ],
       "agentStatus": "pending"
+    },
+    {
+      "id": "prepare-95572106",
+      "lovableSha": "95572106c3ae20a5f51bf2beddc5940318760932",
+      "before": "HEAD~1",
+      "timestamp": "2026-06-19 13:28 UTC",
+      "workflowRunId": "27828562462",
+      "changeTypes": [
+        "VISUAL"
+      ],
+      "designSimilarityPercent": 60.12,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 37.88,
+      "requiresDesignAlignment": true,
+      "summary": "Manifiesto: UI=True, reglas=False, 5 archivo(s); similitud diseño=60.12%",
+      "changedFilesLovable": [
+        "src/components/feed/ProfileView.tsx",
+        "src/components/purchases/MyPurchasesView.tsx",
+        "src/components/purchases/MyReservedServicesView.tsx",
+        "src/components/purchases/MyReservedVenuesView.tsx",
+        "src/pages/Index.tsx"
+      ],
+      "webFilesModified": [],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "pending",
+      "pendingRisks": [
+        "Adaptacion pendiente por agente Cursor"
+      ],
+      "agentStatus": "pending"
     }
   ]
 }
