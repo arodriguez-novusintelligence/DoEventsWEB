@@ -112,20 +112,32 @@ const PersonCard = ({ person }: { person: InvitationPerson }) => {
         <PersonAvatar person={person} />
         <p className="text-sm font-bold text-foreground mt-2">{person.name}</p>
       </div>
+      {(person.rating > 0 || person.eventsCount > 0 || person.experiencePct > 0) && (
       <div className="flex flex-col items-end">
-        <p className="text-sm text-muted-foreground">Calificación</p>
-        <Stars value={person.rating} />
+        {person.rating > 0 && (
+          <>
+            <p className="text-sm text-muted-foreground">Calificación</p>
+            <Stars value={person.rating} />
+          </>
+        )}
+        {(person.eventsCount > 0 || person.experiencePct > 0) && (
         <div className="grid grid-cols-2 gap-6 mt-3 w-full">
+          {person.eventsCount > 0 && (
           <div className="text-center">
             <p className="text-lg font-bold text-foreground">{person.eventsCount}</p>
             <p className="text-xs text-muted-foreground">Eventos realizados</p>
           </div>
+          )}
+          {person.experiencePct > 0 && (
           <div className="text-center">
             <p className="text-lg font-bold text-foreground">%{person.experiencePct}</p>
             <p className="text-xs text-muted-foreground">Experiencia</p>
           </div>
+          )}
         </div>
+        )}
       </div>
+      )}
     </div>
     </div>
   );

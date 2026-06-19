@@ -24,6 +24,7 @@ interface ProfileGalleryProps {
   onBack: () => void;
   photos: GalleryPhotoItem[];
   loading?: boolean;
+  loadError?: string | null;
   saving?: boolean;
   hasChanges?: boolean;
   onAddFiles: (files: File[]) => void;
@@ -35,6 +36,7 @@ const ProfileGallery = ({
   onBack,
   photos,
   loading = false,
+  loadError = null,
   saving = false,
   hasChanges = false,
   onAddFiles,
@@ -99,6 +101,12 @@ const ProfileGallery = ({
         </button>
 
         <div className="rounded-2xl bg-card p-5 shadow-sm">
+          {loadError && (
+            <div className="mb-4 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+              {loadError}
+            </div>
+          )}
+
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="flex items-center gap-2 text-lg font-bold text-foreground">
@@ -132,8 +140,10 @@ const ProfileGallery = ({
           </div>
 
           {loading ? (
-            <div className="flex min-h-[220px] items-center justify-center">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <div className="grid grid-cols-3 gap-2 animate-pulse">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="aspect-square rounded-xl bg-muted" />
+              ))}
             </div>
           ) : photos.length === 0 ? (
             <button

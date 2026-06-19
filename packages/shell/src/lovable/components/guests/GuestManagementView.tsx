@@ -167,8 +167,14 @@ const GuestManagementView = ({ onBack, guestsController, userId, initialEventId,
 
   if (guestsLoading && !invitationOpen) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-secondary">
-        <p className="text-sm text-muted-foreground">Cargando invitados…</p>
+      <div className="min-h-screen bg-secondary px-4 pt-4">
+        <div className="mx-auto max-w-2xl space-y-3 animate-pulse">
+          <div className="h-24 rounded-3xl bg-muted" />
+          <div className="h-10 rounded-xl bg-muted" />
+          <div className="h-16 rounded-2xl bg-muted" />
+          <div className="h-16 rounded-2xl bg-muted" />
+          <div className="h-16 rounded-2xl bg-muted" />
+        </div>
       </div>
     );
   }

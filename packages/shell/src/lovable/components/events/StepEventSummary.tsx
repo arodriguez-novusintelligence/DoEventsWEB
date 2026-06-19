@@ -57,7 +57,7 @@ function resolveVideoEmbedUrl(url: string): string | null {
 const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publishing, publishLabel = 'Publicar' }: StepEventSummaryProps) => {
 
   const [open, setOpen] = useState<Record<SectionKey, boolean>>({
-    main: false, location: false, access: false,
+    main: true, location: true, access: false,
     date: false, faqs: false, agenda: false,
   });
   const [fabOpen, setFabOpen] = useState(false);

@@ -266,7 +266,7 @@ export interface SavedPaymentMethod {
 }
 
 interface BankingFormProps {
-  onComplete?: (method?: SavedPaymentMethod) => void;
+  onComplete?: (method?: SavedPaymentMethod) => void | Promise<void>;
   editingMethod?: SavedPaymentMethod;
 }
 
@@ -472,66 +472,49 @@ export default function BankingForm({ onComplete, editingMethod }: BankingFormPr
       return;
     }
 
-    // Show success modal - navigation happens when modal closes
-    setShowSuccessModal(true);
+    const newMethod: SavedPaymentMethod = {
+      id: Date.now().toString(),
+      type: data.bank,
+      name: data.fullName,
+      details: data.accountNumber,
+      currency: "COP",
+      status: "pending",
+    };
+
+    if (onComplete) {
+      await onComplete(newMethod);
+      return;
+    }
+
+    toast.info("La persistencia de datos bancarios requiere integración backend (BACKEND_REQUIRED).");
   };
 
   const onInternationalSubmit = async (data: InternationalAccountData) => {
-    toast.success("Cuenta guardada");
-    setShowSuccessModal(true);
+    const newMethod: SavedPaymentMethod = {
+      id: Date.now().toString(),
+      type: "international",
+      name: data.accountHolderType === "personal" 
+        ? `${data.firstName} ${data.lastName || ""}`.trim()
+        : data.companyName || "",
+      details: `IBAN ${data.iban.slice(-4)}`,
+      currency: "USD",
+      status: "pending",
+    };
+
+    if (onComplete) {
+      await onComplete(newMethod);
+      return;
+    }
+
+    toast.info("La persistencia de datos bancarios requiere integración backend (BACKEND_REQUIRED).");
   };
 
-  const onPaypalSubmit = async (data: PaypalAccountData) => {
-    toast.success("Cuenta PayPal guardada");
-    setShowSuccessModal(true);
+  const onPaypalSubmit = async (_data: PaypalAccountData) => {
+    toast.error("PayPal requiere integración backend pendiente (BACKEND_REQUIRED).");
   };
 
   const handleModalClose = () => {
     setShowSuccessModal(false);
-    
-    if (paymentMethod === "local") {
-      const data = localForm.getValues();
-      const newMethod: SavedPaymentMethod = {
-        id: Date.now().toString(),
-        type: data.bank,
-        name: data.fullName,
-        details: data.accountNumber,
-        currency: "COP",
-        status: "pending",
-      };
-      onComplete?.(newMethod);
-    } else if (paymentMethod === "international") {
-      const data = internationalForm.getValues();
-      const newMethod: SavedPaymentMethod = {
-        id: Date.now().toString(),
-        type: "international",
-        name: data.accountHolderType === "personal" 
-          ? `${data.firstName} ${data.lastName || ""}`.trim()
-          : data.companyName || "",
-        details: `IBAN ${data.iban.slice(-4)}`,
-        currency: "USD",
-        status: "pending",
-      };
-      onComplete?.(newMethod);
-    } else if (paymentMethod === "paypal") {
-      const data = paypalForm.getValues();
-      const identifier = data.identifierType === "email" 
-        ? data.paypalEmail || "" 
-        : data.identifierType === "phone" 
-        ? data.paypalPhone || ""
-        : data.paypalId || "";
-      const newMethod: SavedPaymentMethod = {
-        id: Date.now().toString(),
-        type: "paypal",
-        name: data.fullName,
-        details: identifier,
-        currency: data.paypalCurrency as SavedPaymentMethod["currency"],
-        status: "pending",
-      };
-      onComplete?.(newMethod);
-    } else {
-      onComplete?.();
-    }
   };
 
   const handleBack = () => {

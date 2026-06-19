@@ -323,6 +323,20 @@ const StepUnified = ({
 
   return (
     <div className="space-y-4">
+      {/* Section progress */}
+      <div className="rounded-2xl bg-card p-3 shadow-sm">
+        <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground mb-2">
+          <span>Progreso del servicio</span>
+          <span className="text-primary">{activeSectionIndex + 1} / {sectionOrder.length}</span>
+        </div>
+        <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+          <div
+            className="h-full rounded-full bg-primary transition-all duration-300"
+            style={{ width: `${((activeSectionIndex + 1) / sectionOrder.length) * 100}%` }}
+          />
+        </div>
+      </div>
+
       <div className="rounded-2xl bg-card p-4 shadow-sm border border-border/50">
         <div className="flex items-center gap-2 mb-3">
           <Camera className="h-5 w-5 text-primary" />

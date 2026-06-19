@@ -29,6 +29,11 @@ const newDay = (idx: number): EventDay => ({
   activities: [newActivity()],
 });
 
+const isTimeRangeValid = (start: string, end: string): boolean => {
+  if (!start || !end) return true;
+  return start <= end;
+};
+
 const StepAgenda = ({ formData, updateForm }: Props) => {
   const days: EventDay[] = formData.agenda?.length
     ? formData.agenda
@@ -198,8 +203,17 @@ const StepAgenda = ({ formData, updateForm }: Props) => {
         </span>
       </div>
 
+      {selectedDay.activities.length === 0 && (
+        <div className="rounded-2xl border border-dashed border-primary/30 bg-primary/5 px-4 py-8 text-center">
+          <p className="text-sm font-semibold text-foreground">Sin actividades en este día</p>
+          <p className="mt-1 text-xs text-muted-foreground">Agrega la primera actividad al itinerario</p>
+        </div>
+      )}
+
       <div className="relative space-y-4 pl-4 before:absolute before:left-[11px] before:top-3 before:bottom-3 before:w-0.5 before:bg-primary/20">
-        {selectedDay.activities.map((act, idx) => (
+        {selectedDay.activities.map((act, idx) => {
+          const timeInvalid = !isTimeRangeValid(act.startTime, act.endTime);
+          return (
           <div key={act.id} className="relative rounded-2xl bg-card p-4 shadow-sm">
             <div className="mb-2 flex items-center justify-between">
               <span className="absolute -left-4 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground ring-4 ring-secondary">
@@ -230,7 +244,7 @@ const StepAgenda = ({ formData, updateForm }: Props) => {
             </div>
 
             <label className="text-xs font-semibold text-foreground">Hora de finalización</label>
-            <div className="mt-1 mb-3 flex items-center gap-2 border-b border-border py-2">
+            <div className="mt-1 mb-1 flex items-center gap-2 border-b border-border py-2">
               <input
                 type="time"
                 value={act.endTime}
@@ -241,6 +255,11 @@ const StepAgenda = ({ formData, updateForm }: Props) => {
               />
               <Clock className="h-4 w-4 text-primary" />
             </div>
+            {timeInvalid && (
+              <p className="mb-3 text-xs font-medium text-destructive">
+                La hora de fin debe ser posterior o igual a la de inicio
+              </p>
+            )}
 
             <label className="text-xs font-semibold text-foreground">
               Descripción de la actividad
@@ -277,7 +296,8 @@ const StepAgenda = ({ formData, updateForm }: Props) => {
               </button>
             )}
           </div>
-        ))}
+        );
+        })}
 
         <Button
           variant="outline"

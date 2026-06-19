@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, ChevronLeft, Heart, MessageSquare, Share2, Reply, Calendar, Clock, Tag, Users, MapPin, Home as HomeIcon, ShieldCheck, ArrowRight, Star, Play } from 'lucide-react';
+import { X, ChevronLeft, Calendar, Clock, Tag, Users, MapPin, Home as HomeIcon, ShieldCheck, ArrowRight, Star, Play } from 'lucide-react';
 import { EventFormData, REFUND_POLICY_OPTIONS } from '@lovable/data/eventFormData';
 
 interface EventPreviewModalProps {
@@ -69,13 +69,9 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
             </span>
           </div>
 
-          {/* Actions row */}
-          <div className="mt-3 flex justify-end gap-2">
-            {[Heart, MessageSquare, Reply, Share2].map((Icon, i) => (
-              <button key={i} className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <Icon className="h-4 w-4" />
-              </button>
-            ))}
+          {/* Preview-only notice */}
+          <div className="mt-3 flex items-center justify-between rounded-xl bg-primary/5 px-3 py-2">
+            <p className="text-xs font-medium text-muted-foreground">Vista previa — las interacciones estarán disponibles al publicar</p>
           </div>
 
           {/* Date / details card */}

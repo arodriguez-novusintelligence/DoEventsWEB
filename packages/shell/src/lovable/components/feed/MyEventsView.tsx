@@ -275,8 +275,14 @@ const MyEventsView = ({
         )}
 
         {events.length === 0 ? (
-          <div className="py-16 text-center">
-            <p className="text-sm text-muted-foreground">Aún no has publicado eventos.</p>
+          <div className="flex flex-col items-center rounded-2xl border border-dashed border-primary/30 bg-card px-6 py-16 text-center">
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+              <CalendarDays className="h-8 w-8 text-primary" />
+            </div>
+            <p className="text-base font-bold text-foreground">Aún no has publicado eventos</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Crea tu primer evento y compártelo con tu comunidad
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3">

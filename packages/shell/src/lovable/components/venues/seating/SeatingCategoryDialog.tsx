@@ -74,6 +74,7 @@ const SeatingCategoryDialog = ({
 
   const handleSave = () => {
     if (!name.trim() || !floorId) return;
+    if (rows < 1 || seatsPerRow < 1) return;
     const category: SeatingCategory = {
       id: editCategory?.id || Date.now().toString(),
       name,
@@ -328,7 +329,7 @@ const SeatingCategoryDialog = ({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
-          <Button onClick={handleSave} disabled={!name.trim() || !floorId}>
+          <Button onClick={handleSave} disabled={!name.trim() || !floorId || rows < 1 || seatsPerRow < 1}>
             {editCategory ? "Guardar cambios" : "Crear categoría"}
           </Button>
         </div>

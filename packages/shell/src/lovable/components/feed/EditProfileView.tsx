@@ -325,7 +325,10 @@ const EditProfileView = ({
           ))}
         </div>
         <Button
-          onClick={() => { toast.success('Gustos actualizados'); setSubView(null); }}
+          onClick={() => {
+            toast.info('Guardar intereses requiere endpoint de preferencias (BACKEND_REQUIRED).');
+            setSubView(null);
+          }}
           className="mt-8 w-full rounded-full"
         >
           Continuar

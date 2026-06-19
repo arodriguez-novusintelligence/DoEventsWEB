@@ -154,7 +154,7 @@ const PrivateChatView = ({
               <div
                 className={cn(
                   'max-w-[70%] rounded-2xl px-4 py-3 shadow-sm cursor-pointer',
-                  msg.isOwn ? 'bg-primary/20 rounded-br-md' : 'bg-card rounded-bl-md'
+                  msg.isOwn ? 'bg-primary text-primary-foreground rounded-br-sm' : 'bg-card rounded-bl-sm'
                 )}
                 onClick={(e) => { e.stopPropagation(); }}
                 onDoubleClick={(e) => handleContextMenu(e, msg)}

@@ -617,7 +617,7 @@ const MyServicesView = ({
         </div>
         <div className="flex flex-1 flex-col items-center justify-center px-8 text-center">
           <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
-            <Home className="h-10 w-10 text-primary" />
+            <Briefcase className="h-10 w-10 text-primary" />
           </div>
           <h2 className="text-xl font-bold text-foreground">
             Parece que aún no has creado los servicios que ofreces para eventos.

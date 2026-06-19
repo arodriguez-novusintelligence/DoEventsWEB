@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { ChevronLeft, Send, Settings, UserPlus, Megaphone, Copy, Pencil, Trash2, X, Shield, Ban, EyeOff, Clock, CalendarDays, ChevronRight, Plus, CornerUpLeft, UserMinus } from 'lucide-react';
+import { ChevronLeft, Send, Settings, UserPlus, Megaphone, Copy, Pencil, Trash2, X, Shield, Ban, Clock, CalendarDays, ChevronRight, Plus, CornerUpLeft, UserMinus } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@lovable/components/ui/avatar';
 import type { EventChatRoom, ChatMessage, ChatAttendee } from '@lovable/data/chatData';
 import { cn } from '@lovable/lib/utils';
@@ -251,25 +251,17 @@ const ChatRoomView = ({
     }
     toast.error('Expulsión no disponible en este chat');
   };
-  const handleBan = () => toast.error('Ban de usuarios requiere soporte backend');
+  const handleBan = () => toast.error('Ban de usuarios requiere soporte backend (BACKEND_REQUIRED)');
 
   return (
     <div className="flex h-[100dvh] max-h-[100dvh] w-full min-w-0 flex-col overflow-hidden bg-secondary">
       {/* Top bar */}
-      <div className="shrink-0 z-20 border-b border-border bg-card px-4 py-3">
+      <div className="shrink-0 z-20 border-b border-border bg-card px-4 py-3 shadow-sm">
         <div className="mx-auto flex w-full max-w-lg items-center justify-between">
           <button onClick={onBack} className="flex items-center gap-1 text-sm font-semibold text-foreground">
             <ChevronLeft className="h-5 w-5" /> Volver
           </button>
           <div className="flex items-center gap-2">
-            {!isReadOnly && (
-              <button
-                onClick={() => toast('Evento oculto de la lista')}
-                className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-accent/50 transition-colors"
-              >
-                <EyeOff className="h-3.5 w-3.5" /> Ocultar evento
-              </button>
-            )}
             {!isReadOnly && (
               <button onClick={() => setShowSettings(!showSettings)} className="text-muted-foreground hover:text-primary transition-colors">
                 <Settings className="h-5 w-5" />

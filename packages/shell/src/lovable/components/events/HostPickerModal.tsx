@@ -79,6 +79,7 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
   const [results, setResults] = useState<SearchUserRow[]>([]);
   const [searching, setSearching] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [searchError, setSearchError] = useState(false);
   const [manual, setManual] = useState({
     name: '',
     email: '',
@@ -96,6 +97,7 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
     }
     setSearching(true);
     setSearched(true);
+    setSearchError(false);
     try {
       const users = await searchUsers(trimmed);
       setResults(
@@ -112,6 +114,7 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
       );
     } catch {
       setResults([]);
+      setSearchError(true);
     } finally {
       setSearching(false);
     }
@@ -141,6 +144,7 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
 
   const addManual = () => {
     if (!manual.name.trim()) return;
+    if (manual.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(manual.email.trim())) return;
     onAdd({
       id: `host-${Date.now()}`,
       name: manual.name.trim(),
@@ -237,6 +241,10 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
                   </p>
                 ) : searching ? (
                   <p className="py-8 text-center text-sm text-muted-foreground">Buscando…</p>
+                ) : searchError ? (
+                  <p className="py-8 text-center text-sm text-destructive">
+                    Error al buscar usuarios. Intenta de nuevo.
+                  </p>
                 ) : searched && results.length === 0 ? (
                   <p className="py-8 text-center text-sm text-muted-foreground">
                     No se encontraron usuarios con “{query}”

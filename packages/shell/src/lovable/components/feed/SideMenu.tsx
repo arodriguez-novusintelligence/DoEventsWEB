@@ -12,6 +12,7 @@ import {
   LogOut,
   ChevronLeft,
   Shield,
+  CalendarDays,
   Sparkles,
 } from 'lucide-react';
 import { useState } from 'react';
@@ -90,6 +91,7 @@ const SideMenu = ({
     },
     { label: 'Control de accesos', icon: ScanLine, onClick: () => go('control-accesos') },
     { label: 'Mapa', icon: MapIcon, onClick: () => go('mapa') },
+    { label: 'Mis eventos', icon: CalendarDays, onClick: () => go('mis-eventos') },
     { label: 'Gestión de invitados', icon: UsersRound, onClick: () => go('invitados') },
     { label: 'Asistente IA', icon: Sparkles, onClick: () => go('ai-assistant') },
   ];

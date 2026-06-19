@@ -70,7 +70,7 @@ export default function SuccessModal({ isOpen, onClose, isInternational = false,
 
         <Button 
           onClick={onClose} 
-          className={`w-full h-12 mt-4 font-semibold ${isInternational ? 'bg-foreground text-background hover:bg-foreground/90' : ''}`}
+          className="w-full h-12 mt-4 font-semibold bg-primary text-primary-foreground hover:bg-primary/90"
         >
           {isInternational ? "Listo" : "Finalizar"}
         </Button>

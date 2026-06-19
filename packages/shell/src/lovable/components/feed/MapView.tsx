@@ -121,6 +121,7 @@ export interface MapViewProps {
   userLocation?: { lat: number; lng: number };
   distanceKm?: number;
   distanceOptions?: number[];
+  loading?: boolean;
   onDistanceChange?: (km: number) => void;
   onOpenEvent?: (eventId: string) => void;
   onOpenVenue?: (venueId?: string) => void;
@@ -140,6 +141,7 @@ const MapView = ({
   userLocation,
   distanceKm: distanceKmProp = 5,
   distanceOptions = [5, 10, 25, 50],
+  loading = false,
   onDistanceChange,
   onOpenEvent,
   onOpenVenue,
@@ -284,6 +286,13 @@ const MapView = ({
       className="relative flex flex-col bg-background"
       style={{ height: 'calc(100dvh - 4rem)', paddingBottom: NAV_CLEARANCE }}
     >
+      {loading && (
+        <div className="absolute inset-0 z-40 flex items-center justify-center bg-background/60 backdrop-blur-sm">
+          <div className="rounded-2xl bg-card px-6 py-4 shadow-lg text-sm font-medium text-muted-foreground">
+            Cargando mapa…
+          </div>
+        </div>
+      )}
       {/* Floating search + distance */}
       <div className="absolute left-0 right-0 top-0 z-30 flex items-center gap-2 px-3 pt-3">
         <div className="flex flex-1 items-center gap-2 rounded-full bg-card px-4 py-2.5 shadow-lg border border-border">
