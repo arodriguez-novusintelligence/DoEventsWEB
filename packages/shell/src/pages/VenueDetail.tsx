@@ -1,1 +1,10 @@
-export { PlaceDetailPage as VenueDetail, PlaceDetailPage as default } from './PlaceDetailPage';
+import { PlaceDetailPage } from './PlaceDetailPage';
+
+/** Detalle de venue — alias Lovable sobre integración real `PlaceDetailPage`. */
+export const VenueDetail = () => (
+  <div className="mx-auto min-h-screen max-w-lg bg-secondary">
+    <PlaceDetailPage />
+  </div>
+);
+
+export default VenueDetail;

@@ -1,1 +1,1 @@
-export { LoginPage as default, LoginPage } from 'mfeAuth/pages/LoginPage';
+export { LoginView as default, LoginView as LoginPage } from '@lovable/components/auth/LoginView';

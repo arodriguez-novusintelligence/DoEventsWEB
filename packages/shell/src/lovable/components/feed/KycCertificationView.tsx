@@ -1,4 +1,4 @@
-import { ShieldCheck, Mail, AlertCircle, CheckCircle2, Clock, XCircle, Loader2 } from 'lucide-react';
+import { ShieldCheck, Mail, AlertCircle, CheckCircle2, Clock, XCircle, Loader2, Camera, IdCard, Upload } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
 import { useKyc, type KycStatus } from '@lovable/contexts/KycContext';
 
@@ -21,6 +21,24 @@ const STATUS_COLORS: Record<KycStatus, string> = {
   verified: 'text-emerald-500',
   rejected: 'text-destructive',
 };
+
+const UPLOAD_STEPS = [
+  {
+    icon: IdCard,
+    title: 'Documento de identidad',
+    description: 'Foto frontal y reverso de tu cédula o pasaporte vigente.',
+  },
+  {
+    icon: Camera,
+    title: 'Selfie de verificación',
+    description: 'Selfie en tiempo real para validar que eres el titular del documento.',
+  },
+  {
+    icon: Upload,
+    title: 'Envío seguro',
+    description: 'Los archivos se transmiten cifrados al proveedor KYC autorizado.',
+  },
+] as const;
 
 export const KycCertificationView = ({ onBack }: KycCertificationViewProps) => {
   const { status, loading, isCertified, statusLabel, refresh } = useKyc();
@@ -77,18 +95,48 @@ export const KycCertificationView = ({ onBack }: KycCertificationViewProps) => {
             </div>
 
             {!isCertified && (
-              <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-                <div className="flex items-start gap-3">
-                  <AlertCircle className="h-5 w-5 shrink-0 text-amber-600 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-semibold text-amber-900">BACKEND_REQUIRED</p>
-                    <p className="mt-1 text-xs text-amber-800">
-                      El envío de documentos (cédula, selfie) requiere integración con el proveedor
-                      KYC en backend. Esta pantalla muestra el estado real de tu perfil sin datos simulados.
-                    </p>
+              <>
+                <div className="space-y-3">
+                  <h3 className="text-sm font-bold text-foreground px-1">Pasos de verificación</h3>
+                  {UPLOAD_STEPS.map((step, index) => {
+                    const StepIcon = step.icon;
+                    return (
+                      <div
+                        key={step.title}
+                        className="flex items-start gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-sm"
+                      >
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                          <StepIcon className="h-5 w-5 text-primary" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-semibold text-muted-foreground">
+                            Paso {index + 1}
+                          </p>
+                          <p className="text-sm font-bold text-foreground">{step.title}</p>
+                          <p className="mt-1 text-xs text-muted-foreground">{step.description}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="h-5 w-5 shrink-0 text-amber-600 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-semibold text-amber-900">Envío pendiente de backend</p>
+                      <p className="mt-1 text-xs text-amber-800">
+                        La carga de documentos requiere el endpoint KYC en DoEventsBack.
+                        Esta pantalla muestra el flujo Lovable y el estado real del perfil sin simular envíos.
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
+
+                <Button type="button" className="w-full rounded-full" disabled>
+                  Enviar documentos (próximamente)
+                </Button>
+              </>
             )}
 
             <Button

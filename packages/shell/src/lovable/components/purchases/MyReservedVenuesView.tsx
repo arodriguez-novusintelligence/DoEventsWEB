@@ -107,8 +107,8 @@ export const MyReservedVenuesView = ({ onBack }: MyReservedVenuesViewProps) => {
                 onClick={() => navigate(`/purchases/venues/${booking.bookingId}`)}
                 className="flex w-full items-center gap-3 rounded-2xl bg-card p-4 shadow-sm text-left hover:bg-accent/40 transition-colors"
               >
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500/10">
-                  <Building2 className="h-5 w-5 text-emerald-600" />
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10">
+                  <Building2 className="h-5 w-5 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="truncate text-sm font-bold text-foreground">{booking.venueName}</p>

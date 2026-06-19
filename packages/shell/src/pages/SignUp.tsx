@@ -1,1 +1,1 @@
-export { CreateAccountPage as default, CreateAccountPage as SignUp } from 'mfeAuth/pages/CreateAccountPage';
+export { SignUpView as default, SignUpView as SignUp } from '@lovable/components/auth/SignUpView';

@@ -106,8 +106,8 @@ export const MyReservedServicesView = ({ onBack }: MyReservedServicesViewProps) 
                 onClick={() => navigate(`/purchases/services/${booking.bookingId}`)}
                 className="flex w-full items-center gap-3 rounded-2xl bg-card p-4 shadow-sm text-left hover:bg-accent/40 transition-colors"
               >
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-500/10">
-                  <Briefcase className="h-5 w-5 text-amber-600" />
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10">
+                  <Briefcase className="h-5 w-5 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="truncate text-sm font-bold text-foreground">{booking.serviceName}</p>

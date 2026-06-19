@@ -46,9 +46,12 @@ export const EventPublished = () => {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center bg-secondary px-6 text-center pb-24">
-      <div className="rounded-full bg-primary/10 p-6">
+      <div className="rounded-full bg-primary/10 p-6 ring-4 ring-primary/20">
         <PartyPopper className="h-12 w-12 text-primary" />
       </div>
+      <p className="mt-4 inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+        Publicación exitosa
+      </p>
       <h1 className="mt-6 text-2xl font-extrabold text-foreground">¡Evento publicado!</h1>
       {loadingName ? (
         <div className="mt-4">

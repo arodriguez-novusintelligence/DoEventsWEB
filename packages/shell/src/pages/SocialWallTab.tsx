@@ -852,6 +852,7 @@ export const SocialWallTab: React.FC = () => {
           actionLabel="Ver certificación"
           onAction={() => navigate('/profile/kyc')}
           className="mt-3"
+          dismissible
         />
       )}
 
