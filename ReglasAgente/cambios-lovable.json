@@ -6,5 +6,26 @@
     "noLovableMocksInRuntime": true,
     "requireBuildDevaws": true
   },
-  "runs": []
+  "runs": [
+    {
+      "id": "prepare-7b1b5419",
+      "lovableSha": "7b1b5419d2fd70b94f8ebcae62aa5cf5bfb76eb4",
+      "before": "HEAD~1",
+      "timestamp": "2026-06-19 11:54 UTC",
+      "workflowRunId": "27824147397",
+      "changeTypes": [
+        "VISUAL"
+      ],
+      "summary": "Manifiesto: UI=False, reglas=False, 0 archivo(s)",
+      "changedFilesLovable": [],
+      "webFilesModified": [],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "pending",
+      "pendingRisks": [
+        "Adaptacion pendiente por agente Cursor"
+      ],
+      "agentStatus": "pending"
+    }
+  ]
 }
