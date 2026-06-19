@@ -472,7 +472,14 @@ const ProfileView = ({
               onClick={() => setShowComments(true)}
               className="flex flex-col items-start active:scale-95 transition-transform"
             >
-              <MessageSquare className="h-6 w-6 text-primary" />
+              <div className="relative">
+                <MessageSquare className="h-6 w-6 text-primary" />
+                {commentsCount > 0 && (
+                  <span className="absolute -top-1 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold text-primary-foreground">
+                    {commentsCount > 99 ? '99+' : commentsCount}
+                  </span>
+                )}
+              </div>
               <span className="mt-1 text-xs font-semibold text-primary">Comentarios</span>
             </button>
           </div>

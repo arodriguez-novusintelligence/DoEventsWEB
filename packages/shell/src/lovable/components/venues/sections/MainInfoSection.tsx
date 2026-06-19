@@ -97,7 +97,7 @@ const MainInfoSection = () => {
           <p className="text-xs text-muted-foreground">Datos básicos del lugar que verán los organizadores</p>
         </div>
       </div>
-
+      <div className="rounded-2xl bg-card border border-border p-4 space-y-6">
       <MediaUpload />
 
       <div>
@@ -250,6 +250,7 @@ const MainInfoSection = () => {
           className="mt-1"
         />
         <p className="text-xs text-muted-foreground mt-1">{form.description.length}/{MAX_DESC}</p>
+      </div>
       </div>
     </div>
   );

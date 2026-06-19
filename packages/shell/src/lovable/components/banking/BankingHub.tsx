@@ -22,19 +22,23 @@ const BankingHub = ({ onBack }: BankingHubProps) => {
   const [editingMethod, setEditingMethod] = useState<SavedPaymentMethod | undefined>(undefined);
   const [methods, setMethods] = useState<SavedPaymentMethod[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const loadMethods = useCallback(async () => {
     if (!userId) {
       setMethods([]);
       setLoading(false);
+      setLoadError(null);
       return;
     }
     setLoading(true);
+    setLoadError(null);
     try {
       const accounts = await fetchBankAccountsByUser(userId);
       setMethods(mapBankAccounts(accounts));
     } catch {
       setMethods([]);
+      setLoadError('No se pudieron cargar tus métodos de cobro');
       toast.error('No se pudieron cargar tus métodos de cobro');
     } finally {
       setLoading(false);
@@ -103,8 +107,20 @@ const BankingHub = ({ onBack }: BankingHubProps) => {
       {view === 'form' ? (
         <BankingForm onComplete={handleFormComplete} editingMethod={editingMethod} />
       ) : loading ? (
-        <div className="flex justify-center py-24">
+        <div className="flex flex-col items-center justify-center gap-3 py-24">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-sm text-muted-foreground">Cargando métodos de cobro…</p>
+        </div>
+      ) : loadError ? (
+        <div className="flex flex-col items-center justify-center gap-3 py-24 px-6 text-center">
+          <p className="text-sm font-semibold text-foreground">{loadError}</p>
+          <button
+            type="button"
+            onClick={() => void loadMethods()}
+            className="rounded-full border border-primary/30 px-4 py-2 text-sm font-semibold text-primary"
+          >
+            Reintentar
+          </button>
         </div>
       ) : (
         <PaymentMethodsDashboard

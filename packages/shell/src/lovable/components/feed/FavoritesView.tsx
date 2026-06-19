@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronLeft, Heart, MapPin, User, CalendarDays, FileText, Building2 } from 'lucide-react';
+import { ChevronLeft, Heart, MapPin, User, CalendarDays, FileText, Building2, Loader2 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@lovable/components/ui/tabs';
 import PostCard from './PostCard';
 import type { Post } from '@doevents/shared';
@@ -29,6 +29,7 @@ interface FavoritesViewProps {
   favoritePosts?: Post[];
   favoritePlaces?: FavPlaceItem[];
   favoriteProfiles?: ProfileListUser[];
+  loading?: boolean;
   onViewProfile?: (user: ProfileListUser) => void;
   onToggleEventFavorite?: (eventId: string) => void;
   onOpenEvent?: (eventId: string) => void;
@@ -201,7 +202,7 @@ const ProfilesTab = ({
   onViewProfile?: (user: ProfileListUser) => void;
 }) => {
   if (!profiles.length) {
-    return <EmptyTab message="No tienes servicios favoritos" icon={User} />;
+    return <EmptyTab message="No tienes perfiles favoritos" icon={User} />;
   }
   return (
     <div className="space-y-3 pt-4">
@@ -237,6 +238,7 @@ const FavoritesView = ({
   favoritePosts = [],
   favoritePlaces = [],
   favoriteProfiles = [],
+  loading = false,
   onViewProfile,
   onToggleEventFavorite,
   onOpenEvent,
@@ -249,6 +251,12 @@ const FavoritesView = ({
       </button>
       <h1 className="mt-2 text-2xl font-extrabold text-primary">Tus favoritos</h1>
 
+      {loading ? (
+        <div className="flex flex-col items-center gap-3 py-16">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-sm text-muted-foreground">Cargando favoritos…</p>
+        </div>
+      ) : (
       <Tabs defaultValue="eventos" className="mt-4">
         <TabsList className="w-full grid grid-cols-4 bg-transparent p-0 h-auto border-b border-border rounded-none gap-0">
           {[
@@ -284,6 +292,7 @@ const FavoritesView = ({
           <ProfilesTab profiles={favoriteProfiles} onViewProfile={onViewProfile} />
         </TabsContent>
       </Tabs>
+      )}
     </div>
   </div>
 );

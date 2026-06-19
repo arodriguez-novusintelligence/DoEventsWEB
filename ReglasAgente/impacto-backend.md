@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27850000711-b3`: batch 3 (20 gaps) — 18 DONE frontend; 2 BACKEND_REQUIRED (`BankingHub` delete, `PaymentMethodsDashboard` delete).
+
 Run `gap-empalme-27850000711-b2`: batch 2 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`PublishFlowModal`, `BookingSheet`, `PaymentGatewaySheet`).
 
 Run `gap-empalme-27850000711-b1`: batch 1 (20 gaps) — 18 DONE frontend; 2 BACKEND_REQUIRED (`EditProfileView`, `BankingForm`).
@@ -34,7 +36,25 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27850000711-b2)
+## Empalme realizado (última ejecución — gap-empalme-27850000711-b3)
+
+- **EventInvitationModal:** `loadEvents` con error/reintento; empty states eventos e invitados.
+- **LocationSection:** empty state sin coordenadas; mapa embebido condicional.
+- **MyInvitationsView:** props `loadError`/`onRetry`; badges estado invitación.
+- **EventsView:** skeleton carga inicial; empty CTA eventos publicados; callbacks `onViewAllNearby`/`onViewAllRecommended`.
+- **CommentsSheet:** contador en título; loading/error; avatares `avatarUrl`.
+- **ProfileView:** badge contador comentarios en experiencia de servicio.
+- **FavoritesView:** loading; copy tab perfiles corregido.
+- **NotificationsContext:** propiedad `isEmpty` derivada.
+- **CreatePostSheet:** `onPublish` async; reset solo tras éxito.
+- **PreferencesRefundSection / MainInfoSection:** cards con borde Lovable.
+- **SeatLocationModal / EventDetailView:** reintento en error de mapa/evento.
+- **AuthLogo:** hero gradiente y tipografía Lovable.
+- **AIAssistantView:** botón volver `ChevronLeft` (sin `←` texto).
+- **BankingHub:** `loadError` + reintento; delete documentado BACKEND_REQUIRED.
+- **PaymentMethodsDashboard:** menú eliminar deshabilitado (requiere backend).
+
+## Empalme realizado (ejecución anterior — gap-empalme-27850000711-b2)
 
 - **EditGuestModal:** submit async con loading; sin toast prematuro antes de API.
 - **ProfileGalleryPage:** prop `loadError` cableada desde fetch.

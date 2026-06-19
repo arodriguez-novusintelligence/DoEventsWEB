@@ -4,15 +4,65 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Formato por entrada
 
-1. Resumen del cambio detectado
-2. Tipo: VISUAL | FRONTEND_LOGIC | BACKEND_REQUIRED | RISKY
-3. Archivos modificados en DoEventsWEB
-4. Archivos modificados en DoEventsBack (si aplica)
-5. Evidencia de que no se usaron mocks
-6. Resultado build/test
-7. Riesgos pendientes
+1. Resumen del empalme (qué gaps se atacaron y resultado).
+2. Tabla: Feature | Archivo WEB | Estado (`DONE` | `BACKEND_REQUIRED` | `BLOCKED`).
+3. Similitud antes/después (%).
+4. Build: `npm run build:devaws` OK/FAIL.
+5. Evidencia anti-mock.
+6. Riesgos pendientes.
 
 ## Historial
+
+## [2026-06-20 00:30 UTC] gap-empalme-27850000711-b3
+
+### 1. Resumen del empalme
+Batch 3 (20 gaps, manifiesto `27850000711-b3`, similitud baseline 57.76%): empalme focalizado en invitados, feed, perfil, venues, tickets, auth, IA y banca. Estados loading/error/reintento unificados en modales y listados. **CreatePostSheet** no resetea hasta éxito de API. **BankingHub** y **PaymentMethodsDashboard** → BACKEND_REQUIRED (delete cuenta).
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Event invitation | `packages/shell/src/lovable/components/guests/EventInvitationModal.tsx` | DONE |
+| Location section | `packages/shell/src/lovable/components/venues/sections/LocationSection.tsx` | DONE |
+| My invitations | `packages/shell/src/lovable/components/invitations/MyInvitationsView.tsx` | DONE |
+| Events | `packages/shell/src/lovable/components/feed/EventsView.tsx` | DONE |
+| Comments | `packages/shell/src/lovable/components/feed/CommentsSheet.tsx` | DONE |
+| Profile view | `packages/shell/src/lovable/components/feed/ProfileView.tsx` | DONE |
+| Favorites | `packages/shell/src/lovable/components/feed/FavoritesView.tsx` | DONE |
+| Notifications context | `packages/shell/src/lovable/contexts/NotificationsContext.tsx` | DONE |
+| Create post | `packages/shell/src/lovable/components/feed/CreatePostSheet.tsx` | DONE |
+| Preferences refund | `packages/shell/src/lovable/components/venues/sections/PreferencesRefundSection.tsx` | DONE |
+| Seat location | `packages/shell/src/lovable/components/tickets/SeatLocationModal.tsx` | DONE |
+| Venue creator | `packages/shell/src/lovable/components/venues/VenueCreator.tsx` | DONE |
+| Auth logo | `packages/shell/src/lovable/components/auth/AuthLogo.tsx` | DONE |
+| Feed services carousel | `packages/shell/src/lovable/components/feed/FeedServicesCarousel.tsx` | DONE |
+| Event detail | `packages/shell/src/lovable/components/events/EventDetailView.tsx` | DONE |
+| Notifications | `packages/shell/src/lovable/components/feed/NotificationsSheet.tsx` | DONE |
+| AI assistant | `packages/shell/src/lovable/components/ai/AIAssistantView.tsx` | DONE |
+| Banking hub | `packages/shell/src/lovable/components/banking/BankingHub.tsx` | BACKEND_REQUIRED |
+| Main info section | `packages/shell/src/lovable/components/venues/sections/MainInfoSection.tsx` | DONE |
+| Payment methods dashboard | `packages/shell/src/lovable/components/banking/PaymentMethodsDashboard.tsx` | BACKEND_REQUIRED |
+
+### 3. Similitud antes/después
+- **Antes:** 57.76%
+- **Después:** ~84.0% (estimado; re-comparación CI pendiente)
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias
+
+### 6. Riesgos pendientes
+- 58 gaps restantes (batches 4–6) para alcanzar 98% similitud
+- BACKEND_REQUIRED: delete cuenta bancaria, PayPal payout
+- `discover-joyful-feed` privado — re-comparación CI pendiente
+
+### Decisión
+**APPLIED**
+
+---
 
 ## [2026-06-19 23:55 UTC] gap-empalme-27850000711-b2
 

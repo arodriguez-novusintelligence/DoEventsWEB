@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ImagePlus, Send, RotateCcw, Sparkles } from 'lucide-react';
+import { ImagePlus, Send, RotateCcw, Sparkles, ChevronLeft } from 'lucide-react';
 import {
   sendAIAssistantMessage,
   resetAIAssistantSession,
@@ -248,8 +248,8 @@ export const AIAssistantView: React.FC<AIAssistantViewProps> = ({ userId, onBack
     <div className="de-ai-assistant fixed inset-0 z-[110] mx-auto flex max-w-lg flex-col bg-background">
       <header className="flex shrink-0 items-center gap-3 border-b border-border bg-card px-4 py-3 safe-area-top">
         {onBack && (
-          <button type="button" onClick={onBack} className="de-ai-assistant__back" aria-label="Volver">
-            ←
+          <button type="button" onClick={onBack} className="flex h-9 w-9 items-center justify-center rounded-full text-primary" aria-label="Volver">
+            <ChevronLeft className="h-5 w-5" />
           </button>
         )}
         <div className="flex flex-1 flex-col">

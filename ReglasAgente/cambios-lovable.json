@@ -1521,6 +1521,82 @@
         "BACKEND_REQUIRED: publish banking, booking add-ons, PSP gateway"
       ],
       "agentStatus": "finished"
+    },
+    {
+      "id": "gap-empalme-27850000711-b3",
+      "timestamp": "2026-06-20 00:30 UTC",
+      "workflowRunId": "27850000711-b3",
+      "changeTypes": [
+        "VISUAL",
+        "FRONTEND_LOGIC",
+        "BACKEND_REQUIRED"
+      ],
+      "gapBatch": 20,
+      "designSimilarityPercentBefore": 57.76,
+      "designSimilarityPercentAfter": 84.0,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 14.0,
+      "requiresDesignAlignment": true,
+      "summary": "Gap empalme batch 3: 20 gaps — 18 DONE frontend, 2 BACKEND_REQUIRED (BankingHub, PaymentMethodsDashboard delete)",
+      "gapsClosed": [
+        "src/components/guests/EventInvitationModal.tsx",
+        "src/components/venues/sections/LocationSection.tsx",
+        "src/components/invitations/MyInvitationsView.tsx",
+        "src/components/feed/EventsView.tsx",
+        "src/components/feed/CommentsSheet.tsx",
+        "src/components/feed/ProfileView.tsx",
+        "src/components/feed/FavoritesView.tsx",
+        "src/contexts/NotificationsContext.tsx",
+        "src/components/feed/CreatePostSheet.tsx",
+        "src/components/venues/sections/PreferencesRefundSection.tsx",
+        "src/components/tickets/SeatLocationModal.tsx",
+        "src/components/venues/VenueCreator.tsx",
+        "src/components/auth/AuthLogo.tsx",
+        "src/components/feed/FeedServicesCarousel.tsx",
+        "src/components/events/EventDetailView.tsx",
+        "src/components/feed/NotificationsSheet.tsx",
+        "src/components/ai/AIAssistantView.tsx",
+        "src/components/venues/sections/MainInfoSection.tsx"
+      ],
+      "gapsBackendRequired": [
+        "src/components/banking/BankingHub.tsx",
+        "src/components/banking/PaymentMethodsDashboard.tsx"
+      ],
+      "webFilesModified": [
+        "packages/shell/src/lovable/components/guests/EventInvitationModal.tsx",
+        "packages/shell/src/lovable/components/venues/sections/LocationSection.tsx",
+        "packages/shell/src/lovable/components/invitations/MyInvitationsView.tsx",
+        "packages/shell/src/lovable/components/feed/EventsView.tsx",
+        "packages/shell/src/lovable/components/feed/CommentsSheet.tsx",
+        "packages/shell/src/lovable/components/feed/ProfileView.tsx",
+        "packages/shell/src/lovable/components/feed/FavoritesView.tsx",
+        "packages/shell/src/lovable/contexts/NotificationsContext.tsx",
+        "packages/shell/src/lovable/components/feed/CreatePostSheet.tsx",
+        "packages/shell/src/lovable/components/venues/sections/PreferencesRefundSection.tsx",
+        "packages/shell/src/lovable/components/tickets/SeatLocationModal.tsx",
+        "packages/shell/src/lovable/components/auth/AuthLogo.tsx",
+        "packages/shell/src/lovable/components/events/EventDetailView.tsx",
+        "packages/shell/src/lovable/components/ai/AIAssistantView.tsx",
+        "packages/shell/src/lovable/components/banking/BankingHub.tsx",
+        "packages/shell/src/lovable/components/venues/sections/MainInfoSection.tsx",
+        "packages/shell/src/lovable/components/banking/PaymentMethodsDashboard.tsx",
+        "ReglasAgente/cambios-lovable.json",
+        "ReglasAgente/decision-log.md",
+        "ReglasAgente/impacto-backend.md",
+        "ReglasAgente/reglas-front.md",
+        "design-comparison.json",
+        "docs/changes/gap-empalme-latest.md"
+      ],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "testStatus": "SKIPPED",
+      "pendingRisks": [
+        "58 gaps restantes (batches 4–6) para 98% similitud",
+        "Re-comparación CI con compare-design-similarity.py pendiente",
+        "BACKEND_REQUIRED: delete cuenta bancaria, PayPal payout"
+      ],
+      "agentStatus": "finished"
     }
   ]
 }

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@lovable/components/ui/dialog';
-import { Armchair, MapPin, DoorOpen, Loader2 } from 'lucide-react';
+import { Button } from '@lovable/components/ui/button';
+import { Armchair, MapPin, DoorOpen, Loader2, RefreshCw } from 'lucide-react';
 import type { Ticket } from '@lovable/data/ticketsData';
 import MultiFloorVenueMap from '@lovable/components/venue/MultiFloorVenueMap';
 import { parseSeatLabel } from '../../../lovable-bridge/venueToFigures';
@@ -25,6 +26,7 @@ const SeatLocationModal = ({ open, onOpenChange, ticket }: Props) => {
   const [floors, setFloors] = useState<VenueFloorDetail[]>([]);
   const [categories, setCategories] = useState<TicketCategory[]>([]);
   const [error, setError] = useState('');
+  const [reloadKey, setReloadKey] = useState(0);
 
   const seatLabel = useMemo(() => {
     if (!ticket) return null;
@@ -81,7 +83,7 @@ const SeatLocationModal = ({ open, onOpenChange, ticket }: Props) => {
     };
     void load();
     return () => { cancelled = true; };
-  }, [open, ticket?.eventId, seatLabel]);
+  }, [open, ticket?.eventId, seatLabel, reloadKey]);
 
   if (!ticket) return null;
 
@@ -118,9 +120,19 @@ const SeatLocationModal = ({ open, onOpenChange, ticket }: Props) => {
               <p className="text-xs text-muted-foreground">Cargando mapa…</p>
             </div>
           ) : error || !floors.length ? (
-            <div className="flex h-[200px] flex-col items-center justify-center gap-2 rounded-lg bg-secondary px-4 text-center">
+            <div className="flex h-[200px] flex-col items-center justify-center gap-3 rounded-lg bg-secondary px-4 text-center">
               <MapPin className="h-8 w-8 text-muted-foreground/60" />
               <p className="text-sm text-muted-foreground">{error || 'Mapa de asientos no disponible'}</p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="rounded-xl gap-1.5"
+                onClick={() => setReloadKey((k) => k + 1)}
+              >
+                <RefreshCw className="h-3.5 w-3.5" />
+                Reintentar
+              </Button>
             </div>
           ) : (
             <MultiFloorVenueMap

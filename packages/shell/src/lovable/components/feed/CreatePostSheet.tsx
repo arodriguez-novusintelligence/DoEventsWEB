@@ -14,7 +14,7 @@ import MentionAutocomplete, { type MentionOption } from './MentionAutocomplete';
 interface CreatePostSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onPublish: (post: Omit<Post, 'id' | 'likes' | 'comments' | 'reposts'>) => void;
+  onPublish: (post: Omit<Post, 'id' | 'likes' | 'comments' | 'reposts'>) => void | Promise<void>;
   authorName?: string;
   authorInitials?: string;
   authorId?: string;
@@ -88,32 +88,36 @@ const CreatePostSheet = ({
 
   const canPublish = (title.trim().length > 0 || description.trim().length > 0) && !publishing;
 
-  const handlePublish = () => {
+  const handlePublish = async () => {
     if (!canPublish) return;
-    onPublish({
-      user: { id: authorId || '', name: authorName, initials: authorInitials },
-      timeAgo: 'Justo ahora',
-      images: media,
-      title: title.trim(),
-      date: new Date().toLocaleDateString('es-CO', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-      }),
-      location: location.trim() || 'Sin ubicación',
-      tags: [],
-      description: description.trim(),
-      type: 'evento',
-      visibility,
-      likedBy: [],
-      repostedBy: [],
-    });
-    setTitle('');
-    setDescription('');
-    setLocation('');
-    setMedia([]);
-    setVisibility('public');
-    onOpenChange(false);
+    try {
+      await onPublish({
+        user: { id: authorId || '', name: authorName, initials: authorInitials },
+        timeAgo: 'Justo ahora',
+        images: media,
+        title: title.trim(),
+        date: new Date().toLocaleDateString('es-CO', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+        }),
+        location: location.trim() || 'Sin ubicación',
+        tags: [],
+        description: description.trim(),
+        type: 'evento',
+        visibility,
+        likedBy: [],
+        repostedBy: [],
+      });
+      setTitle('');
+      setDescription('');
+      setLocation('');
+      setMedia([]);
+      setVisibility('public');
+      onOpenChange(false);
+    } catch {
+      /* el padre muestra error; no cerrar ni resetear */
+    }
   };
 
   return (

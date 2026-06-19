@@ -185,6 +185,7 @@ export const EventInvitationModal = ({
   const { toast } = useToast();
   const [events, setEvents] = useState<InviteEvent[]>([]);
   const [loadingEvents, setLoadingEvents] = useState(false);
+  const [eventsLoadError, setEventsLoadError] = useState<string | null>(null);
   const [eventId, setEventId] = useState<string | null>(null);
   const [guestIds, setGuestIds] = useState<string[]>([]);
   const [channels, setChannels] = useState<string[]>(['campana']);
@@ -208,39 +209,43 @@ export const EventInvitationModal = ({
   const [overlayGuests, setOverlayGuests] = useState<Guest[]>([]);
   const [recentlyAddedGuestIds, setRecentlyAddedGuestIds] = useState<string[]>([]);
 
+  const loadEvents = useCallback(async () => {
+    if (!userId) {
+      setEvents([]);
+      setEventsLoadError(null);
+      return;
+    }
+    setLoadingEvents(true);
+    setEventsLoadError(null);
+    try {
+      const result = await fetchUserEvents(userId, { allEvents: true, forceNetwork: true });
+      const items = (result.data?.datosEvento || []) as UserEventItem[];
+      setEvents(
+        items
+          .filter((ev) => {
+            const status = String(ev.estatus || '').trim().toLowerCase();
+            return status !== 'deleted' && status !== 'cancelado' && status !== 'cancelled';
+          })
+          .map(mapUserEvent)
+          .filter((e) => e.id),
+      );
+    } catch {
+      setEvents([]);
+      setEventsLoadError('No se pudieron cargar tus eventos');
+      toast({
+        title: 'No se pudieron cargar tus eventos',
+        description: 'Revisa tu conexión e intenta de nuevo.',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoadingEvents(false);
+    }
+  }, [userId, toast]);
+
   useEffect(() => {
     if (!open || !userId) return;
-    let cancelled = false;
-    setLoadingEvents(true);
-    fetchUserEvents(userId, { allEvents: true, forceNetwork: true })
-      .then((result) => {
-        if (cancelled) return;
-        const items = (result.data?.datosEvento || []) as UserEventItem[];
-        setEvents(
-          items
-            .filter((ev) => {
-              const status = String(ev.estatus || '').trim().toLowerCase();
-              return status !== 'deleted' && status !== 'cancelado' && status !== 'cancelled';
-            })
-            .map(mapUserEvent)
-            .filter((e) => e.id),
-        );
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setEvents([]);
-          toast({
-            title: 'No se pudieron cargar tus eventos',
-            description: 'Revisa tu conexión e intenta de nuevo.',
-            variant: 'destructive',
-          });
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setLoadingEvents(false);
-      });
-    return () => { cancelled = true; };
-  }, [open, userId]);
+    void loadEvents();
+  }, [open, userId, loadEvents]);
 
   const event = eventId ? events.find((e) => e.id === eventId) : null;
   const channelDefs = [
@@ -882,7 +887,18 @@ export const EventInvitationModal = ({
                     <p className="text-sm text-muted-foreground">Cargando eventos…</p>
                   </div>
                 )}
-                {!loadingEvents && events.length === 0 && (
+                {!loadingEvents && eventsLoadError && (
+                  <div className="flex flex-col items-center gap-3 py-12 text-center">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
+                      <AlertTriangle className="h-7 w-7 text-destructive" />
+                    </div>
+                    <p className="text-sm font-semibold text-foreground">{eventsLoadError}</p>
+                    <Button type="button" variant="outline" size="sm" className="rounded-xl" onClick={() => void loadEvents()}>
+                      Reintentar
+                    </Button>
+                  </div>
+                )}
+                {!loadingEvents && !eventsLoadError && events.length === 0 && (
                   <div className="flex flex-col items-center gap-3 py-12 text-center">
                     <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
                       <CalendarDays className="h-7 w-7 text-primary" />

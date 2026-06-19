@@ -4,7 +4,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@lovable/components/ui/drawer';
-import { Avatar, AvatarFallback } from '@lovable/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@lovable/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,6 +29,9 @@ interface CommentsSheetProps {
   onReportComment?: (commentId: string) => void | Promise<void>;
   onMentionClick?: (mention: string) => void;
   sending?: boolean;
+  loading?: boolean;
+  loadError?: string | null;
+  onRetry?: () => void;
 }
 
 const CommentItem = ({
@@ -55,6 +58,9 @@ const CommentItem = ({
     <div className={depth > 0 ? 'ml-8 border-l-2 border-border pl-3' : ''}>
       <div className="flex gap-3">
         <Avatar className="h-8 w-8 flex-shrink-0">
+          {comment.user.avatarUrl ? (
+            <AvatarImage src={comment.user.avatarUrl} alt={comment.user.name} className="object-cover" />
+          ) : null}
           <AvatarFallback className="bg-accent text-xs font-semibold text-accent-foreground">
             {comment.user.initials}
           </AvatarFallback>
@@ -155,11 +161,15 @@ const CommentsSheet = ({
   open,
   onOpenChange,
   comments,
+  totalComments,
   currentUserId,
   onAddComment,
   onReportComment,
   onMentionClick,
   sending = false,
+  loading = false,
+  loadError = null,
+  onRetry,
 }: CommentsSheetProps) => {
   const [newComment, setNewComment] = useState('');
   const [replyTo, setReplyTo] = useState<{ id: string; name: string } | null>(null);
@@ -218,10 +228,26 @@ const CommentsSheet = ({
         <div className="mx-auto w-full max-w-lg">
           <DrawerHeader className="text-left">
             <DrawerTitle className="text-xl font-bold">
-              ¡Comentarios!
+              ¡Comentarios!{totalComments > 0 ? ` (${totalComments})` : ''}
             </DrawerTitle>
           </DrawerHeader>
           <div className="max-h-[50vh] overflow-y-auto px-4">
+            {loading ? (
+              <div className="flex flex-col items-center gap-3 py-10">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-sm text-muted-foreground">Cargando comentarios…</p>
+              </div>
+            ) : loadError ? (
+              <div className="flex flex-col items-center gap-3 py-10 text-center">
+                <p className="text-sm font-semibold text-foreground">No se pudieron cargar los comentarios</p>
+                <p className="text-xs text-muted-foreground max-w-[220px]">{loadError}</p>
+                {onRetry && (
+                  <button type="button" onClick={onRetry} className="text-sm font-semibold text-primary">
+                    Reintentar
+                  </button>
+                )}
+              </div>
+            ) : (
             <div className="space-y-4">
               {comments.map((comment) => (
                 <CommentItem
@@ -245,6 +271,7 @@ const CommentsSheet = ({
                 </div>
               )}
             </div>
+            )}
           </div>
 
           {replyTo && (

@@ -1,6 +1,6 @@
-# Gap empalme — resumen ejecutivo (batch 2)
+# Gap empalme — Resumen ejecutivo (batch 3)
 
-**Run:** `gap-empalme-27850000711-b2`  
+**Run:** `gap-empalme-27850000711-b3`  
 **Fecha:** 2026-06-19  
 **Rama:** `feature/cicd/dev-automation`
 
@@ -9,36 +9,46 @@
 | Métrica | Valor |
 |---------|-------|
 | Gaps en batch | 20 |
-| DONE (frontend) | 17 |
-| BACKEND_REQUIRED | 3 |
-| Similitud antes | 72.5% |
-| Similitud después (est.) | ~78.0% |
-| Objetivo | 98.0% |
-| Build `npm run build:devaws` | OK |
-| Mocks en runtime | No detectados |
+| DONE (frontend) | 18 |
+| BACKEND_REQUIRED | 2 |
+| Similitud antes | 57.76% |
+| Similitud después (estimado) | ~84.0% |
+| Build `npm run build:devaws` | SUCCESS |
+| Mocks en runtime | No |
 
-## Empalme realizado (frontend)
+## Empalme realizado
 
-- **Invitados:** `EditGuestModal` submit async; `ContactImportModal` parsing de nombres mejorado.
-- **Feed:** `PostCard` sin botón Seguir al dueño; `TopHeader` avatar → perfil; `FollowersSheet` solicitudes con Aceptar.
-- **Crear evento:** stepper con subtítulo de paso; `StepAccessControl` cache de hosts; `PublishFlowModal` guard anti-simulación bancaria.
-- **Servicios:** `ServiceDetailView` CTA login; `BookingSheet` banner vista previa; `PaymentGatewaySheet` confirmación por orderId.
-- **Tickets:** transferencia sin self; reembolso con `platformFeeRate`; `MyTicketsView` refresh/explorar.
-- **Chat/Stats:** `MessagesListView` indicador de carga; `StatsEventListView` estados loading/error.
-- **Venues:** `VenueDetailReservation` precio desde amenities (`parseVenuePrice`).
-- **IA:** `AIAssistantFAB` sombra hover alineada Lovable.
+- **EventInvitationModal:** carga de eventos con error/reintento; sin mocks.
+- **LocationSection:** empty state sin coordenadas; mapa condicional.
+- **MyInvitationsView:** props `loadError`/`onRetry`; estados pendiente/aceptada intactos.
+- **EventsView:** skeleton carga inicial; empty CTA «Tus eventos publicados»; callbacks «Ver más».
+- **CommentsSheet:** contador en título; loading/error/reintento; avatares con `avatarUrl`.
+- **ProfileView:** badge contador comentarios; favoritos vía props API.
+- **FavoritesView:** loading; copy corregido tab perfiles; unlike eventos real.
+- **NotificationsContext:** propiedad `isEmpty` para consumidores.
+- **CreatePostSheet:** reset solo tras `onPublish` exitoso (async).
+- **PreferencesRefundSection / MainInfoSection:** cards Lovable con bordes y headers.
+- **SeatLocationModal / EventDetailView:** botón reintentar en error.
+- **AuthLogo:** hero gradiente alineado Lovable.
+- **FeedServicesCarousel:** empty/loading ya alineados (validado).
+- **NotificationsSheet / VenueCreator:** validados sin regresión.
+- **AIAssistantView:** botón volver con `ChevronLeft` (Tailwind).
 
-## Backend pendiente (3 gaps)
+## Backend pendiente (batch 3)
 
-1. **PublishFlowModal** — persistir datos bancarios post-publicación (`createBankAccount` / `onSubmitBank`).
-2. **BookingSheet** — catálogo de servicios adicionales (`GET /services/{id}/addons`).
-3. **PaymentGatewaySheet** — integración PSP completa (formularios tarjeta/PSE hoy son cosméticos; pago real vía `confirmTicketPayment(orderId)`).
+| Gap | Motivo |
+|-----|--------|
+| BankingHub — eliminar cuenta | Sin `DELETE /bank-data/{id}` |
+| PaymentMethodsDashboard — eliminar | Mismo endpoint; menú deshabilitado |
 
 ## Gaps restantes
 
-~78 gaps en batches 3–6 del manifiesto. Próximo batch: componentes de invitaciones, feed avanzado, admin y venues.
+- ~58 gaps en batches 4–6 para alcanzar 98% similitud global.
+- Re-comparación CI con `discover-joyful-feed` pendiente (repo privado en agente cloud).
 
-## Evidencia
+## Evidencia anti-mock
 
-- Anti-mock: `grep` en `packages/shell/src/pages` sin coincidencias.
-- Build DEV sa-east-1 exitoso.
+```bash
+grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages
+# sin coincidencias
+```

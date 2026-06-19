@@ -67,6 +67,16 @@ const LocationSection = () => {
           </div>
         )}
 
+        {!hasCoords && !locating && (
+          <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-border bg-muted/30 py-6 text-center">
+            <MapPin className="h-8 w-8 text-muted-foreground/50" />
+            <p className="text-sm font-medium text-foreground">Sin ubicación en el mapa</p>
+            <p className="text-xs text-muted-foreground max-w-[240px]">
+              Usa «Usar mi ubicación» o «Buscar en mapa» para fijar las coordenadas.
+            </p>
+          </div>
+        )}
+
         <Field label="Dirección del lugar">
           <Input value={form.address} onChange={(e) => update({ address: e.target.value })} placeholder="Ej: Calle 48c #97-45" className={underlineInput} />
         </Field>

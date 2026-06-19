@@ -19,8 +19,9 @@ const PreferencesRefundSection = () => {
           <p className="text-xs text-muted-foreground">Configura reservas y política de devolución</p>
         </div>
       </div>
-      <div className="form-section pb-6">
-        <Label className="form-label">Preferencias en las reservas</Label>
+      <div className="rounded-2xl bg-card border border-border p-4 space-y-5">
+        <div className="form-section">
+          <Label className="form-label">Preferencias en las reservas</Label>
         <p className="form-sublabel text-sm text-muted-foreground">
           Configura cómo quieres recibir y aprobar las reservas
         </p>
@@ -67,9 +68,11 @@ const PreferencesRefundSection = () => {
             </div>
           </div>
         </div>
+        </div>
       </div>
 
-      <div className="form-section pt-6">
+      <div className="rounded-2xl bg-card border border-border p-4">
+      <div className="form-section">
         <Label className="form-label">¿Cuándo pueden solicitar reembolsos? *</Label>
         <RadioGroup
           value={form.refundPolicy}
@@ -83,6 +86,7 @@ const PreferencesRefundSection = () => {
             </div>
           ))}
         </RadioGroup>
+      </div>
       </div>
 
       {mode === 'create' && (

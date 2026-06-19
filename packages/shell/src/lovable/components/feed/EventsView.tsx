@@ -352,11 +352,23 @@ const Dots = ({ count = 3, active = 0 }: { count?: number; active?: number }) =>
   );
 };
 
-const SectionHeader = ({ title, action }: { title: string; action?: boolean }) => (
+const SectionHeader = ({
+  title,
+  action,
+  onAction,
+}: {
+  title: string;
+  action?: boolean;
+  onAction?: () => void;
+}) => (
   <div className="flex items-end justify-between gap-3">
     <h2 className="text-lg font-extrabold text-foreground leading-tight">{title}</h2>
     {action && (
-      <button type="button" className="flex items-center gap-0.5 text-sm font-semibold text-primary whitespace-nowrap">
+      <button
+        type="button"
+        onClick={onAction}
+        className="flex items-center gap-0.5 text-sm font-semibold text-primary whitespace-nowrap"
+      >
         Ver más <ChevronRight className="h-4 w-4" />
       </button>
     )}
@@ -408,6 +420,8 @@ interface EventsViewProps {
   onOpenService?: (card: FeedServiceCard) => void;
   onReserveService?: (serviceId: string) => void;
   onCreateEvent?: () => void;
+  onViewAllNearby?: () => void;
+  onViewAllRecommended?: () => void;
   favoriteEventIds?: Set<string>;
   onToggleFavorite?: (eventId: string) => void;
   likedVenueIds?: Set<string>;
@@ -552,6 +566,8 @@ const EventsView = ({
   onOpenService,
   onReserveService,
   onCreateEvent,
+  onViewAllNearby,
+  onViewAllRecommended,
   favoriteEventIds,
   onToggleFavorite,
   likedVenueIds,
@@ -653,9 +669,35 @@ const EventsView = ({
     { id: 'servicios', label: 'Servicios', dot: 'bg-emerald-500' },
   ];
 
+  const isInitialDiscoverLoad = discoverLoading
+    && !publishedEvents.length
+    && !favoriteEvents.length
+    && !nearbyEvents.length
+    && !recommendedEvents.length
+    && !publishedVenues.length;
+
   return (
     <div className="mx-auto max-w-lg pb-40 bg-background">
-      {discoverLoading && (
+      {isInitialDiscoverLoad && (
+        <div className="px-4 pt-4 space-y-6">
+          <div className="flex gap-2.5">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="h-10 w-24 animate-pulse rounded-full bg-muted" />
+            ))}
+          </div>
+          {[1, 2].map((i) => (
+            <div key={i} className="space-y-3">
+              <div className="h-5 w-40 animate-pulse rounded bg-muted" />
+              <div className="flex gap-4 overflow-hidden">
+                {[1, 2].map((j) => (
+                  <div key={j} className="h-52 w-[210px] shrink-0 animate-pulse rounded-2xl bg-muted" />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      {discoverLoading && !isInitialDiscoverLoad && (
         <div className="flex items-center justify-center gap-2 border-b border-border bg-muted/40 px-4 py-2 text-xs text-muted-foreground">
           <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
           Actualizando descubrimiento…
@@ -684,7 +726,7 @@ const EventsView = ({
         </div>
       </div>
 
-      {topStrip && (
+      {topStrip && !isInitialDiscoverLoad && (
         <div className="px-4 pt-2 pb-2">
           <h2 className="text-lg font-extrabold text-foreground">{topStrip.title}</h2>
           <div className={`${HORIZONTAL_SCROLL} mt-4`}>
@@ -712,7 +754,21 @@ const EventsView = ({
         </div>
       )}
 
-      {showEvents && filteredMyEvents.length > 0 && (
+      {!isInitialDiscoverLoad && showEvents && filteredMyEvents.length === 0 && filter !== 'lugares' && filter !== 'servicios' && (
+        <section className="px-4 pt-6">
+          <SectionHeader title="Tus eventos publicados" />
+          <EmptyHint icon={CalendarDays}>
+            Aún no has publicado eventos. Crea uno para que aparezca aquí.
+          </EmptyHint>
+          {onCreateEvent && (
+            <Button className="mt-4 w-full rounded-full" size="lg" type="button" onClick={onCreateEvent}>
+              Crear evento
+            </Button>
+          )}
+        </section>
+      )}
+
+      {!isInitialDiscoverLoad && showEvents && filteredMyEvents.length > 0 && (
         <section className="px-4 pt-6 first:pt-2">
           <SectionHeader title="Tus eventos publicados" />
           <div
@@ -733,7 +789,7 @@ const EventsView = ({
         </section>
       )}
 
-      {showEvents && (
+      {!isInitialDiscoverLoad && showEvents && (
         <section className="px-4 pt-6">
           <SectionHeader title="Eventos Favoritos" />
           {filteredFavEvents.length > 0 ? (
@@ -751,10 +807,10 @@ const EventsView = ({
         </section>
       )}
 
-      {showEvents && (
+      {!isInitialDiscoverLoad && showEvents && (
         <section className="px-4 pt-8 border-t border-border/60 mt-6">
           <div className="pt-6">
-            <SectionHeader title="Eventos cercanos a tu ubicación" action />
+            <SectionHeader title="Eventos cercanos a tu ubicación" action onAction={onViewAllNearby} />
             {filteredNearEvents.length > 0 ? (
               <>
                 <div className={HORIZONTAL_SCROLL}>
@@ -771,7 +827,7 @@ const EventsView = ({
         </section>
       )}
 
-      {showVenues && (
+      {!isInitialDiscoverLoad && showVenues && (
         <section className="px-4 pt-8">
           <SectionHeader title="Lugares cercanos a tu ubicación" action />
           {filteredVenues.length > 0 ? (
@@ -799,7 +855,7 @@ const EventsView = ({
         </section>
       )}
 
-      {showServices && (
+      {!isInitialDiscoverLoad && showServices && (
         <FeedServicesCarousel
           providers={filteredServiceCards}
           loading={servicesLoading}
@@ -809,7 +865,7 @@ const EventsView = ({
         />
       )}
 
-      {showServices && (
+      {!isInitialDiscoverLoad && showServices && (
         <section className="px-4 pt-8">
           <SectionHeader
             title={selectedCategory ? `Perfiles · ${selectedCategory}` : 'Perfiles que prestan servicios'}
@@ -850,9 +906,9 @@ const EventsView = ({
         </section>
       )}
 
-      {showEvents && (
+      {!isInitialDiscoverLoad && showEvents && (
         <section className="px-4 pt-8">
-          <SectionHeader title="Eventos recomendados" action />
+          <SectionHeader title="Eventos recomendados" action onAction={onViewAllRecommended} />
           {filteredRecEvents.length > 0 ? (
             <>
               <div className={HORIZONTAL_SCROLL}>
@@ -868,7 +924,7 @@ const EventsView = ({
         </section>
       )}
 
-      {showEvents && (
+      {!isInitialDiscoverLoad && showEvents && (
         <section className="px-4 pt-8">
           <h2 className="text-lg font-extrabold text-foreground">Tus eventos vigentes</h2>
           {filteredUpcoming.length > 0 ? (
@@ -883,7 +939,7 @@ const EventsView = ({
         </section>
       )}
 
-      {showEvents && (
+      {!isInitialDiscoverLoad && showEvents && (
         <section className="px-4 pt-8">
           <h2 className="text-lg font-extrabold text-foreground">Otros eventos</h2>
           {filteredOther.length > 0 ? (
@@ -898,7 +954,7 @@ const EventsView = ({
         </section>
       )}
 
-      {showEvents && (
+      {!isInitialDiscoverLoad && showEvents && (
         <section className="px-4 pt-8 text-center">
           <div className="rounded-2xl bg-card border border-dashed border-border p-6 flex flex-col items-center">
             <CalendarDays className="h-12 w-12 text-primary/60" />

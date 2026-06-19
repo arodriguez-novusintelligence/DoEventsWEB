@@ -89,6 +89,27 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-20 gap-empalme batch 3 (run 27850000711-b3)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| EventInvitationModal retry | Integración | Sí | `guests/EventInvitationModal.tsx` | `loadEvents` + reintento |
+| LocationSection empty map | VISUAL | Sí | `venues/sections/LocationSection.tsx` | Sin coords → empty state |
+| MyInvitationsView error | Integración | Sí | `invitations/MyInvitationsView.tsx` | `loadError`/`onRetry` |
+| EventsView skeleton | VISUAL | Sí | `feed/EventsView.tsx` | Carga inicial + empty publicados |
+| CommentsSheet total/loading | Integración | Sí | `feed/CommentsSheet.tsx` | Contador + avatares API |
+| ProfileView comments badge | VISUAL | Sí | `feed/ProfileView.tsx` | Badge en botón comentarios |
+| FavoritesView loading | VISUAL | Sí | `feed/FavoritesView.tsx` | Spinner + copy perfiles |
+| NotificationsContext isEmpty | Integración | Sí | `contexts/NotificationsContext.tsx` | Flag derivado |
+| CreatePostSheet async publish | FRONTEND_LOGIC | Sí | `feed/CreatePostSheet.tsx` | Reset post-éxito API |
+| Venue sections cards | VISUAL | Sí | `venues/sections/*` | Cards borde Lovable |
+| SeatLocationModal retry | Integración | Sí | `tickets/SeatLocationModal.tsx` | Reintento mapa |
+| EventDetailView retry | Integración | Sí | `events/EventDetailView.tsx` | Reintento fetch |
+| AuthLogo hero | VISUAL | Sí | `auth/AuthLogo.tsx` | Gradiente + copy |
+| AIAssistantView back | VISUAL | Sí | `ai/AIAssistantView.tsx` | ChevronLeft |
+| Banking delete | Bloqueo | Parcial | `banking/BankingHub.tsx`, `PaymentMethodsDashboard.tsx` | BACKEND_REQUIRED |
+| Batch 3 gaps (20) | Empalme | Sí | ver `decision-log.md` | 18 DONE + 2 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-19 gap-empalme batch 2 (run 27850000711-b2)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

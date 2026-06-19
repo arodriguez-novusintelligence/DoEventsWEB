@@ -152,8 +152,9 @@ export default function PaymentMethodsDashboard({ onAddMethod, methods, onSetDef
                     <DropdownMenuItem className="cursor-pointer" onSelect={() => onEdit(method.id)}>Editar información</DropdownMenuItem>
                     <DropdownMenuItem className="cursor-pointer" onSelect={() => onSetDefault(method.id)}>Establecer como predeterminado</DropdownMenuItem>
                     <DropdownMenuItem
-                      className="cursor-pointer text-destructive focus:text-destructive"
-                      onSelect={() => onDelete(method.id)}
+                      className="cursor-pointer text-destructive focus:text-destructive opacity-60"
+                      disabled
+                      onSelect={(e) => e.preventDefault()}
                     >
                       Eliminar (requiere backend)
                     </DropdownMenuItem>

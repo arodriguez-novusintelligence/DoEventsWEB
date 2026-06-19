@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AlertCircle, Loader2 } from 'lucide-react';
+import { AlertCircle, Loader2, RefreshCw } from 'lucide-react';
 import {
   extractVenueImageUrls,
   fetchEventDetail,
@@ -43,6 +43,7 @@ const EventDetailView = ({
   const [loading, setLoading] = useState(Boolean(resolvedId));
   const [invitationEvent, setInvitationEvent] = useState<InvitationEvent | null>(null);
   const [error, setError] = useState('');
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     if (!resolvedId) {
@@ -90,7 +91,7 @@ const EventDetailView = ({
 
     void load();
     return () => { cancelled = true; };
-  }, [resolvedId]);
+  }, [resolvedId, reloadKey]);
 
   if (!resolvedId) {
     return (
@@ -132,6 +133,14 @@ const EventDetailView = ({
         <p className="text-xs text-muted-foreground max-w-[260px]">
           {error || 'Intenta de nuevo más tarde.'}
         </p>
+        <button
+          type="button"
+          onClick={() => setReloadKey((k) => k + 1)}
+          className="mt-1 flex items-center gap-1.5 rounded-full border border-primary/30 px-4 py-2 text-sm font-semibold text-primary"
+        >
+          <RefreshCw className="h-3.5 w-3.5" />
+          Reintentar
+        </button>
         <button
           type="button"
           onClick={onBack}

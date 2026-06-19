@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Heart, Ticket, Mail, Loader2 } from 'lucide-react';
+import { Heart, Ticket, Mail, Loader2, AlertCircle } from 'lucide-react';
+import { Button } from '@lovable/components/ui/button';
 import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBanner';
 import type { InvitationEvent } from '@lovable/data/invitationsData';
 
@@ -7,6 +8,8 @@ interface MyInvitationsViewProps {
   onBack: () => void;
   invitations?: InvitationEvent[];
   loading?: boolean;
+  loadError?: string | null;
+  onRetry?: () => void;
   onOpenInvitation?: (invitation: InvitationEvent) => void;
 }
 
@@ -26,6 +29,8 @@ const MyInvitationsView = ({
   onBack,
   invitations = [],
   loading = false,
+  loadError = null,
+  onRetry,
   onOpenInvitation,
 }: MyInvitationsViewProps) => {
   const [liked, setLiked] = useState<Record<string, boolean>>({});
@@ -44,6 +49,19 @@ const MyInvitationsView = ({
           <div className="flex flex-col items-center gap-3 rounded-2xl bg-card p-10 text-center shadow-sm">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
             <p className="text-sm text-muted-foreground">Cargando invitaciones…</p>
+          </div>
+        ) : loadError ? (
+          <div className="flex flex-col items-center gap-3 rounded-2xl bg-card p-10 text-center shadow-sm">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
+              <AlertCircle className="h-7 w-7 text-destructive" />
+            </div>
+            <p className="text-sm font-semibold text-foreground">No se pudieron cargar las invitaciones</p>
+            <p className="text-xs text-muted-foreground max-w-[240px]">{loadError}</p>
+            {onRetry && (
+              <Button type="button" variant="outline" size="sm" className="rounded-xl" onClick={onRetry}>
+                Reintentar
+              </Button>
+            )}
           </div>
         ) : invitations.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-2xl bg-card p-10 text-center shadow-sm">
