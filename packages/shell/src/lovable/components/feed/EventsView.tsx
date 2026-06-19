@@ -401,6 +401,7 @@ interface EventsViewProps {
   serviceProviders?: ServiceProviderItem[];
   nearbyServiceCards?: FeedServiceCard[];
   servicesLoading?: boolean;
+  discoverLoading?: boolean;
   onOpenEvent?: (event: EventItem) => void;
   onOpenVenue?: (venue: PublishedVenueDraft) => void;
   onOpenServiceProvider?: (provider: ServiceProviderItem) => void;
@@ -544,6 +545,7 @@ const EventsView = ({
   serviceProviders = [],
   nearbyServiceCards = [],
   servicesLoading = false,
+  discoverLoading = false,
   onOpenEvent,
   onOpenVenue,
   onOpenServiceProvider,
@@ -653,6 +655,12 @@ const EventsView = ({
 
   return (
     <div className="mx-auto max-w-lg pb-40 bg-background">
+      {discoverLoading && (
+        <div className="flex items-center justify-center gap-2 border-b border-border bg-muted/40 px-4 py-2 text-xs text-muted-foreground">
+          <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+          Actualizando descubrimiento…
+        </div>
+      )}
       <div className="px-4 pt-4 pb-5">
         <div className="flex gap-2.5 overflow-x-auto no-scrollbar -mx-1 px-1">
           {filterPills.map((p) => {

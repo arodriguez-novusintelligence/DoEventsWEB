@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Input } from '@lovable/components/ui/input';
 import { Textarea } from '@lovable/components/ui/textarea';
 import { Button } from '@lovable/components/ui/button';
-import { MapPinPlus, Crosshair, MapPin } from 'lucide-react';
+import { MapPinPlus, Crosshair, MapPin, Loader2 } from 'lucide-react';
 import { PlaceSeatingMapSection } from '../../../../components/places/PlaceSeatingMapSection';
 import { usePlaceForm } from '@lovable/components/places/placeFormContext';
 
@@ -37,8 +37,8 @@ const LocationSection = () => {
       <div className="rounded-2xl bg-card border border-border p-4 space-y-5">
         <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
           <Button type="button" variant="outline" size="sm" disabled={locating} onClick={() => void useDeviceLocation()}>
-            <Crosshair className="mr-2 h-4 w-4" />
-            Usar mi ubicación
+            {locating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Crosshair className="mr-2 h-4 w-4" />}
+            {locating ? 'Obteniendo ubicación…' : 'Usar mi ubicación'}
           </Button>
           <Button type="button" variant="outline" size="sm" disabled={locating} onClick={() => void searchLocation()}>
             <MapPin className="mr-2 h-4 w-4" />

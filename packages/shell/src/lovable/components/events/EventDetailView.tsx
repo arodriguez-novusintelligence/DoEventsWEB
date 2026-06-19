@@ -1,6 +1,17 @@
-import { AlertCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { AlertCircle, Loader2 } from 'lucide-react';
+import {
+  extractVenueImageUrls,
+  fetchEventDetail,
+  getVenueById,
+  resolveImageUrl,
+} from '@doevents/shared';
 import InvitationEventDetailView from '@lovable/components/invitations/InvitationEventDetailView';
 import type { InvitationEvent } from '@lovable/data/invitationsData';
+import {
+  eventDetailToInvitationEvent,
+  type EventDetailViewOptions,
+} from '../../../lovable-bridge/eventDetailAdapter';
 
 interface BasicEvent {
   id?: string;
@@ -12,55 +23,76 @@ interface BasicEvent {
 }
 
 interface Props {
-  event: BasicEvent;
+  event?: BasicEvent;
+  eventId?: string;
   onBack: () => void;
   onSuccess?: () => void;
   onPurchaseStart?: () => void;
   onPurchaseEnd?: () => void;
 }
 
-const emptyPerson = {
-  name: '—',
-  avatar: '',
-  rating: 0,
-  eventsCount: 0,
-  experiencePct: 0,
-};
+const EventDetailView = ({
+  event,
+  eventId,
+  onBack,
+  onSuccess,
+  onPurchaseStart,
+  onPurchaseEnd,
+}: Props) => {
+  const resolvedId = eventId || event?.id;
+  const [loading, setLoading] = useState(Boolean(resolvedId));
+  const [invitationEvent, setInvitationEvent] = useState<InvitationEvent | null>(null);
+  const [error, setError] = useState('');
 
-function buildInvitationEvent(event: BasicEvent): InvitationEvent {
-  const image = event.image || '';
-  return {
-    id: event.id || '',
-    title: event.title || 'Evento',
-    receivedAt: new Date().toISOString(),
-    inviter: '',
-    status: 'aceptada',
-    image,
-    images: image ? [image] : [],
-    state: 'activo',
-    startDate: event.date || '—',
-    endDate: event.date || '—',
-    startTime: '—',
-    endTime: '—',
-    category: '—',
-    eventClass: '—',
-    capacity: 0,
-    venueType: '—',
-    description: event.description || '',
-    agenda: [],
-    venue: {
-      name: event.location || 'Lugar del evento',
-      address: event.location || '—',
-      images: [],
-    },
-    organizer: emptyPerson,
-    host: emptyPerson,
-    refundPolicy: '',
-  };
-}
+  useEffect(() => {
+    if (!resolvedId) {
+      setLoading(false);
+      setInvitationEvent(null);
+      setError('');
+      return;
+    }
 
-const EventDetailView = ({ event, onBack, onSuccess, onPurchaseStart, onPurchaseEnd }: Props) => {
-  if (!event.id) {
+    let cancelled = false;
+    const load = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const detail = await fetchEventDetail(resolvedId);
+        let venueOptions: EventDetailViewOptions['venue'];
+        const venueId = detail?.event?.venueId;
+        if (venueId) {
+          try {
+            const venue = await getVenueById(venueId);
+            const images = extractVenueImageUrls(venue as Record<string, unknown>)
+              .map((url) => resolveImageUrl(url) || url)
+              .filter(Boolean);
+            venueOptions = {
+              name: venue.name,
+              address: venue.address || undefined,
+              images,
+            };
+          } catch {
+            /* venue opcional */
+          }
+        }
+        if (!cancelled) {
+          setInvitationEvent(eventDetailToInvitationEvent(detail, venueOptions));
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : 'No se pudo cargar el evento');
+          setInvitationEvent(null);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    void load();
+    return () => { cancelled = true; };
+  }, [resolvedId]);
+
+  if (!resolvedId) {
     return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 px-6 text-center">
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
@@ -81,9 +113,39 @@ const EventDetailView = ({ event, onBack, onSuccess, onPurchaseStart, onPurchase
     );
   }
 
+  if (loading) {
+    return (
+      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="text-sm text-muted-foreground">Cargando evento…</p>
+      </div>
+    );
+  }
+
+  if (error || !invitationEvent) {
+    return (
+      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 px-6 text-center">
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
+          <AlertCircle className="h-7 w-7 text-destructive" />
+        </div>
+        <p className="text-sm font-semibold text-foreground">No se pudo cargar el evento</p>
+        <p className="text-xs text-muted-foreground max-w-[260px]">
+          {error || 'Intenta de nuevo más tarde.'}
+        </p>
+        <button
+          type="button"
+          onClick={onBack}
+          className="mt-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground"
+        >
+          Volver
+        </button>
+      </div>
+    );
+  }
+
   return (
     <InvitationEventDetailView
-      event={buildInvitationEvent(event)}
+      event={invitationEvent}
       onBack={onBack}
       onSuccess={onSuccess}
       onPurchaseStart={onPurchaseStart}

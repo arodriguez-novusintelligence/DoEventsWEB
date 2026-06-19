@@ -68,6 +68,8 @@ interface NotificationsContextType {
   notifications: Notification[];
   unreadCount: number;
   loading: boolean;
+  loadError: string | null;
+  reload: () => Promise<void>;
   addNotification: (n: Omit<Notification, 'id' | 'timeAgo' | 'read'>) => void;
   markAllRead: () => void;
   markRead: (id: string) => void;
@@ -80,6 +82,8 @@ const fallbackContext: NotificationsContextType = {
   notifications: [],
   unreadCount: 0,
   loading: false,
+  loadError: null,
+  reload: async () => undefined,
   addNotification: () => undefined,
   markAllRead: () => undefined,
   markRead: () => undefined,
@@ -109,18 +113,22 @@ export const NotificationsProvider = ({
 }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const reloadFromApi = useCallback(async () => {
     if (!userId) {
       setNotifications([]);
+      setLoadError(null);
       return;
     }
     setLoading(true);
+    setLoadError(null);
     try {
       const items = await fetchUserNotifications(userId);
       setNotifications(items.map(appNotificationToLovable));
-    } catch {
+    } catch (err) {
       setNotifications([]);
+      setLoadError(err instanceof Error ? err.message : 'No se pudieron cargar las notificaciones');
     } finally {
       setLoading(false);
     }
@@ -221,7 +229,7 @@ export const NotificationsProvider = ({
 
   return (
     <NotificationsContext.Provider
-      value={{ notifications, unreadCount, loading, addNotification, markAllRead, markRead, dismissNotification, updateNotification, clearAll }}
+      value={{ notifications, unreadCount, loading, loadError, reload: reloadFromApi, addNotification, markAllRead, markRead, dismissNotification, updateNotification, clearAll }}
     >
       {children}
     </NotificationsContext.Provider>

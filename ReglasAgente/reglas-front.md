@@ -83,6 +83,20 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-19 gap-empalme batch 3 (run 27849872403-b3)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| EventDetailView API real | Integración | Sí | `events/EventDetailView.tsx` | `fetchEventDetail` + adapter |
+| ProfileView showComments | Bloqueo | Sí | `feed/ProfileView.tsx` | Fix useState runtime |
+| CreatePostSheet authorId | Bloqueo | Sí | `feed/CreatePostSheet.tsx` | Sin `user.id: 'me'` |
+| Notifications load/error | Integración | Sí | `contexts/NotificationsContext.tsx`, `feed/NotificationsSheet.tsx` | reload + reintento |
+| FeedServicesCarousel empty | VISUAL | Sí | `feed/FeedServicesCarousel.tsx` | Empty state visible |
+| Favorites unlike API | Integración | Sí | `feed/FavoritesView.tsx`, `pages/ProfilePage.tsx` | `toggleEventLike` |
+| Venue sections headers | VISUAL | Sí | `venues/sections/*` | Iconos + copy Lovable |
+| Banking delete | Bloqueo | Parcial | `banking/BankingHub.tsx`, `PaymentMethodsDashboard.tsx` | BACKEND_REQUIRED |
+| Batch 3 gaps (20) | Empalme | Sí | ver `decision-log.md` | 18 DONE + 2 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-19 gap-empalme batch 2 (run 27849872403-b2)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

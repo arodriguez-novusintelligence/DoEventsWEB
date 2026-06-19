@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Minus, Plus, Users, X, ParkingCircle } from 'lucide-react';
+import { Minus, Plus, Users, X, ParkingCircle, FileText } from 'lucide-react';
 import { Input } from '@lovable/components/ui/input';
 import { Textarea } from '@lovable/components/ui/textarea';
 import { Label } from '@lovable/components/ui/label';
@@ -90,9 +90,12 @@ const MainInfoSection = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-base font-extrabold text-foreground mb-1">Información principal</h2>
-        <p className="text-xs text-muted-foreground">Datos básicos del lugar que verán los organizadores</p>
+      <div className="flex items-center gap-2">
+        <FileText className="h-5 w-5 text-primary" />
+        <div>
+          <h2 className="text-base font-extrabold text-foreground">Información principal</h2>
+          <p className="text-xs text-muted-foreground">Datos básicos del lugar que verán los organizadores</p>
+        </div>
       </div>
 
       <MediaUpload />

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Heart, Star } from 'lucide-react';
+import { Heart, Star, Briefcase } from 'lucide-react';
 import { resolveEventImageUrl } from '@doevents/shared';
 
 export interface FeedServiceCard {
@@ -60,7 +60,27 @@ const FeedServicesCarousel = ({
     );
   }
 
-  if (!list.length) return null;
+  if (!list.length) {
+    return (
+      <section className="my-5 px-4">
+        <div className="mb-3">
+          <h3 className="text-base font-bold text-foreground">
+            Servicios cercanos a tu ubicación
+          </h3>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            DJs, catering, fotografía y más cerca de ti
+          </p>
+        </div>
+        <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border bg-card py-10 text-center">
+          <Briefcase className="h-10 w-10 text-muted-foreground/40" />
+          <p className="text-sm font-medium text-foreground">Sin servicios cercanos</p>
+          <p className="text-xs text-muted-foreground max-w-[240px]">
+            Activa tu ubicación o explora más tarde para ver proveedores cerca de ti.
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="my-5">

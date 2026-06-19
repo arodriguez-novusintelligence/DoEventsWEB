@@ -1,7 +1,7 @@
 import { Label } from '@lovable/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@lovable/components/ui/radio-group';
 import { Checkbox } from '@lovable/components/ui/checkbox';
-import { Rocket, ClipboardCheck } from 'lucide-react';
+import { Rocket, ClipboardCheck, RotateCcw } from 'lucide-react';
 import { cn } from '@lovable/lib/utils';
 import { Badge } from '@lovable/components/ui/badge';
 import { REFUND_POLICIES } from '@lovable/data/servicesData';
@@ -12,6 +12,13 @@ const PreferencesRefundSection = () => {
 
   return (
     <div className="divide-y divide-border space-y-6">
+      <div className="flex items-center gap-2 pb-2">
+        <RotateCcw className="h-5 w-5 text-primary" />
+        <div>
+          <h2 className="text-base font-extrabold text-foreground">Preferencias y reembolsos</h2>
+          <p className="text-xs text-muted-foreground">Configura reservas y política de devolución</p>
+        </div>
+      </div>
       <div className="form-section pb-6">
         <Label className="form-label">Preferencias en las reservas</Label>
         <p className="form-sublabel text-sm text-muted-foreground">

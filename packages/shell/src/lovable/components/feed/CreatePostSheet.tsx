@@ -5,7 +5,7 @@ import {
   DrawerTitle,
 } from '@lovable/components/ui/drawer';
 import { Avatar, AvatarFallback } from '@lovable/components/ui/avatar';
-import { ImagePlus, Video, X, Globe, Lock } from 'lucide-react';
+import { ImagePlus, Video, X, Globe, Lock, Loader2 } from 'lucide-react';
 import { useState, useRef, useMemo } from 'react';
 import { cn } from '@lovable/lib/utils';
 import type { Post } from '@doevents/shared';
@@ -17,7 +17,9 @@ interface CreatePostSheetProps {
   onPublish: (post: Omit<Post, 'id' | 'likes' | 'comments' | 'reposts'>) => void;
   authorName?: string;
   authorInitials?: string;
+  authorId?: string;
   mentionOptions?: MentionOption[];
+  publishing?: boolean;
 }
 
 const isVideo = (src: string) => {
@@ -31,7 +33,9 @@ const CreatePostSheet = ({
   onPublish,
   authorName = 'Tú',
   authorInitials = 'TU',
+  authorId,
   mentionOptions: mentionOptionsProp = [],
+  publishing = false,
 }: CreatePostSheetProps) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -82,12 +86,12 @@ const CreatePostSheet = ({
     setMedia((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const canPublish = title.trim().length > 0 || description.trim().length > 0;
+  const canPublish = (title.trim().length > 0 || description.trim().length > 0) && !publishing;
 
   const handlePublish = () => {
     if (!canPublish) return;
     onPublish({
-      user: { id: 'me', name: authorName, initials: authorInitials },
+      user: { id: authorId || '', name: authorName, initials: authorInitials },
       timeAgo: 'Justo ahora',
       images: media,
       title: title.trim(),
@@ -287,9 +291,16 @@ const CreatePostSheet = ({
               <button
                 onClick={handlePublish}
                 disabled={!canPublish}
-                className="w-full rounded-full bg-primary py-3 font-semibold text-primary-foreground transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:hover:scale-100"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3 font-semibold text-primary-foreground transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:hover:scale-100"
               >
-                Publicar
+                {publishing ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Publicando…
+                  </>
+                ) : (
+                  'Publicar'
+                )}
               </button>
             </div>
           </div>

@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27849872403-b3`: batch 3 (20 gaps) — 18 DONE frontend; 2 BACKEND_REQUIRED (`BankingHub` delete, `PaymentMethodsDashboard` delete).
+
 Run `gap-empalme-27849872403-b2`: batch 2 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`PublishFlowModal`, `BookingSheet` add-ons, `PaymentGatewaySheet`).
 
 Run `gap-empalme-27849872403-b1`: batch 1 (20 gaps) — 18 DONE frontend; 2 BACKEND_REQUIRED (`EditProfileView`, `BankingForm`). Anti-mock: TicketPurchaseFlow, VenueDetailReservation. Kick chat vía `kickFromEventChat`.
@@ -22,14 +24,15 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27849872403-b2)
+## Empalme realizado (última ejecución — gap-empalme-27849872403-b3)
 
-- **VenueDetailReservation:** montados `BookingSheet` + `PaymentGatewaySheet` para contratar servicios adicionales del lugar; indicador paso 1/3–3/3 dinámico; reserva venue vía `createVenueBooking` + `onPaymentReady`.
-- **FollowersSheet:** tab Solicitudes con `fetchPendingFollowRequests`; seguir/dejar de seguir vía API real.
-- **PaymentGatewaySheet:** panel inline cuando falta `orderId`; botón pago deshabilitado sin orden.
-- **BookingSheet:** empty state servicios adicionales (catálogo real pendiente backend).
-- **PublishFlowModal:** banner “Datos bancarios pendientes” en éxito; sin simular persistencia bancaria.
-- **MyVenuesView, StatsEventListView, ServiceDetailView, ContactImportModal, TransferTicketFlow, MyTicketsView:** polish visual alineado Lovable.
+- **EventDetailView:** carga real vía `fetchEventDetail` + `eventDetailToInvitationEvent`; eliminado stub con organizador ficticio.
+- **ProfileView:** fix `showComments` (`useState`); favoritos con `toggleEventLike` y navegación a evento.
+- **NotificationsContext/Sheet:** `loadError`, `reload`, estados loading/error con reintento.
+- **CreatePostSheet:** props `authorId`/`publishing`; sin `user.id: 'me'`.
+- **FeedServicesCarousel:** empty state en lugar de ocultar sección.
+- **FavoritesView/EventsView:** banner loading descubrimiento; callbacks unlike/open event.
+- **LocationSection/MainInfoSection/PreferencesRefundSection/AuthLogo:** headers y UX alineados Lovable.
 
 ## Backend pendiente para 100%
 

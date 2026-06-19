@@ -14,6 +14,54 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-19 23:15 UTC] gap-empalme-27849872403-b3
+
+### 1. Resumen del empalme
+Batch 3 (20 gaps, manifiesto `27849872403-b3`, similitud baseline 58.21%): empalme focalizado en feed, perfil, venues y banca. **EventDetailView** reescrito con `fetchEventDetail` + `eventDetailToInvitationEvent` (sin stub `buildInvitationEvent`). **ProfileView** corrige bug `showComments` y cablea favoritos con API. **NotificationsContext/Sheet** exponen `loading`, `loadError` y reintento. **CreatePostSheet** recibe `authorId`/`publishing` sin `user.id: 'me'`.
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Location section | `packages/shell/src/lovable/components/venues/sections/LocationSection.tsx` | DONE |
+| Event invitation | `packages/shell/src/lovable/components/guests/EventInvitationModal.tsx` | DONE |
+| My invitations | `packages/shell/src/lovable/components/invitations/MyInvitationsView.tsx` | DONE |
+| Events | `packages/shell/src/lovable/components/feed/EventsView.tsx` | DONE |
+| Comments | `packages/shell/src/lovable/components/feed/CommentsSheet.tsx` | DONE |
+| Favorites | `packages/shell/src/lovable/components/feed/FavoritesView.tsx` | DONE |
+| Profile view | `packages/shell/src/lovable/components/feed/ProfileView.tsx` | DONE |
+| Preferences refund | `packages/shell/src/lovable/components/venues/sections/PreferencesRefundSection.tsx` | DONE |
+| Create post | `packages/shell/src/lovable/components/feed/CreatePostSheet.tsx` | DONE |
+| Notifications context | `packages/shell/src/lovable/contexts/NotificationsContext.tsx` | DONE |
+| Auth logo | `packages/shell/src/lovable/components/auth/AuthLogo.tsx` | DONE |
+| Seat location | `packages/shell/src/lovable/components/tickets/SeatLocationModal.tsx` | DONE |
+| Venue creator | `packages/shell/src/lovable/components/venues/VenueCreator.tsx` | DONE |
+| Feed services carousel | `packages/shell/src/lovable/components/feed/FeedServicesCarousel.tsx` | DONE |
+| Event detail | `packages/shell/src/lovable/components/events/EventDetailView.tsx` | DONE |
+| Notifications | `packages/shell/src/lovable/components/feed/NotificationsSheet.tsx` | DONE |
+| AI assistant | `packages/shell/src/lovable/components/ai/AIAssistantView.tsx` | DONE |
+| Banking hub | `packages/shell/src/lovable/components/banking/BankingHub.tsx` | BACKEND_REQUIRED |
+| Main info section | `packages/shell/src/lovable/components/venues/sections/MainInfoSection.tsx` | DONE |
+| Payment methods dashboard | `packages/shell/src/lovable/components/banking/PaymentMethodsDashboard.tsx` | BACKEND_REQUIRED |
+
+### 3. Similitud diseño
+- **Antes:** 58.21%
+- **Después (estimado):** 74.0% — re-comparación CI pendiente
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- EventDetailView: sin `buildInvitationEvent` con datos ficticios
+- CreatePostSheet: `authorId` desde padre; sin `'me'` hardcodeado
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias
+
+### 6. Decisión
+**APPLIED**
+
+---
+
 ## [2026-06-19 22:45 UTC] gap-empalme-27849872403-b2
 
 ### 1. Resumen del empalme

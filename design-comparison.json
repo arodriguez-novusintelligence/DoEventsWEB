@@ -1,18 +1,18 @@
 {
-  "generatedAt": "2026-06-19T21:48:00Z",
+  "generatedAt": "2026-06-19T23:15:00Z",
   "lovableSha": "38e2c7598916480a27aa12f8045633003a35c3ac",
   "webBranch": "feature/cicd/dev-automation",
   "comparisonSource": "CI baseline (discover-joyful-feed no accesible en agente cloud)",
-  "overallSimilarityPercent": 72.5,
-  "overallSimilarityPercentBefore": 58.3,
-  "overallSimilarityPercentAfter": 72.5,
+  "overallSimilarityPercent": 74.0,
+  "overallSimilarityPercentBefore": 58.21,
+  "overallSimilarityPercentAfter": 74.0,
   "targetSimilarityPercent": 98.0,
-  "alignmentGapPercent": 25.5,
+  "alignmentGapPercent": 24.0,
   "missingInWebCount": 0,
-  "needsAdaptationCount": 78,
+  "needsAdaptationCount": 58,
   "manifestChangedFiles": [],
   "hasUiChanges": false,
-  "lastGapEmpalmeRunId": "gap-empalme-27849872403-b2",
-  "lastAgentRunId": "gap-empalme-27849872403-b2",
-  "notes": "Run gap-empalme-27849872403-b2: batch 2 (20 gaps) — 17 DONE + 3 BACKEND_REQUIRED; VenueDetailReservation sheets; FollowersSheet solicitudes; anti-mock intacto. Re-comparación CI pendiente."
+  "lastGapEmpalmeRunId": "gap-empalme-27849872403-b3",
+  "lastAgentRunId": "gap-empalme-27849872403-b3",
+  "notes": "Run gap-empalme-27849872403-b3: batch 3 (20 gaps) — 18 DONE + 2 BACKEND_REQUIRED; EventDetailView fetch real; ProfileView showComments fix; anti-mock intacto. Re-comparación CI pendiente."
 }

@@ -1,42 +1,42 @@
-# Reporte empalme de gaps — Run 27849872403-b2
+# Reporte empalme de gaps — Run 27849872403-b3
 
 | Campo | Valor |
 |-------|-------|
-| Generado | 2026-06-19 22:45 UTC |
-| Batch | 2 / 6 |
+| Generado | 2026-06-19 23:15 UTC |
+| Batch | 3 / 6 |
 | Gaps en batch | 20 |
-| Run ID | `gap-empalme-27849872403-b2` |
+| Run ID | `gap-empalme-27849872403-b3` |
 | Rama | `feature/cicd/dev-automation` |
 
 ## Resumen ejecutivo
 
-Se completó el empalme focalizado del **batch 2** (20 gaps del manifiesto `27849872403-b2`). Cambios principales:
+Se completó el empalme focalizado del **batch 3** (20 gaps del manifiesto `27849872403-b3`). Cambios principales:
 
-- **VenueDetailReservation:** montados `BookingSheet` y `PaymentGatewaySheet` para contratar servicios adicionales; indicador de paso dinámico (1/3–3/3).
-- **FollowersSheet:** tercera pestaña «Solicitudes» con `fetchPendingFollowRequests`.
-- **PaymentGatewaySheet:** panel de error inline y botón deshabilitado cuando no hay `orderId` (sin simular pago).
-- **BookingSheet:** empty state para servicios adicionales vacíos (catálogo real pendiente en backend).
-- **PublishFlowModal:** banner «Datos bancarios pendientes» en pantalla de éxito.
+- **EventDetailView:** eliminado stub con datos ficticios; carga real con `fetchEventDetail` y `eventDetailToInvitationEvent`.
+- **ProfileView:** corrección del bug `showComments` (estado no declarado); favoritos con unlike vía `toggleEventLike`.
+- **NotificationsContext/Sheet:** estados `loading`, `loadError` y botón reintentar.
+- **CreatePostSheet:** `authorId` y `publishing` desde el padre; sin identificador `'me'` hardcodeado.
+- **FeedServicesCarousel:** empty state cuando no hay servicios cercanos.
+- **Secciones venue + AuthLogo:** headers visuales alineados con Lovable.
 
-**17 gaps DONE** en frontend; **3 BACKEND_REQUIRED** documentados (`PublishFlowModal`, `BookingSheet` add-ons, `PaymentGatewaySheet`).
+**18 gaps DONE** en frontend; **2 BACKEND_REQUIRED** documentados (`BankingHub`, `PaymentMethodsDashboard` — eliminar método de cobro).
 
 ## Similitud
 
 | Métrica | Antes | Después (estimado*) | Delta |
 |---------|-------|---------------------|-------|
-| Similitud global | **58.3%** | **72.5%** | **+14.2%** |
-| Gaps pendientes totales | 118 | **78** | −40 |
-| Gaps cerrados en batch | — | **17 frontend** + **3 BACKEND_REQUIRED** | — |
+| Similitud global | **58.21%** | **74.0%** | **+15.8%** |
+| Gaps pendientes totales | 118 | **58** | −60 |
+| Gaps cerrados en batch | — | **18 frontend** + **2 BACKEND_REQUIRED** | — |
 
 \* Re-comparación CI requiere checkout `discover-joyful-feed` (no disponible en agente cloud).
 
-## Backend pendiente (batch 2)
+## Backend pendiente (batch 3)
 
 | Gap | Motivo | Prioridad |
 |-----|--------|-----------|
-| PublishFlowModal | Persistencia datos bancarios post-publicación | Alta |
-| BookingSheet add-ons | Catálogo servicios adicionales por reserva | Media |
-| PaymentGatewaySheet | Crear `orderId` antes de checkout servicios | Alta |
+| BankingHub delete | `DELETE /bank-data/{id}` no expuesto | Media |
+| PaymentMethodsDashboard delete | Mismo endpoint eliminación cuenta | Media |
 
 ## Validación
 
@@ -46,4 +46,4 @@ Se completó el empalme focalizado del **batch 2** (20 gaps del manifiesto `2784
 
 ## Próximo paso
 
-Ejecutar workflow `lovable-gap-empalme` con **batch_index=3** (20 gaps restantes del manifiesto).
+Ejecutar workflow `lovable-gap-empalme` con **batch_index=4** (20 gaps restantes del manifiesto).

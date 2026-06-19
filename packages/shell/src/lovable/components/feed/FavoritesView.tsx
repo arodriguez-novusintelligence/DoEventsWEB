@@ -30,6 +30,8 @@ interface FavoritesViewProps {
   favoritePlaces?: FavPlaceItem[];
   favoriteProfiles?: ProfileListUser[];
   onViewProfile?: (user: ProfileListUser) => void;
+  onToggleEventFavorite?: (eventId: string) => void;
+  onOpenEvent?: (eventId: string) => void;
 }
 
 const statusStyle = (s: FavEventItem['status']) => {
@@ -73,7 +75,15 @@ const EmptyTab = ({ message, icon: Icon }: { message: string; icon: typeof Heart
   </div>
 );
 
-const EventsTab = ({ events }: { events: FavEventItem[] }) => {
+const EventsTab = ({
+  events,
+  onToggleEventFavorite,
+  onOpenEvent,
+}: {
+  events: FavEventItem[];
+  onToggleEventFavorite?: (eventId: string) => void;
+  onOpenEvent?: (eventId: string) => void;
+}) => {
   const [likes, setLikes] = useState<Record<string, boolean>>(
     Object.fromEntries(events.map((e) => [e.id, true])),
   );
@@ -89,7 +99,11 @@ const EventsTab = ({ events }: { events: FavEventItem[] }) => {
         .map((e) => (
           <div key={e.id} className="rounded-2xl bg-card shadow-sm overflow-hidden">
             <div className="flex">
-              <div className="relative w-[120px] shrink-0">
+              <button
+                type="button"
+                onClick={() => onOpenEvent?.(e.id)}
+                className="relative w-[120px] shrink-0 text-left"
+              >
                 {e.image ? (
                   <img src={e.image} alt={e.title} className="h-full w-full object-cover" />
                 ) : (
@@ -102,13 +116,22 @@ const EventsTab = ({ events }: { events: FavEventItem[] }) => {
                     {e.status}
                   </span>
                 )}
-              </div>
+              </button>
               <div className="flex-1 p-3 pr-2">
                 <div className="flex items-start justify-between gap-2">
-                  <h3 className="text-sm font-bold text-foreground leading-snug">{e.title}</h3>
+                  <button
+                    type="button"
+                    onClick={() => onOpenEvent?.(e.id)}
+                    className="text-left flex-1 min-w-0"
+                  >
+                    <h3 className="text-sm font-bold text-foreground leading-snug">{e.title}</h3>
+                  </button>
                   <FavoriteHeartButton
                     liked={!!likes[e.id]}
-                    onToggle={() => setLikes((p) => ({ ...p, [e.id]: !p[e.id] }))}
+                    onToggle={() => {
+                      setLikes((p) => ({ ...p, [e.id]: !p[e.id] }));
+                      if (likes[e.id]) onToggleEventFavorite?.(e.id);
+                    }}
                   />
                 </div>
                 <p className="mt-2 text-sm font-medium text-foreground">{e.date}</p>
@@ -215,12 +238,14 @@ const FavoritesView = ({
   favoritePlaces = [],
   favoriteProfiles = [],
   onViewProfile,
+  onToggleEventFavorite,
+  onOpenEvent,
 }: FavoritesViewProps) => (
   <div className="mx-auto max-w-lg min-h-screen bg-secondary pb-24">
     <div className="px-4 pt-4">
       <button onClick={onBack} className="flex items-center gap-1 text-foreground font-medium">
         <ChevronLeft className="h-5 w-5 text-primary" />
-        Atras
+        Atrás
       </button>
       <h1 className="mt-2 text-2xl font-extrabold text-primary">Tus favoritos</h1>
 
@@ -243,7 +268,11 @@ const FavoritesView = ({
         </TabsList>
 
         <TabsContent value="eventos">
-          <EventsTab events={favoriteEvents} />
+          <EventsTab
+            events={favoriteEvents}
+            onToggleEventFavorite={onToggleEventFavorite}
+            onOpenEvent={onOpenEvent}
+          />
         </TabsContent>
         <TabsContent value="posts">
           <PostsTab posts={favoritePosts} />

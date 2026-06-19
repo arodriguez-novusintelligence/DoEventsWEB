@@ -4,7 +4,7 @@ import { Button } from '@lovable/components/ui/button';
 import {
   Heart, MessageSquare, Repeat2, Share2, UserPlus, CheckCheck,
   CalendarPlus, Mail, Ticket, CreditCard, ShieldCheck, Star,
-  Megaphone, FileText, Trash2, MessagesSquare, AtSign, Building2, Briefcase, Crown, Bell,
+  Megaphone, FileText, Trash2, MessagesSquare, AtSign, Building2, Briefcase, Crown, Bell, Loader2,
 } from 'lucide-react';
 import { useNotifications, Notification, NotificationType } from '@lovable/contexts/NotificationsContext';
 import { cn } from '@lovable/lib/utils';
@@ -279,7 +279,7 @@ const NotificationsSheet = ({
   onGoToTickets,
   onGoToPost,
 }: NotificationsSheetProps) => {
-  const { notifications, unreadCount, markAllRead, markRead, dismissNotification, updateNotification, clearAll } = useNotifications();
+  const { notifications, unreadCount, loading, loadError, reload, markAllRead, markRead, dismissNotification, updateNotification, clearAll } = useNotifications();
 
   const handleAccept = async (n: Notification) => {
     if (n.type === 'follow_request') {
@@ -402,7 +402,27 @@ const NotificationsSheet = ({
         </DrawerHeader>
 
         <div className="mt-2 overflow-y-auto divide-y divide-border pb-6">
-          {notifications.length === 0 ? (
+          {loading ? (
+            <div className="flex flex-col items-center py-12 text-center">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="mt-3 text-sm text-muted-foreground">Cargando notificaciones…</p>
+            </div>
+          ) : loadError ? (
+            <div className="flex flex-col items-center py-12 text-center px-4">
+              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
+                <Bell className="h-7 w-7 text-destructive" strokeWidth={2} />
+              </div>
+              <p className="text-sm font-semibold text-foreground">Error al cargar</p>
+              <p className="mt-1 max-w-[260px] text-xs text-muted-foreground">{loadError}</p>
+              <button
+                type="button"
+                onClick={() => { void reload(); }}
+                className="mt-4 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground"
+              >
+                Reintentar
+              </button>
+            </div>
+          ) : notifications.length === 0 ? (
             <div className="flex flex-col items-center py-12 text-center">
               <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
                 <Bell className="h-7 w-7 text-primary" strokeWidth={2} />

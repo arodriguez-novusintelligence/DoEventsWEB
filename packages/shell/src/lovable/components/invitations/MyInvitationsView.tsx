@@ -92,7 +92,9 @@ const MyInvitationsView = ({
                 <p className="text-xs text-foreground mt-2 font-mono">
                   {new Date(inv.receivedAt).toLocaleString('es-CO')}
                 </p>
-                <p className="text-xs text-muted-foreground mt-3">{inv.inviter}</p>
+                <p className="text-xs text-muted-foreground mt-3">
+                  {inv.inviter ? `Invitado por ${inv.inviter}` : 'Invitación a evento'}
+                </p>
                 <span className={`inline-block mt-2 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${statusBadgeClass[inv.status]}`}>
                   {statusLabel[inv.status]}
                 </span>

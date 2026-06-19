@@ -396,6 +396,7 @@ export const EventsPage: React.FC = () => {
       publishedVenues={publishedVenues}
       nearbyServiceCards={nearbyServiceCards}
       servicesLoading={loading}
+      discoverLoading={loading}
       serviceProviders={serviceProviders.map((p) => ({
         userId: p.userId,
         name: p.name,

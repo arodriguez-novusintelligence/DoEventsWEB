@@ -41,6 +41,7 @@ import {
   setProfileCoverFromGallery,
   ProfileMediaPickerSheet,
   useToast,
+  toggleEventLike,
   type UserProfile,
   type UserStats,
 } from '@doevents/shared';
@@ -399,6 +400,12 @@ export const ProfilePage: React.FC = () => {
         publishedServices={publishedServices}
         onOpenServices={() => navigate(`/users/${userId}/services`)}
         onViewProfile={(u) => navigate(`/users/${u.id}`)}
+        onOpenFavoriteEvent={(eventId) => navigate(`/events/${eventId}`)}
+        onToggleEventFavorite={(eventId) => {
+          void toggleEventLike(eventId).then(() => {
+            setFavoriteEvents((prev) => prev.filter((e) => e.id !== eventId));
+          });
+        }}
         onLogout={() => {
           clearSession();
           navigate('/auth/login');

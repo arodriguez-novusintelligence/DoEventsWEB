@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@lovable/components/ui/dropdown-menu';
 import { Popover, PopoverContent, PopoverTrigger } from '@lovable/components/ui/popover';
-import { Heart, ImagePlus, MessageSquare, MoreHorizontal, Send, Smile, X, Flag } from 'lucide-react';
+import { Heart, ImagePlus, MessageSquare, MoreHorizontal, Send, Smile, X, Flag, Loader2 } from 'lucide-react';
 import { useState, useRef } from 'react';
 import type { Comment } from '@doevents/shared';
 import MentionText from './MentionText';
@@ -339,7 +339,7 @@ const CommentsSheet = ({
               disabled={!canSend}
               className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform hover:scale-105 disabled:opacity-40"
             >
-              <Send className="h-4 w-4" />
+              {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             </button>
           </div>
         </div>

@@ -109,12 +109,14 @@ interface ProfileViewProps {
   currentPlan?: PlanId;
   uploadingMedia?: boolean;
   onLogout?: () => void;
+  onOpenFavoriteEvent?: (eventId: string) => void;
+  onToggleEventFavorite?: (eventId: string) => void;
 }
 
 const ProfileView = ({
   userId,
-  profileName = 'Eventer',
-  profileUsername = '@eventer',
+  profileName = '',
+  profileUsername = '',
   profileAvatar: profileAvatarProp,
   profileCover: profileCoverProp,
   profileBio = '',
@@ -173,6 +175,8 @@ const ProfileView = ({
   currentPlan: currentPlanProp = 'free',
   uploadingMedia = false,
   onLogout,
+  onOpenFavoriteEvent,
+  onToggleEventFavorite,
 }: ProfileViewProps) => {
   const [bookingService, setBookingService] = useState<ServiceFormData | null>(null);
   const [bookingData, setBookingData] = useState<BookingData | null>(null);
@@ -193,6 +197,7 @@ const ProfileView = ({
   const [showFavorites, setShowFavorites] = useState(false);
   const [showMyPosts, setShowMyPosts] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
+  const [showComments, setShowComments] = useState(false);
   const { isCertified } = useKyc();
 
   useEffect(() => {
@@ -259,6 +264,8 @@ const ProfileView = ({
         favoritePlaces={favoritePlaces}
         favoriteProfiles={favoriteProfiles}
         onViewProfile={onViewProfile}
+        onOpenEvent={onOpenFavoriteEvent}
+        onToggleEventFavorite={onToggleEventFavorite}
       />
     );
   }
