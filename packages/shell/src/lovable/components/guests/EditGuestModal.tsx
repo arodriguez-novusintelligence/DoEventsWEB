@@ -66,11 +66,11 @@ export function EditGuestModal({ guest, open, onOpenChange, onUpdateGuest, group
         <DialogHeader><DialogTitle className="text-xl font-semibold text-primary flex items-center gap-2"><Edit className="h-5 w-5" />Editar invitado</DialogTitle></DialogHeader>
         <form onSubmit={submit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2"><Label>Nombre *</Label><Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></div>
-            <div className="space-y-2"><Label>Apellido *</Label><Input value={form.lastName} onChange={e => setForm({ ...form, lastName: e.target.value })} /></div>
+            <div className="space-y-2"><Label>Nombre *</Label><Input className="rounded-xl" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></div>
+            <div className="space-y-2"><Label>Apellido *</Label><Input className="rounded-xl" value={form.lastName} onChange={e => setForm({ ...form, lastName: e.target.value })} /></div>
           </div>
-          <div className="space-y-2"><Label>Usuario</Label><Input value={form.username} onChange={e => setForm({ ...form, username: e.target.value })} /></div>
-          <div className="space-y-2"><Label>Email</Label><Input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} /></div>
+          <div className="space-y-2"><Label>Usuario</Label><Input className="rounded-xl" value={form.username} onChange={e => setForm({ ...form, username: e.target.value })} placeholder="@usuario" /></div>
+          <div className="space-y-2"><Label>Email</Label><Input type="email" className="rounded-xl" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} /></div>
           <PhoneCountryFields
             indicative={form.phoneIndicative || "+57"}
             number={form.phoneNumber || ""}
@@ -92,8 +92,8 @@ export function EditGuestModal({ guest, open, onOpenChange, onUpdateGuest, group
             <Label htmlFor="ef" className="text-sm">Marcar como favorito</Label>
           </div>
           <div className="flex gap-3 pt-4">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1">Cancelar</Button>
-            <Button type="submit" className="flex-1">Guardar cambios</Button>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1 rounded-full">Cancelar</Button>
+            <Button type="submit" className="flex-1 rounded-full">Guardar cambios</Button>
           </div>
         </form>
       </DialogContent>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Megaphone, Share2, X, ExternalLink } from 'lucide-react';
+import { Megaphone, Share2, X, ExternalLink, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { getCurrentEnv } from '@doevents/shared';
 
@@ -10,10 +10,11 @@ interface Props {
   onFinalize: () => void;
 }
 
-type Stage = 'bank' | 'bankForm' | 'success';
+type Stage = 'bank' | 'bankForm' | 'success' | 'error';
 
 const PublishFlowModal = ({ open, eventId, onClose, onFinalize }: Props) => {
   const [stage, setStage] = useState<Stage>('bank');
+  const [errorMessage, setErrorMessage] = useState('');
   const [bank, setBank] = useState({
     holderName: '',
     documentId: '',
@@ -28,6 +29,7 @@ const PublishFlowModal = ({ open, eventId, onClose, onFinalize }: Props) => {
 
   const reset = () => {
     setStage('bank');
+    setErrorMessage('');
     setBank({ holderName: '', documentId: '', bankName: '', accountType: 'ahorros', accountNumber: '' });
   };
 
@@ -35,10 +37,12 @@ const PublishFlowModal = ({ open, eventId, onClose, onFinalize }: Props) => {
 
   const submitBank = () => {
     if (!bank.holderName || !bank.documentId || !bank.bankName || !bank.accountNumber) {
-      toast.error('Completa todos los datos bancarios');
+      setErrorMessage('Completa todos los datos bancarios para continuar.');
+      setStage('error');
       return;
     }
-    toast.success('Datos bancarios registrados');
+    // BACKEND_REQUIRED: persistencia vía API banking — no simular guardado
+    toast.info('Registro bancario pendiente de activación en plataforma');
     setStage('success');
   };
 
@@ -149,9 +153,23 @@ const PublishFlowModal = ({ open, eventId, onClose, onFinalize }: Props) => {
           </div>
         )}
 
+        {stage === 'error' && (
+          <div className="flex flex-col items-center text-center">
+            <AlertCircle className="h-12 w-12 text-destructive" />
+            <h3 className="mt-4 text-lg font-bold text-foreground">Revisa los datos</h3>
+            <p className="mt-2 text-sm text-muted-foreground">{errorMessage}</p>
+            <button
+              onClick={() => setStage('bankForm')}
+              className="mt-5 w-full rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground"
+            >
+              Volver al formulario
+            </button>
+          </div>
+        )}
+
         {stage === 'success' && (
           <div className="flex flex-col items-center text-center">
-            <Megaphone className="h-12 w-12 text-emerald-600" />
+            <CheckCircle2 className="h-12 w-12 text-emerald-600" />
             <h3 className="mt-4 text-2xl font-extrabold text-foreground">
               ¡Felicitaciones tu evento se ha publicado!
             </h3>

@@ -138,9 +138,15 @@ export function ContactImportModal({ open, onOpenChange, onImportContacts }: Pro
               </div>
             </>
           ) : (
-            <p className="flex-1 flex items-center justify-center text-sm text-muted-foreground text-center px-4">
-              Pulsa el botón superior para elegir contactos de tu teléfono o agenda.
-            </p>
+            <div className="flex flex-1 flex-col items-center justify-center py-8 text-center px-4">
+              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                <Smartphone className="h-7 w-7 text-primary" />
+              </div>
+              <p className="text-sm font-semibold text-foreground">Importar desde tu dispositivo</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Pulsa el botón superior para elegir contactos de tu teléfono o agenda.
+              </p>
+            </div>
           )}
         </div>
         <div className="pt-4">

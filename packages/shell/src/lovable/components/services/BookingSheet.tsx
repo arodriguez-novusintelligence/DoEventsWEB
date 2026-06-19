@@ -71,14 +71,7 @@ function parseDateStr(ds: string): Date {
   return new Date(y, m - 1, d);
 }
 
-// Mock additional services for the booking flow
-const MOCK_ADDITIONAL_SERVICES: AdditionalService[] = [
-  { name: 'Servicio de DJ', pricePerDay: 350000, quantity: 0 },
-  { name: 'Decoración temática', pricePerDay: 500000, quantity: 0 },
-  { name: 'Servicio de fotografía', pricePerDay: 800000, quantity: 0 },
-  { name: 'Catering premium', pricePerDay: 1200000, quantity: 0 },
-];
-
+// Additional services come from props/API — no mock data in runtime
 const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBooking, additionalServiceOptions }: BookingSheetProps) => {
   const isLive = Boolean(liveBooking?.serviceId && liveBooking?.userId);
   const today = new Date();
@@ -87,14 +80,14 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
   const [singleDay, setSingleDay] = useState(false);
   const [startDate, setStartDate] = useState<string | null>(null);
   const [endDate, setEndDate] = useState<string | null>(null);
-  const [additionalServices, setAdditionalServices] = useState<AdditionalService[]>(MOCK_ADDITIONAL_SERVICES);
+  const [additionalServices, setAdditionalServices] = useState<AdditionalService[]>([]);
   useEffect(() => {
     if (!open) return;
     if (additionalServiceOptions?.length) {
       setAdditionalServices(additionalServiceOptions.map((item) => ({ ...item, quantity: 0 })));
       return;
     }
-    setAdditionalServices(MOCK_ADDITIONAL_SERVICES);
+    setAdditionalServices([]);
   }, [open, additionalServiceOptions]);
   const [reservedDates, setReservedDates] = useState<Set<string>>(new Set());
   const [loadingAvailability, setLoadingAvailability] = useState(false);
@@ -416,7 +409,8 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
             </div>
           </div>
 
-          {/* Additional services */}
+          {/* Additional services — only when provided by API/props */}
+          {additionalServices.length > 0 && (
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <ShoppingCart className="h-4 w-4 text-primary" />
@@ -448,6 +442,7 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
               ))}
             </div>
           </div>
+          )}
 
           {/* Booking summary */}
           {startDate && endDate && (

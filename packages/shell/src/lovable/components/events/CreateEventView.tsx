@@ -233,23 +233,28 @@ const CreateEventView = ({
         <div className="mt-3 flex items-center gap-1.5 overflow-x-auto rounded-full bg-card p-1.5 shadow-sm">
           {STEPS.map((s) => {
             const active = currentStep === s.num;
+            const completed = currentStep > s.num;
             return (
               <div
                 key={s.num}
                 className={`flex flex-shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold transition-colors ${
                   active
                     ? 'bg-primary text-primary-foreground shadow-sm'
-                    : 'text-muted-foreground'
+                    : completed
+                      ? 'bg-primary/10 text-primary'
+                      : 'text-muted-foreground'
                 }`}
               >
                 <span
                   className={`flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold ${
                     active
                       ? 'bg-primary-foreground/20 text-primary-foreground'
-                      : 'bg-muted text-muted-foreground'
+                      : completed
+                        ? 'bg-primary/20 text-primary'
+                        : 'bg-muted text-muted-foreground'
                   }`}
                 >
-                  {s.num}
+                  {completed ? '✓' : s.num}
                 </span>
                 <span className="whitespace-nowrap">{s.label}</span>
               </div>

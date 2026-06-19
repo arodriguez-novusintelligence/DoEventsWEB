@@ -31,6 +31,23 @@ type Step = 'select' | 'confirm' | 'policy' | 'success';
 
 const PLATFORM_FEE_RATE = 0.10;
 
+const REFUND_STEPS: Step[] = ['select', 'confirm', 'policy', 'success'];
+
+const RefundStepProgress = ({ current }: { current: Step }) => {
+  const idx = REFUND_STEPS.indexOf(current);
+  if (idx < 0 || current === 'success') return null;
+  return (
+    <div className="flex items-center justify-center gap-1.5 px-4 pt-3">
+      {REFUND_STEPS.slice(0, -1).map((_, i) => (
+        <div
+          key={i}
+          className={`h-1 flex-1 max-w-14 rounded-full transition-colors ${i <= idx ? 'bg-primary' : 'bg-muted'}`}
+        />
+      ))}
+    </div>
+  );
+};
+
 const formatCOP = (n: number) =>
   `$ ${n.toLocaleString('es-CO', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
 
@@ -112,6 +129,7 @@ const RefundTicketFlow = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-secondary overflow-y-auto">
+      <RefundStepProgress current={step} />
       {step === 'select' && (
         <div className="min-h-screen flex flex-col pb-44">
           <div className="px-4 pt-4">

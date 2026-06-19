@@ -195,7 +195,7 @@ const TicketDetailView = ({
           </div>
         )}
 
-        <div className="relative mt-4 rounded-3xl bg-card shadow-md overflow-hidden">
+        <div className="relative mt-4 rounded-3xl border border-border/60 bg-card shadow-lg overflow-hidden">
           <div className={(isTransferred || isRefunded) ? 'opacity-30' : ''}>
             <div className="p-3 pb-0">
               <div className="h-40 w-full overflow-hidden rounded-2xl">

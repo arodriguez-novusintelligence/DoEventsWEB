@@ -366,6 +366,23 @@ const MapView = ({
       {/* Google Map */}
       <div ref={mapRef} className="flex-1 w-full bg-secondary" />
 
+      {!loaded && !error && (
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-secondary/80">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary/30 border-t-primary" />
+          <p className="mt-3 text-sm font-medium text-muted-foreground">Cargando mapa…</p>
+        </div>
+      )}
+
+      {loaded && items.length === 0 && !error && (
+        <div className="absolute inset-x-6 top-1/3 z-20 flex flex-col items-center rounded-2xl border border-border bg-card/95 p-6 text-center shadow-lg">
+          <MapPin className="h-10 w-10 text-primary" />
+          <p className="mt-3 text-sm font-semibold text-foreground">Sin eventos cerca</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Ajusta el radio de búsqueda o explora otra categoría.
+          </p>
+        </div>
+      )}
+
       {error && (
         <div className="absolute inset-x-4 top-28 z-30 rounded-lg bg-destructive/10 border border-destructive p-3 text-sm text-destructive">
           No se pudo cargar Google Maps: {error}

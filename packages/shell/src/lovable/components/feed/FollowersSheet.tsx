@@ -4,8 +4,9 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@lovable/components/ui
 import { Avatar, AvatarFallback, AvatarImage } from '@lovable/components/ui/avatar';
 import { Button } from '@lovable/components/ui/button';
 import { Input } from '@lovable/components/ui/input';
-import { Search, UserPlus, Check, Shield, X } from 'lucide-react';
+import { Search, UserPlus, Check, Shield, Users } from 'lucide-react';
 import { toast } from 'sonner';
+import { followUser, unfollowUser } from '@doevents/shared';
 
 export type ProfileListUser = {
   id: string;
@@ -23,19 +24,49 @@ interface FollowersSheetProps {
   followingCount?: number;
   followersList?: ProfileListUser[];
   followingList?: ProfileListUser[];
+  currentUserId?: string;
+  onFollowChange?: () => void;
   onViewProfile?: (user: ProfileListUser) => void;
 }
 
 const UserRow = ({
   user,
   initiallyFollowing,
+  currentUserId,
+  onFollowChange,
   onOpen,
 }: {
   user: ProfileListUser;
   initiallyFollowing: boolean;
+  currentUserId?: string;
+  onFollowChange?: () => void;
   onOpen?: () => void;
 }) => {
   const [following, setFollowing] = useState(initiallyFollowing);
+  const [pending, setPending] = useState(false);
+  const isSelf = currentUserId && user.id === currentUserId;
+
+  const toggleFollow = async () => {
+    if (!currentUserId || isSelf || pending) return;
+    setPending(true);
+    try {
+      if (following) {
+        await unfollowUser(currentUserId, user.id);
+        setFollowing(false);
+        toast.success(`Dejaste de seguir a ${user.name}`);
+      } else {
+        const result = await followUser(currentUserId, user.id);
+        setFollowing(true);
+        toast.success(result.status === 'pending' ? 'Solicitud enviada' : `Sigues a ${user.name}`);
+      }
+      onFollowChange?.();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'No se pudo actualizar el seguimiento');
+    } finally {
+      setPending(false);
+    }
+  };
+
   return (
     <div className="flex items-center gap-3 py-2.5">
       <button
@@ -62,7 +93,8 @@ const UserRow = ({
         size="sm"
         variant={following ? 'outline' : 'default'}
         className="h-8 shrink-0 rounded-full text-xs"
-        onClick={() => setFollowing((p) => !p)}
+        disabled={!currentUserId || isSelf || pending}
+        onClick={() => void toggleFollow()}
       >
         {following ? (
           <>
@@ -86,6 +118,8 @@ const FollowersSheet = ({
   defaultTab = 'followers',
   followersList = [],
   followingList = [],
+  currentUserId,
+  onFollowChange,
   onViewProfile,
 }: FollowersSheetProps) => {
   const [query, setQuery] = useState('');
@@ -140,13 +174,23 @@ const FollowersSheet = ({
 
           <TabsContent value="followers" className="mt-0 flex-1 overflow-y-auto px-5 pb-8">
             {filter(followers).length === 0 ? (
-              <p className="py-10 text-center text-sm text-muted-foreground">Aún no tienes seguidores</p>
+              <div className="flex flex-col items-center py-12 text-center">
+                <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                  <Users className="h-7 w-7 text-primary" />
+                </div>
+                <p className="text-sm font-semibold text-foreground">Aún no tienes seguidores</p>
+                <p className="mt-1 max-w-[240px] text-xs text-muted-foreground">
+                  Comparte tu perfil para conectar con más personas.
+                </p>
+              </div>
             ) : (
               filter(followers).map((u) => (
                 <UserRow
                   key={u.id}
                   user={u}
                   initiallyFollowing={followingIds.has(u.id)}
+                  currentUserId={currentUserId}
+                  onFollowChange={onFollowChange}
                   onOpen={() => open_(u)}
                 />
               ))
@@ -155,10 +199,25 @@ const FollowersSheet = ({
 
           <TabsContent value="following" className="mt-0 flex-1 overflow-y-auto px-5 pb-8">
             {filter(following).length === 0 ? (
-              <p className="py-10 text-center text-sm text-muted-foreground">Aún no sigues a nadie</p>
+              <div className="flex flex-col items-center py-12 text-center">
+                <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                  <UserPlus className="h-7 w-7 text-primary" />
+                </div>
+                <p className="text-sm font-semibold text-foreground">Aún no sigues a nadie</p>
+                <p className="mt-1 max-w-[240px] text-xs text-muted-foreground">
+                  Descubre perfiles en el feed y empieza a seguir.
+                </p>
+              </div>
             ) : (
               filter(following).map((u) => (
-                <UserRow key={u.id} user={u} initiallyFollowing onOpen={() => open_(u)} />
+                <UserRow
+                  key={u.id}
+                  user={u}
+                  initiallyFollowing
+                  currentUserId={currentUserId}
+                  onFollowChange={onFollowChange}
+                  onOpen={() => open_(u)}
+                />
               ))
             )}
           </TabsContent>

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import SideMenu from './SideMenu';
 import NotificationsSheet from './NotificationsSheet';
 import { useNotifications } from '@lovable/contexts/NotificationsContext';
+import { Avatar, AvatarFallback, AvatarImage } from '@lovable/components/ui/avatar';
 
 interface TopHeaderProps {
   onGoHome?: () => void;
@@ -63,7 +64,9 @@ const TopHeader = ({
             className="relative rounded-xl bg-card p-2.5 text-primary shadow-sm transition-colors hover:bg-accent"
           >
             <SlidersHorizontal className="h-5 w-5" />
-            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-destructive" />
+            {unreadMessages > 0 && (
+              <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-destructive" />
+            )}
           </button>
           <button
             type="button"
@@ -96,6 +99,21 @@ const TopHeader = ({
             >
               <Search className="h-6 w-6" strokeWidth={2} />
             </button>
+            {profileAvatar && (
+              <button
+                type="button"
+                onClick={() => setMenuOpen(true)}
+                className="rounded-full ring-2 ring-primary/20 transition-opacity hover:opacity-80"
+                aria-label="Menú de perfil"
+              >
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={profileAvatar} alt={profileName || 'Perfil'} />
+                  <AvatarFallback className="bg-primary/10 text-xs font-bold text-primary">
+                    {(profileName || 'U').slice(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              </button>
+            )}
           </div>
         </div>
       </header>

@@ -647,6 +647,7 @@ const ProfileView = ({
         defaultTab={followersTab}
         followersList={followersList}
         followingList={followingList}
+        currentUserId={userId}
         onViewProfile={(u) => onViewProfile?.(u)}
       />
       <SubscriptionPlanSheet

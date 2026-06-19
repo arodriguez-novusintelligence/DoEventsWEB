@@ -184,8 +184,22 @@ const MyVenuesView = ({
 
       <main className="mx-auto max-w-lg px-4 pt-4">
         {venues.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border bg-card p-10 text-center text-sm text-muted-foreground shadow-sm">
-            Aún no has publicado lugares para eventos.
+          <div className="flex flex-col items-center rounded-2xl border border-dashed border-primary/25 bg-card p-10 text-center shadow-sm">
+            <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+              <Building2 className="h-7 w-7 text-primary" />
+            </div>
+            <p className="text-sm font-semibold text-foreground">Aún no has publicado lugares</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Crea tu primer espacio para recibir reservas de eventos.
+            </p>
+            <button
+              type="button"
+              onClick={() => (onCreateVenue ? onCreateVenue() : navigate('/places/publish'))}
+              className="mt-4 flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground"
+            >
+              <Plus className="h-4 w-4" />
+              Crear lugar
+            </button>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3">

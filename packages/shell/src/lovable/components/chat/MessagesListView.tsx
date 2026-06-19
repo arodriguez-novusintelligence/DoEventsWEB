@@ -691,8 +691,10 @@ const MessagesListView = ({
 
 const EmptyState = ({ text }: { text: string }) => (
   <div className="flex flex-col items-center justify-center py-16 text-center">
-    <MessageSquare className="h-10 w-10 text-muted-foreground" />
-    <p className="mt-3 text-sm text-muted-foreground">{text}</p>
+    <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+      <MessageSquare className="h-7 w-7 text-primary" strokeWidth={2} />
+    </div>
+    <p className="text-sm font-semibold text-foreground">{text}</p>
   </div>
 );
 

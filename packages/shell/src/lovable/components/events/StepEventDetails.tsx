@@ -150,11 +150,12 @@ const StepEventDetails = ({
     <div className="space-y-5">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold text-foreground">
-          Cuéntanos sobre tu evento
+        <h2 className="text-xl font-bold text-primary">
+          Detalles del evento
         </h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Información básica, lugar y organizador en un solo paso.
+        <p className="mt-1 text-sm text-foreground">
+          Cuéntanos sobre tu evento: nombre, descripción y fechas.{' '}
+          <span className="text-muted-foreground">(Obligatorio)</span>
         </p>
       </div>
 

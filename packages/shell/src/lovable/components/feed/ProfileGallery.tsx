@@ -101,7 +101,10 @@ const ProfileGallery = ({
         <div className="rounded-2xl bg-card p-5 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-lg font-bold text-foreground">📸 Mi Galería de Fotos</h2>
+              <h2 className="flex items-center gap-2 text-lg font-bold text-foreground">
+                <ImagePlus className="h-5 w-5 text-primary" />
+                Mi Galería de Fotos
+              </h2>
               <p className="text-xs text-muted-foreground mt-0.5">
                 {photos.length} de {MAX_GALLERY_PHOTOS} fotos
               </p>

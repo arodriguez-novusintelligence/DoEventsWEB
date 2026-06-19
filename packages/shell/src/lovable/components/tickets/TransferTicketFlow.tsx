@@ -48,6 +48,23 @@ type Step = 'select' | 'summary' | 'searchUser' | 'confirm' | 'success';
 
 const formatCOP = (n: number) => `$ ${n.toLocaleString('es-CO')}`;
 
+const TRANSFER_STEPS: Step[] = ['select', 'summary', 'searchUser', 'confirm', 'success'];
+
+const TransferStepProgress = ({ current }: { current: Step }) => {
+  const idx = TRANSFER_STEPS.indexOf(current);
+  if (idx < 0 || current === 'success') return null;
+  return (
+    <div className="flex items-center justify-center gap-1.5 px-4 pt-3">
+      {TRANSFER_STEPS.slice(0, -1).map((_, i) => (
+        <div
+          key={i}
+          className={`h-1 flex-1 max-w-14 rounded-full transition-colors ${i <= idx ? 'bg-primary' : 'bg-muted'}`}
+        />
+      ))}
+    </div>
+  );
+};
+
 const initialsFrom = (name: string) =>
   name
     .split(/\s+/)
@@ -143,6 +160,7 @@ const TransferTicketFlow = ({ ticket, entries, onClose, onCompleted }: Props) =>
 
   return (
     <div className="fixed inset-0 z-50 bg-secondary overflow-y-auto">
+      <TransferStepProgress current={step} />
       {step === 'select' && (
         <div className="min-h-screen flex flex-col pb-40">
           <div className="px-4 pt-4">

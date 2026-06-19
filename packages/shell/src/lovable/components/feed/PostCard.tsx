@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@lovable/components/ui/avatar';
 import { cn } from '@lovable/lib/utils';
-import type { Post, User } from '@lovable/data/mockData';
+import type { FeedUiPost as Post, FeedUiUser as User } from '@doevents/shared';
 import ImageCarousel from './ImageCarousel';
 import PostActions from './PostActions';
 import PostMenu from './PostMenu';

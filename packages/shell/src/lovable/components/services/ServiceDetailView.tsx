@@ -233,8 +233,10 @@ const ServiceDetailView = ({
         <div className="rounded-2xl bg-card p-4 shadow-sm">
           <div className="flex items-center gap-2 mb-2">
             <Star className="h-5 w-5 fill-primary text-primary" />
-            <span className="font-bold">{rating > 0 ? rating.toFixed(1) : 'Nuevo'}</span>
-            <span className="text-sm text-muted-foreground">({reviewCount} reseñas)</span>
+            <span className="font-bold">{rating > 0 ? rating.toFixed(1) : 'Sin calificaciones'}</span>
+            <span className="text-sm text-muted-foreground">
+              {reviewCount > 0 ? `(${reviewCount} reseñas)` : '(aún sin reseñas)'}
+            </span>
           </div>
           <p className="text-xs text-muted-foreground">Calificación promedio del proveedor.</p>
           {onRate && (

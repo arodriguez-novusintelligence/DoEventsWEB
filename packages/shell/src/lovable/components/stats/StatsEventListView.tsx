@@ -355,9 +355,14 @@ const StatsEventListView = ({ events, onBack }: StatsEventListViewProps) => {
         )}
 
         {events.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <BarChart3 className="h-12 w-12 text-muted-foreground" />
-            <p className="mt-3 text-sm text-muted-foreground">No hay eventos para mostrar</p>
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-primary/25 bg-card py-16 text-center">
+            <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+              <BarChart3 className="h-7 w-7 text-primary" />
+            </div>
+            <p className="text-sm font-semibold text-foreground">Sin eventos para estadísticas</p>
+            <p className="mt-1 max-w-[260px] text-xs text-muted-foreground">
+              Publica o gestiona eventos para ver ventas, invitados y accesos.
+            </p>
           </div>
         )}
       </div>
