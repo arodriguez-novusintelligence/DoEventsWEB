@@ -11,6 +11,7 @@ import {
   setAuthenticated,
 } from '@doevents/shared';
 import { getEnvironment } from '@config/environments/index';
+import { resolveOAuthFromCognito } from '../services/oauthCallback';
 
 /**
  * Procesa el callback OAuth de Cognito Hosted UI.
@@ -71,10 +72,8 @@ export const OAuthCallbackPage: React.FC = () => {
 
         setStatus('Sincronizando con DoEvents...');
 
-        const provider = payload.identities?.[0]?.providerName || 'Google';
-        const endpoint = provider.toLowerCase().includes('apple')
-          ? env.endpoints.appleOAuth
-          : env.endpoints.googleOAuth;
+        const providerName = payload.identities?.[0]?.providerName || 'Google';
+        const { endpoint, pendingProvider } = resolveOAuthFromCognito(providerName, env);
 
         const backendResponse = await fetch(endpoint, {
           method: 'POST',
@@ -112,7 +111,7 @@ export const OAuthCallbackPage: React.FC = () => {
             photo: payload.picture || '',
           };
           persistPendingOAuthUser({
-            provider: provider.toLowerCase().includes('apple') ? 'apple' : 'google',
+            provider: pendingProvider,
             user: oauthUser,
           });
           persistEnrollmentUserId(result.data.userId);

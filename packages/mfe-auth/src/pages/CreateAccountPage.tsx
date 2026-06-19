@@ -39,6 +39,7 @@ export const CreateAccountPage: React.FC = () => {
 
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [facebookLoading, setFacebookLoading] = useState(false);
   const [appleLoading, setAppleLoading] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [termsOpen, setTermsOpen] = useState(false);
@@ -147,6 +148,19 @@ export const CreateAccountPage: React.FC = () => {
     }
   };
 
+  const handleFacebookRegister = () => {
+    if (!acceptedTerms) {
+      showToast('Acepta los términos antes de continuar con Facebook', 'error');
+      return;
+    }
+    if (!env.oauth.facebook.enabled) {
+      showToast('Registro con Facebook no está disponible en este entorno', 'error');
+      return;
+    }
+    setFacebookLoading(true);
+    redirectToOAuth('Facebook');
+  };
+
   const handleAppleRegister = () => {
     if (!acceptedTerms) {
       showToast('Acepta los términos antes de continuar con Apple', 'error');
@@ -160,7 +174,7 @@ export const CreateAccountPage: React.FC = () => {
     redirectToOAuth('SignInWithApple');
   };
 
-  const busy = loading || googleLoading || appleLoading;
+  const busy = loading || googleLoading || facebookLoading || appleLoading;
 
   return (
     <div className="de-page de-page--signup">
@@ -188,10 +202,13 @@ export const CreateAccountPage: React.FC = () => {
         <div className="de-signup-social">
           <SocialLoginButtons
             onGoogle={handleGoogleRegister}
+            onFacebook={handleFacebookRegister}
             onApple={handleAppleRegister}
             googleEnabled={env.oauth.google.enabled}
-            appleEnabled
+            facebookEnabled={env.oauth.facebook.enabled}
+            appleEnabled={env.oauth.apple.enabled}
             googleLoading={googleLoading}
+            facebookLoading={facebookLoading}
             appleLoading={appleLoading}
           />
         </div>

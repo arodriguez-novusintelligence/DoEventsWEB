@@ -14,6 +14,7 @@ export type EnvironmentName = 'dev' | 'devaws' | 'qa' | 'prod';
 export interface ApiEndpoints {
   login: string;
   googleOAuth: string;
+  facebookOAuth: string;
   appleOAuth: string;
   appleCallback: string;
   createUser: string;
@@ -130,6 +131,7 @@ const US_CHAT_WS = 'wss://g3216zaw17.execute-api.us-east-1.amazonaws.com/dev';
 const buildEndpoints = (baseUrl: string): ApiEndpoints => ({
   login: `${baseUrl}/login/login`,
   googleOAuth: `${baseUrl}/login/googleOAuth`,
+  facebookOAuth: `${baseUrl}/login/facebookOAuth`,
   appleOAuth: `${baseUrl}/login/appleOAuth`,
   appleCallback: `${baseUrl}/login/apple-callback`,
   createUser: `${baseUrl}/users/createUser`,
@@ -235,8 +237,8 @@ const devaws: AppEnvironment = {
   chat: buildChat(DEVAWS_CHAT_REST, DEVAWS_CHAT_WS),
   cognito: {
     region: 'us-east-2',
-    userPoolId: 'CONFIGURE_DEVAWS_USER_POOL_ID',
-    clientId: 'CONFIGURE_DEVAWS_CLIENT_ID',
+    userPoolId: 'us-east-2_e9yVmpgXy',
+    clientId: '6ev8diclujio6uh3vn4fe2e7ia',
     domain: 'doevents-qa.auth.us-east-2.amazoncognito.com',
     redirectSignIn: 'https://dev.doeventsapp.com/auth/callback',
     redirectSignOut: 'https://dev.doeventsapp.com/auth/login',
@@ -246,7 +248,7 @@ const devaws: AppEnvironment = {
       clientId: '465354618241-o281g4an56hcrvmjgc3p727otg2fej8m.apps.googleusercontent.com',
       enabled: true,
     },
-    facebook: { appId: '', enabled: false },
+    facebook: { appId: '696770136864604', enabled: true },
     apple: { clientId: '', enabled: false },
   },
   features: {
@@ -272,8 +274,8 @@ const qa: AppEnvironment = {
   chat: buildChat(QA_CHAT_REST, QA_CHAT_WS),
   cognito: {
     region: 'us-east-2',
-    userPoolId: 'CONFIGURE_QA_USER_POOL_ID',
-    clientId: 'CONFIGURE_QA_CLIENT_ID',
+    userPoolId: 'us-east-2_e9yVmpgXy',
+    clientId: '6ev8diclujio6uh3vn4fe2e7ia',
     domain: 'doevents-qa.auth.us-east-2.amazoncognito.com',
     redirectSignIn: 'https://qa.doeventsapp.com/auth/callback',
     redirectSignOut: 'https://qa.doeventsapp.com/auth/login',
@@ -283,7 +285,7 @@ const qa: AppEnvironment = {
       clientId: '465354618241-o281g4an56hcrvmjgc3p727otg2fej8m.apps.googleusercontent.com',
       enabled: true,
     },
-    facebook: { appId: 'CONFIGURE_FACEBOOK_APP_ID', enabled: false },
+    facebook: { appId: '696770136864604', enabled: true },
     apple: { clientId: 'CONFIGURE_APPLE_SERVICES_ID', enabled: false },
   },
   features: {

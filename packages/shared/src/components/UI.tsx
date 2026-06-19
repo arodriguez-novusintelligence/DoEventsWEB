@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { GoogleIcon } from './GoogleIcon';
 import { AppleIcon } from './AppleIcon';
+import { FacebookIcon } from './FacebookIcon';
 import { Colors } from '../theme';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -109,19 +110,25 @@ export const PasswordField: React.FC<PasswordFieldProps> = ({
 
 interface SocialLoginButtonsProps {
   onGoogle?: () => void;
+  onFacebook?: () => void;
   onApple?: () => void;
   googleEnabled?: boolean;
+  facebookEnabled?: boolean;
   appleEnabled?: boolean;
   googleLoading?: boolean;
+  facebookLoading?: boolean;
   appleLoading?: boolean;
 }
 
 export const SocialLoginButtons: React.FC<SocialLoginButtonsProps> = ({
   onGoogle,
+  onFacebook,
   onApple,
   googleEnabled = true,
+  facebookEnabled = false,
   appleEnabled = true,
   googleLoading = false,
+  facebookLoading = false,
   appleLoading = false,
 }) => (
   <div className="de-oauth-row de-oauth-row--pill">
@@ -135,6 +142,18 @@ export const SocialLoginButtons: React.FC<SocialLoginButtonsProps> = ({
     >
       <GoogleIcon size={24} />
     </button>
+    {facebookEnabled && (
+      <button
+        type="button"
+        className="de-oauth-btn de-oauth-btn--facebook de-oauth-btn--pill"
+        onClick={onFacebook}
+        disabled={facebookLoading}
+        title="Iniciar sesión con Facebook"
+        aria-label="Iniciar sesión con Facebook"
+      >
+        <FacebookIcon size={22} />
+      </button>
+    )}
     <button
       type="button"
       className="de-oauth-btn de-oauth-btn--apple de-oauth-btn--pill"

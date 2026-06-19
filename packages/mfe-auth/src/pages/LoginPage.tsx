@@ -46,6 +46,7 @@ export const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [facebookLoading, setFacebookLoading] = useState(false);
   const [appleLoading, setAppleLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
   const [demoOpen, setDemoOpen] = useState(false);
@@ -81,6 +82,15 @@ export const LoginPage: React.FC = () => {
     } finally {
       setGoogleLoading(false);
     }
+  };
+
+  const handleFacebookLogin = () => {
+    if (!env.oauth.facebook.enabled) {
+      notify('Inicio de sesión con Facebook no está disponible en este entorno', 'error');
+      return;
+    }
+    setFacebookLoading(true);
+    redirectToOAuth('Facebook');
   };
 
   const handleAppleLogin = () => {
@@ -170,7 +180,7 @@ export const LoginPage: React.FC = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
-            disabled={loading || googleLoading || appleLoading}
+            disabled={loading || googleLoading || facebookLoading || appleLoading}
           />
 
           <PasswordField
@@ -180,13 +190,13 @@ export const LoginPage: React.FC = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="current-password"
-            disabled={loading || googleLoading || appleLoading}
+            disabled={loading || googleLoading || facebookLoading || appleLoading}
           />
 
           <button
             type="button"
             className="de-btn-pill-primary"
-            disabled={!isValid || loading || googleLoading || appleLoading}
+            disabled={!isValid || loading || googleLoading || facebookLoading || appleLoading}
             onClick={handleLogin}
           >
             {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
@@ -224,10 +234,13 @@ export const LoginPage: React.FC = () => {
 
           <SocialLoginButtons
             onGoogle={handleGoogleLogin}
+            onFacebook={handleFacebookLogin}
             onApple={handleAppleLogin}
             googleEnabled={env.oauth.google.enabled}
-            appleEnabled
+            facebookEnabled={env.oauth.facebook.enabled}
+            appleEnabled={env.oauth.apple.enabled}
             googleLoading={googleLoading}
+            facebookLoading={facebookLoading}
             appleLoading={appleLoading}
           />
         </div>

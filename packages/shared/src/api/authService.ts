@@ -286,7 +286,7 @@ const PENDING_PASSWORD_KEY = 'doevents_pending_login_password';
 const PENDING_OAUTH_USER_KEY = 'doevents_pending_oauth_user';
 
 export interface PendingOAuthUser {
-  provider: 'google' | 'apple';
+  provider: 'google' | 'facebook' | 'apple';
   user: {
     id: string;
     email: string;
@@ -339,7 +339,9 @@ async function retryOAuthEnrollment(): Promise<ApiResponse<LoginSuccessData> | n
   const env = getEnvironment();
   const endpoint = pending.provider === 'apple'
     ? env.endpoints.appleOAuth
-    : env.endpoints.googleOAuth;
+    : pending.provider === 'facebook'
+      ? env.endpoints.facebookOAuth
+      : env.endpoints.googleOAuth;
 
   const response = await fetch(endpoint, {
     method: 'POST',

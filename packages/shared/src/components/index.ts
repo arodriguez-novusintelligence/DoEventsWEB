@@ -6,6 +6,7 @@ export * from './EventCard';
 export * from './EventCardHorizontal';
 export * from './EventSection';
 export * from './GoogleIcon';
+export * from './FacebookIcon';
 export * from './AppleIcon';
 export * from './BottomNav';
 export * from './BottomDock';
