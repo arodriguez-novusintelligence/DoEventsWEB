@@ -9,10 +9,6 @@ import {
   X,
   Calendar,
   Clock,
-  Mail,
-  MessageCircle,
-  Megaphone,
-  Bell,
 } from 'lucide-react';
 import { searchUsers } from '@doevents/shared';
 import type { Ticket } from '@lovable/data/ticketsData';
@@ -158,6 +154,36 @@ const TransferTicketFlow = ({ ticket, entries, onClose, onCompleted }: Props) =>
   const qrImage = (entry: BoletaEntry, size = 200) =>
     entry.qrUrl || `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&margin=0&data=${encodeURIComponent(entry.qrData)}`;
 
+  const entryLocationLabel = (entry: BoletaEntry) => {
+    const lower = ticket.category.toLowerCase();
+    if (lower.includes('silla') || lower.includes('asiento') || lower.includes('seat')) {
+      return `Silla - ${entry.code}`;
+    }
+    if (lower.includes('vip') || lower.includes('palco')) {
+      return `${ticket.category} - ${entry.code}`;
+    }
+    return `Entrada - ${entry.code}`;
+  };
+
+  if (entries.length === 0) {
+    return (
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-secondary px-6 text-center">
+        <AlertCircle className="h-12 w-12 text-muted-foreground" />
+        <p className="mt-4 text-base font-semibold text-foreground">No hay boletas para transferir</p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Este ticket no tiene entradas disponibles para compartir.
+        </p>
+        <button
+          type="button"
+          onClick={onClose}
+          className="mt-6 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground"
+        >
+          Volver
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 z-50 bg-secondary overflow-y-auto">
       <TransferStepProgress current={step} />
@@ -219,7 +245,7 @@ const TransferTicketFlow = ({ ticket, entries, onClose, onCompleted }: Props) =>
                         <span className="inline-block mt-1 rounded-full bg-emerald-100 px-3 py-1 text-[10px] font-bold text-emerald-800 uppercase">
                           {ticket.category}
                         </span>
-                        <p className="mt-2 text-sm font-extrabold text-foreground">Silla - {e.code}</p>
+                        <p className="mt-2 text-sm font-extrabold text-foreground">{entryLocationLabel(e)}</p>
                       </div>
                       <div className="text-right">
                         <p className="text-xs text-muted-foreground">Puerta</p>

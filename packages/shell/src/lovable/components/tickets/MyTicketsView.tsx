@@ -9,6 +9,7 @@ interface MyTicketsViewProps {
   onBack: () => void;
   onViewEventDetail?: (eventId: string, ticket: Ticket) => void;
   onOpenTicketDetail?: (ticket: Ticket) => void;
+  onExploreEvents?: () => void;
   tickets?: Ticket[];
   loading?: boolean;
   initialTab?: TicketStatus;
@@ -70,6 +71,7 @@ const MyTicketsView = ({
   onBack,
   onViewEventDetail,
   onOpenTicketDetail,
+  onExploreEvents,
   tickets: ticketsProp = [],
   loading = false,
   initialTab,
@@ -147,6 +149,15 @@ const MyTicketsView = ({
                   ? 'Revisa las otras categorías para ver tus entradas.'
                   : 'Compra entradas en un evento para verlas aquí.'}
               </p>
+              {ticketsProp.length === 0 && onExploreEvents && (
+                <button
+                  type="button"
+                  onClick={onExploreEvents}
+                  className="mt-4 rounded-full bg-primary px-5 py-2 text-xs font-bold text-primary-foreground"
+                >
+                  Explorar eventos
+                </button>
+              )}
             </div>
           )}
 

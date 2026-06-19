@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BarChart3, CalendarDays, Users, ChevronRight, ChevronLeft, MessageSquare, DollarSign, UserCheck, ScanLine, RefreshCw } from 'lucide-react';
+import { BarChart3, CalendarDays, Users, ChevronRight, MessageSquare, DollarSign, UserCheck, ScanLine, RefreshCw } from 'lucide-react';
 import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBanner';
 import { Avatar, AvatarFallback, AvatarImage } from '@lovable/components/ui/avatar';
 import type { EventChatRoom, EventStatus } from '@lovable/data/chatData';
@@ -138,15 +138,14 @@ const StatsEventListView = ({ events, onBack }: StatsEventListViewProps) => {
   if (selectedEvent) {
     const status = statusConfig[selectedEvent.eventStatus];
     return (
-      <div className="min-h-screen bg-slate-50 pt-16">
+      <div className="min-h-screen bg-secondary pb-24">
+        <ProfileSectionBanner
+          title={selectedEvent.eventName}
+          subtitle="Opciones de estadísticas"
+          icon={BarChart3}
+          onBack={() => setSelectedEvent(null)}
+        />
         <div className="mx-auto max-w-lg px-4 pt-4">
-          <button
-            onClick={() => setSelectedEvent(null)}
-            className="mb-3 flex items-center gap-1 text-sm font-semibold text-primary"
-          >
-            <ChevronLeft className="h-5 w-5" />
-            Atrás
-          </button>
 
           {/* Event Header Card */}
           <div className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3 shadow-sm">

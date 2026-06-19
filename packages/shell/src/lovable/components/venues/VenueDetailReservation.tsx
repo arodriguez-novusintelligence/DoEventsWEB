@@ -345,9 +345,48 @@ const VenueDetailReservation = ({
     return cells;
   }, [isLive, calendarYear, calendarMonth, liveDayMap, previewDayMap, pricePerDay]);
 
+  const stepIndicator = step === 'detail' ? '1/3' : step === 'confirm' ? '2/3' : '3/3';
+
+  const hireAddonSheets = (
+    <>
+      {hireServiceForm && liveBooking?.userId ? (
+        <BookingSheet
+          open={hireBookingOpen}
+          onOpenChange={setHireBookingOpen}
+          service={hireServiceForm}
+          liveBooking={{
+            serviceId: hireServiceId,
+            userId: liveBooking.userId,
+            buyer,
+          }}
+          onProceedToPayment={(data) => {
+            setServiceBookingData(data);
+            setHireBookingOpen(false);
+            setShowServicePayment(true);
+          }}
+        />
+      ) : null}
+      <PaymentGatewaySheet
+        open={showServicePayment}
+        onOpenChange={(o) => {
+          setShowServicePayment(o);
+          if (!o) setServiceBookingData(null);
+        }}
+        booking={serviceBookingData}
+        sellerName={hireProviderName}
+        onSuccess={() => {
+          toast.success(`Servicio contratado: ${hireProviderName}`);
+          setShowServicePayment(false);
+          setServiceBookingData(null);
+        }}
+      />
+    </>
+  );
+
   // ─────────── DETAIL STEP ───────────
   if (step === 'detail') {
     return (
+      <>
       <div className="min-h-screen bg-secondary pb-32">
         {/* Hero */}
         <div className="relative h-64 w-full overflow-hidden">
@@ -360,7 +399,7 @@ const VenueDetailReservation = ({
             <ChevronLeft className="h-5 w-5 text-foreground" />
           </button>
           <div className="absolute bottom-3 right-3 rounded-full bg-foreground/70 px-2.5 py-0.5 text-[11px] font-medium text-background">
-            1/3
+            {stepIndicator}
           </div>
         </div>
 
@@ -634,6 +673,8 @@ const VenueDetailReservation = ({
           )}
         </div>
       </div>
+      {hireAddonSheets}
+      </>
     );
   }
 
@@ -644,11 +685,13 @@ const VenueDetailReservation = ({
       ? formatIsoDisplay(selectedIsoDates[selectedIsoDates.length - 1])
       : '—';
     return (
+      <>
       <div className="min-h-screen bg-secondary pb-32">
         <div className="sticky top-0 z-10 bg-secondary px-4 pt-4 pb-2">
           <button onClick={() => setStep('detail')} className="flex items-center gap-1 text-sm font-medium text-primary">
             <ChevronLeft className="h-4 w-4" /> Volver
           </button>
+          <p className="mt-1 text-right text-[11px] font-medium text-muted-foreground">{stepIndicator}</p>
         </div>
 
         <div className="mx-auto max-w-lg space-y-4 px-4 pt-2">
@@ -766,16 +809,20 @@ const VenueDetailReservation = ({
           </Button>
         </div>
       </div>
+      {hireAddonSheets}
+      </>
     );
   }
 
   // ─────────── SUCCESS STEP ───────────
   return (
+    <>
     <div className="min-h-screen bg-secondary pb-12">
       <div className="sticky top-0 z-10 bg-secondary px-4 pt-4 pb-2">
         <button onClick={onFinish} className="flex items-center gap-1 text-sm font-medium text-primary">
           <ChevronLeft className="h-4 w-4" /> Volver
         </button>
+        <p className="mt-1 text-right text-[11px] font-medium text-muted-foreground">{stepIndicator}</p>
       </div>
 
       <div className="mx-auto max-w-lg space-y-4 px-4 pt-2">
@@ -891,6 +938,8 @@ const VenueDetailReservation = ({
         </Button>
       </div>
     </div>
+    {hireAddonSheets}
+    </>
   );
 };
 

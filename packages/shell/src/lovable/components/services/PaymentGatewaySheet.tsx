@@ -60,7 +60,7 @@ const PaymentGatewaySheet = ({ open, onOpenChange, booking, onSuccess, sellerNam
   const isCardValid = cardNumber.replace(/\s/g, '').length === 16 && cardName.trim().length > 2 && cardExpiry.length === 5 && cardCvv.length >= 3;
   const isPseValid = bank.length > 0 && docNumber.trim().length >= 6;
 
-  const canPay = method === 'card' ? isCardValid : isPseValid;
+  const canPay = (method === 'card' ? isCardValid : isPseValid) && Boolean(booking?.orderId);
 
   const handlePay = () => {
     if (!booking) return;
@@ -130,6 +130,14 @@ const PaymentGatewaySheet = ({ open, onOpenChange, booking, onSuccess, sellerNam
         </SheetHeader>
 
         <div className="px-5 py-4">
+          {!booking.orderId && step !== 'success' && (
+            <div className="mb-4 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3">
+              <p className="text-sm font-semibold text-destructive">Orden de pago no disponible</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Completa la reserva nuevamente para generar una orden válida antes de pagar.
+              </p>
+            </div>
+          )}
           {(step === 'method' || step === 'form' || step === 'processing') && (
             <div className="mb-5 flex items-center gap-2">
               {(['method', 'form', 'processing'] as const).map((s, i) => {

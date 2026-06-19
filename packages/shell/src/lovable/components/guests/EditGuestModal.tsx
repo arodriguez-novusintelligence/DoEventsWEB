@@ -80,7 +80,7 @@ export function EditGuestModal({ guest, open, onOpenChange, onUpdateGuest, group
           <div className="space-y-2">
             <Label>Grupo</Label>
             <Select value={form.groupId || "none"} onValueChange={v => setForm({ ...form, groupId: v === "none" ? undefined : v })}>
-              <SelectTrigger><SelectValue placeholder="Sin grupo" /></SelectTrigger>
+              <SelectTrigger className="rounded-xl"><SelectValue placeholder="Sin grupo" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="none">Sin grupo</SelectItem>
                 {groups.map(g => (<SelectItem key={g.id} value={g.id}><div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full" style={{ backgroundColor: g.color }} />{g.name}</div></SelectItem>))}

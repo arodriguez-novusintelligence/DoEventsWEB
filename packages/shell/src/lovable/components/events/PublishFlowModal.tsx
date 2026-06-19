@@ -177,6 +177,13 @@ const PublishFlowModal = ({ open, eventId, onClose, onFinalize }: Props) => {
               No olvides compartirlo en tus redes sociales.
             </p>
 
+            <div className="mt-4 w-full rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-left">
+              <p className="text-xs font-semibold text-amber-800">Datos bancarios pendientes</p>
+              <p className="mt-1 text-[11px] text-amber-700">
+                Registra tu cuenta para recibir pagos de entradas vendidas.
+              </p>
+            </div>
+
             <div className="mt-5 w-full text-left">
               <p className="text-xs text-muted-foreground">Enlace del evento</p>
               <div className="mt-1 flex items-start gap-2 rounded-xl bg-secondary/60 p-3">

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, Plus, Star, MessageSquare, X, MoreVertical, Building2, DollarSign, ChevronRight } from 'lucide-react';
+import { Heart, Plus, Star, MessageSquare, X, MoreVertical, Building2, Users, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { fetchVenueCalifications, publishStatusLabel } from '@doevents/shared';
 import { Drawer, DrawerContent } from '@lovable/components/ui/drawer';
@@ -265,7 +265,7 @@ const MyVenuesView = ({
                     </p>
                     {v.capacity ? (
                       <p className="mt-0.5 flex items-center gap-1 text-xs font-bold text-primary">
-                        <DollarSign className="h-3 w-3" /> Capacidad {v.capacity}
+                        <Users className="h-3 w-3" /> Capacidad {v.capacity}
                       </p>
                     ) : null}
 
@@ -336,7 +336,7 @@ const MyVenuesView = ({
                     <span className="text-2xl font-extrabold text-primary">{avg.toFixed(1)}</span>
                   </div>
                   <div className="mt-2 flex items-center justify-between">
-                    <p className="text-xs text-muted-foreground">{rs.length} calificaciónes</p>
+                    <p className="text-xs text-muted-foreground">{rs.length} calificaciones</p>
                     <Stars value={avg} size={18} />
                   </div>
                 </div>

@@ -411,13 +411,13 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
             </div>
           </div>
 
-          {/* Additional services — only when provided by API/props */}
-          {additionalServices.length > 0 && (
+          {/* Additional services — from API/props or empty state */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <ShoppingCart className="h-4 w-4 text-primary" />
               <h4 className="text-sm font-semibold text-foreground">Servicios adicionales (por día)</h4>
             </div>
+            {additionalServices.length > 0 ? (
             <div className="space-y-2">
               {additionalServices.map((as, idx) => (
                 <div key={as.name} className="flex items-center justify-between rounded-xl border border-border bg-card px-4 py-3">
@@ -443,8 +443,15 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
                 </div>
               ))}
             </div>
+            ) : (
+              <div className="rounded-xl border border-dashed border-primary/25 bg-card px-4 py-6 text-center">
+                <p className="text-sm font-semibold text-foreground">No hay servicios adicionales</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Este servicio no ofrece complementos por el momento.
+                </p>
+              </div>
+            )}
           </div>
-          )}
 
           {/* Booking summary */}
           {startDate && endDate && (

@@ -100,7 +100,7 @@ const ServiceDetailView = ({
       <div className="px-4 pt-4">
         <button onClick={onBack} className="flex items-center gap-1 text-primary font-medium mb-3">
           <ChevronLeft className="h-5 w-5" />
-          Atras
+          Atrás
         </button>
       </div>
 
