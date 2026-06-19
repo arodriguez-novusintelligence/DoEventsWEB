@@ -1,9 +1,9 @@
-# Reporte empalme de gaps — Run 27839776030
+# Reporte empalme de gaps — Run 27840572801
 
 | Campo | Valor |
 |-------|-------|
-| Generado | 2026-06-19 17:33 UTC |
-| Batch | 1 / 6 |
+| Generado | 2026-06-19 17:47 UTC |
+| Batch | 2 / 6 |
 | Gaps en batch | 20 |
 | Entorno | [https://dev.doeventsapp.com](https://dev.doeventsapp.com) |
 
@@ -11,7 +11,7 @@
 
 | Métrica | Antes | Después | Delta |
 |---------|-------|---------|-------|
-| Similitud global | **60.49%** | **59.92%** | **-0.57%** |
+| Similitud global | **59.92%** | **59.92%** | **+0.0%** |
 | Gaps pendientes totales | 118 | 118 | +0 |
 | Gaps mejorados en batch | — | **0** / 20 | — |
 
@@ -19,26 +19,26 @@
 
 | Feature (Lovable) | WEB | Sim. antes | Sim. después | Mejoró |
 |-------------------|-----|------------|--------------|--------|
-| Guest management | `packages/shell/src/lovable/components/guests/GuestManagementView.tsx` | 75.5% | 74.75% | ⚠️ |
-| Step event summary | `packages/shell/src/lovable/components/events/StepEventSummary.tsx` | 76.33% | 76.25% | ⚠️ |
-| Aiassistant fab | `packages/shell/src/lovable/components/ai/AIAssistantFAB.tsx` | 80.52% | 55.71% | ⚠️ |
-| Event preview | `packages/shell/src/lovable/components/events/EventPreviewModal.tsx` | 78.3% | 71.71% | ⚠️ |
-| Host picker | `packages/shell/src/lovable/components/events/HostPickerModal.tsx` | 80.49% | 79.84% | ⚠️ |
-| Invitation event detail | `packages/shell/src/lovable/components/invitations/InvitationEventDetailView.tsx` | 74.05% | 73.66% | ⚠️ |
-| Map | `packages/shell/src/lovable/components/feed/MapView.tsx` | 72.06% | 67.73% | ⚠️ |
-| Step agenda | `packages/shell/src/lovable/components/events/StepAgenda.tsx` | 84.23% | 84.23% | ⚠️ |
-| My services | `packages/shell/src/lovable/components/services/MyServicesView.tsx` | 82.74% | 79.58% | ⚠️ |
-| Private chat | `packages/shell/src/lovable/components/chat/PrivateChatView.tsx` | 84.8% | 84.23% | ⚠️ |
-| Banking form | `packages/shell/src/lovable/components/banking/BankingForm.tsx` | 69.3% | 68.52% | ⚠️ |
-| Ticket purchase flow | `packages/shell/src/lovable/components/invitations/TicketPurchaseFlow.tsx` | 78.58% | 78.45% | ⚠️ |
-| Success | `packages/shell/src/lovable/components/banking/SuccessModal.tsx` | 77.31% | 75.85% | ⚠️ |
-| My events | `packages/shell/src/lovable/components/feed/MyEventsView.tsx` | 73.76% | 73.31% | ⚠️ |
-| Editar perfil | `packages/shell/src/lovable/components/feed/EditProfileView.tsx` | 69.82% | 69.46% | ⚠️ |
-| Seating category | `packages/shell/src/lovable/components/venues/seating/SeatingCategoryDialog.tsx` | 78.14% | 77.65% | ⚠️ |
-| Step unified | `packages/shell/src/lovable/components/services/StepUnified.tsx` | 69.98% | 69.91% | ⚠️ |
-| Chat room | `packages/shell/src/lovable/components/chat/ChatRoomView.tsx` | 73.82% | 72.12% | ⚠️ |
-| Notifications | `packages/shell/src/lovable/components/feed/NotificationsSheet.tsx` | 69.99% | 69.91% | ⚠️ |
-| Notifications context | `packages/shell/src/lovable/contexts/NotificationsContext.tsx` | 84.78% | 35.05% | ⚠️ |
+| Followers | `packages/shell/src/lovable/components/feed/FollowersSheet.tsx` | 64.83% | 64.83% | ⚠️ |
+| Messages list | `packages/shell/src/lovable/components/chat/MessagesListView.tsx` | 51.87% | 51.87% | ⚠️ |
+| Booking | `packages/shell/src/lovable/components/services/BookingSheet.tsx` | 62.57% | 62.57% | ⚠️ |
+| Map | `packages/shell/src/lovable/components/feed/MapView.tsx` | 67.73% | 67.73% | ⚠️ |
+| Ticket detail | `packages/shell/src/lovable/components/tickets/TicketDetailView.tsx` | 53.73% | 53.73% | ⚠️ |
+| Step access control | `packages/shell/src/lovable/components/events/StepAccessControl.tsx` | 63.1% | 63.1% | ⚠️ |
+| Edit guest | `packages/shell/src/lovable/components/guests/EditGuestModal.tsx` | 65.78% | 65.78% | ⚠️ |
+| My venues | `packages/shell/src/lovable/components/venues/MyVenuesView.tsx` | 64.22% | 64.22% | ⚠️ |
+| Post card | `packages/shell/src/lovable/components/feed/PostCard.tsx` | 63.34% | 63.34% | ⚠️ |
+| Aiassistant fab | `packages/shell/src/lovable/components/ai/AIAssistantFAB.tsx` | 55.71% | 55.71% | ⚠️ |
+| Service detail | `packages/shell/src/lovable/components/services/ServiceDetailView.tsx` | 62.28% | 62.28% | ⚠️ |
+| Publish flow | `packages/shell/src/lovable/components/events/PublishFlowModal.tsx` | 65.39% | 65.39% | ⚠️ |
+| Transfer ticket flow | `packages/shell/src/lovable/components/tickets/TransferTicketFlow.tsx` | 63.26% | 63.26% | ⚠️ |
+| Stats event list | `packages/shell/src/lovable/components/stats/StatsEventListView.tsx` | 57.51% | 57.51% | ⚠️ |
+| Top header | `packages/shell/src/lovable/components/feed/TopHeader.tsx` | 67.62% | 67.62% | ⚠️ |
+| Create event | `packages/shell/src/lovable/components/events/CreateEventView.tsx` | 64.07% | 64.07% | ⚠️ |
+| Step event details | `packages/shell/src/lovable/components/events/StepEventDetails.tsx` | 65.23% | 65.23% | ⚠️ |
+| Mi galería | `packages/shell/src/lovable/components/feed/ProfileGallery.tsx` | 65.74% | 65.74% | ⚠️ |
+| Refund ticket flow | `packages/shell/src/lovable/components/tickets/RefundTicketFlow.tsx` | 53.89% | 53.89% | ⚠️ |
+| Contact import | `packages/shell/src/lovable/components/guests/ContactImportModal.tsx` | 56.4% | 56.4% | ⚠️ |
 
 ## Backend pendiente para cerrar al 100%
 
@@ -179,6 +179,6 @@
 
 ## Próximo paso
 
-Quedan **118** gap(s) frontend. Re-ejecutar workflow `lovable-gap-empalme` con `batch_index=2` (batch_size=20).
+Quedan **118** gap(s) frontend. Re-ejecutar workflow `lovable-gap-empalme` con `batch_index=3` (batch_size=20).
 
 Implementar **6** ítem(s) de backend documentados antes de marcar empalme al 100%.
