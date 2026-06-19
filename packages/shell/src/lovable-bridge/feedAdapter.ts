@@ -8,7 +8,7 @@ import {
   resolveVenueIdFromFeedPublication,
   resolvePublicationDetailPath,
 } from '@doevents/shared';
-import type { Post, User } from '@lovable/data/mockData';
+import type { Post, User } from '@doevents/shared';
 
 function initialsFromName(name: string): string {
   return name

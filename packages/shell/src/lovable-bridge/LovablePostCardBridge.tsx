@@ -1,7 +1,7 @@
 import React from 'react';
 import type { FeedPublication } from '@doevents/shared';
 import LovablePostCard from '@lovable/components/feed/PostCard';
-import type { User } from '@lovable/data/mockData';
+import type { User } from '@doevents/shared';
 import { feedPublicationToLovablePost } from './feedAdapter';
 
 export interface LovablePostCardBridgeProps {

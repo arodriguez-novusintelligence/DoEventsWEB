@@ -11,7 +11,7 @@ import {
 } from '@doevents/shared';
 import MyPostsView from '@lovable/components/feed/MyPostsView';
 import { feedPublicationToLovablePost } from '../lovable-bridge/feedAdapter';
-import type { Post } from '@lovable/data/mockData';
+import type { Post } from '@doevents/shared';
 
 export const ProfilePublicationsPage: React.FC = () => {
   const navigate = useNavigate();

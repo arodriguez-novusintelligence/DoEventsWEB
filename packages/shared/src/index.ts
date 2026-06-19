@@ -6,6 +6,7 @@ export * from './types/auth';
 export * from './types/events';
 export * from './types/eventDetail';
 export * from './types/feed';
+export * from './types/feedUi';
 export * from './types/orders';
 export * from './types/guests';
 export * from './types/access';

@@ -68,6 +68,8 @@ import {
 
   FeedPublishRedirectState,
 
+  type Post,
+
   followUser,
   likeEvent,
   toggleEventLike,
@@ -601,7 +603,7 @@ export const SocialWallTab: React.FC = () => {
 
 
   const handlePublishRepost = async (
-    repostData: Omit<import('@lovable/data/mockData').Post, 'id' | 'likes' | 'comments' | 'reposts'>,
+    repostData: Omit<Post, 'id' | 'likes' | 'comments' | 'reposts'>,
   ) => {
     if (!repostingPost) return;
     try {

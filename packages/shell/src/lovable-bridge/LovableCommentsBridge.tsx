@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { formatRelativeTime, resolveImageUrl, uploadMediaFile } from '@doevents/shared';
 import LovableCommentsSheet from '@lovable/components/feed/CommentsSheet';
-import type { Comment } from '@lovable/data/mockData';
+import type { Comment } from '@doevents/shared';
 
 interface ApiComment {
   id: string;
