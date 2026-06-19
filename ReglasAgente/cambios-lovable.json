@@ -109,6 +109,32 @@
         "Adaptacion pendiente por agente Cursor"
       ],
       "agentStatus": "pending"
+    },
+    {
+      "id": "prepare-b8d294e3",
+      "lovableSha": "b8d294e3f30fc6754c7cce53cba1fed75269ec44",
+      "before": "HEAD~1",
+      "timestamp": "2026-06-19 13:20 UTC",
+      "workflowRunId": "27828131207",
+      "changeTypes": [
+        "VISUAL"
+      ],
+      "designSimilarityPercent": 61.23,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 36.77,
+      "requiresDesignAlignment": true,
+      "summary": "Manifiesto: UI=True, reglas=False, 1 archivo(s); similitud diseño=61.23%",
+      "changedFilesLovable": [
+        "src/components/services/PaymentGatewaySheet.tsx"
+      ],
+      "webFilesModified": [],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "pending",
+      "pendingRisks": [
+        "Adaptacion pendiente por agente Cursor"
+      ],
+      "agentStatus": "pending"
     }
   ]
 }
