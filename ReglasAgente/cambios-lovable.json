@@ -1087,7 +1087,11 @@
       "timestamp": "2026-06-19 23:15 UTC",
       "workflowRunId": "27849872403-b3",
       "gapBatch": 20,
-      "changeTypes": ["VISUAL", "FRONTEND_LOGIC", "BACKEND_REQUIRED"],
+      "changeTypes": [
+        "VISUAL",
+        "FRONTEND_LOGIC",
+        "BACKEND_REQUIRED"
+      ],
       "designSimilarityPercentBefore": 58.21,
       "designSimilarityPercentAfter": 74.0,
       "designSimilarityTarget": 98.0,
@@ -1289,6 +1293,32 @@
         "Re-comparación CI con compare-design-similarity.py pendiente"
       ],
       "agentStatus": "finished"
+    },
+    {
+      "id": "prepare-28d62d5e",
+      "lovableSha": "28d62d5ef4e09d0fa9df2d5163e40b3568e1fdcd",
+      "before": "HEAD~1",
+      "timestamp": "2026-06-19 22:20 UTC",
+      "workflowRunId": "27850000711",
+      "changeTypes": [
+        "VISUAL"
+      ],
+      "designSimilarityPercent": 58.04,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 39.96,
+      "requiresDesignAlignment": true,
+      "summary": "Manifiesto: UI=True, reglas=False, 1 archivo(s); similitud diseño=58.04%",
+      "changedFilesLovable": [
+        "src/components/feed/SideMenu.tsx"
+      ],
+      "webFilesModified": [],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "pending",
+      "pendingRisks": [
+        "Adaptacion pendiente por agente Cursor"
+      ],
+      "agentStatus": "pending"
     }
   ]
 }
