@@ -430,6 +430,33 @@
       "mocksUsed": false,
       "buildResult": "SUCCESS",
       "agentStatus": "finished"
+    },
+    {
+      "id": "prepare-b6c89604",
+      "lovableSha": "b6c89604624e6903e00e6bc14890df198ee2fc57",
+      "before": "HEAD~1",
+      "timestamp": "2026-06-19 18:49 UTC",
+      "workflowRunId": "27843136315",
+      "changeTypes": [
+        "VISUAL"
+      ],
+      "designSimilarityPercent": 59.92,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 38.08,
+      "requiresDesignAlignment": true,
+      "summary": "Manifiesto: UI=True, reglas=False, 2 archivo(s); similitud diseño=59.92%",
+      "changedFilesLovable": [
+        "src/components/chat/MessagesListView.tsx",
+        "src/pages/Index.tsx"
+      ],
+      "webFilesModified": [],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "pending",
+      "pendingRisks": [
+        "Adaptacion pendiente por agente Cursor"
+      ],
+      "agentStatus": "pending"
     }
   ]
 }
