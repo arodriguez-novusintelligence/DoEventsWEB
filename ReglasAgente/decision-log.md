@@ -14,10 +14,51 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-19 21:48 UTC] agent-38e2c759-27849872403
+
+### 1. Resumen del cambio detectado
+Manifiesto Lovable SHA `38e2c759` sin diff UI (`changedFiles: []`, `hasUiChanges: false`). Validación de rama `feature/cicd/dev-automation` post batch 5: build DEV sa-east-1 OK, anti-mock limpio, empalmes previos intactos. Sin cambios de código frontend en este run.
+
+### 2. Tipo de cambio
+- [x] VISUAL (validación)
+- [ ] FRONTEND_LOGIC
+- [ ] BACKEND_REQUIRED
+- [ ] RISKY
+
+### 3. Archivos modificados en DoEventsWEB
+- `ReglasAgente/cambios-lovable.json`
+- `ReglasAgente/decision-log.md`
+- `ReglasAgente/impacto-backend.md`
+- `ReglasAgente/reglas-front.md`
+- `design-comparison.json`
+- `Reports/2026-06-19-design-comparison-38e2c759-27849872403.md`
+- `Reports/2026-06-19-agent-execution-38e2c759-27849872403.md`
+
+### 4. Archivos modificados en DoEventsBack (si aplica)
+- Ninguno
+
+### 5. Evidencia de que no se usaron mocks
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages` → sin coincidencias
+- `mocksUsed: false`
+
+### 6. Resultado build/test
+- `npm run build:devaws`: **SUCCESS** (~22s, shared + mfe-auth + shell)
+- Tests: SKIPPED (no solicitados en run de validación)
+
+### 7. Riesgos pendientes
+- Similitud global ~82.5% vs objetivo 98% (18 `needs_adaptation` restantes — batch 6)
+- Re-comparación CI con `compare-design-similarity.py` no disponible (`discover-joyful-feed` privado)
+- Brechas BACKEND_REQUIRED: KYC submit, PaymentGateway, banking SWIFT/PayPal, StoryViewers
+
+### Decisión
+**APPLIED** — validación exitosa sin delta UI; empalme batch 6 pendiente.
+
+---
+
 ## [2026-06-19 21:47 UTC] prepare-e1cc7eaf
 
 ### 1. Resumen del cambio detectado
-Manifiesto: UI=False, reglas=False, 0 archivo(s); similitud diseño=58.82%
+Manifiesto: UI=False, reglas=False, 0 archivo(s); similitud diseño CI baseline=58.82% (SHA `e1cc7eaf` en prepare; manifiesto agente referencia `38e2c759`).
 
 ### 2. Tipo de cambio (preliminar)
 - [x] VISUAL
@@ -26,20 +67,19 @@ Manifiesto: UI=False, reglas=False, 0 archivo(s); similitud diseño=58.82%
 - [ ] RISKY
 
 ### 3. Archivos modificados en DoEventsWEB
-- Pendiente — el agente adapta sin copia literal
+- Completado por agente `agent-38e2c759-27849872403` (solo artefactos ReglasAgente/Reports)
 
 ### 4. Archivos modificados en DoEventsBack (si aplica)
-- Pendiente evaluacion agente
+- Ninguno
 
 ### 5. Evidencia de que no se usaron mocks
-- Sin port deterministico de componentes en esta fase.
-- El agente debe usar `lovable-bridge/*` + `@doevents/shared`.
+- Validación anti-mock en `pages/` sin coincidencias.
 
 ### 6. Resultado build/test
-- `npm run build:devaws`: pending
+- `npm run build:devaws`: **SUCCESS** (agente)
 
 ### 7. Riesgos pendientes
-- Agente debe completar adaptacion y actualizar esta entrada.
+- Ver entrada `agent-38e2c759-27849872403`.
 
 ---
 

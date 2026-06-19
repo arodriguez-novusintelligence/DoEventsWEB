@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `agent-38e2c759-27849872403`: validación sin diff UI; build:devaws OK; sin cambios backend ni frontend de lógica.
+
 Run `gap-empalme-27847959667-b5`: batch 5 (20 gaps) — empalme frontend completado en 19 componentes; 1 gap documentado como BACKEND_REQUIRED (KycCertificationView submit).
 
 Run `gap-empalme-27847959667-b4`: batch 4 (20 gaps) — empalme frontend completado en 18 componentes; 2 gaps documentados como BACKEND_REQUIRED (StoryViewersSheet, PayPal payout/delete cuenta).
