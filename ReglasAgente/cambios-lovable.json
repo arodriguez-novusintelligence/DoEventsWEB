@@ -57,6 +57,32 @@
         "Adaptacion pendiente por agente Cursor"
       ],
       "agentStatus": "pending"
+    },
+    {
+      "id": "prepare-82aef42a",
+      "lovableSha": "82aef42ac55f94ccbdffbc51089b2423e9690394",
+      "before": "HEAD~1",
+      "timestamp": "2026-06-19 13:09 UTC",
+      "workflowRunId": "27827605952",
+      "changeTypes": [
+        "VISUAL"
+      ],
+      "designSimilarityPercent": 61.67,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 36.33,
+      "requiresDesignAlignment": true,
+      "summary": "Manifiesto: UI=True, reglas=False, 1 archivo(s); similitud diseño=61.67%",
+      "changedFilesLovable": [
+        "src/components/venues/VenueDetailReservation.tsx"
+      ],
+      "webFilesModified": [],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "pending",
+      "pendingRisks": [
+        "Adaptacion pendiente por agente Cursor"
+      ],
+      "agentStatus": "pending"
     }
   ]
 }
