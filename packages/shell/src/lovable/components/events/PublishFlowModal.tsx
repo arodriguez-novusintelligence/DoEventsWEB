@@ -8,13 +8,22 @@ interface Props {
   eventId: string;
   onClose: () => void;
   onFinalize: () => void;
+  onSubmitBank?: (bank: {
+    holderName: string;
+    documentId: string;
+    bankName: string;
+    accountType: string;
+    accountNumber: string;
+  }) => Promise<void>;
 }
 
 type Stage = 'bank' | 'bankForm' | 'success' | 'error';
 
-const PublishFlowModal = ({ open, eventId, onClose, onFinalize }: Props) => {
+const PublishFlowModal = ({ open, eventId, onClose, onFinalize, onSubmitBank }: Props) => {
   const [stage, setStage] = useState<Stage>('bank');
   const [errorMessage, setErrorMessage] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [bankSaved, setBankSaved] = useState(false);
   const [bank, setBank] = useState({
     holderName: '',
     documentId: '',
@@ -30,20 +39,37 @@ const PublishFlowModal = ({ open, eventId, onClose, onFinalize }: Props) => {
   const reset = () => {
     setStage('bank');
     setErrorMessage('');
+    setSaving(false);
+    setBankSaved(false);
     setBank({ holderName: '', documentId: '', bankName: '', accountType: 'ahorros', accountNumber: '' });
   };
 
   const handleClose = () => { reset(); onClose(); };
 
-  const submitBank = () => {
+  const submitBank = async () => {
     if (!bank.holderName || !bank.documentId || !bank.bankName || !bank.accountNumber) {
       setErrorMessage('Completa todos los datos bancarios para continuar.');
       setStage('error');
       return;
     }
-    // BACKEND_REQUIRED: persistencia vía API banking — no simular guardado
-    toast.info('Registro bancario pendiente de activación en plataforma');
-    setStage('success');
+    if (!onSubmitBank) {
+      // BACKEND_REQUIRED: persistencia vía API banking — no simular guardado
+      toast.info('Registro bancario pendiente de activación en plataforma');
+      setStage('success');
+      return;
+    }
+    setSaving(true);
+    try {
+      await onSubmitBank(bank);
+      setBankSaved(true);
+      toast.success('Datos bancarios registrados');
+      setStage('success');
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : 'No se pudieron guardar los datos bancarios');
+      setStage('error');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const share = async () => {
@@ -139,10 +165,11 @@ const PublishFlowModal = ({ open, eventId, onClose, onFinalize }: Props) => {
               </div>
             </div>
             <button
-              onClick={submitBank}
-              className="mt-5 w-full rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground"
+              onClick={() => void submitBank()}
+              disabled={saving}
+              className="mt-5 w-full rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground disabled:opacity-60"
             >
-              Guardar y publicar
+              {saving ? 'Guardando…' : 'Guardar y publicar'}
             </button>
             <button
               onClick={() => setStage('bank')}
@@ -177,12 +204,14 @@ const PublishFlowModal = ({ open, eventId, onClose, onFinalize }: Props) => {
               No olvides compartirlo en tus redes sociales.
             </p>
 
+            {!bankSaved && (
             <div className="mt-4 w-full rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-left">
               <p className="text-xs font-semibold text-amber-800">Datos bancarios pendientes</p>
               <p className="mt-1 text-[11px] text-amber-700">
                 Registra tu cuenta para recibir pagos de entradas vendidas.
               </p>
             </div>
+            )}
 
             <div className="mt-5 w-full text-left">
               <p className="text-xs text-muted-foreground">Enlace del evento</p>

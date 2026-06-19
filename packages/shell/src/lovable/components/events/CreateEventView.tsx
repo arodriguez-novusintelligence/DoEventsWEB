@@ -261,6 +261,9 @@ const CreateEventView = ({
             );
           })}
         </div>
+        <p className="mt-2 text-center text-xs font-medium text-muted-foreground">
+          Paso {currentStep} de {STEPS.length} · {STEPS.find((s) => s.num === currentStep)?.label}
+        </p>
       </div>
 
       {/* Content */}

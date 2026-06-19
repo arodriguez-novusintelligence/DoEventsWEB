@@ -70,10 +70,12 @@ export function ContactImportModal({ open, onOpenChange, onImportContacts }: Pro
 
   const handleImport = () => {
     const list = contacts.filter((c) => selected.has(c.id)).map((c) => {
-      const [name, ...rest] = c.name.split(" ");
+      const parts = c.name.trim().split(/\s+/).filter(Boolean);
+      const name = parts[0] || c.name.trim();
+      const lastName = parts.slice(1).join(' ');
       return {
         name,
-        lastName: rest.join(" ") || "",
+        lastName: lastName || '',
         username: "",
         email: "",
         phone: c.phone,

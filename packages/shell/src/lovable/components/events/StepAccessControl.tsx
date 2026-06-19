@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { CheckCircle2, DoorOpen, Trash2, UserPlus, Users, HelpCircle } from 'lucide-react';
 import { EventFormData, EventGate, EventHost, EventFormUpdater } from '@lovable/data/eventFormData';
 import UserSearchPickerModal, { type UserSearchResult } from '../../../components/UserSearchPickerModal';
@@ -44,6 +44,16 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
   const assignments = formData.accessControl ?? {};
   const [pickerGateId, setPickerGateId] = useState<string | null>(null);
   const [userCache, setUserCache] = useState<Record<string, EventHost>>({});
+
+  useEffect(() => {
+    const fromHosts: Record<string, EventHost> = {};
+    (formData.hosts || []).forEach((host) => {
+      fromHosts[host.id] = host;
+    });
+    if (Object.keys(fromHosts).length) {
+      setUserCache((prev) => ({ ...fromHosts, ...prev }));
+    }
+  }, [formData.hosts]);
 
   const totalAssigned = useMemo(
     () => gates.reduce((s, g) => s + (assignments[g.id]?.length ?? 0), 0),

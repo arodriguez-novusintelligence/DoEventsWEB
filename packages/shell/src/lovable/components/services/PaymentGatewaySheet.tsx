@@ -118,9 +118,15 @@ const PaymentGatewaySheet = ({ open, onOpenChange, booking, onSuccess, sellerNam
               </button>
             )}
             <SheetTitle className="text-base font-bold text-foreground">
-              {step === 'success' ? '¡Reserva confirmada!' : 'Pago seguro'}
+              {step === 'success' ? '¡Reserva confirmada!' : booking.orderId ? 'Confirmar orden' : 'Pago seguro'}
             </SheetTitle>
-            {step !== 'success' && (
+            {step !== 'success' && booking.orderId && (
+              <div className="ml-auto flex items-center gap-1 text-[11px] text-muted-foreground">
+                <ShieldCheck className="h-3 w-3" />
+                <span>Orden {booking.orderId.slice(-8)}</span>
+              </div>
+            )}
+            {step !== 'success' && !booking.orderId && (
               <div className="ml-auto flex items-center gap-1 text-[11px] text-muted-foreground">
                 <Lock className="h-3 w-3" />
                 <span>SSL seguro</span>

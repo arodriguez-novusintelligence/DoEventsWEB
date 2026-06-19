@@ -36,6 +36,7 @@ export interface TransferRecipient {
 interface Props {
   ticket: Ticket;
   entries: BoletaEntry[];
+  currentUserId?: string;
   onClose: () => void;
   onCompleted: (transferredIds: string[], recipient: TransferRecipient) => Promise<void>;
 }
@@ -69,7 +70,7 @@ const initialsFrom = (name: string) =>
     .map((p) => p[0]?.toUpperCase() || '')
     .join('') || '?';
 
-const TransferTicketFlow = ({ ticket, entries, onClose, onCompleted }: Props) => {
+const TransferTicketFlow = ({ ticket, entries, currentUserId, onClose, onCompleted }: Props) => {
   const [step, setStep] = useState<Step>('select');
   const [selected, setSelected] = useState<Set<string>>(new Set(entries[0]?.id ? [entries[0].id] : []));
   const [recipient, setRecipient] = useState<TransferRecipient | null>(null);
@@ -95,7 +96,9 @@ const TransferTicketFlow = ({ ticket, entries, onClose, onCompleted }: Props) =>
         .then((users) => {
           if (cancelled) return;
           setResults(
-            users.map((u) => {
+            users
+              .filter((u) => !currentUserId || u.id !== currentUserId)
+              .map((u) => {
               const name = u.name || u.username || u.email || 'Usuario';
               const username = u.username ? (u.username.startsWith('@') ? u.username : `@${u.username}`) : '';
               return {
@@ -120,7 +123,7 @@ const TransferTicketFlow = ({ ticket, entries, onClose, onCompleted }: Props) =>
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [query, step]);
+  }, [query, step, currentUserId]);
 
   const toggle = (id: string) =>
     setSelected((prev) => {

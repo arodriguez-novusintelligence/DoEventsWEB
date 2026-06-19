@@ -150,6 +150,10 @@ export const LovableLayout: React.FC = () => {
   );
 
   const handleNavigate = (section: string) => {
+    if (section.startsWith('user-')) {
+      navigate(`/users/${section.slice(5)}`);
+      return;
+    }
     const routes: Record<string, string> = {
       feed: '/',
       wall: '/',

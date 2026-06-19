@@ -363,6 +363,7 @@ export const TicketDetailPage: React.FC = () => {
       canRefund={Boolean(userId && isPaid)}
       refundEligible={refundEligible}
       refundEligibilityMessage={refundEligibilityMessage}
+      currentUserId={userId || undefined}
     />
   );
 };

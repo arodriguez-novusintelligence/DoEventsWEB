@@ -12,6 +12,8 @@ import { isAccessControlEnabled } from '../../../lovable-bridge/accessAdapter';
 interface StatsEventListViewProps {
   events: EventChatRoom[];
   onBack: () => void;
+  loading?: boolean;
+  loadError?: string | null;
 }
 
 const statusConfig: Record<EventStatus, { label: string; className: string; order: number }> = {
@@ -76,7 +78,7 @@ const statsOptions = [
   },
 ];
 
-const StatsEventListView = ({ events, onBack }: StatsEventListViewProps) => {
+const StatsEventListView = ({ events, onBack, loading = false, loadError = null }: StatsEventListViewProps) => {
   const [selectedEvent, setSelectedEvent] = useState<EventChatRoom | null>(null);
   const [activeStatsOption, setActiveStatsOption] = useState<string | null>(null);
 
@@ -131,6 +133,34 @@ const StatsEventListView = ({ events, onBack }: StatsEventListViewProps) => {
         event={selectedEvent}
         onBack={() => setActiveStatsOption(null)}
       />
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-secondary pb-24">
+        <ProfileSectionBanner title="Estadísticas" subtitle="Cargando eventos…" icon={BarChart3} onBack={onBack} />
+        <div className="mx-auto max-w-lg px-4 -mt-6">
+          <div className="flex flex-col items-center gap-3 rounded-2xl bg-card p-10 text-center shadow-sm">
+            <RefreshCw className="h-8 w-8 animate-spin text-primary" />
+            <p className="text-sm text-muted-foreground">Obteniendo tus eventos…</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="min-h-screen bg-secondary pb-24">
+        <ProfileSectionBanner title="Estadísticas" subtitle="Error al cargar" icon={BarChart3} onBack={onBack} />
+        <div className="mx-auto max-w-lg px-4 -mt-6">
+          <div className="rounded-2xl bg-card p-8 text-center shadow-sm">
+            <p className="text-sm font-semibold text-destructive">{loadError}</p>
+            <p className="mt-2 text-xs text-muted-foreground">Intenta de nuevo más tarde.</p>
+          </div>
+        </div>
+      </div>
     );
   }
 

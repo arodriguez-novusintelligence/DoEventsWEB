@@ -27,6 +27,7 @@ export const ProfileGalleryPage: React.FC = () => {
   const userId = useSelector((s: RootState) => s.auth.idUser);
 
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [savedPhotos, setSavedPhotos] = useState<ProfileGalleryImage[]>([]);
   const [pendingPhotos, setPendingPhotos] = useState<PendingPhoto[]>([]);
@@ -35,11 +36,14 @@ export const ProfileGalleryPage: React.FC = () => {
   const load = useCallback(async () => {
     if (!userId) return;
     setLoading(true);
+    setLoadError(null);
     try {
       const data = await fetchProfileGallery(userId);
       setSavedPhotos(data);
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Error al cargar fotos', 'error');
+      const message = err instanceof Error ? err.message : 'Error al cargar fotos';
+      setLoadError(message);
+      showToast(message, 'error');
     } finally {
       setLoading(false);
     }
@@ -143,6 +147,7 @@ export const ProfileGalleryPage: React.FC = () => {
       onBack={() => navigate('/profile')}
       photos={displayPhotos}
       loading={loading}
+      loadError={loadError}
       saving={saving}
       hasChanges={hasChanges}
       onAddFiles={handleAddFiles}

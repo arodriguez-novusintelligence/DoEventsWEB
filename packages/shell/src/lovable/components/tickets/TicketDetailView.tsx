@@ -30,6 +30,8 @@ export interface TicketDetailViewProps {
   canRefund?: boolean;
   refundEligible?: boolean;
   refundEligibilityMessage?: string;
+  platformFeeRate?: number;
+  currentUserId?: string;
   transferredAt?: Map<string, Date>;
   refundedAt?: Map<string, Date>;
 }
@@ -48,6 +50,8 @@ const TicketDetailView = ({
   canRefund = false,
   refundEligible = true,
   refundEligibilityMessage,
+  platformFeeRate,
+  currentUserId,
   transferredAt,
   refundedAt,
 }: TicketDetailViewProps) => {
@@ -327,6 +331,7 @@ const TicketDetailView = ({
         <TransferTicketFlow
           ticket={ticket}
           entries={entries.filter((e) => !transferMap.has(e.id) && !refundMap.has(e.id))}
+          currentUserId={currentUserId}
           onClose={() => setTransferOpen(false)}
           onCompleted={handleTransferComplete}
         />
@@ -341,6 +346,7 @@ const TicketDetailView = ({
           onCompleted={handleRefundComplete}
           eligible={refundEligible}
           eligibilityMessage={refundEligibilityMessage}
+          platformFeeRate={platformFeeRate}
         />
       )}
 

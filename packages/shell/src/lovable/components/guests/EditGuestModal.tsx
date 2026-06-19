@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Edit } from "lucide-react";
+import { Edit, Loader2 } from "lucide-react";
 import { Guest, UpdateGuestRequest, GuestGroup } from "@lovable/types/guest";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@lovable/components/ui/dialog";
 import { Button } from "@lovable/components/ui/button";
@@ -14,13 +14,14 @@ interface Props {
   guest: Guest | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onUpdateGuest: (g: UpdateGuestRequest) => void;
+  onUpdateGuest: (g: UpdateGuestRequest) => void | Promise<void>;
   groups: GuestGroup[];
   nested?: boolean;
 }
 
 export function EditGuestModal({ guest, open, onOpenChange, onUpdateGuest, groups, nested = false }: Props) {
   const { toast } = useToast();
+  const [saving, setSaving] = useState(false);
   const [form, setForm] = useState<UpdateGuestRequest>({
     id: "",
     name: "",
@@ -51,12 +52,21 @@ export function EditGuestModal({ guest, open, onOpenChange, onUpdateGuest, group
     });
   }, [guest]);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name.trim() || !form.lastName.trim()) { toast({ title: "Campos requeridos", description: "Nombre y apellido obligatorios.", variant: "destructive" }); return; }
-    onUpdateGuest(form);
-    onOpenChange(false);
-    toast({ title: "Invitado actualizado", description: "Cambios guardados." });
+    if (!form.name.trim() || !form.lastName.trim()) {
+      toast({ title: "Campos requeridos", description: "Nombre y apellido obligatorios.", variant: "destructive" });
+      return;
+    }
+    setSaving(true);
+    try {
+      await onUpdateGuest(form);
+      onOpenChange(false);
+    } catch {
+      // El padre muestra el error vía toast
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (!guest) return null;
@@ -92,8 +102,10 @@ export function EditGuestModal({ guest, open, onOpenChange, onUpdateGuest, group
             <Label htmlFor="ef" className="text-sm">Marcar como favorito</Label>
           </div>
           <div className="flex gap-3 pt-4">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1 rounded-full">Cancelar</Button>
-            <Button type="submit" className="flex-1 rounded-full">Guardar cambios</Button>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={saving} className="flex-1 rounded-full">Cancelar</Button>
+            <Button type="submit" disabled={saving} className="flex-1 rounded-full">
+              {saving ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Guardando…</> : 'Guardar cambios'}
+            </Button>
           </div>
         </form>
       </DialogContent>

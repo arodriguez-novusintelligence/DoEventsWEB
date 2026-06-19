@@ -105,6 +105,7 @@ const PostCard = ({
           </div>
         </div>
         <div className="flex items-center gap-1">
+          {!isOwner && (
           <button
             onClick={onFollow}
             className={cn(
@@ -116,6 +117,7 @@ const PostCard = ({
           >
             {followed ? 'Siguiendo' : 'Seguir'}
           </button>
+          )}
           <PostMenu
             isOwner={isOwner}
             onEdit={onEdit}

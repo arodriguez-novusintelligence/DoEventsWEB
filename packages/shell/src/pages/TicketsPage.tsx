@@ -197,6 +197,8 @@ export const TicketsPage: React.FC = () => {
           },
         });
       }}
+      onRefresh={() => void reloadTickets()}
+      onExploreEvents={() => navigate('/events')}
     />
   );
 };

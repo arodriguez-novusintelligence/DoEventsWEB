@@ -278,7 +278,7 @@ const ServiceDetailView = ({
             }}
             className="ml-auto rounded-full bg-white px-5 py-2.5 text-sm font-bold text-primary"
           >
-            Reservar servicio
+            {liveBooking ? 'Reservar servicio' : 'Inicia sesión para reservar'}
           </button>
         </div>
       </div>

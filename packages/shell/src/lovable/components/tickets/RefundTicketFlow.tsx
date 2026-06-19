@@ -25,6 +25,7 @@ interface Props {
   onCompleted: (refundedIds: string[]) => Promise<void>;
   eligible?: boolean;
   eligibilityMessage?: string;
+  platformFeeRate?: number;
 }
 
 type Step = 'select' | 'confirm' | 'policy' | 'success';
@@ -59,6 +60,7 @@ const RefundTicketFlow = ({
   onCompleted,
   eligible = true,
   eligibilityMessage,
+  platformFeeRate = PLATFORM_FEE_RATE,
 }: Props) => {
   const [step, setStep] = useState<Step>(eligible ? 'select' : 'confirm');
   const [selected, setSelected] = useState<Set<string>>(new Set(entries[0]?.id ? [entries[0].id] : []));
@@ -66,7 +68,7 @@ const RefundTicketFlow = ({
 
   const selectedEntries = useMemo(() => entries.filter((e) => selected.has(e.id)), [entries, selected]);
   const grossTotal = selectedEntries.reduce((s, e) => s + e.value, 0);
-  const platformFee = Math.round(grossTotal * PLATFORM_FEE_RATE);
+  const platformFee = Math.round(grossTotal * platformFeeRate);
   const refundTotal = grossTotal - platformFee;
   const avgValue = selectedEntries.length ? Math.round(grossTotal / selectedEntries.length) : 0;
 

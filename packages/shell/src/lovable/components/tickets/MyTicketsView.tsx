@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Ticket as TicketIcon, Eye, Calendar, Clock, Loader2 } from 'lucide-react';
+import { Ticket as TicketIcon, Eye, Calendar, Clock, Loader2, RefreshCw } from 'lucide-react';
 import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBanner';
 import type { Ticket, TicketStatus } from '@lovable/data/ticketsData';
 import { groupTicketsForListView } from '../../../lovable-bridge/ticketsAdapter';
@@ -10,6 +10,7 @@ interface MyTicketsViewProps {
   onViewEventDetail?: (eventId: string, ticket: Ticket) => void;
   onOpenTicketDetail?: (ticket: Ticket) => void;
   onExploreEvents?: () => void;
+  onRefresh?: () => void;
   tickets?: Ticket[];
   loading?: boolean;
   initialTab?: TicketStatus;
@@ -72,6 +73,7 @@ const MyTicketsView = ({
   onViewEventDetail,
   onOpenTicketDetail,
   onExploreEvents,
+  onRefresh,
   tickets: ticketsProp = [],
   loading = false,
   initialTab,
@@ -105,6 +107,17 @@ const MyTicketsView = ({
         subtitle={`${ticketsProp.length} boleta${ticketsProp.length === 1 ? '' : 's'} en total`}
         icon={TicketIcon}
         onBack={onBack}
+        rightAction={onRefresh ? (
+          <button
+            type="button"
+            onClick={onRefresh}
+            disabled={loading}
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-card/80 text-primary shadow-sm"
+            aria-label="Actualizar boletas"
+          >
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+          </button>
+        ) : undefined}
       />
 
       <div className="mx-auto max-w-lg px-4 -mt-6">

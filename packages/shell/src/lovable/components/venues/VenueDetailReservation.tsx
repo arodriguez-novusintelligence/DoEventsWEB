@@ -23,6 +23,7 @@ import {
   createVenueBooking,
   fetchServiceById,
   fetchVenueBookingAvailability,
+  parseVenuePrice,
   type VenueAddonService,
   type VenueDayStatus,
 } from '@doevents/shared';
@@ -189,7 +190,11 @@ const VenueDetailReservation = ({
     }),
     [venue, venueDetail, venueAmenities, hostProfile, addonServices, venueMeta, venueRating, venueReviewCount],
   );
-  const pricePerDay = liveBooking?.pricePerDay ?? BASE_PRICE_PER_DAY;
+  const previewPricePerDay = useMemo(
+    () => parseVenuePrice(venueAmenities?.pricing?.perDay || venueAmenities?.pricing?.perMultiDay),
+    [venueAmenities],
+  );
+  const pricePerDay = liveBooking?.pricePerDay ?? previewPricePerDay ?? BASE_PRICE_PER_DAY;
   const checkIn = liveBooking?.checkIn || '12:00';
   const checkOut = liveBooking?.checkOut || '15:00';
 

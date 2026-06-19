@@ -447,6 +447,11 @@ const MessagesListView = ({
   return (
     <div className="min-h-screen bg-secondary pb-24">
       <div className="mx-auto max-w-lg">
+        {loading && (
+          <div className="mx-4 mt-3 rounded-xl border border-border bg-card px-4 py-2.5 text-center text-xs font-medium text-muted-foreground shadow-sm">
+            Actualizando conversaciones…
+          </div>
+        )}
         {/* Brand header row */}
         <div className="bg-card px-4 py-3 border-b border-border">
           <div className="flex items-center justify-between gap-3">

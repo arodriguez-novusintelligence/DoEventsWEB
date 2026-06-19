@@ -112,6 +112,62 @@ const UserRow = ({
   );
 };
 
+const RequestRow = ({
+  user,
+  currentUserId,
+  onFollowChange,
+  onOpen,
+}: {
+  user: ProfileListUser;
+  currentUserId?: string;
+  onFollowChange?: () => void;
+  onOpen?: () => void;
+}) => {
+  const [pending, setPending] = useState(false);
+
+  const accept = async () => {
+    if (!currentUserId || pending) return;
+    setPending(true);
+    try {
+      await followUser(currentUserId, user.id);
+      toast.success(`Aceptaste a ${user.name}`);
+      onFollowChange?.();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'No se pudo aceptar la solicitud');
+    } finally {
+      setPending(false);
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-3 py-2.5">
+      <button
+        onClick={onOpen}
+        className="flex flex-1 min-w-0 items-center gap-3 text-left active:opacity-70"
+      >
+        <Avatar className="h-11 w-11">
+          {user.avatarUrl ? <AvatarImage src={user.avatarUrl} alt={user.name} /> : null}
+          <AvatarFallback className="bg-primary/10 text-sm font-bold text-primary">
+            {user.initials}
+          </AvatarFallback>
+        </Avatar>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-semibold text-foreground">{user.name}</p>
+          <p className="truncate text-xs text-muted-foreground">Quiere seguirte</p>
+        </div>
+      </button>
+      <Button
+        size="sm"
+        className="h-8 shrink-0 rounded-full text-xs"
+        disabled={!currentUserId || pending}
+        onClick={() => void accept()}
+      >
+        {pending ? '…' : 'Aceptar'}
+      </Button>
+    </div>
+  );
+};
+
 const FollowersSheet = ({
   open,
   onOpenChange,
@@ -268,10 +324,9 @@ const FollowersSheet = ({
               </div>
             ) : (
               filter(requests).map((u) => (
-                <UserRow
+                <RequestRow
                   key={u.id}
                   user={u}
-                  initiallyFollowing={false}
                   currentUserId={currentUserId}
                   onFollowChange={onFollowChange}
                   onOpen={() => open_(u)}

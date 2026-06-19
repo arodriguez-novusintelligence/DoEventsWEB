@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@lovable/components/ui/avat
 
 interface TopHeaderProps {
   onGoHome?: () => void;
-  onViewProfile?: (user: { name: string; initials: string }) => void;
+  onViewProfile?: (user: { name: string; initials: string; userId?: string }) => void;
   onGoToEvent?: (eventName: string) => void;
   onGoToEventById?: (eventId: string) => void;
   onGoToPlace?: (venueId: string) => void;
@@ -50,8 +50,12 @@ const TopHeader = ({
   const [notifOpen, setNotifOpen] = useState(false);
   const { unreadCount } = useNotifications();
 
-  const handleViewProfileFromNotif = (user: { name: string; initials: string }) => {
+  const handleViewProfileFromNotif = (user: { name: string; initials: string; userId?: string }) => {
     setNotifOpen(false);
+    if (user.userId && user.userId !== profileUserId) {
+      onNavigate?.(`user-${user.userId}`);
+      return;
+    }
     onViewProfile?.(user);
   };
 
@@ -102,9 +106,12 @@ const TopHeader = ({
             {profileAvatar && (
               <button
                 type="button"
-                onClick={() => setMenuOpen(true)}
+                onClick={() => {
+                  if (profileUserId) onNavigate?.('perfil');
+                  else setMenuOpen(true);
+                }}
                 className="rounded-full ring-2 ring-primary/20 transition-opacity hover:opacity-80"
-                aria-label="Menú de perfil"
+                aria-label="Ir a mi perfil"
               >
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={profileAvatar} alt={profileName || 'Perfil'} />

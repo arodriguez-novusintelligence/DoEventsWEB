@@ -293,6 +293,14 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
         </SheetHeader>
 
         <div className="px-5 py-4 space-y-5">
+          {!isLive && (
+            <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
+              <p className="text-xs font-semibold text-amber-800">Vista previa</p>
+              <p className="mt-1 text-[11px] text-amber-700">
+                Inicia sesión para reservar fechas reales y generar una orden de pago.
+              </p>
+            </div>
+          )}
           {/* Service info */}
           <div className="rounded-2xl bg-card p-4 shadow-sm space-y-2">
             <p className="text-xs font-semibold text-primary uppercase tracking-wide">{serviceName}</p>
