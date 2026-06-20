@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27876228669-b5`: batch 5 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`KycCertificationView` submit).
+
 Run `gap-empalme-27876228669-b4`: batch 4 (20 gaps) — 16 DONE frontend; 4 BACKEND_REQUIRED (`PaymentMethodsDashboard`/`BankingHub` delete, `GlobalSearchView` posts, `StoryViewersSheet`, `KycCertificationView` submit).
 
 Run `gap-empalme-27876228669-b3`: batch 3 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete).
@@ -50,23 +52,18 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27876228669-b4)
+## Empalme realizado (última ejecución — gap-empalme-27876228669-b5)
 
-- **AccessControlListView / AccessControlPage:** `ProfileSectionBanner`; chips status success/primary; error/retry API real.
-- **ScanQRSheet:** Input shadcn; feedback success/error tokens; botón Reintentar tras fallo.
-- **BankingHub / PaymentMethodsDashboard:** banner Wallet; CTA primary; delete deshabilitado (BACKEND_REQUIRED).
-- **BookingReviewSheet:** copy términos ampliado; botón Cancelar; prop `confirmError`.
-- **FAQSection / MediaUpload:** empty states icono primary; límite 12 archivos con toast; tiles foto+video.
-- **ReportPostDialog:** submit destructive; error inline con AlertCircle.
-- **KycContext / CompanyContext:** `loadErrorMessage` expuesto para UI retry.
-- **FeedHero:** empty historias con card Sparkles.
-- **GlobalSearchView:** error con AlertCircle; empty ilustrados por tab (posts BACKEND_REQUIRED).
-- **MyPurchases / MyReserved*:** tokens primary unificados; error/retry Button; login CTA sin userId.
-- **TermsDialog:** sección privacidad (§7).
-- **ChangeLocationSheet:** Loader2; error inline; hint ubicación guardada.
-- **StoryViewersSheet:** skeleton preparado; placeholder BACKEND_REQUIRED documentado.
-- **KycCertificationView:** ProfileSectionBanner; error contexto; tokens warning (submit BACKEND_REQUIRED).
-- **VenueDetail:** shell `pb-24` alineado Lovable.
+- **StoriesContext:** `loadErrorMessage`, `isEmpty`, `authorCount` expuestos para UI retry.
+- **ResetPasswordView:** shell Lovable (`AuthLogo`, card, validación inline) con `resetPasswordWithToken` shared.
+- **MyPostsView / ProfilePublicationsPage:** loading Loader2, error AlertCircle + Reintentar vía API real.
+- **VenueReservationDetail / ServiceReservationDetail:** chip status en header gradiente primary.
+- **TicketPurchaseFlow:** estado «Redirigiendo…» antes de checkout real.
+- **StoryViewer:** empty Sparkles; barras de progreso h-1 rounded-full.
+- **SignUpView:** título y copy Lovable sobre `CreateAccountPage` mfe-auth.
+- **AdminPanelView:** wrapper Lovable; panels con badges en `AdminPanelSection`.
+- **AddGuestModal:** tabs rounded-xl alineados Lovable.
+- **NotFound:** icono MapPinOff + anillo primary.
 
 ## Backend pendiente para 100%
 

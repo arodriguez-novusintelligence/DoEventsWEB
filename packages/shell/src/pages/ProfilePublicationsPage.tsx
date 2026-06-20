@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import {
   deletePublication,
   fetchUserPublications,
-  Loader,
   resolvePublicationDetailPath,
   RootState,
   type FeedPublication,
@@ -17,6 +16,7 @@ export const ProfilePublicationsPage: React.FC = () => {
   const navigate = useNavigate();
   const userId = useSelector((s: RootState) => s.auth.idUser);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [publications, setPublications] = useState<FeedPublication[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
 
@@ -24,14 +24,20 @@ export const ProfilePublicationsPage: React.FC = () => {
     if (!userId) {
       setPosts([]);
       setLoading(false);
+      setLoadError(null);
       return;
     }
     setLoading(true);
+    setLoadError(null);
     try {
       const items = await fetchUserPublications(userId);
       const feedPosts = items.filter((pub) => pub.type !== 'story');
       setPublications(feedPosts);
       setPosts(feedPosts.map(feedPublicationToLovablePost));
+    } catch (err) {
+      setPublications([]);
+      setPosts([]);
+      setLoadError(err instanceof Error ? err.message : 'No se pudieron cargar tus publicaciones');
     } finally {
       setLoading(false);
     }
@@ -41,18 +47,13 @@ export const ProfilePublicationsPage: React.FC = () => {
     void reload();
   }, [reload]);
 
-  if (loading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center bg-secondary">
-        <Loader />
-      </div>
-    );
-  }
-
   return (
     <MyPostsView
       onBack={() => navigate('/profile')}
       posts={posts}
+      loading={loading}
+      loadError={loadError}
+      onRetry={() => void reload()}
       onDeletePost={async (postId) => {
         await deletePublication(postId);
         setPosts((prev) => prev.filter((p) => p.id !== postId));

@@ -519,10 +519,10 @@ export function AddGuestModal({
 
   const modalInner = (
     <Tabs defaultValue="contacts" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
-            <TabsTrigger value="contacts">Contactos</TabsTrigger>
-            <TabsTrigger value="search">DoEvents</TabsTrigger>
-            <TabsTrigger value="manual">Manual</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 mb-6 rounded-xl bg-secondary p-1">
+            <TabsTrigger value="contacts" className="rounded-lg">Contactos</TabsTrigger>
+            <TabsTrigger value="search" className="rounded-lg">DoEvents</TabsTrigger>
+            <TabsTrigger value="manual" className="rounded-lg">Manual</TabsTrigger>
           </TabsList>
           <TabsContent value="contacts" className="space-y-3">
             <p className="text-xs text-muted-foreground">Importa contactos del dispositivo como invitados.</p>

@@ -7,6 +7,7 @@ export const SupportSearchPanel = () => (
     title="Soporte y búsqueda"
     description="Localiza usuarios, tickets y casos de atención."
     icon={Search}
+    badge="Soporte"
   >
     <AdminSupportTab />
   </AdminPanelSection>

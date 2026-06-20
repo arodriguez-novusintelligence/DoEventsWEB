@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MoreHorizontal, X } from 'lucide-react';
+import { MoreHorizontal, Sparkles, X } from 'lucide-react';
 import {
   FeedStoryItem,
   Loader,
@@ -201,6 +201,9 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
 
       {!loading && !stories.length && (
         <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
+          <div className="rounded-full bg-white/10 p-4">
+            <Sparkles className="h-8 w-8 text-white/80" />
+          </div>
           <p className="text-sm text-white/80">No hay historias activas de este usuario.</p>
           <button
             type="button"
@@ -215,14 +218,14 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
       {!loading && current && (
         <>
           <header className="absolute inset-x-0 top-0 z-20 px-3 pb-3 pt-4">
-            <div className="mb-3 flex gap-1">
+            <div className="mb-3 flex gap-1 px-1">
               {stories.map((story, i) => (
                 <span
                   key={story.id}
-                  className="h-0.5 flex-1 overflow-hidden rounded-full bg-white/30"
+                  className="h-1 flex-1 overflow-hidden rounded-full bg-white/25"
                 >
                   <span
-                    className={`block h-full rounded-full bg-white transition-all ${
+                    className={`block h-full rounded-full bg-white transition-all duration-300 ${
                       i < index ? 'w-full' : i === index ? 'w-full animate-pulse' : 'w-0'
                     }`}
                   />

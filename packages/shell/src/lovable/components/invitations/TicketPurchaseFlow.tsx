@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, CreditCard, Ticket } from 'lucide-react';
+import { ChevronLeft, CreditCard, Loader2, Ticket } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
 import { InvitationEvent } from '@lovable/data/invitationsData';
 
@@ -18,9 +18,11 @@ interface Props {
 const TicketPurchaseFlow = ({ event, onBack }: Props) => {
   const navigate = useNavigate();
   const [confirmed, setConfirmed] = useState(false);
+  const [navigating, setNavigating] = useState(false);
 
   useEffect(() => {
     if (confirmed && event.id) {
+      setNavigating(true);
       navigate(`/events/${event.id}/checkout`, { replace: true });
     }
   }, [confirmed, event.id, navigate]);
@@ -96,9 +98,17 @@ const TicketPurchaseFlow = ({ event, onBack }: Props) => {
           <Button
             type="button"
             className="mt-6 w-full rounded-full"
+            disabled={navigating}
             onClick={() => setConfirmed(true)}
           >
-            Continuar al checkout
+            {navigating ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Redirigiendo…
+              </>
+            ) : (
+              'Continuar al checkout'
+            )}
           </Button>
         </div>
       </div>

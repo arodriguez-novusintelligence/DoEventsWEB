@@ -7,6 +7,9 @@ interface StoriesContextValue {
   refreshStories: () => void;
   loading: boolean;
   loadError: boolean;
+  loadErrorMessage: string | null;
+  isEmpty: boolean;
+  authorCount: number;
 }
 
 const StoriesContext = createContext<StoriesContextValue>({
@@ -15,6 +18,9 @@ const StoriesContext = createContext<StoriesContextValue>({
   refreshStories: () => undefined,
   loading: false,
   loadError: false,
+  loadErrorMessage: null,
+  isEmpty: true,
+  authorCount: 0,
 });
 
 interface StoriesProviderProps {
@@ -26,6 +32,7 @@ export const StoriesProvider: React.FC<StoriesProviderProps> = ({ children, curr
   const [activeAuthorIds, setActiveAuthorIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
+  const [loadErrorMessage, setLoadErrorMessage] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const refreshStories = useCallback(() => {
@@ -39,6 +46,7 @@ export const StoriesProvider: React.FC<StoriesProviderProps> = ({ children, curr
     const load = async () => {
       setLoading(true);
       setLoadError(false);
+      setLoadErrorMessage(null);
       try {
         const [rings, ownStories] = await Promise.all([
           fetchNearbyStories({
@@ -56,10 +64,13 @@ export const StoriesProvider: React.FC<StoriesProviderProps> = ({ children, curr
           ids.add(currentUserId);
         }
         setActiveAuthorIds(ids);
-      } catch {
+      } catch (err) {
         if (!cancelled) {
           setActiveAuthorIds(new Set());
           setLoadError(true);
+          setLoadErrorMessage(
+            err instanceof Error ? err.message : 'No se pudieron cargar las historias',
+          );
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -76,7 +87,10 @@ export const StoriesProvider: React.FC<StoriesProviderProps> = ({ children, curr
     refreshStories,
     loading,
     loadError,
-  }), [activeAuthorIds, refreshStories, loading, loadError]);
+    loadErrorMessage,
+    isEmpty: !loading && !loadError && activeAuthorIds.size === 0,
+    authorCount: activeAuthorIds.size,
+  }), [activeAuthorIds, refreshStories, loading, loadError, loadErrorMessage]);
 
   return (
     <StoriesContext.Provider value={value}>{children}</StoriesContext.Provider>

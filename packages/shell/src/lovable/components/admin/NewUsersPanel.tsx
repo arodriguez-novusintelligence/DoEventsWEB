@@ -7,6 +7,7 @@ export const NewUsersPanel = () => (
     title="Usuarios nuevos"
     description="Revisa registros recientes y activaciones pendientes."
     icon={UserPlus}
+    badge="Recientes"
   >
     <AdminNewUsersTab />
   </AdminPanelSection>

@@ -114,7 +114,9 @@ export const VenueReservationDetail = () => {
           </div>
           <div>
             <h1 className="text-xl font-extrabold leading-tight">{booking.venueName}</h1>
-            <p className="text-xs text-primary-foreground/80">{formatBookingStatus(booking.status)}</p>
+            <span className="mt-1 inline-flex rounded-full bg-primary-foreground/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide">
+              {formatBookingStatus(booking.status)}
+            </span>
           </div>
         </div>
       </div>

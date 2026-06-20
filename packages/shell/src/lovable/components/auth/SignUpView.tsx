@@ -7,8 +7,14 @@ import AuthLogo from '@lovable/components/auth/AuthLogo';
 export const SignUpView = () => (
   <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-secondary px-4 pb-12">
     <AuthLogo />
-    <div className="rounded-2xl bg-card p-1 shadow-md border border-border/60">
-      <CreateAccountPage />
+    <div className="rounded-2xl bg-card p-6 shadow-md border border-border/60">
+      <h1 className="text-xl font-extrabold text-foreground">Crear cuenta</h1>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Únete a Do.Events y descubre eventos, lugares y servicios cerca de ti.
+      </p>
+      <div className="mt-4 rounded-xl border border-border/40 bg-secondary/50 p-1">
+        <CreateAccountPage />
+      </div>
     </div>
   </div>
 );

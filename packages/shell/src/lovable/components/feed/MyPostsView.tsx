@@ -1,18 +1,30 @@
 import { useState } from 'react';
-import { FileText, Trash2 } from 'lucide-react';
+import { AlertCircle, FileText, Loader2, Trash2 } from 'lucide-react';
 import PostCard from './PostCard';
 import type { FeedUiPost as Post } from '@doevents/shared';
 import { toast } from 'sonner';
 import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBanner';
+import { Button } from '@lovable/components/ui/button';
 
 interface MyPostsViewProps {
   onBack: () => void;
   posts?: Post[];
+  loading?: boolean;
+  loadError?: string | null;
+  onRetry?: () => void;
   onDeletePost?: (postId: string) => Promise<void>;
   onOpenDetail?: (post: Post) => void;
 }
 
-const MyPostsView = ({ onBack, posts = [], onDeletePost, onOpenDetail }: MyPostsViewProps) => {
+const MyPostsView = ({
+  onBack,
+  posts = [],
+  loading = false,
+  loadError = null,
+  onRetry,
+  onDeletePost,
+  onOpenDetail,
+}: MyPostsViewProps) => {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const handleDelete = async (postId: string) => {
@@ -38,7 +50,22 @@ const MyPostsView = ({ onBack, posts = [], onDeletePost, onOpenDetail }: MyPosts
       />
 
       <div className="px-4 pt-4 space-y-4">
-        {posts.length === 0 ? (
+        {loading ? (
+          <div className="flex flex-col items-center gap-3 rounded-2xl bg-card py-16 text-center shadow-sm">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="text-sm text-muted-foreground">Cargando publicaciones…</p>
+          </div>
+        ) : loadError ? (
+          <div className="flex flex-col items-center gap-3 rounded-2xl border border-destructive/30 bg-card py-12 text-center shadow-sm">
+            <AlertCircle className="h-8 w-8 text-destructive" />
+            <p className="text-sm font-medium text-destructive">{loadError}</p>
+            {onRetry && (
+              <Button type="button" variant="outline" className="rounded-full" onClick={onRetry}>
+                Reintentar
+              </Button>
+            )}
+          </div>
+        ) : posts.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-2xl bg-card py-16 text-center shadow-sm">
             <FileText className="h-10 w-10 text-muted-foreground/50" />
             <p className="text-sm font-medium text-foreground">Sin publicaciones</p>

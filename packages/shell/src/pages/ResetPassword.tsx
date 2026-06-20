@@ -1,1 +1,1 @@
-export { ResetPasswordTokenPage as default, ResetPasswordTokenPage as ResetPassword } from 'mfeAuth/pages/ResetPasswordTokenPage';
+export { ResetPasswordView as default, ResetPasswordView as ResetPassword } from '@lovable/components/auth/ResetPasswordView';

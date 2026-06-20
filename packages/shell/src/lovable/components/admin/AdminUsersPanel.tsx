@@ -7,6 +7,7 @@ export const AdminUsersPanel = () => (
     title="Usuarios y roles"
     description="Gestiona cuentas, estados y permisos de la plataforma."
     icon={Users}
+    badge="Admin"
   >
     <AdminStaffTab />
   </AdminPanelSection>

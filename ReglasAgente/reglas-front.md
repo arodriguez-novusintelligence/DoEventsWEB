@@ -95,6 +95,32 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+---
+
+## Ejecución 2026-06-20 gap-empalme batch 5 (run 27876228669-b5)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| StoriesContext loadError | Integración | Sí | `contexts/StoriesContext.tsx` | `loadErrorMessage`, `isEmpty`, `authorCount` |
+| VenueReservationDetail badge | VISUAL | Sí | `purchases/VenueReservationDetail.tsx` | Chip status en header gradiente |
+| NotFound 404 icon | VISUAL | Sí | `pages/NotFound.tsx` | MapPinOff + anillo primary |
+| KYC certification submit | Bloqueo | Parcial | `feed/KycCertificationView.tsx` | BACKEND_REQUIRED envío documentos |
+| EventPublished share API | Integración | Sí | `pages/EventPublished.tsx` | `fetchEventById` + share (batch previo intacto) |
+| ResetPassword Lovable shell | RISKY | Sí | `auth/ResetPasswordView.tsx`, `pages/ResetPassword.tsx` | Cognito/shared sin mfe-auth CSS legacy |
+| ServiceReservationDetail badge | VISUAL | Sí | `purchases/ServiceReservationDetail.tsx` | Paridad con venue detail |
+| ForgotPassword APIs | RISKY | Sí | `auth/ForgotPasswordView.tsx`, `pages/ForgotPassword.tsx` | Re-export vista Lovable |
+| FeedBanner dismissible | VISUAL | Sí | `feed/FeedBanner.tsx` | CTA KYC (batch previo intacto) |
+| MyPosts loading/retry | Integración | Sí | `feed/MyPostsView.tsx`, `ProfilePublicationsPage.tsx` | Loader2 + AlertCircle |
+| StoryViewer fullscreen | VISUAL | Sí | `components/StoryViewer.tsx` | Sparkles empty + barras progreso |
+| AddGuestModal tabs | VISUAL | Sí | `guests/AddGuestModal.tsx` | TabsList rounded-xl |
+| AdminPanelView shell | Navegación | Sí | `admin/AdminPanelView.tsx` | Wrapper Lovable sobre AdminPanelPage |
+| useGuests bridge | Integración | Sí | `hooks/useGuests.ts` | Re-export `useApiGuests` documentado |
+| LoginView Cognito | RISKY | Sí | `auth/LoginView.tsx`, `pages/Login.tsx` | APIs shared sin mocks |
+| TicketPurchaseFlow checkout | FRONTEND_LOGIC | Sí | `invitations/TicketPurchaseFlow.tsx` | Redirect checkout + loading |
+| Admin panels badges | VISUAL | Sí | `admin/*Panel.tsx`, `AdminPanelSection.tsx` | Headers Lovable con badge |
+| SignUpView shell | Navegación | Sí | `auth/SignUpView.tsx`, `pages/SignUp.tsx` | Título + card mfe-auth |
+| Batch 5 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-20 gap-empalme batch 4 (run 27876228669-b4)
 
 | Regla | Tipo | Implementada | Archivo | Observación |
