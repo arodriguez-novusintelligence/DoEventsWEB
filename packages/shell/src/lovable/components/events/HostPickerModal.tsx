@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Search, X, UserPlus, BookUser, ChevronDown, Loader2 } from 'lucide-react';
+import { Search, X, UserPlus, BookUser, ChevronDown, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
+import { Button } from '@lovable/components/ui/button';
 import { searchUsers } from '@doevents/shared';
 import { EventHost } from '@lovable/data/eventFormData';
 
@@ -255,9 +256,20 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
                     Buscando…
                   </p>
                 ) : searchError ? (
-                  <p className="py-8 text-center text-sm text-destructive">
-                    Error al buscar usuarios. Intenta de nuevo.
-                  </p>
+                  <div className="flex flex-col items-center py-8 text-center">
+                    <AlertCircle className="h-8 w-8 text-destructive" />
+                    <p className="mt-2 text-sm text-destructive">Error al buscar usuarios</p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="mt-3 gap-1.5 rounded-full"
+                      onClick={() => void runSearch(query)}
+                    >
+                      <RefreshCw className="h-3.5 w-3.5" />
+                      Reintentar
+                    </Button>
+                  </div>
                 ) : searched && results.length === 0 ? (
                   <div className="py-8 text-center">
                     <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted">

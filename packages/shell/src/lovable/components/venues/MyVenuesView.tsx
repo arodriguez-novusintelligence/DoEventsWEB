@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, Plus, Star, MessageSquare, X, MoreVertical, Building2, Users, ChevronRight } from 'lucide-react';
+import { Heart, Plus, Star, MessageSquare, X, MoreVertical, Building2, Users, ChevronRight, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { fetchVenueCalifications, publishStatusLabel } from '@doevents/shared';
 import { Drawer, DrawerContent } from '@lovable/components/ui/drawer';
@@ -224,7 +224,7 @@ const MyVenuesView = ({
                         <Building2 className="h-3.5 w-3.5 text-primary" />
                       </div>
                       {statusLabel && (
-                        <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-800">
+                        <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
                           {statusLabel}
                         </span>
                       )}
@@ -343,7 +343,10 @@ const MyVenuesView = ({
 
                 <div className="mt-3 max-h-[45vh] space-y-3 overflow-y-auto">
                   {loadingReviews && (
-                    <p className="text-center text-sm text-muted-foreground">Cargando opiniones…</p>
+                    <div className="flex flex-col items-center gap-2 py-6">
+                      <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                      <p className="text-sm text-muted-foreground">Cargando opiniones…</p>
+                    </div>
                   )}
                   {!loadingReviews && rs.length === 0 && (
                     <p className="text-center text-sm text-muted-foreground">Aún no hay opiniones para este lugar.</p>

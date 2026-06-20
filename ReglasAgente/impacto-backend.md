@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27876831237-b1`: batch 1 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingForm` SWIFT/PayPal/persistencia). Polish retry maps + tokens MyVenuesView.
+
 Run `agent-27876831237-a8b70853`: prepare StepEventSummary + TicketDetailView — 5 gaps DONE frontend; sin cambios backend. `ticketsData` Lovable ignorado en runtime (tipos only).
 
 Run `gap-empalme-27876228669-b5`: batch 5 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`KycCertificationView` submit).
@@ -54,18 +56,14 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27876228669-b5)
+## Empalme realizado (última ejecución — gap-empalme-27876831237-b1)
 
-- **StoriesContext:** `loadErrorMessage`, `isEmpty`, `authorCount` expuestos para UI retry.
-- **ResetPasswordView:** shell Lovable (`AuthLogo`, card, validación inline) con `resetPasswordWithToken` shared.
-- **MyPostsView / ProfilePublicationsPage:** loading Loader2, error AlertCircle + Reintentar vía API real.
-- **VenueReservationDetail / ServiceReservationDetail:** chip status en header gradiente primary.
-- **TicketPurchaseFlow:** estado «Redirigiendo…» antes de checkout real.
-- **StoryViewer:** empty Sparkles; barras de progreso h-1 rounded-full.
-- **SignUpView:** título y copy Lovable sobre `CreateAccountPage` mfe-auth.
-- **AdminPanelView:** wrapper Lovable; panels con badges en `AdminPanelSection`.
-- **AddGuestModal:** tabs rounded-xl alineados Lovable.
-- **NotFound:** icono MapPinOff + anillo primary.
+- **GuestStatsView:** empty state con icono Users en círculo primary/10.
+- **EventLocationMap:** overlay error con MapPinOff + botón Reintentar (reset script Google Maps).
+- **MapView:** banner error rounded-2xl + Reintentar carga mapa.
+- **HostPickerModal:** error búsqueda AlertCircle + Reintentar vía `searchUsers` API.
+- **MyVenuesView:** status badges `amber-500/15`; Loader2 en drawer opiniones.
+- **Batch 1 restante (15):** StepAgenda, MyServicesView, SeatingCategoryDialog, GuestManagementView, MyEventsView, SuccessModal, InvitationEventDetailView, PrivateChatView, StepUnified, StepEventLocation, EventPreviewModal, SideMenu, ChatRoomView, StepEventSummary — verificados intactos.
 
 ## Backend pendiente para 100%
 
@@ -78,9 +76,9 @@ Sí (parcial)
 | KYC submit | `src/components/feed/KycCertificationView.tsx` | `packages/shell/src/lovable/components/feed/KycCertificationView.tsx` | Sin envío documentos KYC | `POST /users/{id}/kyc` | `Users` / proveedor KYC | Integración proveedor; botón deshabilitado | Alta |
 | EditProfile password | `src/components/feed/EditProfileView.tsx` | `packages/shell/src/lovable/components/feed/EditProfileView.tsx` | Cambio contraseña Cognito | Cognito `ChangePassword` | — | Batch previo | Media |
 | PublishFlow banking | `src/components/events/PublishFlowModal.tsx` | `packages/shell/src/lovable/components/events/PublishFlowModal.tsx` | Persistencia banco post-publicación | `POST /events/{id}/bank-link` | `Events` | Batch previo | Media |
-| Booking add-ons | `src/components/services/BookingSheet.tsx` | `packages/shell/src/lovable/components/services/BookingSheet.tsx` | Catálogo add-ons | `GET /services/{id}/addons` | `Services` | Batch previo | Media |
+| BankingForm SWIFT/PayPal | `src/components/banking/BankingForm.tsx` | `packages/shell/src/lovable/components/banking/BankingForm.tsx` | Verificación SWIFT + persistencia PayPal | `POST /bank-accounts` + lookup SWIFT | `BankAccounts` | Batch 1 BACKEND_REQUIRED | Alta |
 
-## Empalme realizado (ejecución anterior — gap-empalme-27876228669-b3)
+## Empalme realizado (ejecución anterior — gap-empalme-27876228669-b5)
 
 - **MyTicketsView / TicketsPage:** `loadError` + reintento inline; countdown tokens amber/destructive; sin loader full-page.
 - **MyInvitationsView / MyInvitationsPage:** error/retry cableado; badges status primary/amber/destructive.

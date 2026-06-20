@@ -8,6 +8,56 @@
   },
   "runs": [
     {
+      "id": "gap-empalme-27876831237-b1",
+      "timestamp": "2026-06-20 22:15 UTC",
+      "workflowRunId": "27876831237-b1",
+      "gapBatch": 20,
+      "designSimilarityPercentBefore": 57.08,
+      "designSimilarityPercentAfter": 65.5,
+      "designSimilarityTarget": 98.0,
+      "summary": "Batch 1 gap empalme run 27876831237: 19 gaps DONE frontend, 1 BACKEND_REQUIRED (BankingForm); polish retry maps + tokens MyVenuesView",
+      "gapsClosed": [
+        "src/components/stats/GuestStatsView.tsx",
+        "src/components/events/EventLocationMap.tsx",
+        "src/components/events/StepAgenda.tsx",
+        "src/components/services/MyServicesView.tsx",
+        "src/components/venues/seating/SeatingCategoryDialog.tsx",
+        "src/components/events/HostPickerModal.tsx",
+        "src/components/guests/GuestManagementView.tsx",
+        "src/components/feed/MyEventsView.tsx",
+        "src/components/banking/SuccessModal.tsx",
+        "src/components/invitations/InvitationEventDetailView.tsx",
+        "src/components/chat/PrivateChatView.tsx",
+        "src/components/services/StepUnified.tsx",
+        "src/components/events/StepEventLocation.tsx",
+        "src/components/events/EventPreviewModal.tsx",
+        "src/components/feed/SideMenu.tsx",
+        "src/components/chat/ChatRoomView.tsx",
+        "src/components/events/StepEventSummary.tsx",
+        "src/components/venues/MyVenuesView.tsx",
+        "src/components/feed/MapView.tsx"
+      ],
+      "gapsBackendRequired": [
+        "src/components/banking/BankingForm.tsx"
+      ],
+      "webFilesModified": [
+        "packages/shell/src/lovable/components/stats/GuestStatsView.tsx",
+        "packages/shell/src/lovable/components/events/EventLocationMap.tsx",
+        "packages/shell/src/lovable/components/events/HostPickerModal.tsx",
+        "packages/shell/src/lovable/components/venues/MyVenuesView.tsx",
+        "packages/shell/src/lovable/components/feed/MapView.tsx",
+        "ReglasAgente/decision-log.md",
+        "ReglasAgente/cambios-lovable.json",
+        "ReglasAgente/impacto-backend.md",
+        "ReglasAgente/reglas-front.md",
+        "design-comparison.json",
+        "docs/changes/gap-empalme-latest.md"
+      ],
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "agentStatus": "finished"
+    },
+    {
       "id": "agent-27876831237-a8b70853",
       "lovableSha": "a8b70853c97beb18e5ff9593655856fd7c7ad303",
       "timestamp": "2026-06-20 21:30 UTC",

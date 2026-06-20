@@ -227,9 +227,11 @@ const GuestStatsView = ({ event, onBack }: GuestStatsViewProps) => {
           </div>
         )}
         {!loading && data.channels.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-border bg-card p-8 text-center">
-            <Users className="mx-auto h-8 w-8 text-muted-foreground" />
-            <p className="mt-2 text-sm font-semibold text-foreground">Sin datos de invitados</p>
+          <div className="rounded-2xl border border-dashed border-primary/25 bg-card p-8 text-center shadow-sm">
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+              <Users className="h-7 w-7 text-primary" />
+            </div>
+            <p className="text-sm font-semibold text-foreground">Sin datos de invitados</p>
             <p className="mt-1 text-xs text-muted-foreground">
               Cuando envíes invitaciones por WhatsApp, email o push, verás el embudo de conversión aquí.
             </p>

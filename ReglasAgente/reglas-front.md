@@ -97,6 +97,18 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-20 gap-empalme batch 1 (run 27876831237-b1)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| GuestStatsView empty primary | VISUAL | Sí | `stats/GuestStatsView.tsx` | Icono Users en círculo primary |
+| EventLocationMap retry | Integración | Sí | `events/EventLocationMap.tsx` | Reintentar carga Google Maps |
+| MapView retry | Integración | Sí | `feed/MapView.tsx` | Banner error + Reintentar |
+| HostPickerModal retry | Integración | Sí | `events/HostPickerModal.tsx` | AlertCircle + Reintentar búsqueda |
+| MyVenuesView tokens | VISUAL | Sí | `venues/MyVenuesView.tsx` | amber-500/15 + Loader2 opiniones |
+| BankingForm persistencia | Bloqueo | Parcial | `banking/BankingForm.tsx` | BACKEND_REQUIRED SWIFT/PayPal |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-20 prepare-a8b70853 (run 27876831237)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

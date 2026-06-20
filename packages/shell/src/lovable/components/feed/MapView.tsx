@@ -1,6 +1,7 @@
 /// <reference types="google.maps" />
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Search, Crosshair, Ruler, ChevronDown, Navigation, MapPin, Calendar, Clock, ArrowRight, Users, Star } from 'lucide-react';
+import { Search, Crosshair, Ruler, ChevronDown, Navigation, MapPin, Calendar, Clock, ArrowRight, Users, Star, RefreshCw } from 'lucide-react';
+import { Button } from '@lovable/components/ui/button';
 import { cn } from '@lovable/lib/utils';
 import type { PublishedVenueDraft } from '@lovable/components/venues/VenueCreator';
 import type { ServiceFormData } from '@lovable/data/servicesData';
@@ -160,6 +161,7 @@ const MapView = ({
   const distance = distanceKmProp;
   const [error, setError] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [mapRetryKey, setMapRetryKey] = useState(0);
 
   const items = useMemo<MapItem[]>(() => (
     (mapItems || []).map((it) => ({
@@ -185,7 +187,13 @@ const MapView = ({
   });
 
   useEffect(() => {
-    if (mapInitializedRef.current) return;
+    if (mapInitializedRef.current && mapRetryKey === 0) return;
+    if (mapRetryKey > 0) {
+      mapInitializedRef.current = false;
+      mapInstance.current = null;
+      setLoaded(false);
+      setError(null);
+    }
     let cancelled = false;
     loadGoogleMaps()
       .then((google) => {
@@ -212,7 +220,7 @@ const MapView = ({
       })
       .catch((e) => setError(e.message));
     return () => { cancelled = true; };
-  }, [items, userLocation]);
+  }, [items, userLocation, mapRetryKey]);
 
   useEffect(() => {
     if (!loaded || !mapInstance.current || !(window as any).google || !userLocation) return;
@@ -394,8 +402,21 @@ const MapView = ({
       )}
 
       {error && (
-        <div className="absolute inset-x-4 top-28 z-30 rounded-lg bg-destructive/10 border border-destructive p-3 text-sm text-destructive">
-          No se pudo cargar Google Maps: {error}
+        <div className="absolute inset-x-4 top-28 z-30 rounded-2xl border border-destructive/30 bg-destructive/10 p-4 text-center">
+          <p className="text-sm text-destructive">No se pudo cargar Google Maps: {error}</p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="mt-2 gap-1.5 rounded-full"
+            onClick={() => {
+              googleMapsPromise = null;
+              setMapRetryKey((k) => k + 1);
+            }}
+          >
+            <RefreshCw className="h-3.5 w-3.5" />
+            Reintentar
+          </Button>
         </div>
       )}
 

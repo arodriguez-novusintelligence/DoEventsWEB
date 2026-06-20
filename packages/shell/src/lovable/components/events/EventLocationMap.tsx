@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Loader2, MapPinOff } from 'lucide-react';
+import { Loader2, MapPinOff, RefreshCw } from 'lucide-react';
+import { Button } from '@lovable/components/ui/button';
 
 interface Props {
   lat: number;
@@ -43,9 +44,12 @@ const EventLocationMap = ({ lat, lng, onPick }: Props) => {
   const markerRef = useRef<any>(null);
   const [ready, setReady] = useState(false);
   const [loadError, setLoadError] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
+    setLoadError(false);
+    setReady(false);
     loadGoogleMaps()
       .then(() => {
         if (cancelled || !containerRef.current || !window.google?.maps) return;
@@ -71,13 +75,13 @@ const EventLocationMap = ({ lat, lng, onPick }: Props) => {
       })
       .catch((err) => {
         console.error(err);
-        setLoadError(true);
+        if (!cancelled) setLoadError(true);
       });
     return () => {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [retryKey]);
 
   useEffect(() => {
     if (!ready || !mapRef.current || !markerRef.current) return;
@@ -96,11 +100,26 @@ const EventLocationMap = ({ lat, lng, onPick }: Props) => {
       )}
       {loadError && (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-muted px-4 text-center">
-          <MapPinOff className="h-6 w-6 text-muted-foreground" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10">
+            <MapPinOff className="h-5 w-5 text-destructive" />
+          </div>
           <p className="text-xs font-medium text-foreground">No se pudo cargar el mapa</p>
           <p className="text-[10px] text-muted-foreground">
             Verifica la clave de Google Maps o ingresa la dirección manualmente.
           </p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="mt-1 gap-1.5 rounded-full"
+            onClick={() => {
+              scriptPromise = null;
+              setRetryKey((k) => k + 1);
+            }}
+          >
+            <RefreshCw className="h-3.5 w-3.5" />
+            Reintentar
+          </Button>
         </div>
       )}
       <div ref={containerRef} className="h-full w-full" />
