@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27883333029-b5`: batch 5 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`KycCertificationView` submit documentos KYC). Auth RISKY con APIs reales + Loader2; admin panels, stories, reservas, feed banner.
+
 Run `gap-empalme-27883333029-b4`: batch 4 (20 gaps) — 16 DONE frontend; 4 BACKEND_REQUIRED (`PaymentMethodsDashboard`/`BankingHub` delete+PayPal, `StoryViewersSheet`, `GlobalSearchView` posts). Patrón Lovable: ring-primary/20 h-14, Loader2, shadow-sm, banners BACKEND.
 
 Run `gap-empalme-27883333029-b3`: batch 3 (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED. Patrón Lovable: tokens primary/accent/success, círculos h-14 ring-primary/20, AlertCircle/Loader2/CheckCircle2.
@@ -74,7 +76,24 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27883333029-b4)
+## Empalme realizado (última ejecución — gap-empalme-27883333029-b5)
+
+- **StoriesContext:** re-export documentado con `loadErrorMessage`, `isEmpty`, `authorCount`, `refreshStories`; API `fetchNearbyStories`/`fetchUserStories`.
+- **VenueReservationDetail:** badge status header gradiente; AlertCircle retry; empty Building2 ring-primary/20.
+- **EventPublished:** `fetchEventById` + share/copy; PartyPopper ring-primary/20.
+- **NotFound:** MapPinOff + anillo primary/20; CTAs Home/Search.
+- **Auth (Login/Forgot/Reset/SignUp):** vistas Lovable + `@doevents/shared`/Cognito/mfe-auth; Loader2 en submit; páginas thin re-export (RISKY).
+- **FeedBanner:** dismissible KYC CTA en feed (`SocialWallTab`).
+- **MyPostsView:** ProfileSectionBanner; Loader2/AlertCircle; empty FileText ring-primary/20; delete API real.
+- **StoryViewer:** fullscreen Lovable; Sparkles empty; barras progreso (viewers BACKEND_REQUIRED previo).
+- **AddGuestModal:** TabsList rounded-xl; UserPlus header; APIs `searchUsers`/`fetchAllGuestContacts`.
+- **useGuests:** re-export `useApiGuests` documentado.
+- **AdminPanelView / NewUsersPanel / AdminUsersPanel / SupportSearchPanel:** header gradiente; AdminPanelSection badges.
+- **TicketPurchaseFlow:** redirect `/events/:id/checkout`; Loader2; sin pasarela simulada.
+- **VenueDetail:** shell pb-24 aria-label sobre PlaceDetailPage.
+- **KycCertificationView:** pasos upload Lovable; botón submit deshabilitado — BACKEND_REQUIRED.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27883333029-b4)
 
 - **PaymentMethodsDashboard:** banner delete BACKEND_REQUIRED; empty Wallet ring-primary/20; cards shadow-sm; delete deshabilitado en menú.
 - **BankingHub:** banner PayPal payout BACKEND_REQUIRED cuando hay método PayPal; ProfileSectionBanner + Loader2 intactos.

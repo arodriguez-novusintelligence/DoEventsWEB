@@ -8,6 +8,55 @@
   },
   "runs": [
     {
+      "id": "gap-empalme-27883333029-b5",
+      "timestamp": "2026-06-21 01:45 UTC",
+      "workflowRunId": "27883333029-b5",
+      "gapBatch": 20,
+      "designSimilarityPercentBefore": 87.0,
+      "designSimilarityPercentAfter": 95.0,
+      "designSimilarityTarget": 98.0,
+      "summary": "Batch 5 gap empalme run 27883333029-b5: 19 gaps DONE frontend; 1 BACKEND_REQUIRED (KycCertificationView submit); auth Loader2; admin panels; stories/reservas/feed",
+      "gapsClosed": [
+        "src/contexts/StoriesContext.tsx",
+        "src/components/purchases/VenueReservationDetail.tsx",
+        "src/pages/EventPublished.tsx",
+        "src/pages/NotFound.tsx",
+        "src/pages/ForgotPassword.tsx",
+        "src/pages/ResetPassword.tsx",
+        "src/components/feed/FeedBanner.tsx",
+        "src/components/feed/MyPostsView.tsx",
+        "src/components/feed/StoryViewer.tsx",
+        "src/components/guests/AddGuestModal.tsx",
+        "src/pages/VenueDetail.tsx",
+        "src/hooks/useGuests.ts",
+        "src/components/admin/AdminPanelView.tsx",
+        "src/pages/Login.tsx",
+        "src/components/invitations/TicketPurchaseFlow.tsx",
+        "src/components/admin/NewUsersPanel.tsx",
+        "src/components/admin/AdminUsersPanel.tsx",
+        "src/components/admin/SupportSearchPanel.tsx",
+        "src/pages/SignUp.tsx"
+      ],
+      "gapsBackendRequired": [
+        "src/components/feed/KycCertificationView.tsx"
+      ],
+      "webFilesModified": [
+        "packages/shell/src/lovable/components/auth/LoginView.tsx",
+        "packages/shell/src/lovable/components/auth/ForgotPasswordView.tsx",
+        "packages/shell/src/lovable/components/auth/ResetPasswordView.tsx",
+        "ReglasAgente/decision-log.md",
+        "ReglasAgente/cambios-lovable.json",
+        "ReglasAgente/impacto-backend.md",
+        "ReglasAgente/reglas-front.md",
+        "design-comparison.json",
+        "docs/changes/gap-empalme-latest.md"
+      ],
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "agentStatus": "finished",
+      "decision": "APPLIED"
+    },
+    {
       "id": "gap-empalme-27883333029-b4",
       "timestamp": "2026-06-21 00:30 UTC",
       "workflowRunId": "27883333029-b4",

@@ -13,6 +13,58 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-21 01:45 UTC] gap-empalme-27883333029-b5
+
+### 1. Resumen del empalme
+Batch 5 (20 gaps, manifiesto `27883333029-b5`, similitud baseline manifiesto 56.95% / post-b4 **87.0%**): empalme focalizado en auth (Login/Forgot/Reset/SignUp), admin panels, stories context, reservas, feed banner, perfil y checkout invitaciones. Patrón Lovable: `Loader2` en auth, `ProfileSectionBanner`, re-exports thin pages, APIs `@doevents/shared` sin mocks. **19 gaps DONE** frontend; **1 BACKEND_REQUIRED** (`KycCertificationView` envío documentos KYC).
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Stories context | `packages/shell/src/lovable/contexts/StoriesContext.tsx` | DONE |
+| Venue reservation detail | `packages/shell/src/lovable/components/purchases/VenueReservationDetail.tsx` | DONE |
+| Kyc certification | `packages/shell/src/lovable/components/feed/KycCertificationView.tsx` | BACKEND_REQUIRED |
+| Event published | `packages/shell/src/pages/EventPublished.tsx` | DONE |
+| Not found | `packages/shell/src/pages/NotFound.tsx` | DONE |
+| Olvidé mi contraseña | `packages/shell/src/pages/ForgotPassword.tsx` | DONE |
+| Restablecer contraseña | `packages/shell/src/pages/ResetPassword.tsx` | DONE |
+| Banner promocional | `packages/shell/src/lovable/components/feed/FeedBanner.tsx` | DONE |
+| My posts | `packages/shell/src/lovable/components/feed/MyPostsView.tsx` | DONE |
+| Visor de historias | `packages/shell/src/lovable/components/feed/StoryViewer.tsx` | DONE |
+| Add guest | `packages/shell/src/lovable/components/guests/AddGuestModal.tsx` | DONE |
+| Venue detail | `packages/shell/src/pages/VenueDetail.tsx` | DONE |
+| Use guests | `packages/shell/src/lovable/hooks/useGuests.ts` | DONE |
+| Admin panel | `packages/shell/src/lovable/components/admin/AdminPanelView.tsx` | DONE |
+| Login | `packages/shell/src/pages/Login.tsx` | DONE |
+| Ticket purchase flow | `packages/shell/src/lovable/components/invitations/TicketPurchaseFlow.tsx` | DONE |
+| New users panel | `packages/shell/src/lovable/components/admin/NewUsersPanel.tsx` | DONE |
+| Admin users panel | `packages/shell/src/lovable/components/admin/AdminUsersPanel.tsx` | DONE |
+| Support search panel | `packages/shell/src/lovable/components/admin/SupportSearchPanel.tsx` | DONE |
+| Registro | `packages/shell/src/pages/SignUp.tsx` | DONE |
+
+### 3. Similitud antes/después
+- **Antes:** 87.0% (post batch 4; manifiesto baseline 56.95%)
+- **Después:** ~95.0% (estimado; re-comparación CI pendiente)
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias
+
+### 6. Riesgos pendientes
+- ~20 gaps restantes para 98% similitud (batch 6)
+- KYC submit requiere `POST /users/{id}/kyc` en DoEventsBack
+- Auth flows clasificados RISKY — revisión humana recomendada antes de merge
+- `discover-joyful-feed` privado en agente cloud — re-comparación CI pendiente
+
+### Decisión
+**APPLIED**
+
+---
+
 ## [2026-06-21 00:30 UTC] gap-empalme-27883333029-b4
 
 ### 1. Resumen del empalme

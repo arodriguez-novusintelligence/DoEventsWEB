@@ -101,6 +101,30 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 5 (run 27883333029-b5)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| StoriesContext loadError | Integración | Sí | `contexts/StoriesContext.tsx` | loadErrorMessage, isEmpty, authorCount |
+| VenueReservationDetail badge | VISUAL | Sí | `purchases/VenueReservationDetail.tsx` | Chip status + AlertCircle retry |
+| KYC certification submit | Bloqueo | Parcial | `feed/KycCertificationView.tsx` | BACKEND_REQUIRED envío documentos |
+| EventPublished share API | Integración | Sí | `pages/EventPublished.tsx` | fetchEventById + share intacto |
+| NotFound 404 icon | VISUAL | Sí | `pages/NotFound.tsx` | MapPinOff + anillo primary/20 |
+| ForgotPassword APIs | RISKY | Sí | `auth/ForgotPasswordView.tsx`, `pages/ForgotPassword.tsx` | Loader2; APIs shared |
+| ResetPassword Cognito | RISKY | Sí | `auth/ResetPasswordView.tsx`, `pages/ResetPassword.tsx` | Loader2; token real shared |
+| FeedBanner dismissible | VISUAL | Sí | `feed/FeedBanner.tsx` | CTA KYC en SocialWallTab |
+| AdminPanelView shell | Navegación | Sí | `admin/AdminPanelView.tsx` | Header gradiente + AdminPanelPage |
+| MyPosts loading/retry | Integración | Sí | `feed/MyPostsView.tsx` | Loader2 + AlertCircle + empty primary |
+| StoryViewer fullscreen | VISUAL | Sí | `components/StoryViewer.tsx` | Sparkles empty + barras progreso |
+| AddGuestModal tabs | VISUAL | Sí | `guests/AddGuestModal.tsx` | TabsList rounded-xl + UserPlus |
+| useGuests bridge | Integración | Sí | `hooks/useGuests.ts` | Re-export useApiGuests documentado |
+| LoginView Cognito | RISKY | Sí | `auth/LoginView.tsx`, `pages/Login.tsx` | Loader2; APIs shared sin mocks |
+| TicketPurchaseFlow checkout | FRONTEND_LOGIC | Sí | `invitations/TicketPurchaseFlow.tsx` | Redirect checkout + Loader2 |
+| Admin panels badges | VISUAL | Sí | `admin/*Panel.tsx`, `AdminPanelSection.tsx` | Headers Lovable con badge |
+| SignUpView shell | Navegación | Sí | `auth/SignUpView.tsx`, `pages/SignUp.tsx` | Título + card mfe-auth + link login |
+| VenueDetail shell | Navegación | Sí | `pages/VenueDetail.tsx` | pb-24 aria-label sobre PlaceDetailPage |
+| Batch 5 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-20 gap-empalme batch 4 (run 27883333029-b4)
 
 | Regla | Tipo | Implementada | Archivo | Observación |
