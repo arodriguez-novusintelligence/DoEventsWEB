@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MapPin } from 'lucide-react';
+import { MapPin, Loader2, AlertCircle } from 'lucide-react';
 import {
   getStoredUserLocation,
   resolveManualUserLocation,
@@ -30,11 +30,15 @@ export const ChangeLocationSheet = ({
   const [manualCity, setManualCity] = useState(fallbackCity || '');
   const [locating, setLocating] = useState(false);
   const [savingManual, setSavingManual] = useState(false);
+  const [inlineError, setInlineError] = useState<string | null>(null);
 
+  const stored = getStoredUserLocation();
   const displayLabel = label || fallbackCity || 'Indica dónde te encuentras para ver eventos cercanos';
+  const sourceHint = stored?.city ? 'Ubicación guardada en tu dispositivo' : null;
 
   const localizeMe = async () => {
     setLocating(true);
+    setInlineError(null);
     try {
       const resolved = await resolveUserLocation({ prompt: true, force: true, fallbackCity });
       if (resolved) {
@@ -43,7 +47,9 @@ export const ChangeLocationSheet = ({
         onOpenChange(false);
         return;
       }
-      showToast('Activa la ubicación del navegador o escríbela manualmente', 'error');
+      const message = 'Activa la ubicación del navegador o escríbela manualmente';
+      setInlineError(message);
+      showToast(message, 'error');
     } finally {
       setLocating(false);
     }
@@ -52,14 +58,19 @@ export const ChangeLocationSheet = ({
   const saveManualCity = async () => {
     const city = manualCity.trim();
     if (!city) {
-      showToast('Indica tu ciudad o municipio', 'error');
+      const message = 'Indica tu ciudad o municipio';
+      setInlineError(message);
+      showToast(message, 'error');
       return;
     }
     setSavingManual(true);
+    setInlineError(null);
     try {
       const resolved = await resolveManualUserLocation(city);
       if (!resolved) {
-        showToast('No pudimos interpretar esa ubicación. Prueba: Girardot, Melgar, Bogotá…', 'error');
+        const message = 'No pudimos interpretar esa ubicación. Prueba: Girardot, Melgar, Bogotá…';
+        setInlineError(message);
+        showToast(message, 'error');
         return;
       }
       onLocationResolved(resolved);
@@ -71,8 +82,9 @@ export const ChangeLocationSheet = ({
   };
 
   const openManual = () => {
-    const stored = getStoredUserLocation();
-    setManualCity(stored?.city || fallbackCity || '');
+    const current = getStoredUserLocation();
+    setManualCity(current?.city || fallbackCity || '');
+    setInlineError(null);
   };
 
   return (
@@ -80,6 +92,7 @@ export const ChangeLocationSheet = ({
       open={open}
       onOpenChange={(next) => {
         if (next) openManual();
+        else setInlineError(null);
         onOpenChange(next);
       }}
     >
@@ -95,7 +108,17 @@ export const ChangeLocationSheet = ({
           <div className="rounded-2xl border border-border bg-secondary/40 p-4">
             <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Ubicación actual</p>
             <p className="mt-1 text-sm font-semibold text-foreground">{displayLabel}</p>
+            {sourceHint && (
+              <p className="mt-1 text-[10px] text-muted-foreground">{sourceHint}</p>
+            )}
           </div>
+
+          {inlineError && (
+            <div className="flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/5 p-3 text-xs text-destructive">
+              <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+              <span>{inlineError}</span>
+            </div>
+          )}
 
           <Button
             type="button"
@@ -103,7 +126,14 @@ export const ChangeLocationSheet = ({
             onClick={localizeMe}
             disabled={locating}
           >
-            {locating ? 'Localizando…' : 'Localízame'}
+            {locating ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Localizando…
+              </>
+            ) : (
+              'Localízame'
+            )}
           </Button>
 
           <div className="relative py-1">
@@ -135,7 +165,14 @@ export const ChangeLocationSheet = ({
               onClick={saveManualCity}
               disabled={savingManual}
             >
-              {savingManual ? 'Aplicando…' : 'Aplicar ubicación'}
+              {savingManual ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Aplicando…
+                </>
+              ) : (
+                'Aplicar ubicación'
+              )}
             </Button>
           </div>
         </div>

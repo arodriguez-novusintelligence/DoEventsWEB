@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { ChevronLeft, Loader2, Wallet, AlertCircle } from 'lucide-react';
+import { Loader2, Wallet, AlertCircle } from 'lucide-react';
 import {
   createBankAccount,
   fetchBankAccountsByUser,
@@ -8,6 +8,8 @@ import {
   setDefaultBankAccount,
 } from '@doevents/shared';
 import { toast } from '@lovable/components/ui/sonner';
+import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBanner';
+import { Button } from '@lovable/components/ui/button';
 import BankingForm, { type SavedPaymentMethod } from './BankingForm';
 import PaymentMethodsDashboard from './PaymentMethodsDashboard';
 import { mapBankAccounts, savedMethodToCreateInput } from '../../../lovable-bridge/bankingAdapter';
@@ -90,32 +92,32 @@ const BankingHub = ({ onBack }: BankingHubProps) => {
   };
 
   const handleDelete = (id: string) => {
-    setMethods((p) => p.filter((m) => m.id !== id));
     toast('Eliminar cuenta bancaria requiere endpoint backend', { description: 'Contacta soporte si necesitas retirar un método.' });
+    void id;
   };
 
   return (
     <div className="min-h-screen bg-secondary pb-24">
-      <div className="mx-auto max-w-4xl px-4 pt-4">
-        <button
-          type="button"
-          onClick={view === 'form' ? () => setView('dashboard') : onBack}
-          className="flex items-center text-primary text-sm font-medium"
-        >
-          <ChevronLeft className="h-5 w-5" /> Atrás
-        </button>
-        {view === 'dashboard' && (
-          <div className="mt-4 flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-              <Wallet className="h-6 w-6 text-primary" />
-            </div>
-            <div>
-              <h1 className="text-xl font-extrabold text-foreground">Métodos de cobro</h1>
-              <p className="text-xs text-muted-foreground">Administra cuentas bancarias y retiros</p>
-            </div>
-          </div>
-        )}
-      </div>
+      {view === 'dashboard' && (
+        <ProfileSectionBanner
+          title="Métodos de cobro"
+          subtitle="Administra cuentas bancarias y retiros"
+          icon={Wallet}
+          onBack={onBack}
+        />
+      )}
+      {view === 'form' && (
+        <div className="mx-auto max-w-4xl px-4 pt-4">
+          <Button
+            type="button"
+            variant="ghost"
+            className="text-primary"
+            onClick={() => setView('dashboard')}
+          >
+            ← Volver al listado
+          </Button>
+        </div>
+      )}
       {view === 'form' ? (
         <BankingForm onComplete={handleFormComplete} editingMethod={editingMethod} />
       ) : loading ? (
@@ -129,13 +131,9 @@ const BankingHub = ({ onBack }: BankingHubProps) => {
             <AlertCircle className="h-7 w-7 text-destructive" />
           </div>
           <p className="text-sm font-semibold text-foreground">{loadError}</p>
-          <button
-            type="button"
-            onClick={() => void loadMethods()}
-            className="rounded-full border border-primary/30 px-4 py-2 text-sm font-semibold text-primary"
-          >
+          <Button type="button" variant="outline" className="rounded-full" onClick={() => void loadMethods()}>
             Reintentar
-          </button>
+          </Button>
         </div>
       ) : (
         <PaymentMethodsDashboard

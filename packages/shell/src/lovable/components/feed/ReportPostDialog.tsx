@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Flag } from 'lucide-react';
+import { Flag, AlertCircle } from 'lucide-react';
 import { reportPublication, useToast } from '@doevents/shared';
 import {
   Dialog,
@@ -36,6 +36,7 @@ export const ReportPostDialog = ({
   const [reason, setReason] = useState('inappropriate');
   const [details, setDetails] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const handleSubmit = async () => {
     if (!publicationId) {
@@ -43,6 +44,7 @@ export const ReportPostDialog = ({
       return;
     }
     setSubmitting(true);
+    setSubmitError(null);
     try {
       await reportPublication(publicationId, { reason, details: details.trim() });
       showToast('Reporte enviado. Gracias por ayudarnos a mantener la comunidad segura.', 'success');
@@ -51,7 +53,9 @@ export const ReportPostDialog = ({
       onReported?.();
       onOpenChange(false);
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'No se pudo enviar el reporte', 'error');
+      const message = err instanceof Error ? err.message : 'No se pudo enviar el reporte';
+      setSubmitError(message);
+      showToast(message, 'error');
     } finally {
       setSubmitting(false);
     }
@@ -101,11 +105,18 @@ export const ReportPostDialog = ({
           />
         </div>
 
+        {submitError && (
+          <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+            <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+            <span>{submitError}</span>
+          </div>
+        )}
+
         <DialogFooter className="gap-2 sm:gap-0">
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
-          <Button type="button" onClick={handleSubmit} disabled={submitting}>
+          <Button type="button" variant="destructive" onClick={handleSubmit} disabled={submitting}>
             {submitting ? 'Enviando…' : 'Enviar reporte'}
           </Button>
         </DialogFooter>

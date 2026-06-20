@@ -20,6 +20,7 @@ interface BookingReviewSheetProps {
   onConfirm: () => void;
   confirming?: boolean;
   confirmLabel?: string;
+  confirmError?: string | null;
 }
 
 function formatCurrency(amount?: number, currency = 'COP') {
@@ -40,6 +41,7 @@ export const BookingReviewSheet = ({
   onConfirm,
   confirming = false,
   confirmLabel = 'Confirmar reserva',
+  confirmError = null,
 }: BookingReviewSheetProps) => {
   const dateLabel = summary.datesLabel
     || (summary.startDate
@@ -95,8 +97,12 @@ export const BookingReviewSheet = ({
           )}
 
           <p className="text-[11px] text-center text-muted-foreground">
-            Al confirmar, aceptas los términos de reserva del proveedor.
+            Al confirmar, aceptas los términos de reserva del proveedor y la política de cancelación aplicable.
           </p>
+
+          {confirmError && (
+            <p className="text-xs text-center text-destructive">{confirmError}</p>
+          )}
 
           <Button
             type="button"
@@ -112,6 +118,16 @@ export const BookingReviewSheet = ({
             ) : (
               confirmLabel
             )}
+          </Button>
+
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full rounded-full"
+            onClick={() => onOpenChange(false)}
+            disabled={confirming}
+          >
+            Cancelar
           </Button>
         </div>
       </SheetContent>

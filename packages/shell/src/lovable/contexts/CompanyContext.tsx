@@ -14,6 +14,7 @@ interface CompanyContextValue {
   company: CompanyInfo | null;
   loading: boolean;
   loadError: boolean;
+  loadErrorMessage: string | null;
   refresh: () => void;
 }
 
@@ -21,6 +22,7 @@ const CompanyContext = createContext<CompanyContextValue>({
   company: null,
   loading: false,
   loadError: false,
+  loadErrorMessage: null,
   refresh: () => undefined,
 });
 
@@ -35,6 +37,7 @@ export const CompanyProvider = ({ userId, children }: CompanyProviderProps) => {
   const [company, setCompany] = useState<CompanyInfo | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadError, setLoadError] = useState(false);
+  const [loadErrorMessage, setLoadErrorMessage] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const refresh = () => setRefreshKey((k) => k + 1);
@@ -43,11 +46,13 @@ export const CompanyProvider = ({ userId, children }: CompanyProviderProps) => {
     if (!userId) {
       setCompany(null);
       setLoadError(false);
+      setLoadErrorMessage(null);
       return;
     }
     let cancelled = false;
     setLoading(true);
     setLoadError(false);
+    setLoadErrorMessage(null);
     void fetchUserById(userId)
       .then((profile) => {
         if (cancelled || !profile) return;
@@ -61,10 +66,11 @@ export const CompanyProvider = ({ userId, children }: CompanyProviderProps) => {
           organizerName: organizerName || profile.username || profile.email,
         });
       })
-      .catch(() => {
+      .catch((err) => {
         if (!cancelled) {
           setCompany(null);
           setLoadError(true);
+          setLoadErrorMessage(err instanceof Error ? err.message : 'No se pudieron cargar los datos de empresa');
         }
       })
       .finally(() => {
@@ -74,8 +80,8 @@ export const CompanyProvider = ({ userId, children }: CompanyProviderProps) => {
   }, [userId, refreshKey]);
 
   const value = useMemo(
-    () => ({ company, loading, loadError, refresh }),
-    [company, loading, loadError],
+    () => ({ company, loading, loadError, loadErrorMessage, refresh }),
+    [company, loading, loadError, loadErrorMessage],
   );
 
   return (

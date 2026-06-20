@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Building2, Briefcase, ChevronRight, Ticket } from 'lucide-react';
+import { Building2, Briefcase, ChevronRight, Ticket, AlertCircle } from 'lucide-react';
 import {
   fetchGroupedUserTickets,
   fetchUserServiceBookings,
@@ -85,7 +85,8 @@ export const MyPurchasesView = ({ onBack }: MyPurchasesViewProps) => {
           </div>
         ) : loadError ? (
           <div className="rounded-2xl border border-destructive/30 bg-card p-8 text-center shadow-sm">
-            <p className="text-sm font-medium text-destructive">No pudimos cargar tus compras.</p>
+            <AlertCircle className="mx-auto h-8 w-8 text-destructive" />
+            <p className="mt-3 text-sm font-medium text-destructive">No pudimos cargar tus compras.</p>
             <Button
               type="button"
               variant="outline"
@@ -119,8 +120,8 @@ export const MyPurchasesView = ({ onBack }: MyPurchasesViewProps) => {
               onClick={() => navigate('/purchases/venues')}
               className="flex w-full items-center gap-3 rounded-2xl bg-card p-4 shadow-sm text-left hover:bg-accent/40 transition-colors"
             >
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500/10">
-                <Building2 className="h-5 w-5 text-emerald-600" />
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10">
+                <Building2 className="h-5 w-5 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-foreground">Reservas de lugares</p>
@@ -136,8 +137,8 @@ export const MyPurchasesView = ({ onBack }: MyPurchasesViewProps) => {
               onClick={() => navigate('/purchases/services')}
               className="flex w-full items-center gap-3 rounded-2xl bg-card p-4 shadow-sm text-left hover:bg-accent/40 transition-colors"
             >
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-500/10">
-                <Briefcase className="h-5 w-5 text-amber-600" />
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10">
+                <Briefcase className="h-5 w-5 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-foreground">Reservas de servicios</p>

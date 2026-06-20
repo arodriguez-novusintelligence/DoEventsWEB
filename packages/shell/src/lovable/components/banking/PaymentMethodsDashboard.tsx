@@ -179,7 +179,7 @@ export default function PaymentMethodsDashboard({
           {/* Add Method Button */}
           <Button
             onClick={onAddMethod}
-            className="h-12 px-6 bg-foreground text-background hover:bg-foreground/90 font-medium"
+            className="h-12 px-6 bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
           >
             <Plus className="w-4 h-4 mr-2" />
             Añadir método de cobro

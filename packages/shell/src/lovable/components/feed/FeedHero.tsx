@@ -1,4 +1,4 @@
-import { MapPin, Smile, PartyPopper, Gamepad2, Map, Music, Trophy, Plus } from 'lucide-react';
+import { MapPin, Smile, PartyPopper, Gamepad2, Map, Music, Trophy, Plus, Sparkles } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { UserAvatar } from '@doevents/shared';
 import dessertFestival from '@lovable/assets/dessert-festival.jpg';
@@ -168,7 +168,13 @@ const FeedHero = ({
                 </>
               )}
               {!storiesLoading && useApiStories && apiStories!.length === 0 && (
-                <p className="text-xs text-muted-foreground py-4">No hay historias cerca de ti aún.</p>
+                <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-border bg-card py-6 px-4 w-full">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                    <Sparkles className="h-6 w-6 text-primary" />
+                  </div>
+                  <p className="text-xs font-medium text-foreground">No hay historias cerca de ti aún</p>
+                  <p className="text-[10px] text-muted-foreground text-center">Sé el primero en compartir lo que está pasando</p>
+                </div>
               )}
               {!storiesLoading && useApiStories && apiStories!.map((s) => (
                 <button

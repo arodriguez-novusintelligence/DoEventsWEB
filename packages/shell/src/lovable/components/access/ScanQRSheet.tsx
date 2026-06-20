@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@lovable/components/ui/dialog';
+import { Input } from '@lovable/components/ui/input';
+import { Button } from '@lovable/components/ui/button';
 import { ScanLine, ShieldCheck, CameraOff, KeyRound, Loader2, CheckCircle2, XCircle } from 'lucide-react';
 import { scanTicketFromQr } from '@doevents/shared';
 import { toast } from 'sonner';
@@ -127,9 +129,9 @@ const ScanQRSheet = ({ open, onOpenChange, eventTitle, eventId }: ScanQRSheetPro
               className="absolute inset-0 h-full w-full object-cover"
             />
             {!cameraReady && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-muted text-muted-foreground">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-muted text-muted-foreground px-4 text-center">
                 <CameraOff className="h-8 w-8" />
-                <span className="text-xs">Cámara no disponible — usa código manual</span>
+                <span className="text-xs">Cámara no disponible — permite el acceso en ajustes del navegador o usa código manual</span>
               </div>
             )}
 
@@ -159,13 +161,13 @@ const ScanQRSheet = ({ open, onOpenChange, eventTitle, eventId }: ScanQRSheetPro
             <label className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-1.5">
               <KeyRound className="h-3.5 w-3.5 text-primary" /> Código manual
             </label>
-            <input
+            <Input
               value={manualCode}
               onChange={(e) => setManualCode(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && !validating && void validate()}
               placeholder="Pega el código QR"
               disabled={validating}
-              className="w-full rounded-xl border border-border bg-card px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-60"
+              className="rounded-xl"
             />
           </div>
 
@@ -176,9 +178,22 @@ const ScanQRSheet = ({ open, onOpenChange, eventTitle, eventId }: ScanQRSheetPro
             </div>
           )}
           {lastResult === 'error' && (
-            <div className="mt-3 flex items-center gap-2 rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">
-              <XCircle className="h-4 w-4 shrink-0" />
-              Código inválido — intenta de nuevo
+            <div className="mt-3 space-y-2">
+              <div className="flex items-center gap-2 rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                <XCircle className="h-4 w-4 shrink-0" />
+                Código inválido — intenta de nuevo
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full rounded-full"
+                onClick={() => {
+                  setLastResult(null);
+                  setManualCode('');
+                }}
+              >
+                Reintentar
+              </Button>
             </div>
           )}
 

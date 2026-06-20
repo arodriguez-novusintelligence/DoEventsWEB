@@ -37,8 +37,10 @@ const FAQSection = () => {
 
       {form.faqs.length === 0 ? (
         <div className="mt-4 rounded-xl border border-dashed border-border bg-secondary/20 p-6 text-center">
-          <HelpCircle className="mx-auto h-8 w-8 text-muted-foreground/60" />
-          <p className="mt-2 text-sm text-muted-foreground">Sin preguntas frecuentes aún</p>
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+            <HelpCircle className="h-6 w-6 text-primary" />
+          </div>
+          <p className="mt-3 text-sm text-muted-foreground">Sin preguntas frecuentes aún</p>
           <Button type="button" variant="outline" className="mt-4 w-full border-dashed" onClick={addFAQ}>
             <Plus className="w-4 h-4 mr-2" />
             Agregar pregunta
@@ -70,7 +72,7 @@ const FAQSection = () => {
                     />
                   </div>
                 </div>
-                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive" onClick={() => removeFAQ(faq.id)}>
+                <Button variant="ghost" size="icon" className="text-destructive hover:bg-destructive/10 hover:text-destructive" onClick={() => removeFAQ(faq.id)}>
                   <Trash2 className="w-4 h-4" />
                 </Button>
               </div>

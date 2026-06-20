@@ -95,6 +95,29 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-20 gap-empalme batch 4 (run 27876228669-b4)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| AccessControlListView banner | VISUAL | Sí | `access/AccessControlListView.tsx`, `AccessControlPage.tsx` | ProfileSectionBanner + error/retry |
+| PaymentMethodsDashboard CTA | VISUAL | Parcial | `banking/PaymentMethodsDashboard.tsx` | BACKEND_REQUIRED delete |
+| BookingReviewSheet cancel | VISUAL | Sí | `services/BookingReviewSheet.tsx` | Cancelar + confirmError |
+| FAQSection / MediaUpload | VISUAL | Sí | `venues/sections/*`, `MediaUpload.tsx` | Empty primary + límite 12 |
+| ScanQR retry | Integración | Sí | `access/ScanQRSheet.tsx` | Input shadcn + Reintentar |
+| BankingHub banner | VISUAL | Parcial | `banking/BankingHub.tsx` | BACKEND_REQUIRED delete |
+| ReportPostDialog destructive | VISUAL | Sí | `feed/ReportPostDialog.tsx` | Error inline + variant destructive |
+| KycContext loadErrorMessage | Integración | Sí | `contexts/KycContext.tsx` | Mensaje error expuesto |
+| FeedHero stories empty | VISUAL | Sí | `feed/FeedHero.tsx` | Card Sparkles |
+| GlobalSearch empty/error | VISUAL | Parcial | `feed/GlobalSearchView.tsx` | BACKEND_REQUIRED tab posts |
+| MyReserved* / MyPurchases | Integración | Sí | `purchases/*View.tsx` | Tokens primary + AlertCircle retry |
+| TermsDialog privacidad | VISUAL | Sí | `auth/TermsDialog.tsx` | Sección §7 |
+| ChangeLocation inline error | VISUAL | Sí | `feed/ChangeLocationSheet.tsx` | Loader2 + error persistente |
+| StoryViewersSheet skeleton | Bloqueo | Parcial | `feed/StoryViewersSheet.tsx` | BACKEND_REQUIRED viewers API |
+| KycCertificationView banner | Bloqueo | Parcial | `feed/KycCertificationView.tsx` | BACKEND_REQUIRED submit |
+| VenueDetail shell | Navegación | Sí | `pages/VenueDetail.tsx` | pb-24 Lovable |
+| CompanyContext loadErrorMessage | Integración | Sí | `contexts/CompanyContext.tsx` | Mensaje error expuesto |
+| Batch 4 gaps (20) | Empalme | Sí | ver `decision-log.md` | 16 DONE + 4 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-20 gap-empalme batch 3 (run 27876228669-b3)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

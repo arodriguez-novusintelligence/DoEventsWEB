@@ -197,7 +197,8 @@ export const GlobalSearchView = ({
           </div>
         ) : searchError ? (
           <div className="mt-4 rounded-2xl border border-destructive/30 bg-card p-8 text-center shadow-sm">
-            <p className="text-sm text-destructive">{searchError}</p>
+            <AlertCircle className="mx-auto h-8 w-8 text-destructive" />
+            <p className="mt-3 text-sm text-destructive">{searchError}</p>
             <Button
               type="button"
               variant="outline"
@@ -303,7 +304,10 @@ export const GlobalSearchView = ({
                 );
               })}
               {hasSearched && query.trim() && !userResults.length && (
-                <p className="py-8 text-center text-sm text-muted-foreground">Sin resultados</p>
+                <div className="rounded-2xl bg-card py-10 text-center shadow-sm">
+                  <Search className="mx-auto h-8 w-8 text-muted-foreground/40" />
+                  <p className="mt-3 text-sm text-muted-foreground">Sin usuarios para «{query.trim()}»</p>
+                </div>
               )}
             </TabsContent>
 
@@ -317,7 +321,10 @@ export const GlobalSearchView = ({
                 <PostCard key={post.id} post={post} />
               ))}
               {hasSearched && query.trim() && !postResults.length && (
-                <p className="py-8 text-center text-sm text-muted-foreground">Sin publicaciones</p>
+                <div className="rounded-2xl bg-card py-10 text-center shadow-sm">
+                  <Search className="mx-auto h-8 w-8 text-muted-foreground/40" />
+                  <p className="mt-3 text-sm text-muted-foreground">Sin publicaciones para «{query.trim()}»</p>
+                </div>
               )}
             </TabsContent>
           </>

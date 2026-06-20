@@ -1,5 +1,6 @@
 import { ShieldCheck, Mail, AlertCircle, CheckCircle2, Clock, XCircle, Loader2, Camera, IdCard, Upload } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
+import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBanner';
 import { useKyc, type KycStatus } from '@lovable/contexts/KycContext';
 
 interface KycCertificationViewProps {
@@ -17,8 +18,8 @@ const STATUS_ICONS: Record<KycStatus, typeof ShieldCheck> = {
 
 const STATUS_COLORS: Record<KycStatus, string> = {
   pending: 'text-muted-foreground/40',
-  in_review: 'text-amber-500',
-  verified: 'text-emerald-500',
+  in_review: 'text-warning',
+  verified: 'text-success',
   rejected: 'text-destructive',
 };
 
@@ -41,36 +42,41 @@ const UPLOAD_STEPS = [
 ] as const;
 
 export const KycCertificationView = ({ onBack }: KycCertificationViewProps) => {
-  const { status, loading, isCertified, statusLabel, refresh } = useKyc();
+  const { status, loading, loadError, loadErrorMessage, isCertified, statusLabel, refresh } = useKyc();
   const StatusIcon = STATUS_ICONS[status];
 
   return (
     <div className="mx-auto min-h-screen max-w-lg bg-secondary pb-24">
-      <div className="rounded-b-3xl bg-gradient-to-br from-primary via-primary to-accent px-4 pb-10 pt-5 text-primary-foreground">
-        {onBack && (
-          <button
-            type="button"
-            onClick={onBack}
-            className="mb-3 text-sm font-medium text-primary-foreground/90"
-          >
-            ← Volver
-          </button>
-        )}
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-foreground/15 backdrop-blur">
-            <ShieldCheck className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-extrabold leading-tight">Organizador certificado (KYC)</h1>
-            <p className="text-xs text-primary-foreground/80">Verificación de identidad</p>
-          </div>
-        </div>
-      </div>
+      {onBack ? (
+        <ProfileSectionBanner
+          title="Organizador certificado (KYC)"
+          subtitle="Verificación de identidad"
+          icon={ShieldCheck}
+          onBack={onBack}
+        />
+      ) : (
+        <ProfileSectionBanner
+          title="Organizador certificado (KYC)"
+          subtitle="Verificación de identidad"
+          icon={ShieldCheck}
+          onBack={() => window.history.back()}
+        />
+      )}
 
       <div className="px-4 pt-6 space-y-4">
         {loading ? (
           <div className="flex justify-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        ) : loadError ? (
+          <div className="rounded-2xl border border-destructive/30 bg-card p-8 text-center shadow-sm">
+            <AlertCircle className="mx-auto h-8 w-8 text-destructive" />
+            <p className="mt-3 text-sm font-medium text-destructive">
+              {loadErrorMessage || 'No se pudo cargar el estado KYC'}
+            </p>
+            <Button type="button" variant="outline" className="mt-4 rounded-full" onClick={() => refresh()}>
+              Reintentar
+            </Button>
           </div>
         ) : (
           <>
@@ -120,12 +126,12 @@ export const KycCertificationView = ({ onBack }: KycCertificationViewProps) => {
                   })}
                 </div>
 
-                <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
+                <div className="rounded-2xl border border-warning/30 bg-warning/10 p-4">
                   <div className="flex items-start gap-3">
-                    <AlertCircle className="h-5 w-5 shrink-0 text-amber-600 mt-0.5" />
+                    <AlertCircle className="h-5 w-5 shrink-0 text-warning mt-0.5" />
                     <div>
-                      <p className="text-sm font-semibold text-amber-900">Envío pendiente de backend</p>
-                      <p className="mt-1 text-xs text-amber-800">
+                      <p className="text-sm font-semibold text-foreground">Envío pendiente de backend</p>
+                      <p className="mt-1 text-xs text-muted-foreground">
                         La carga de documentos requiere el endpoint KYC en DoEventsBack.
                         Esta pantalla muestra el flujo Lovable y el estado real del perfil sin simular envíos.
                       </p>

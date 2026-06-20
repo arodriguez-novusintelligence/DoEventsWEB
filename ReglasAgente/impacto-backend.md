@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27876228669-b4`: batch 4 (20 gaps) — 16 DONE frontend; 4 BACKEND_REQUIRED (`PaymentMethodsDashboard`/`BankingHub` delete, `GlobalSearchView` posts, `StoryViewersSheet`, `KycCertificationView` submit).
+
 Run `gap-empalme-27876228669-b3`: batch 3 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete).
 
 Run `gap-empalme-27876228669-b2`: batch 2 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`EditProfileView`, `PublishFlowModal`, `BookingSheet`).
@@ -48,7 +50,38 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27876228669-b3)
+## Empalme realizado (última ejecución — gap-empalme-27876228669-b4)
+
+- **AccessControlListView / AccessControlPage:** `ProfileSectionBanner`; chips status success/primary; error/retry API real.
+- **ScanQRSheet:** Input shadcn; feedback success/error tokens; botón Reintentar tras fallo.
+- **BankingHub / PaymentMethodsDashboard:** banner Wallet; CTA primary; delete deshabilitado (BACKEND_REQUIRED).
+- **BookingReviewSheet:** copy términos ampliado; botón Cancelar; prop `confirmError`.
+- **FAQSection / MediaUpload:** empty states icono primary; límite 12 archivos con toast; tiles foto+video.
+- **ReportPostDialog:** submit destructive; error inline con AlertCircle.
+- **KycContext / CompanyContext:** `loadErrorMessage` expuesto para UI retry.
+- **FeedHero:** empty historias con card Sparkles.
+- **GlobalSearchView:** error con AlertCircle; empty ilustrados por tab (posts BACKEND_REQUIRED).
+- **MyPurchases / MyReserved*:** tokens primary unificados; error/retry Button; login CTA sin userId.
+- **TermsDialog:** sección privacidad (§7).
+- **ChangeLocationSheet:** Loader2; error inline; hint ubicación guardada.
+- **StoryViewersSheet:** skeleton preparado; placeholder BACKEND_REQUIRED documentado.
+- **KycCertificationView:** ProfileSectionBanner; error contexto; tokens warning (submit BACKEND_REQUIRED).
+- **VenueDetail:** shell `pb-24` alineado Lovable.
+
+## Backend pendiente para 100%
+
+| Gap / Feature | lovablePath | webPath | Motivo | Endpoint / Lambda | Tabla DynamoDB | Acción | Prioridad |
+|---------------|-------------|---------|--------|-------------------|----------------|--------|-----------|
+| Banking delete | `src/components/banking/BankingHub.tsx` | `packages/shell/src/lovable/components/banking/BankingHub.tsx` | Sin endpoint eliminar cuenta | `DELETE /bank-accounts/{id}` (propuesto) | `BankAccounts` | Implementar en DoEventsBack; UI documenta bloqueo | Alta |
+| PaymentMethods delete | `src/components/banking/PaymentMethodsDashboard.tsx` | `packages/shell/src/lovable/components/banking/PaymentMethodsDashboard.tsx` | Mismo contrato delete | `DELETE /bank-accounts/{id}` | `BankAccounts` | Reutilizar endpoint delete | Alta |
+| GlobalSearch posts | `src/components/feed/GlobalSearchView.tsx` | `packages/shell/src/lovable/components/feed/GlobalSearchView.tsx` | Sin búsqueda full-text publicaciones | `GET /publications/search?q=` | `Publications` | Endpoint dedicado; UI filtra feed reciente | Media |
+| Story viewers | `src/components/feed/StoryViewersSheet.tsx` | `packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx` | Sin lista de visualizaciones | `GET /stories/{id}/viewers` | `StoryViews` | Implementar endpoint; skeleton listo | Media |
+| KYC submit | `src/components/feed/KycCertificationView.tsx` | `packages/shell/src/lovable/components/feed/KycCertificationView.tsx` | Sin envío documentos KYC | `POST /users/{id}/kyc` | `Users` / proveedor KYC | Integración proveedor; botón deshabilitado | Alta |
+| EditProfile password | `src/components/feed/EditProfileView.tsx` | `packages/shell/src/lovable/components/feed/EditProfileView.tsx` | Cambio contraseña Cognito | Cognito `ChangePassword` | — | Batch previo | Media |
+| PublishFlow banking | `src/components/events/PublishFlowModal.tsx` | `packages/shell/src/lovable/components/events/PublishFlowModal.tsx` | Persistencia banco post-publicación | `POST /events/{id}/bank-link` | `Events` | Batch previo | Media |
+| Booking add-ons | `src/components/services/BookingSheet.tsx` | `packages/shell/src/lovable/components/services/BookingSheet.tsx` | Catálogo add-ons | `GET /services/{id}/addons` | `Services` | Batch previo | Media |
+
+## Empalme realizado (ejecución anterior — gap-empalme-27876228669-b3)
 
 - **MyTicketsView / TicketsPage:** `loadError` + reintento inline; countdown tokens amber/destructive; sin loader full-page.
 - **MyInvitationsView / MyInvitationsPage:** error/retry cableado; badges status primary/amber/destructive.
@@ -60,16 +93,6 @@ Sí (parcial)
 - **NotificationsSheet:** iconMap con tokens primary/amber en lugar de green/emerald hardcoded.
 - **BankingHub:** header Wallet + error con icono; delete deshabilitado (BACKEND_REQUIRED).
 - **LocationSection:** empty map con icono en círculo primary.
-
-## Backend pendiente para 100%
-
-| Gap / Feature | lovablePath | webPath | Motivo | Endpoint / Lambda | Tabla DynamoDB | Acción | Prioridad |
-|---------------|-------------|---------|--------|-------------------|----------------|--------|-----------|
-| Banking delete | `src/components/banking/BankingHub.tsx` | `packages/shell/src/lovable/components/banking/BankingHub.tsx` | Sin endpoint eliminar cuenta | `DELETE /bank-accounts/{id}` (propuesto) | `BankAccounts` | Implementar en DoEventsBack; UI ya documenta bloqueo | Alta |
-| PaymentMethods delete | `src/components/banking/PaymentMethodsDashboard.tsx` | `packages/shell/src/lovable/components/banking/PaymentMethodsDashboard.tsx` | Mismo contrato delete | `DELETE /bank-accounts/{id}` | `BankAccounts` | Reutilizar endpoint delete | Alta |
-| EditProfile password | `src/components/feed/EditProfileView.tsx` | `packages/shell/src/lovable/components/feed/EditProfileView.tsx` | Cambio contraseña Cognito | Cognito `ChangePassword` | — | Batch previo | Media |
-| PublishFlow banking | `src/components/events/PublishFlowModal.tsx` | `packages/shell/src/lovable/components/events/PublishFlowModal.tsx` | Persistencia banco post-publicación | `POST /events/{id}/bank-link` | `Events` | Batch previo | Media |
-| Booking add-ons | `src/components/services/BookingSheet.tsx` | `packages/shell/src/lovable/components/services/BookingSheet.tsx` | Catálogo add-ons | `GET /services/{id}/addons` | `Services` | Batch previo | Media |
 
 ## Empalme realizado (ejecución anterior — gap-empalme-27876228669-b2)
 

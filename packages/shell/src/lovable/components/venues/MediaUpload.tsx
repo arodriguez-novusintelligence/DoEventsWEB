@@ -1,8 +1,24 @@
 import { FileUp, ImageIcon, Video, X } from 'lucide-react';
+import { toast } from 'sonner';
 import { usePlaceForm, PlaceMediaPicker } from '@lovable/components/places/placeFormContext';
+
+const MAX_MEDIA = 12;
 
 const MediaUpload = () => {
   const { form, addMedia, removeMedia } = usePlaceForm();
+
+  const handleAddMedia = (files: FileList | null, kind: 'image' | 'video') => {
+    if (!files?.length) return;
+    const remaining = MAX_MEDIA - form.media.length;
+    if (remaining <= 0) {
+      toast.error(`Máximo ${MAX_MEDIA} archivos permitidos`);
+      return;
+    }
+    if (files.length > remaining) {
+      toast.info(`Solo se agregarán ${remaining} archivo(s) — límite de ${MAX_MEDIA}`);
+    }
+    addMedia(files, kind);
+  };
 
   return (
     <div className="form-section py-4">
@@ -13,21 +29,23 @@ const MediaUpload = () => {
         </label>
       </div>
       <p className="text-xs text-muted-foreground mb-3">
-        Sube fotos o videos para mostrar tu espacio a los organizadores.
+        Sube fotos o videos para mostrar tu espacio a los organizadores ({form.media.length}/{MAX_MEDIA}).
       </p>
 
       {form.media.length === 0 ? (
         <div className="space-y-3">
           <label className="flex w-full cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 border-dashed border-primary/30 bg-secondary/40 py-10 px-4 hover:border-primary hover:bg-primary/5 transition-colors">
-            <FileUp className="w-8 h-8 text-primary" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+              <FileUp className="w-6 h-6 text-primary" />
+            </div>
             <p className="text-sm font-semibold text-foreground">Subir fotos o videos</p>
-            <p className="text-xs text-muted-foreground">JPG, PNG o MP4 — máximo 12 archivos</p>
+            <p className="text-xs text-muted-foreground">JPG, PNG o MP4 — máximo {MAX_MEDIA} archivos</p>
             <input
               type="file"
               accept="image/*,video/*"
               multiple
               className="sr-only"
-              onChange={(e) => { addMedia(e.target.files, 'image'); e.target.value = ''; }}
+              onChange={(e) => { handleAddMedia(e.target.files, 'image'); e.target.value = ''; }}
             />
           </label>
           <PlaceMediaPicker />
@@ -51,12 +69,19 @@ const MediaUpload = () => {
                 </button>
               </div>
             ))}
-            {form.media.length < 12 && (
-              <label className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-border hover:border-primary">
-                <Video className="w-5 h-5 text-muted-foreground" />
-                <span className="text-[10px] font-semibold">Video</span>
-                <input type="file" accept="video/*" multiple className="sr-only" onChange={(e) => addMedia(e.target.files, 'video')} />
-              </label>
+            {form.media.length < MAX_MEDIA && (
+              <>
+                <label className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-border hover:border-primary">
+                  <ImageIcon className="w-5 h-5 text-muted-foreground" />
+                  <span className="text-[10px] font-semibold">Foto</span>
+                  <input type="file" accept="image/*" multiple className="sr-only" onChange={(e) => { handleAddMedia(e.target.files, 'image'); e.target.value = ''; }} />
+                </label>
+                <label className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-border hover:border-primary">
+                  <Video className="w-5 h-5 text-muted-foreground" />
+                  <span className="text-[10px] font-semibold">Video</span>
+                  <input type="file" accept="video/*" multiple className="sr-only" onChange={(e) => { handleAddMedia(e.target.files, 'video'); e.target.value = ''; }} />
+                </label>
+              </>
             )}
           </div>
           <PlaceMediaPicker />

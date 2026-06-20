@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Briefcase, ChevronRight } from 'lucide-react';
+import { Briefcase, ChevronRight, AlertCircle } from 'lucide-react';
 import {
   fetchUserServiceBookings,
   Loader,
@@ -9,6 +9,7 @@ import {
   type UserServiceBooking,
 } from '@doevents/shared';
 import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBanner';
+import { Button } from '@lovable/components/ui/button';
 import { formatBookingStatus } from '@lovable/lib/bookingStatusLabels';
 
 interface MyReservedServicesViewProps {
@@ -33,6 +34,7 @@ export const MyReservedServicesView = ({ onBack }: MyReservedServicesViewProps) 
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [bookings, setBookings] = useState<UserServiceBooking[]>([]);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     if (!userId) {
@@ -56,7 +58,7 @@ export const MyReservedServicesView = ({ onBack }: MyReservedServicesViewProps) 
         if (!cancelled) setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [userId]);
+  }, [userId, reloadKey]);
 
   return (
     <div className="mx-auto min-h-screen max-w-lg bg-secondary pb-24">
@@ -74,22 +76,24 @@ export const MyReservedServicesView = ({ onBack }: MyReservedServicesViewProps) 
           </div>
         ) : loadError ? (
           <div className="rounded-2xl border border-destructive/30 bg-card p-8 text-center shadow-sm">
-            <p className="text-sm font-medium text-destructive">{loadError}</p>
-            <button
+            <AlertCircle className="mx-auto h-8 w-8 text-destructive" />
+            <p className="mt-3 text-sm font-medium text-destructive">{loadError}</p>
+            <Button
               type="button"
-              onClick={() => {
-                if (!userId) return;
-                setLoading(true);
-                setLoadError(null);
-                void fetchUserServiceBookings(userId)
-                  .then(setBookings)
-                  .catch((err) => setLoadError(err instanceof Error ? err.message : 'Error al reintentar'))
-                  .finally(() => setLoading(false));
-              }}
-              className="mt-3 text-xs font-semibold text-primary"
+              variant="outline"
+              className="mt-4 rounded-full"
+              onClick={() => setReloadKey((k) => k + 1)}
             >
               Reintentar
-            </button>
+            </Button>
+          </div>
+        ) : !userId ? (
+          <div className="rounded-2xl bg-card p-10 text-center shadow-sm">
+            <Briefcase className="mx-auto h-10 w-10 text-muted-foreground/40" />
+            <p className="mt-3 text-sm font-medium text-foreground">Inicia sesión para ver tus reservas</p>
+            <Button type="button" className="mt-4 rounded-full" onClick={() => navigate('/auth/login')}>
+              Iniciar sesión
+            </Button>
           </div>
         ) : bookings.length === 0 ? (
           <div className="rounded-2xl bg-card p-10 text-center shadow-sm">

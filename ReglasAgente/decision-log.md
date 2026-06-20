@@ -13,6 +13,57 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-20 19:30 UTC] gap-empalme-27876228669-b4
+
+### 1. Resumen del empalme
+Batch 4 (20 gaps, manifiesto `27876228669-b4`, similitud baseline 57.25% / post-b3 79.5%): empalme focalizado en control de acceso (AccessControlListView/ScanQR), banca (BankingHub/PaymentMethodsDashboard), servicios (BookingReviewSheet), venues (FAQSection/MediaUpload), feed (ReportPostDialog/FeedHero/GlobalSearch/ChangeLocation/StoryViewers), compras (MyPurchases/MyReserved*), auth (TermsDialog), contextos (KycContext/CompanyContext), KYC view y página VenueDetail. Mejoras: `ProfileSectionBanner`, error/retry con `AlertCircle`, tokens primary/success/warning/destructive, empty states con iconografía. **4 gaps BACKEND_REQUIRED** (delete banca, posts search, story viewers, KYC submit).
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Access control list | `packages/shell/src/lovable/components/access/AccessControlListView.tsx` | DONE |
+| Payment methods dashboard | `packages/shell/src/lovable/components/banking/PaymentMethodsDashboard.tsx` | BACKEND_REQUIRED |
+| Booking review | `packages/shell/src/lovable/components/services/BookingReviewSheet.tsx` | DONE |
+| FAQ section | `packages/shell/src/lovable/components/venues/sections/FAQSection.tsx` | DONE |
+| Media upload | `packages/shell/src/lovable/components/venues/MediaUpload.tsx` | DONE |
+| Scan QR | `packages/shell/src/lovable/components/access/ScanQRSheet.tsx` | DONE |
+| Banking hub | `packages/shell/src/lovable/components/banking/BankingHub.tsx` | BACKEND_REQUIRED |
+| Report post | `packages/shell/src/lovable/components/feed/ReportPostDialog.tsx` | DONE |
+| KYC context | `packages/shell/src/lovable/contexts/KycContext.tsx` | DONE |
+| Feed hero | `packages/shell/src/lovable/components/feed/FeedHero.tsx` | DONE |
+| Global search | `packages/shell/src/lovable/components/feed/GlobalSearchView.tsx` | BACKEND_REQUIRED |
+| My reserved services | `packages/shell/src/lovable/components/purchases/MyReservedServicesView.tsx` | DONE |
+| My reserved venues | `packages/shell/src/lovable/components/purchases/MyReservedVenuesView.tsx` | DONE |
+| My purchases | `packages/shell/src/lovable/components/purchases/MyPurchasesView.tsx` | DONE |
+| Terms dialog | `packages/shell/src/lovable/components/auth/TermsDialog.tsx` | DONE |
+| Change location | `packages/shell/src/lovable/components/feed/ChangeLocationSheet.tsx` | DONE |
+| Story viewers | `packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx` | BACKEND_REQUIRED |
+| KYC certification | `packages/shell/src/lovable/components/feed/KycCertificationView.tsx` | BACKEND_REQUIRED |
+| Venue detail | `packages/shell/src/pages/VenueDetail.tsx` | DONE |
+| Company context | `packages/shell/src/lovable/contexts/CompanyContext.tsx` | DONE |
+
+### 3. Similitud antes/después
+- **Antes:** 79.5% (post batch 3; manifiesto CI 57.25%)
+- **Después:** ~86.0% (estimado; re-comparación CI pendiente)
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias
+
+### 6. Riesgos pendientes
+- 40 gaps restantes (batches 5–6) para alcanzar 98% similitud
+- BACKEND_REQUIRED: delete cuenta bancaria, búsqueda posts, viewers historias, envío KYC
+- Flujos QR/pagos RISKY — revisión humana recomendada
+
+### Decisión
+**APPLIED**
+
+---
+
 ## [2026-06-20 18:00 UTC] gap-empalme-27876228669-b3
 
 ### 1. Resumen del empalme

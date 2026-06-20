@@ -1,20 +1,25 @@
 import { useState } from 'react';
-import { ChevronLeft, Calendar, MapPin, DoorOpen, Users, ScanLine, Settings2, Plus, Lock, Shield } from 'lucide-react';
+import { Calendar, MapPin, DoorOpen, Users, ScanLine, Settings2, Plus, Lock, Shield, AlertCircle, Loader2 } from 'lucide-react';
 import ScanQRSheet from './ScanQRSheet';
 import { toast } from 'sonner';
+import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBanner';
+import { Button } from '@lovable/components/ui/button';
 import type { AccessEventView } from '../../../lovable-bridge/accessAdapter';
 import { isAccessControlEnabled } from '../../../lovable-bridge/accessAdapter';
 
 interface Props {
   onBack: () => void;
   events?: AccessEventView[];
+  loading?: boolean;
+  loadError?: string | null;
+  onRetry?: () => void;
   onConfigureEvent?: (event: AccessEventView) => void;
   onAssignEvent?: () => void;
 }
 
 const statusStyles: Record<AccessEventView['status'], string> = {
-  activo: 'bg-emerald-100 text-emerald-700',
-  en_ejecucion: 'bg-blue-100 text-blue-700',
+  activo: 'bg-success/10 text-success',
+  en_ejecucion: 'bg-primary/10 text-primary',
   inactivo: 'bg-muted text-muted-foreground',
   finalizado: 'bg-muted text-muted-foreground',
   cancelado: 'bg-destructive/10 text-destructive',
@@ -100,6 +105,9 @@ const EventCard = ({
 const AccessControlListView = ({
   onBack,
   events = [],
+  loading = false,
+  loadError = null,
+  onRetry,
   onConfigureEvent,
   onAssignEvent,
 }: Props) => {
@@ -122,22 +130,39 @@ const AccessControlListView = ({
   return (
     <div className="min-h-screen bg-secondary pb-24">
       <div className="mx-auto max-w-lg">
-        <div className="relative overflow-hidden bg-gradient-to-br from-primary via-primary to-[hsl(var(--primary-deep))] px-5 pt-5 pb-8 rounded-b-3xl">
-          <button onClick={onBack} className="text-primary-foreground/90 mb-3">
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <div className="flex items-baseline gap-1">
-            <span className="text-2xl font-extrabold text-primary-foreground">Do</span>
-            <span className="h-2 w-2 rounded-full bg-primary-foreground/90" />
-            <span className="text-2xl font-extrabold text-primary-foreground">events</span>
-          </div>
-          <p className="mt-1 text-sm text-primary-foreground/85 font-medium">Control y gestión de accesos</p>
-        </div>
+        <ProfileSectionBanner
+          title="Control de accesos"
+          subtitle="Escaneo QR y gestión de puertas"
+          icon={Shield}
+          onBack={onBack}
+        />
 
-        <div className="px-4 -mt-3">
+        <div className="px-4 pt-4">
           <p className="text-xs text-muted-foreground mb-4 px-1">
             Solo eventos activos o en ejecución permiten escaneo y configuración de puertas.
           </p>
+
+          {loading && (
+            <div className="flex flex-col items-center justify-center gap-3 py-16">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="text-sm text-muted-foreground">Cargando eventos…</p>
+            </div>
+          )}
+
+          {!loading && loadError && (
+            <div className="rounded-2xl border border-destructive/30 bg-card p-8 text-center shadow-sm">
+              <AlertCircle className="mx-auto h-8 w-8 text-destructive" />
+              <p className="mt-3 text-sm font-medium text-destructive">{loadError}</p>
+              {onRetry && (
+                <Button type="button" variant="outline" className="mt-4 rounded-full" onClick={onRetry}>
+                  Reintentar
+                </Button>
+              )}
+            </div>
+          )}
+
+          {!loading && !loadError && (
+          <>
 
           <div className="grid grid-cols-2 gap-2 mb-4">
             {(['mios', 'asignados'] as const).map((k) => (
@@ -170,7 +195,7 @@ const AccessControlListView = ({
           {activeItems.length > 0 && (
             <section className="mb-6">
               <div className="mb-3 flex items-center gap-2 px-1">
-                <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700">
+                <span className="rounded-full bg-success/10 px-2.5 py-0.5 text-[11px] font-semibold text-success">
                   Activos / En ejecución
                 </span>
                 <span className="text-xs text-muted-foreground">({activeItems.length})</span>
@@ -225,6 +250,8 @@ const AccessControlListView = ({
             >
               <Plus className="h-4 w-4" /> Asignar evento
             </button>
+          )}
+          </>
           )}
         </div>
       </div>

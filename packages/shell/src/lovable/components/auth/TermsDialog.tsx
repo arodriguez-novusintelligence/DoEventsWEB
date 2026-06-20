@@ -40,6 +40,10 @@ const SECTIONS = [
     title: '6. Propiedad intelectual',
     body: 'El contenido que publiques sigue siendo tuyo, pero nos concedes una licencia limitada para mostrarlo en la plataforma con fines operativos del servicio.',
   },
+  {
+    title: '7. Privacidad',
+    body: 'Consulta nuestra política de privacidad en la app para conocer cómo tratamos tus datos personales, cookies y derechos de acceso, rectificación y supresión.',
+  },
 ];
 
 export const TermsDialog = ({ open, onClose, onAccept }: TermsDialogProps) => (

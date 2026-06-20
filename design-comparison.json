@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-06-20T18:00:00Z",
+  "generatedAt": "2026-06-20T19:30:00Z",
   "lovableSha": "ef7b3dfda21848cb792b708e6a65718f0506dbc5",
   "webBranch": "feature/cicd/dev-automation",
-  "comparisonSource": "gap-empalme batch 3 (27876228669-b3) — discover-joyful-feed no accesible en agente cloud",
-  "overallSimilarityPercent": 79.5,
-  "overallSimilarityPercentBefore": 72.0,
-  "overallSimilarityPercentAfter": 79.5,
+  "comparisonSource": "gap-empalme batch 4 (27876228669-b4) — discover-joyful-feed no accesible en agente cloud",
+  "overallSimilarityPercent": 86.0,
+  "overallSimilarityPercentBefore": 79.5,
+  "overallSimilarityPercentAfter": 86.0,
   "targetSimilarityPercent": 98.0,
-  "alignmentGapPercent": 18.5,
+  "alignmentGapPercent": 12.0,
   "missingInWebCount": 0,
-  "needsAdaptationCount": 60,
-  "lastGapEmpalmeRunId": "gap-empalme-27876228669-b3",
-  "lastAgentRunId": "27876228669-b3",
-  "notes": "Batch 3: 19 gaps DONE frontend + 1 BACKEND_REQUIRED (BankingHub delete); build:devaws OK; re-comparación CI pendiente."
+  "needsAdaptationCount": 40,
+  "lastGapEmpalmeRunId": "gap-empalme-27876228669-b4",
+  "lastAgentRunId": "27876228669-b4",
+  "notes": "Batch 4: 16 gaps DONE frontend + 4 BACKEND_REQUIRED (banking delete, posts search, story viewers, KYC submit); build:devaws OK; re-comparación CI pendiente."
 }

@@ -14,6 +14,7 @@ interface KycContextValue {
   status: KycStatus;
   loading: boolean;
   loadError: boolean;
+  loadErrorMessage: string | null;
   isCertified: boolean;
   statusLabel: string;
   refresh: () => void;
@@ -23,6 +24,7 @@ const KycContext = createContext<KycContextValue>({
   status: 'pending',
   loading: false,
   loadError: false,
+  loadErrorMessage: null,
   isCertified: false,
   statusLabel: KYC_STATUS_LABELS.pending,
   refresh: () => undefined,
@@ -54,6 +56,7 @@ export const KycProvider = ({ userId, children }: KycProviderProps) => {
   const [status, setStatus] = useState<KycStatus>('pending');
   const [loading, setLoading] = useState(false);
   const [loadError, setLoadError] = useState(false);
+  const [loadErrorMessage, setLoadErrorMessage] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const refresh = () => setRefreshKey((k) => k + 1);
@@ -62,21 +65,24 @@ export const KycProvider = ({ userId, children }: KycProviderProps) => {
     if (!userId) {
       setStatus('pending');
       setLoadError(false);
+      setLoadErrorMessage(null);
       return;
     }
     let cancelled = false;
     setLoading(true);
     setLoadError(false);
+    setLoadErrorMessage(null);
     void fetchUserById(userId)
       .then((profile) => {
         if (!cancelled) {
           setStatus(resolveKycStatus(profile as Record<string, unknown> | null));
         }
       })
-      .catch(() => {
+      .catch((err) => {
         if (!cancelled) {
           setStatus('pending');
           setLoadError(true);
+          setLoadErrorMessage(err instanceof Error ? err.message : 'No se pudo cargar el estado KYC');
         }
       })
       .finally(() => {
@@ -90,11 +96,12 @@ export const KycProvider = ({ userId, children }: KycProviderProps) => {
       status,
       loading,
       loadError,
+      loadErrorMessage,
       isCertified: status === 'verified',
       statusLabel: KYC_STATUS_LABELS[status],
       refresh,
     }),
-    [status, loading, loadError],
+    [status, loading, loadError, loadErrorMessage],
   );
 
   return (
