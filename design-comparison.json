@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-06-20T20:45:00Z",
-  "lovableSha": "ef7b3dfda21848cb792b708e6a65718f0506dbc5",
+  "generatedAt": "2026-06-20T21:30:00Z",
+  "lovableSha": "a8b70853c97beb18e5ff9593655856fd7c7ad303",
   "webBranch": "feature/cicd/dev-automation",
-  "comparisonSource": "gap-empalme batch 5 (27876228669-b5) — discover-joyful-feed no accesible en agente cloud",
-  "overallSimilarityPercent": 91.0,
-  "overallSimilarityPercentBefore": 86.0,
-  "overallSimilarityPercentAfter": 91.0,
+  "comparisonSource": "agent-27876831237 prepare-a8b70853 — discover-joyful-feed no accesible en agente cloud",
+  "overallSimilarityPercent": 93.5,
+  "overallSimilarityPercentBefore": 91.0,
+  "overallSimilarityPercentAfter": 93.5,
   "targetSimilarityPercent": 98.0,
-  "alignmentGapPercent": 7.0,
+  "alignmentGapPercent": 4.5,
   "missingInWebCount": 0,
-  "needsAdaptationCount": 20,
-  "lastGapEmpalmeRunId": "gap-empalme-27876228669-b5",
-  "lastAgentRunId": "27876228669-b5",
-  "notes": "Batch 5: 19 gaps DONE frontend + 1 BACKEND_REQUIRED (KYC submit); build:devaws OK; batch 6 pendiente (~20 gaps)."
+  "needsAdaptationCount": 12,
+  "lastGapEmpalmeRunId": "agent-27876831237-a8b70853",
+  "lastAgentRunId": "27876831237",
+  "notes": "Prepare a8b70853: StepEventSummary PULEP + categorías boletas; TicketDetailView header/status/countdown; ticketsData tipos-only sin mocks. build:devaws OK."
 }

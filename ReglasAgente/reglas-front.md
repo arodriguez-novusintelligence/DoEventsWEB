@@ -97,6 +97,17 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-20 prepare-a8b70853 (run 27876831237)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| StepEventSummary PULEP | VISUAL | Sí | `events/StepEventSummary.tsx` | Card resumen Ley 1493 |
+| StepEventSummary categorías | VISUAL | Sí | `events/StepEventSummary.tsx` | Precios desde seatingMap |
+| TicketDetailView header | VISUAL | Sí | `tickets/TicketDetailView.tsx` | Título + chip status + fecha compra |
+| TicketDetailView countdown | FRONTEND_LOGIC | Sí | `tickets/TicketDetailView.tsx` | `useReservationTimer` API real |
+| ticketsData anti-mock | Bloqueo | Sí | `data/ticketsData.ts` | Solo tipos; sin store mock |
+| TicketDetailPage wiring | Integración | Sí | `pages/TicketDetailPage.tsx` | `resolveOrderExpiresAtTs` + precio |
+
 ## Ejecución 2026-06-20 gap-empalme batch 5 (run 27876228669-b5)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

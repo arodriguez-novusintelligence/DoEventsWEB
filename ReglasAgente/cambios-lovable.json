@@ -8,6 +8,52 @@
   },
   "runs": [
     {
+      "id": "agent-27876831237-a8b70853",
+      "lovableSha": "a8b70853c97beb18e5ff9593655856fd7c7ad303",
+      "timestamp": "2026-06-20 21:30 UTC",
+      "workflowRunId": "27876831237",
+      "changeTypes": [
+        "VISUAL",
+        "FRONTEND_LOGIC"
+      ],
+      "designSimilarityPercentBefore": 91.0,
+      "designSimilarityPercentAfter": 93.5,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 4.5,
+      "requiresDesignAlignment": true,
+      "summary": "Prepare a8b70853: StepEventSummary PULEP + categorías boletas; TicketDetailView header/status/countdown; ticketsData tipos-only",
+      "changedFilesLovable": [
+        "src/components/events/StepEventSummary.tsx",
+        "src/components/tickets/TicketDetailView.tsx",
+        "src/data/ticketsData.ts"
+      ],
+      "webFilesModified": [
+        "packages/shell/src/lovable/data/ticketsData.ts",
+        "packages/shell/src/lovable/components/tickets/TicketDetailView.tsx",
+        "packages/shell/src/lovable/components/events/StepEventSummary.tsx",
+        "packages/shell/src/pages/TicketDetailPage.tsx",
+        "ReglasAgente/decision-log.md",
+        "ReglasAgente/cambios-lovable.json",
+        "ReglasAgente/impacto-backend.md",
+        "ReglasAgente/reglas-front.md",
+        "design-comparison.json",
+        "docs/changes/gap-empalme-latest.md",
+        "Reports/2026-06-20-agent-execution-a8b70853-27876831237.md",
+        "Reports/2026-06-20-design-comparison-a8b70853-27876831237.md"
+      ],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "testStatus": "SKIPPED",
+      "pendingRisks": [
+        "Similitud 93.5% vs objetivo 98% — re-comparación CI pendiente",
+        "discover-joyful-feed privado en agente cloud",
+        "BACKEND_REQUIRED acumulado (KYC, banking, PULEP persistencia)"
+      ],
+      "decision": "APPLIED",
+      "agentStatus": "finished"
+    },
+    {
       "id": "gap-empalme-27876228669-b5",
       "timestamp": "2026-06-20 20:45 UTC",
       "workflowRunId": "27876228669-b5",
@@ -2216,14 +2262,17 @@
         "src/components/tickets/TicketDetailView.tsx",
         "src/data/ticketsData.ts"
       ],
-      "webFilesModified": [],
+      "webFilesModified": [
+        "packages/shell/src/lovable/data/ticketsData.ts",
+        "packages/shell/src/lovable/components/tickets/TicketDetailView.tsx",
+        "packages/shell/src/lovable/components/events/StepEventSummary.tsx",
+        "packages/shell/src/pages/TicketDetailPage.tsx"
+      ],
       "backFilesModified": [],
       "mocksUsed": false,
-      "buildResult": "pending",
-      "pendingRisks": [
-        "Adaptacion pendiente por agente Cursor"
-      ],
-      "agentStatus": "pending"
+      "buildResult": "SUCCESS",
+      "pendingRisks": [],
+      "agentStatus": "finished"
     }
   ]
 }

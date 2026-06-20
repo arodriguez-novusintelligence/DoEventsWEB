@@ -1,38 +1,33 @@
-# Gap empalme — resumen ejecutivo (batch 5)
+# Gap empalme — resumen ejecutivo (prepare-a8b70853)
 
-**Run:** `gap-empalme-27876228669-b5`  
+**Run:** `agent-27876831237-a8b70853`  
 **Fecha:** 2026-06-20  
 **Rama:** `feature/cicd/dev-automation`
 
 ## Resultado
 
-Se cerraron **19 de 20 gaps** del batch 5 en frontend mediante empalme (sin copy-paste literal ni mocks). Similitud estimada **86.0% → 91.0%** (objetivo 98%; re-comparación CI pendiente).
+Empalme de **3 archivos Lovable** del prepare `a8b70853` (sin copy-paste literal ni mocks en runtime). Similitud estimada **91.0% → 93.5%** (objetivo 98%; re-comparación CI pendiente).
 
 ## Empalme realizado
 
 | Área | Cambios principales |
 |------|---------------------|
-| **Contextos** | `StoriesContext` expone `loadErrorMessage`, `isEmpty`, `authorCount` |
-| **Auth** | `ResetPasswordView` shell Lovable con `resetPasswordWithToken`; `SignUpView` título + card |
-| **Compras** | `VenueReservationDetail` / `ServiceReservationDetail` chip status en header |
-| **Feed** | `MyPostsView` loading/error/retry; `StoryViewer` empty Sparkles + barras progreso |
-| **Invitaciones** | `TicketPurchaseFlow` loading «Redirigiendo…» antes de checkout real |
-| **Invitados** | `AddGuestModal` tabs rounded; `useGuests` documentado |
-| **Admin** | `AdminPanelView` wrapper; panels con badges en `AdminPanelSection` |
-| **Páginas** | `NotFound` MapPinOff; `ProfilePublicationsPage` error API |
+| **StepEventSummary** | Sección PULEP en resumen principal; categorías de boletas con precio en ubicación |
+| **TicketDetailView** | Header evento, chip status, fecha compra, countdown pendiente, precio, badge boleta N de M |
+| **ticketsData** | Solo tipos TypeScript — eliminado store mock (`useTickets`/`getTickets`) |
+| **TicketDetailPage** | `paymentExpiresAtTs` vía API/reserva; precio y fecha compra reales |
 
-## Backend pendiente
+## Backend pendiente (acumulado)
 
-| Gap | Motivo | Acción |
-|-----|--------|--------|
-| `KycCertificationView` submit | Sin `POST /users/{id}/kyc` | Botón deshabilitado; estado real vía perfil |
-| `BankingHub` / `PaymentMethodsDashboard` delete | Sin `DELETE /bank-accounts/{id}` | UI documenta bloqueo (batch 4) |
-| `GlobalSearchView` posts | Sin búsqueda full-text | Filtro feed reciente (batch 4) |
-| `StoryViewersSheet` | Sin `GET /stories/{id}/viewers` | Placeholder (batch 4) |
+| Gap | Motivo |
+|-----|--------|
+| `KycCertificationView` submit | Sin `POST /users/{id}/kyc` |
+| `BankingHub` delete | Sin `DELETE /bank-accounts/{id}` |
+| PULEP persistencia | Campos no en `POST/PATCH` evento |
 
 ## Gaps restantes
 
-- **20 gaps** pendientes en batch 6 del manifiesto global.
+- ~12 componentes `needs_adaptation` para alcanzar 98%.
 - Re-comparación con `compare-design-similarity.py` requiere checkout `discover-joyful-feed` (repo privado).
 
 ## Validación

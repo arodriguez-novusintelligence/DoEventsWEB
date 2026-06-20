@@ -13,6 +13,43 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-20 21:30 UTC] agent-27876831237-a8b70853
+
+### 1. Resumen del empalme
+Prepare `a8b70853` (3 archivos Lovable): empalme en `StepEventSummary` (sección PULEP + categorías boletas con precio), `TicketDetailView` (header evento, chip status, fecha compra, countdown pendiente, precio, badge boleta N/M) y `ticketsData` (solo tipos — eliminado store mock). `TicketDetailPage` cablea `paymentExpiresAtTs` y precio desde API/reserva real.
+
+### 2. Tabla gaps prepare-a8b70853
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Step event summary PULEP | `packages/shell/src/lovable/components/events/StepEventSummary.tsx` | DONE |
+| Step event summary tickets | `packages/shell/src/lovable/components/events/StepEventSummary.tsx` | DONE |
+| Ticket detail header/status | `packages/shell/src/lovable/components/tickets/TicketDetailView.tsx` | DONE |
+| Ticket types (no mocks) | `packages/shell/src/lovable/data/ticketsData.ts` | DONE |
+| Ticket detail page wiring | `packages/shell/src/pages/TicketDetailPage.tsx` | DONE |
+
+### 3. Similitud antes/después
+- **Antes:** 91.0% (post batch 5)
+- **Después:** ~93.5% (estimado; re-comparación CI pendiente)
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- `ticketsData.ts` sin arrays hardcodeados ni hooks mock
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias
+
+### 6. Riesgos pendientes
+- ~12 gaps restantes para 98% similitud
+- `discover-joyful-feed` privado en agente cloud
+- BACKEND_REQUIRED acumulado (KYC, banking, PULEP persistencia)
+
+### Decisión
+**APPLIED**
+
+---
+
 ## [2026-06-20 16:29 UTC] prepare-a8b70853
 
 ### 1. Resumen del cambio detectado

@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `agent-27876831237-a8b70853`: prepare StepEventSummary + TicketDetailView — 5 gaps DONE frontend; sin cambios backend. `ticketsData` Lovable ignorado en runtime (tipos only).
+
 Run `gap-empalme-27876228669-b5`: batch 5 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`KycCertificationView` submit).
 
 Run `gap-empalme-27876228669-b4`: batch 4 (20 gaps) — 16 DONE frontend; 4 BACKEND_REQUIRED (`PaymentMethodsDashboard`/`BankingHub` delete, `GlobalSearchView` posts, `StoryViewersSheet`, `KycCertificationView` submit).
