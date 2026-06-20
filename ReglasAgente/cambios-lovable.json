@@ -2196,6 +2196,34 @@
       "buildResult": "SUCCESS",
       "pendingRisks": [],
       "agentStatus": "finished"
+    },
+    {
+      "id": "prepare-a8b70853",
+      "lovableSha": "a8b70853c97beb18e5ff9593655856fd7c7ad303",
+      "before": "HEAD~1",
+      "timestamp": "2026-06-20 16:29 UTC",
+      "workflowRunId": "27876831237",
+      "changeTypes": [
+        "VISUAL"
+      ],
+      "designSimilarityPercent": 57.17,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 40.83,
+      "requiresDesignAlignment": true,
+      "summary": "Manifiesto: UI=True, reglas=False, 3 archivo(s); similitud diseño=57.17%",
+      "changedFilesLovable": [
+        "src/components/events/StepEventSummary.tsx",
+        "src/components/tickets/TicketDetailView.tsx",
+        "src/data/ticketsData.ts"
+      ],
+      "webFilesModified": [],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "pending",
+      "pendingRisks": [
+        "Adaptacion pendiente por agente Cursor"
+      ],
+      "agentStatus": "pending"
     }
   ]
 }
