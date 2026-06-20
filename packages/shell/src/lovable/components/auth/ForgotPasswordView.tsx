@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Mail, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Loader2, Mail } from 'lucide-react';
 import {
   getUserByEmail,
   sendPasswordResetLink,
@@ -95,7 +95,14 @@ export const ForgotPasswordView = () => {
               disabled={loading || !email.trim()}
               onClick={() => void handleSubmit()}
             >
-              {loading ? 'Enviando…' : 'Enviar enlace'}
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Enviando…
+                </>
+              ) : (
+                'Enviar enlace'
+              )}
             </Button>
           </div>
         )}

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { Lock, Mail } from 'lucide-react';
+import { Loader2, Lock, Mail } from 'lucide-react';
 import {
   generateOtp,
   initApiClient,
@@ -192,7 +192,14 @@ export const LoginView = () => {
             disabled={!isValid || busy}
             onClick={() => void handleLogin()}
           >
-            {loading ? 'Iniciando sesión…' : 'Iniciar sesión'}
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Iniciando sesión…
+              </>
+            ) : (
+              'Iniciar sesión'
+            )}
           </Button>
 
           <div className="text-center">

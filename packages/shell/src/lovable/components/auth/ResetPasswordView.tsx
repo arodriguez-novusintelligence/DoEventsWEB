@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, Lock, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Loader2, Lock, ShieldAlert } from 'lucide-react';
 import { resetPasswordWithToken, useToast } from '@doevents/shared';
 import AuthLogo from '@lovable/components/auth/AuthLogo';
 import { Button } from '@lovable/components/ui/button';
@@ -133,7 +133,14 @@ export const ResetPasswordView = () => {
                 disabled={!isValid || loading}
                 onClick={() => void handleSubmit()}
               >
-                {loading ? 'Guardando…' : 'Actualizar contraseña'}
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Guardando…
+                  </>
+                ) : (
+                  'Actualizar contraseña'
+                )}
               </Button>
             </div>
           </>
