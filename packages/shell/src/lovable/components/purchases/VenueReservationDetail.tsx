@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Building2, Calendar, CreditCard, Hash } from 'lucide-react';
+import { AlertCircle, Building2, Calendar, CreditCard, Hash } from 'lucide-react';
 import {
   fetchUserVenueBookings,
   Loader,
@@ -70,7 +70,7 @@ export const VenueReservationDetail = () => {
   if (loadError) {
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
-        <Building2 className="mx-auto h-10 w-10 text-destructive/50" />
+        <AlertCircle className="mx-auto h-10 w-10 text-destructive" />
         <p className="mt-3 text-sm font-medium text-foreground">Error al cargar</p>
         <p className="mt-1 text-xs text-muted-foreground">{loadError}</p>
         <Button
@@ -88,7 +88,9 @@ export const VenueReservationDetail = () => {
   if (!booking) {
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
-        <Building2 className="mx-auto h-10 w-10 text-muted-foreground/40" />
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+          <Building2 className="h-7 w-7 text-primary" />
+        </div>
         <p className="mt-3 text-sm font-medium text-foreground">Reserva no encontrada</p>
         <p className="mt-1 text-xs text-muted-foreground">Verifica el enlace o consulta tus reservas activas.</p>
         <Button type="button" variant="outline" className="mt-4 rounded-full" onClick={() => navigate('/purchases/venues')}>

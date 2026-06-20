@@ -4,7 +4,7 @@ import { Button } from '@lovable/components/ui/button';
 
 export const NotFound = () => (
   <div className="mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center bg-secondary px-6 text-center pb-24">
-    <div className="rounded-full bg-primary/10 p-6 ring-4 ring-primary/10">
+    <div className="rounded-full bg-primary/10 p-6 ring-4 ring-primary/20">
       <MapPinOff className="mx-auto h-10 w-10 text-primary" />
       <p className="mt-3 text-3xl font-extrabold text-primary">404</p>
     </div>

@@ -67,7 +67,9 @@ const MyPostsView = ({
           </div>
         ) : posts.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-2xl bg-card py-16 text-center shadow-sm">
-            <FileText className="h-10 w-10 text-muted-foreground/50" />
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+              <FileText className="h-7 w-7 text-primary" />
+            </div>
             <p className="text-sm font-medium text-foreground">Sin publicaciones</p>
             <p className="text-xs text-muted-foreground">Aún no has publicado en el muro</p>
           </div>

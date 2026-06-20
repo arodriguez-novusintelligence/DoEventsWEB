@@ -40,8 +40,8 @@ const TicketPurchaseFlow = ({ event, onBack }: Props) => {
           </button>
         </div>
         <div className="flex flex-1 flex-col items-center justify-center px-6 pb-16 text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-            <CreditCard className="h-8 w-8 text-muted-foreground" />
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+            <CreditCard className="h-8 w-8 text-primary" />
           </div>
           <h2 className="text-lg font-bold text-foreground">Compra no disponible</h2>
           <p className="mt-2 max-w-sm text-sm text-muted-foreground">

@@ -1,5 +1,5 @@
-import { ChevronLeft, MessageSquare, Star } from 'lucide-react';
-import { Loader } from '@doevents/shared';
+import { AlertCircle, Loader2, MessageSquare, Star } from 'lucide-react';
+import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBanner';
 import { Button } from '@lovable/components/ui/button';
 
 export type ProfileCommentItem = {
@@ -26,35 +26,35 @@ const ProfileCommentsView = ({
   error = null,
   onRetry,
 }: ProfileCommentsViewProps) => (
-  <div className="mx-auto max-w-lg min-h-screen bg-background pb-24">
-    <div className="px-4 pt-4">
-      <button onClick={onBack} className="flex items-center gap-1 text-foreground font-medium">
-        <ChevronLeft className="h-5 w-5 text-primary" />
-        Atrás
-      </button>
-      <h1 className="mt-2 text-2xl font-extrabold text-primary">Comentarios</h1>
-      <p className="mt-1 text-xs text-muted-foreground">
-        Opiniones de clientes sobre tus servicios
-      </p>
+  <div className="mx-auto max-w-lg min-h-screen bg-secondary pb-24">
+    <ProfileSectionBanner
+      title="Comentarios"
+      subtitle={`${comments.length} opinión${comments.length === 1 ? '' : 'es'} de clientes`}
+      icon={MessageSquare}
+      onBack={onBack}
+    />
 
-      <div className="mt-6 space-y-4">
+    <div className="px-4 pt-4 space-y-4">
         {loading ? (
-          <div className="py-16 flex flex-col items-center gap-3">
-            <Loader />
+          <div className="flex flex-col items-center gap-3 rounded-2xl bg-card py-16 text-center shadow-sm">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
             <p className="text-sm text-muted-foreground">Cargando comentarios…</p>
           </div>
         ) : error ? (
-          <div className="rounded-2xl border border-destructive/30 bg-card p-6 text-center shadow-sm">
-            <p className="text-sm text-destructive">{error}</p>
+          <div className="flex flex-col items-center gap-3 rounded-2xl border border-destructive/30 bg-card py-12 text-center shadow-sm">
+            <AlertCircle className="h-8 w-8 text-destructive" />
+            <p className="text-sm font-medium text-destructive">{error}</p>
             {onRetry && (
-              <Button type="button" variant="outline" className="mt-4 rounded-full" onClick={onRetry}>
+              <Button type="button" variant="outline" className="rounded-full" onClick={onRetry}>
                 Reintentar
               </Button>
             )}
           </div>
         ) : comments.length === 0 ? (
-          <div className="flex flex-col items-center gap-3 py-16 text-center rounded-2xl bg-card shadow-sm">
-            <MessageSquare className="h-10 w-10 text-muted-foreground/50" />
+          <div className="flex flex-col items-center gap-3 rounded-2xl bg-card py-16 text-center shadow-sm">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+              <MessageSquare className="h-7 w-7 text-primary" />
+            </div>
             <p className="text-sm font-medium text-foreground">Sin comentarios aún</p>
             <p className="text-xs text-muted-foreground max-w-xs">
               Cuando los clientes califiquen tus servicios, sus opiniones aparecerán aquí.
@@ -84,7 +84,6 @@ const ProfileCommentsView = ({
             </div>
           ))
         )}
-      </div>
     </div>
   </div>
 );

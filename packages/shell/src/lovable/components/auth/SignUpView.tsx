@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { CreateAccountPage } from 'mfeAuth/pages/CreateAccountPage';
 import AuthLogo from '@lovable/components/auth/AuthLogo';
 
@@ -15,6 +16,12 @@ export const SignUpView = () => (
       <div className="mt-4 rounded-xl border border-border/40 bg-secondary/50 p-1">
         <CreateAccountPage />
       </div>
+      <p className="mt-4 text-center text-xs text-muted-foreground">
+        ¿Ya tienes cuenta?{' '}
+        <Link to="/auth/login" className="font-semibold text-primary">
+          Iniciar sesión
+        </Link>
+      </p>
     </div>
   </div>
 );
