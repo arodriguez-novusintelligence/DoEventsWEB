@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27876228669-b3`: batch 3 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete).
+
 Run `gap-empalme-27876228669-b2`: batch 2 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`EditProfileView`, `PublishFlowModal`, `BookingSheet`).
 
 Run `gap-empalme-27876228669-b1`: batch 1 (20 gaps) — 18 DONE frontend; 2 BACKEND_REQUIRED (`EditProfileView`, `BankingForm`).
@@ -46,7 +48,30 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27876228669-b2)
+## Empalme realizado (última ejecución — gap-empalme-27876228669-b3)
+
+- **MyTicketsView / TicketsPage:** `loadError` + reintento inline; countdown tokens amber/destructive; sin loader full-page.
+- **MyInvitationsView / MyInvitationsPage:** error/retry cableado; badges status primary/amber/destructive.
+- **TicketDetailView / SeatLocationModal:** overlay reembolso `destructive`; badge entrada con tokens secondary/primary.
+- **FavoritesView:** `ProfileSectionBanner`; error/retry props; chips status con tokens diseño.
+- **CommentsSheet:** error con icono `AlertCircle` + botón Reintentar.
+- **EventsView / EventsPage:** «Ver más» en lugares (`/places`) y proveedores (`/services`).
+- **FeedServicesCarousel:** empty state con icono en círculo primary.
+- **NotificationsSheet:** iconMap con tokens primary/amber en lugar de green/emerald hardcoded.
+- **BankingHub:** header Wallet + error con icono; delete deshabilitado (BACKEND_REQUIRED).
+- **LocationSection:** empty map con icono en círculo primary.
+
+## Backend pendiente para 100%
+
+| Gap / Feature | lovablePath | webPath | Motivo | Endpoint / Lambda | Tabla DynamoDB | Acción | Prioridad |
+|---------------|-------------|---------|--------|-------------------|----------------|--------|-----------|
+| Banking delete | `src/components/banking/BankingHub.tsx` | `packages/shell/src/lovable/components/banking/BankingHub.tsx` | Sin endpoint eliminar cuenta | `DELETE /bank-accounts/{id}` (propuesto) | `BankAccounts` | Implementar en DoEventsBack; UI ya documenta bloqueo | Alta |
+| PaymentMethods delete | `src/components/banking/PaymentMethodsDashboard.tsx` | `packages/shell/src/lovable/components/banking/PaymentMethodsDashboard.tsx` | Mismo contrato delete | `DELETE /bank-accounts/{id}` | `BankAccounts` | Reutilizar endpoint delete | Alta |
+| EditProfile password | `src/components/feed/EditProfileView.tsx` | `packages/shell/src/lovable/components/feed/EditProfileView.tsx` | Cambio contraseña Cognito | Cognito `ChangePassword` | — | Batch previo | Media |
+| PublishFlow banking | `src/components/events/PublishFlowModal.tsx` | `packages/shell/src/lovable/components/events/PublishFlowModal.tsx` | Persistencia banco post-publicación | `POST /events/{id}/bank-link` | `Events` | Batch previo | Media |
+| Booking add-ons | `src/components/services/BookingSheet.tsx` | `packages/shell/src/lovable/components/services/BookingSheet.tsx` | Catálogo add-ons | `GET /services/{id}/addons` | `Services` | Batch previo | Media |
+
+## Empalme realizado (ejecución anterior — gap-empalme-27876228669-b2)
 
 - **ProfileGallery / PostCard / TopHeader:** reintento carga galería; badge primary en posts; botón búsqueda card.
 - **ServiceDetailView / BookingSheet:** empty Briefcase; header CalendarDays; Loader2 disponibilidad; empty add-ons sin mock (catálogo BACKEND_REQUIRED).

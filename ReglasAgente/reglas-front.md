@@ -93,6 +93,25 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+---
+
+## Ejecución 2026-06-20 gap-empalme batch 3 (run 27876228669-b3)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| MyTickets error/retry | Integración | Sí | `tickets/MyTicketsView.tsx`, `TicketsPage.tsx` | loadError inline + Reintentar |
+| MyInvitations wire | Integración | Sí | `MyInvitationsPage.tsx` | loadError/onRetry sin loader full-page |
+| TicketDetail tokens | VISUAL | Sí | `tickets/TicketDetailView.tsx` | Overlay reembolso destructive |
+| LocationSection empty | VISUAL | Sí | `venues/sections/LocationSection.tsx` | Icono primary en círculo |
+| EventsView Ver más | Navegación | Sí | `feed/EventsView.tsx`, `EventsPage.tsx` | Lugares y proveedores |
+| FavoritesView banner | VISUAL | Sí | `feed/FavoritesView.tsx` | ProfileSectionBanner + error/retry |
+| CommentsSheet error | VISUAL | Sí | `feed/CommentsSheet.tsx` | AlertCircle + Button |
+| NotificationsSheet tokens | VISUAL | Sí | `feed/NotificationsSheet.tsx` | Sin green/emerald hardcoded |
+| FeedServicesCarousel empty | VISUAL | Sí | `feed/FeedServicesCarousel.tsx` | Icono Briefcase en círculo |
+| BankingHub header | VISUAL | Parcial | `banking/BankingHub.tsx` | BACKEND_REQUIRED delete |
+| SeatLocationModal badges | VISUAL | Sí | `tickets/SeatLocationModal.tsx` | Tokens primary/secondary |
+| Batch 3 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-20 gap-empalme batch 2 (run 27876228669-b2)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

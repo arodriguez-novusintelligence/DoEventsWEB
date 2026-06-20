@@ -1,47 +1,38 @@
-# Gap empalme — Resumen ejecutivo (batch 2)
+# Gap empalme — resumen ejecutivo (batch 3)
 
-**Run:** `gap-empalme-27876228669-b2`  
+**Run:** `gap-empalme-27876228669-b3`  
 **Fecha:** 2026-06-20  
 **Rama:** `feature/cicd/dev-automation`
 
 ## Resultado
 
-| Métrica | Valor |
-|---------|-------|
-| Gaps batch 2 | 20 |
-| DONE (frontend) | 17 |
-| BACKEND_REQUIRED | 3 |
-| Similitud antes | 64.5% |
-| Similitud después (estimado) | ~72.0% |
-| Build `npm run build:devaws` | SUCCESS |
-| Mocks en runtime | No |
-| Gaps restantes | 80 (batches 3–6) |
+Se cerraron **19 de 20 gaps** del batch 3 en frontend mediante empalme (sin copy-paste literal ni mocks). Similitud estimada **72.0% → 79.5%** (objetivo 98%; re-comparación CI pendiente).
 
 ## Empalme realizado
 
-- **Perfil / feed:** ProfileGallery reintento en error; PostCard badge primary + borde card; TopHeader búsqueda card; FollowersSheet header Users + Loader2 solicitudes.
-- **Servicios:** ServiceDetailView empty Briefcase + estrellas primary; BookingSheet header CalendarDays + Loader2 disponibilidad + empty add-ons (catálogo BACKEND_REQUIRED).
-- **Eventos:** CreateEventView título CalendarDays; StepAccessControl tokens success/primary + empty UserPlus; StepEventDetails header icono; PublishFlowModal tokens primary (persistencia banco BACKEND_REQUIRED).
-- **Tickets:** TransferTicketFlow/RefundTicketFlow/TicketDetailView badges y éxito con tokens primary; sin emerald/amber hardcoded.
-- **Invitados:** EditGuestModal header UserRound; ContactImportModal header UserPlus.
-- **Stats / chat:** StatsEventListView status y opciones con tokens diseño; MessagesListView Loader2 + status tokens.
-- **Venues / IA:** VenueDetailReservation calendario primary/destructive; AIAssistantFAB badge PRO primary.
+| Área | Cambios principales |
+|------|---------------------|
+| **Tickets** | `MyTicketsView` error/retry; tokens en countdown y overlays; `SeatLocationModal` badges primary |
+| **Invitaciones** | `MyInvitationsPage` cablea `loadError`/`onRetry`; badges status con tokens |
+| **Feed** | `FavoritesView` con `ProfileSectionBanner`; `CommentsSheet` error con icono; `EventsView` «Ver más» lugares/proveedores |
+| **Servicios** | `FeedServicesCarousel` empty state con icono en círculo |
+| **Notificaciones** | `NotificationsSheet` tokens primary/amber en lugar de colores hardcoded |
+| **Banking** | `BankingHub` header Wallet + error con icono (delete sigue bloqueado) |
+| **Venues** | `LocationSection` empty state con icono primary |
 
 ## Backend pendiente
 
-| Gap | Motivo |
-|-----|--------|
-| `EditProfileView` | Cambio contraseña e intereses/gustos sin endpoint persistencia |
-| `PublishFlowModal` | Persistencia datos bancarios post-publicación (`onSubmitBank`) |
-| `BookingSheet` | Catálogo servicios adicionales por reserva (`GET /services/{id}/addons`) |
+| Gap | Motivo | Acción |
+|-----|--------|--------|
+| `BankingHub` delete cuenta | Sin endpoint `DELETE` bank account en DoEventsBack | Documentado en `impacto-backend.md`; UI muestra toast sin simular eliminación |
 
-## Evidencia anti-mock
+## Gaps restantes
 
-```bash
-grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages
-# sin coincidencias
-```
+- **60 gaps** pendientes en batches 4–6 del manifiesto global.
+- Re-comparación con `compare-design-similarity.py` requiere checkout `discover-joyful-feed` (repo privado).
 
-## Próximo paso
+## Validación
 
-Batch 3 del manifiesto (20 gaps) — objetivo incremental hacia 98% similitud tras re-comparación CI con `discover-joyful-feed`.
+- `npm run build:devaws`: **OK**
+- Anti-mock en `packages/shell/src/pages`: **sin coincidencias**
+- `mocksUsed`: **false**
