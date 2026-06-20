@@ -1765,6 +1765,36 @@
         "LoginView RISKY — revisión humana recomendada"
       ],
       "agentStatus": "finished"
+    },
+    {
+      "id": "prepare-ef7b3dfd",
+      "lovableSha": "ef7b3dfda21848cb792b708e6a65718f0506dbc5",
+      "before": "HEAD~1",
+      "timestamp": "2026-06-20 15:55 UTC",
+      "workflowRunId": "27876228669",
+      "changeTypes": [
+        "VISUAL",
+        "FRONT_LOGIC"
+      ],
+      "designSimilarityPercent": 57.71,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 40.29,
+      "requiresDesignAlignment": true,
+      "summary": "Manifiesto: UI=True, reglas=True, 4 archivo(s); similitud diseño=57.71%",
+      "changedFilesLovable": [
+        "reglasActuacion/eventos/pulep-colombia.yml",
+        "src/components/events/CreateEventView.tsx",
+        "src/components/events/StepEventDetails.tsx",
+        "src/data/eventFormData.ts"
+      ],
+      "webFilesModified": [],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "pending",
+      "pendingRisks": [
+        "Adaptacion pendiente por agente Cursor"
+      ],
+      "agentStatus": "pending"
     }
   ]
 }
