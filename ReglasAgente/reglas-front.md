@@ -97,6 +97,31 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+---
+
+## Ejecución 2026-06-20 gap-empalme batch 4 (run 27876831237-b4)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| PaymentMethodsDashboard cards | VISUAL | Parcial | `banking/PaymentMethodsDashboard.tsx` | BACKEND_REQUIRED delete; empty primary circle |
+| BookingReviewSheet términos | VISUAL | Sí | `services/BookingReviewSheet.tsx` | ShieldCheck card secondary |
+| FAQSection / MediaUpload | VISUAL | Sí | `venues/sections/*`, `MediaUpload.tsx` | shadow-sm cards |
+| ScanQR feedback | Integración | Sí | `access/ScanQRSheet.tsx` | Tokens primary/destructive + Reintentar |
+| BankingHub banner | VISUAL | Parcial | `banking/BankingHub.tsx` | BACKEND_REQUIRED delete; conteo métodos |
+| ReportPostDialog destructive | VISUAL | Sí | `feed/ReportPostDialog.tsx` | Shield descripción + variant destructive |
+| KycContext isEmpty | Integración | Sí | `contexts/KycContext.tsx` | Flag derivado expuesto |
+| FeedHero stories | VISUAL | Sí | `feed/FeedHero.tsx` | Primary pulse + Ver todas historias |
+| GlobalSearch empty/error | VISUAL | Parcial | `feed/GlobalSearchView.tsx` | BACKEND_REQUIRED tab posts |
+| MyReserved* / MyPurchases | Integración | Sí | `purchases/*View.tsx` | Empty círculo primary + AlertCircle retry |
+| TermsDialog privacidad | VISUAL | Sí | `auth/TermsDialog.tsx` | CheckCircle2 CTA |
+| ChangeLocation Navigation2 | VISUAL | Sí | `feed/ChangeLocationSheet.tsx` | Icono Localízame |
+| StoryViewersSheet skeleton | Bloqueo | Parcial | `feed/StoryViewersSheet.tsx` | BACKEND_REQUIRED viewers API |
+| VenueDetail shell | Navegación | Sí | `pages/VenueDetail.tsx` | pb-24 Lovable intacto |
+| CompanyContext isEmpty | Integración | Sí | `contexts/CompanyContext.tsx` | hasCompany + isEmpty |
+| ServiceReservationDetail error | VISUAL | Sí | `purchases/ServiceReservationDetail.tsx` | AlertCircle + empty primary |
+| AccessControlListView empty | VISUAL | Sí | `access/AccessControlListView.tsx` | Shield círculo primary |
+| Batch 4 gaps (20) | Empalme | Sí | ver `decision-log.md` | 16 DONE + 4 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-20 gap-empalme batch 3 (run 27876831237-b3)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

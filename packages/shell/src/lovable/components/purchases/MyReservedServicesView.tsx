@@ -97,8 +97,10 @@ export const MyReservedServicesView = ({ onBack }: MyReservedServicesViewProps) 
           </div>
         ) : bookings.length === 0 ? (
           <div className="rounded-2xl bg-card p-10 text-center shadow-sm">
-            <Briefcase className="mx-auto h-10 w-10 text-muted-foreground/40" />
-            <p className="mt-3 text-sm font-medium text-foreground">Sin reservas de servicios</p>
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+              <Briefcase className="h-7 w-7 text-primary" />
+            </div>
+            <p className="mt-3 text-sm font-semibold text-foreground">Sin reservas de servicios</p>
             <p className="mt-1 text-xs text-muted-foreground">Tus reservas aparecerán aquí cuando contrates un servicio</p>
           </div>
         ) : (

@@ -49,7 +49,7 @@ const FAQSection = () => {
       ) : (
         <div className="space-y-4 mt-4">
           {form.faqs.map((faq, index) => (
-            <div key={faq.id} className="p-4 rounded-xl border border-border bg-secondary/20">
+            <div key={faq.id} className="p-4 rounded-xl border border-border bg-secondary/20 shadow-sm">
               <div className="flex items-start gap-3">
                 <div className="flex-1 space-y-3">
                   <div>

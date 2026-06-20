@@ -115,11 +115,13 @@ export default function PaymentMethodsDashboard({
           )}
 
           {/* Methods List */}
-          <div className="rounded-2xl border border-border bg-card divide-y divide-border overflow-hidden">
+          <div className="rounded-2xl border border-border bg-card divide-y divide-border overflow-hidden shadow-sm">
             {methods.length === 0 && (
               <div className="py-12 text-center px-4">
-                <Wallet className="mx-auto h-10 w-10 text-muted-foreground/40" />
-                <p className="mt-3 text-sm font-medium text-foreground">Sin métodos de cobro</p>
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                  <Wallet className="h-7 w-7 text-primary" />
+                </div>
+                <p className="mt-3 text-sm font-semibold text-foreground">Sin métodos de cobro</p>
                 <p className="mt-1 text-xs text-muted-foreground max-w-sm mx-auto">
                   Agrega una cuenta en Colombia, internacional o PayPal para recibir tus cobros.
                 </p>
@@ -137,13 +139,13 @@ export default function PaymentMethodsDashboard({
                         {getMethodName(method.type, method.name)}
                       </span>
                       {method.status === "default" && (
-                        <Badge variant="secondary" className="text-xs font-medium uppercase tracking-wide">
+                        <Badge variant="secondary" className="text-xs font-semibold uppercase tracking-wide bg-primary/10 text-primary border-0">
                           Predeterminado
                         </Badge>
                       )}
                       {method.status === "pending" && (
-                        <Badge variant="outline" className="text-xs font-medium border-warning/50 text-warning">
-                          <span className="w-1.5 h-1.5 rounded-full bg-warning mr-1.5" />
+                        <Badge variant="outline" className="text-xs font-medium border-secondary/60 text-secondary-foreground bg-secondary/30">
+                          <span className="w-1.5 h-1.5 rounded-full bg-secondary mr-1.5" />
                           Pendiente
                         </Badge>
                       )}

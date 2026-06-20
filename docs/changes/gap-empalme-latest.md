@@ -1,53 +1,47 @@
-# Gap empalme — resumen ejecutivo (batch 3)
+# Gap empalme — resumen ejecutivo (batch 4)
 
-**Run:** `gap-empalme-27876831237-b3`  
+**Run:** `gap-empalme-27876831237-b4`  
 **Fecha:** 2026-06-20  
 **Rama:** `feature/cicd/dev-automation`
 
 ## Resultado
 
-Empalme focalizado de **20 gaps** del manifiesto batch 3. Similitud estimada **57.05% → 81.5%** (objetivo 98%; re-comparación CI pendiente). **20 DONE** frontend; **0 BACKEND_REQUIRED** nuevos en este batch.
+Empalme focalizado de **20 gaps** del manifiesto batch 4. Similitud estimada **81.5% → 88.0%** (objetivo 98%; re-comparación CI pendiente). **16 DONE** frontend; **4 BACKEND_REQUIRED** documentados.
 
 ## Empalme realizado
 
 | Área | Cambios principales |
 |------|---------------------|
-| **RefundTicketFlow** | Badge categoría primary; check éxito `text-primary-foreground` |
-| **EventInvitationModal** | Banner éxito primary; badge «Nuevo» con token success |
-| **MyTicketsView** | Tabs con dot success/secondary; countdown pendiente secondary |
-| **MyInvitationsView** | Cards border Lovable; empty imagen con icono Ticket |
-| **CommentsSheet** | Header con icono MessageSquare en círculo primary |
-| **EventsView** | Filter pills dots primary/accent/success; badge borrador secondary |
-| **ProfileView** | Barra experiencia gradiente primary; iconos menú tokens diseño |
-| **CreatePostSheet** | Header con icono PenLine |
-| **TicketDetailView** | Chips pendiente secondary; check primary-foreground |
-| **NotificationsContext** | `loadErrorMessage` expuesto (paridad Lovable) |
-| **FavoritesView** | Badge «Próximamente» secondary |
-| **VenueCreator** | Header font-extrabold + shadow sticky |
-| **AuthLogo** | Sparkles decorativo + ring primary |
-| **SeatLocationModal** | Empty sin asiento con círculo primary |
-| **FeedServicesCarousel** | Badge distancia primary; estrellas primary |
-| **AIAssistantView** | CreatedEntityCard tokens success |
-| **LocationSection / MainInfoSection / PreferencesRefundSection** | Empty states y stepper tokens primary |
-| **EventDetailView** | Verificado intacto (retry API + InvitationEventDetailView) |
+| **PaymentMethodsDashboard** | Empty círculo primary; badges predeterminado/pendiente tokens; shadow-sm cards |
+| **BankingHub** | Subtítulo dinámico con conteo métodos; retry intacto |
+| **BookingReviewSheet** | Términos con ShieldCheck en card secondary |
+| **MediaUpload / FAQSection** | shadow-sm en previews y cards FAQ |
+| **ScanQRSheet** | Feedback éxito/error tokens primary/destructive + Reintentar |
+| **ReportPostDialog** | Shield en descripción; variant destructive submit |
+| **FeedHero** | Indicador «Cerca de ti» token primary; «Ver todas» en historias |
+| **AccessControlListView** | Empty Shield en círculo primary |
+| **MyPurchases / MyReserved*** | Empty states iconografía en círculo primary |
+| **ServiceReservationDetail** | Error AlertCircle; empty primary circle |
+| **KycContext** | `isEmpty` derivado expuesto |
+| **CompanyContext** | `hasCompany` + `isEmpty` derivados |
+| **GlobalSearchView** | Empty Search en círculo primary; banner posts BACKEND_REQUIRED |
+| **ChangeLocationSheet** | Navigation2 en botón Localízame |
+| **TermsDialog** | CheckCircle2 en CTA aceptar |
+| **StoryViewersSheet** | Empty Eye primary; skeleton listo — BACKEND_REQUIRED viewers API |
+| **VenueDetail** | Shell pb-24 verificado intacto |
 
-## Backend pendiente (acumulado batches previos)
+## Backend pendiente (batch 4)
 
 | Gap | Motivo |
 |-----|--------|
-| `EditProfileView` | Cambio contraseña Cognito + persistencia gustos |
-| `BookingSheet` | Catálogo add-ons desde API |
-| `PublishFlowModal` | `POST /events/{id}/bank-link` post-publicación |
-| `PaymentGatewaySheet` | Integración PSP tarjeta/PSE |
-| `BankingHub` / `PaymentMethodsDashboard` | DELETE cuenta bancaria |
-| `KycCertificationView` | Envío documentos KYC |
-| `GlobalSearchView` | Tab búsqueda posts |
-| `StoryViewersSheet` | API viewers historias |
+| `PaymentMethodsDashboard` / `BankingHub` | DELETE `/bank-accounts/{id}` no expuesto |
+| `StoryViewersSheet` | GET `/stories/{id}/viewers` no implementado |
+| `GlobalSearchView` tab posts | Búsqueda full-text publicaciones — filtra feed reciente |
 
 ## Gaps restantes
 
-- **60 gaps** pendientes (batches 4–6 del manifiesto).
-- Re-comparación con `compare-design-similarity.py` requiere checkout `discover-joyful-feed` (repo privado).
+- **40 gaps** pendientes (batches 5–6 del manifiesto).
+- Re-comparación con `compare-design-similarity.py` requiere checkout `discover-joyful-feed`.
 
 ## Validación
 

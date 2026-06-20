@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MapPin, Loader2, AlertCircle } from 'lucide-react';
+import { MapPin, Loader2, AlertCircle, Navigation2 } from 'lucide-react';
 import {
   getStoredUserLocation,
   resolveManualUserLocation,
@@ -132,7 +132,10 @@ export const ChangeLocationSheet = ({
                 Localizando…
               </>
             ) : (
-              'Localízame'
+              <>
+                <Navigation2 className="mr-2 h-4 w-4" />
+                Localízame
+              </>
             )}
           </Button>
 

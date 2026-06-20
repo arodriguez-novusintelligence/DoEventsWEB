@@ -305,7 +305,9 @@ export const GlobalSearchView = ({
               })}
               {hasSearched && query.trim() && !userResults.length && (
                 <div className="rounded-2xl bg-card py-10 text-center shadow-sm">
-                  <Search className="mx-auto h-8 w-8 text-muted-foreground/40" />
+                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                    <Search className="h-7 w-7 text-primary" />
+                  </div>
                   <p className="mt-3 text-sm text-muted-foreground">Sin usuarios para «{query.trim()}»</p>
                 </div>
               )}
@@ -322,7 +324,9 @@ export const GlobalSearchView = ({
               ))}
               {hasSearched && query.trim() && !postResults.length && (
                 <div className="rounded-2xl bg-card py-10 text-center shadow-sm">
-                  <Search className="mx-auto h-8 w-8 text-muted-foreground/40" />
+                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                    <Search className="h-7 w-7 text-primary" />
+                  </div>
                   <p className="mt-3 text-sm text-muted-foreground">Sin publicaciones para «{query.trim()}»</p>
                 </div>
               )}

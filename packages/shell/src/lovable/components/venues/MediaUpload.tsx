@@ -54,7 +54,7 @@ const MediaUpload = () => {
         <div className="space-y-3">
           <div className="grid grid-cols-3 gap-2">
             {form.media.map((item) => (
-              <div key={item.id} className="relative aspect-square rounded-xl overflow-hidden bg-muted">
+              <div key={item.id} className="relative aspect-square rounded-xl overflow-hidden bg-muted shadow-sm ring-1 ring-border/40">
                 {item.kind === 'video' ? (
                   <video src={item.preview} className="h-full w-full object-cover" muted />
                 ) : (

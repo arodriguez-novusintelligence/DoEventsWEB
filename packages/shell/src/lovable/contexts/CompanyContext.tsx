@@ -15,6 +15,8 @@ interface CompanyContextValue {
   loading: boolean;
   loadError: boolean;
   loadErrorMessage: string | null;
+  hasCompany: boolean;
+  isEmpty: boolean;
   refresh: () => void;
 }
 
@@ -23,6 +25,8 @@ const CompanyContext = createContext<CompanyContextValue>({
   loading: false,
   loadError: false,
   loadErrorMessage: null,
+  hasCompany: false,
+  isEmpty: true,
   refresh: () => undefined,
 });
 
@@ -80,7 +84,15 @@ export const CompanyProvider = ({ userId, children }: CompanyProviderProps) => {
   }, [userId, refreshKey]);
 
   const value = useMemo(
-    () => ({ company, loading, loadError, loadErrorMessage, refresh }),
+    () => ({
+      company,
+      loading,
+      loadError,
+      loadErrorMessage,
+      hasCompany: Boolean(company?.companyName || company?.accountType === 'company'),
+      isEmpty: !loading && !loadError && !company?.companyName && company?.accountType !== 'company',
+      refresh,
+    }),
     [company, loading, loadError, loadErrorMessage],
   );
 

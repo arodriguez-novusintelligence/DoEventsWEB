@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27876831237-b4`: batch 4 (20 gaps) — 16 DONE frontend; 4 BACKEND_REQUIRED (`PaymentMethodsDashboard`/`BankingHub` delete, `StoryViewersSheet`, `GlobalSearchView` posts).
+
 Run `gap-empalme-27876831237-b3`: batch 3 (20 gaps) — 20 DONE frontend; tokens primary/success/secondary; sin nuevos BACKEND_REQUIRED.
 
 Run `gap-empalme-27876831237-b2`: batch 2 (20 gaps) — 16 DONE frontend; 4 BACKEND_REQUIRED (`EditProfileView`, `BookingSheet` add-ons, `PublishFlowModal` banking, `PaymentGatewaySheet` PSP).
@@ -60,7 +62,25 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27876831237-b3)
+## Empalme realizado (última ejecución — gap-empalme-27876831237-b4)
+
+- **PaymentMethodsDashboard / BankingHub:** empty círculo primary; badges predeterminado primary/secondary; subtítulo dinámico conteo métodos; delete deshabilitado (BACKEND_REQUIRED).
+- **BookingReviewSheet:** términos con ShieldCheck en card secondary; cancelar + confirmError intactos.
+- **MediaUpload / FAQSection:** shadow-sm en previews y cards FAQ; límite 12 archivos.
+- **ScanQRSheet:** feedback tokens primary/destructive; Reintentar en error; BarcodeDetector + manual.
+- **ReportPostDialog:** Shield en descripción; radio borde primary; submit destructive.
+- **FeedHero:** indicador «Cerca de ti» token primary; «Ver todas» en historias; empty Sparkles.
+- **AccessControlListView:** empty Shield círculo primary; ProfileSectionBanner + retry.
+- **MyPurchases / MyReserved* / ServiceReservationDetail:** empty/error AlertCircle; iconos círculo primary.
+- **KycContext:** `isEmpty` derivado; `loadErrorMessage` intacto.
+- **CompanyContext:** `hasCompany` + `isEmpty` derivados de `fetchUserById`.
+- **GlobalSearchView:** empty Search círculo primary; tab posts filtra feed — BACKEND_REQUIRED full-text.
+- **ChangeLocationSheet:** Navigation2 en Localízame; error inline persistente.
+- **TermsDialog:** CheckCircle2 en CTA; secciones §1–§7.
+- **StoryViewersSheet:** skeleton + empty Eye primary — BACKEND_REQUIRED viewers API.
+- **VenueDetail:** shell pb-24 sobre PlaceDetailPage verificado.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27876831237-b3)
 
 - **RefundTicketFlow / TicketDetailView / MyTicketsView:** tokens primary/success/secondary; sin emerald/amber hardcoded en runtime.
 - **EventInvitationModal / MyInvitationsView:** cards y badges Lovable; banner éxito primary; status chips secondary/primary.

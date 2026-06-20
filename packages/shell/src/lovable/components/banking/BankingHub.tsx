@@ -101,7 +101,7 @@ const BankingHub = ({ onBack }: BankingHubProps) => {
       {view === 'dashboard' && (
         <ProfileSectionBanner
           title="Métodos de cobro"
-          subtitle="Administra cuentas bancarias y retiros"
+          subtitle={loading ? 'Cargando…' : `${methods.length} método${methods.length === 1 ? '' : 's'} registrado${methods.length === 1 ? '' : 's'}`}
           icon={Wallet}
           onBack={onBack}
         />

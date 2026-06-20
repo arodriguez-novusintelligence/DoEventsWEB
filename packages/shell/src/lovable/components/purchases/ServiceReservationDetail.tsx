@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Briefcase, Calendar, CreditCard, Hash } from 'lucide-react';
+import { Briefcase, Calendar, CreditCard, Hash, AlertCircle } from 'lucide-react';
 import {
   fetchUserServiceBookings,
   Loader,
@@ -69,8 +69,10 @@ export const ServiceReservationDetail = () => {
   if (loadError) {
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
-        <Briefcase className="mx-auto h-10 w-10 text-destructive/50" />
-        <p className="mt-3 text-sm font-medium text-foreground">Error al cargar</p>
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
+          <AlertCircle className="h-7 w-7 text-destructive" />
+        </div>
+        <p className="mt-3 text-sm font-semibold text-foreground">Error al cargar</p>
         <p className="mt-1 text-xs text-muted-foreground">{loadError}</p>
         <Button
           type="button"
@@ -87,8 +89,10 @@ export const ServiceReservationDetail = () => {
   if (!booking) {
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
-        <Briefcase className="mx-auto h-10 w-10 text-muted-foreground/40" />
-        <p className="mt-3 text-sm font-medium text-foreground">Reserva no encontrada</p>
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+          <Briefcase className="h-7 w-7 text-primary" />
+        </div>
+        <p className="mt-3 text-sm font-semibold text-foreground">Reserva no encontrada</p>
         <p className="mt-1 text-xs text-muted-foreground">Verifica el enlace o consulta tus reservas activas.</p>
         <Button type="button" variant="outline" className="mt-4 rounded-full" onClick={() => navigate('/purchases/services')}>
           Volver a reservas

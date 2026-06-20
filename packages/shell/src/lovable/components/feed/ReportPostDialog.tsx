@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Flag, AlertCircle } from 'lucide-react';
+import { Flag, AlertCircle, Shield } from 'lucide-react';
 import { reportPublication, useToast } from '@doevents/shared';
 import {
   Dialog,
@@ -69,8 +69,11 @@ export const ReportPostDialog = ({
             <Flag className="h-5 w-5 text-destructive" />
             Reportar publicación
           </DialogTitle>
-          <DialogDescription>
-            Indica por qué consideras que esta publicación debe ser revisada por nuestro equipo.
+          <DialogDescription className="flex items-start gap-2">
+            <Shield className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+            <span>
+              Indica por qué consideras que esta publicación debe ser revisada por nuestro equipo.
+            </span>
           </DialogDescription>
         </DialogHeader>
 

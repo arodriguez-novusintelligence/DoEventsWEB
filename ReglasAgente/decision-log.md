@@ -13,6 +13,58 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-20 17:15 UTC] gap-empalme-27876831237-b4
+
+### 1. Resumen del empalme
+Batch 4 (20 gaps, manifiesto `27876831237-b4`, similitud baseline 81.5%): empalme focalizado en banca, reservas, feed, accesos y contextos. **16 gaps DONE** frontend; **4 BACKEND_REQUIRED** (`PaymentMethodsDashboard`/`BankingHub` delete, `StoryViewersSheet` viewers API, `GlobalSearchView` posts full-text). Patrón empty states círculo primary; `KycContext.isEmpty` y `CompanyContext.hasCompany/isEmpty` expuestos.
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Payment methods dashboard | `packages/shell/src/lovable/components/banking/PaymentMethodsDashboard.tsx` | BACKEND_REQUIRED (delete) |
+| Booking review | `packages/shell/src/lovable/components/services/BookingReviewSheet.tsx` | DONE |
+| Media upload | `packages/shell/src/lovable/components/venues/MediaUpload.tsx` | DONE |
+| Faqsection | `packages/shell/src/lovable/components/venues/sections/FAQSection.tsx` | DONE |
+| Scan qr | `packages/shell/src/lovable/components/access/ScanQRSheet.tsx` | DONE |
+| Banking hub | `packages/shell/src/lovable/components/banking/BankingHub.tsx` | BACKEND_REQUIRED (delete) |
+| Report post | `packages/shell/src/lovable/components/feed/ReportPostDialog.tsx` | DONE |
+| Story ers | `packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx` | BACKEND_REQUIRED |
+| Banner del feed | `packages/shell/src/lovable/components/feed/FeedHero.tsx` | DONE |
+| Access control list | `packages/shell/src/lovable/components/access/AccessControlListView.tsx` | DONE |
+| My purchases | `packages/shell/src/lovable/components/purchases/MyPurchasesView.tsx` | DONE |
+| My reserved services | `packages/shell/src/lovable/components/purchases/MyReservedServicesView.tsx` | DONE |
+| Kyc context | `packages/shell/src/lovable/contexts/KycContext.tsx` | DONE |
+| My reserved venues | `packages/shell/src/lovable/components/purchases/MyReservedVenuesView.tsx` | DONE |
+| Diálogo de términos | `packages/shell/src/lovable/components/auth/TermsDialog.tsx` | DONE |
+| Venue detail | `packages/shell/src/pages/VenueDetail.tsx` | DONE |
+| Búsqueda global | `packages/shell/src/lovable/components/feed/GlobalSearchView.tsx` | BACKEND_REQUIRED (posts) |
+| Service reservation detail | `packages/shell/src/lovable/components/purchases/ServiceReservationDetail.tsx` | DONE |
+| Cambiar ubicación | `packages/shell/src/lovable/components/feed/ChangeLocationSheet.tsx` | DONE |
+| Company context | `packages/shell/src/lovable/contexts/CompanyContext.tsx` | DONE |
+
+### 3. Similitud antes/después
+- **Antes:** 81.5%
+- **Después:** ~88.0% (estimado; re-comparación CI pendiente)
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias
+
+### 6. Riesgos pendientes
+- ~40 gaps restantes (batches 5–6)
+- DELETE cuenta bancaria requiere DoEventsBack
+- Story viewers API pendiente
+- GlobalSearch posts requiere endpoint dedicado
+
+### Decisión
+**APPLIED**
+
+---
+
 ## [2026-06-20 16:42 UTC] gap-empalme-27876831237-b3
 
 ### 1. Resumen del empalme

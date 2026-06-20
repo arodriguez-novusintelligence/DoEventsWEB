@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from '@lovable/components/ui/dialog';
 import { Button } from '@lovable/components/ui/button';
-import { ScrollText } from 'lucide-react';
+import { ScrollText, CheckCircle2 } from 'lucide-react';
 
 interface TermsDialogProps {
   open: boolean;
@@ -76,6 +76,7 @@ export const TermsDialog = ({ open, onClose, onAccept }: TermsDialogProps) => (
             onClose();
           }}
         >
+          <CheckCircle2 className="mr-2 h-4 w-4" />
           Aceptar términos
         </Button>
         <Button type="button" variant="ghost" className="w-full" onClick={onClose}>

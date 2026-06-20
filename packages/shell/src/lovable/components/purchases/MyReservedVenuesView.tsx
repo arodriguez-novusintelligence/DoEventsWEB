@@ -98,8 +98,10 @@ export const MyReservedVenuesView = ({ onBack }: MyReservedVenuesViewProps) => {
           </div>
         ) : bookings.length === 0 ? (
           <div className="rounded-2xl bg-card p-10 text-center shadow-sm">
-            <Building2 className="mx-auto h-10 w-10 text-muted-foreground/40" />
-            <p className="mt-3 text-sm font-medium text-foreground">Sin reservas de lugares</p>
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+              <Building2 className="h-7 w-7 text-primary" />
+            </div>
+            <p className="mt-3 text-sm font-semibold text-foreground">Sin reservas de lugares</p>
             <p className="mt-1 text-xs text-muted-foreground">Tus reservas de venues aparecerán aquí</p>
           </div>
         ) : (

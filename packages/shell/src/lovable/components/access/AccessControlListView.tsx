@@ -182,8 +182,10 @@ const AccessControlListView = ({
 
           {tabItems.length === 0 && (
             <div className="rounded-2xl bg-card p-10 text-center shadow-sm">
-              <Shield className="mx-auto h-10 w-10 text-muted-foreground/40" />
-              <p className="mt-3 text-sm font-medium text-foreground">Sin eventos en esta categoría</p>
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                <Shield className="h-7 w-7 text-primary" />
+              </div>
+              <p className="mt-3 text-sm font-semibold text-foreground">Sin eventos en esta categoría</p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {tab === 'mios'
                   ? 'Publica un evento o espera asignación de staff para controlar accesos.'

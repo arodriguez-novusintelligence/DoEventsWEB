@@ -151,10 +151,21 @@ const FeedHero = ({
           <div className="mx-auto max-w-lg">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-base font-extrabold text-foreground">En vivo & Historias</h2>
-              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-500">
-                <span className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
-                Cerca de ti
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary">
+                  <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                  Cerca de ti
+                </span>
+                {onViewAllCategories && (
+                  <button
+                    type="button"
+                    onClick={onViewAllCategories}
+                    className="text-xs font-semibold text-primary hover:underline"
+                  >
+                    Ver todas
+                  </button>
+                )}
+              </div>
             </div>
             <div className="flex items-start gap-3 overflow-x-auto no-scrollbar pb-1">
               {storiesLoading && (

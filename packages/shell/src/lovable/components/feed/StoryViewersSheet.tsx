@@ -1,4 +1,4 @@
-import { Eye, Users, Loader2 } from 'lucide-react';
+import { Eye, Loader2 } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@lovable/components/ui/sheet';
 
 interface StoryViewersSheetProps {
@@ -42,8 +42,8 @@ export const StoryViewersSheet = ({
         </div>
       ) : (
         <div className="mt-6 rounded-2xl border border-dashed border-border bg-muted/30 p-8 text-center">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-muted">
-            <Users className="h-7 w-7 text-muted-foreground/50" />
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+            <Eye className="h-7 w-7 text-primary" />
           </div>
           <p className="mt-3 text-sm font-semibold text-foreground">Visualizaciones no disponibles</p>
           <p className="mt-2 text-xs text-muted-foreground max-w-xs mx-auto leading-relaxed">

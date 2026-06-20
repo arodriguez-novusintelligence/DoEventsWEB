@@ -1,4 +1,4 @@
-import { Calendar, CreditCard, Clock } from 'lucide-react';
+import { Calendar, CreditCard, Clock, ShieldCheck } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@lovable/components/ui/sheet';
 import { Button } from '@lovable/components/ui/button';
 
@@ -96,9 +96,12 @@ export const BookingReviewSheet = ({
             </div>
           )}
 
-          <p className="text-[11px] text-center text-muted-foreground">
-            Al confirmar, aceptas los términos de reserva del proveedor y la política de cancelación aplicable.
-          </p>
+          <div className="flex items-start gap-2 rounded-xl border border-border bg-secondary/40 p-3">
+            <ShieldCheck className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
+              Al confirmar, aceptas los términos de reserva del proveedor y la política de cancelación aplicable.
+            </p>
+          </div>
 
           {confirmError && (
             <p className="text-xs text-center text-destructive">{confirmError}</p>
