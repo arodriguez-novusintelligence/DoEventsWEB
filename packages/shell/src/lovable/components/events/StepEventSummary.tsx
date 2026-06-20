@@ -381,7 +381,13 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
         if (gates.length === 0) {
           return (
             <div className="space-y-3">
-              <p className="text-xs text-muted-foreground">Sin puertas configuradas en el Lugar.</p>
+              <div className="rounded-2xl border border-dashed border-border bg-card p-6 text-center">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                  <ShieldCheck className="h-6 w-6 text-primary" />
+                </div>
+                <p className="mt-2 text-sm font-semibold text-foreground">Sin control de acceso</p>
+                <p className="mt-1 text-xs text-muted-foreground">Configura puertas en el paso de ubicación del lugar.</p>
+              </div>
               {onEdit && (
                 <button
                   onClick={() => onEdit(3)}
@@ -538,8 +544,11 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
           return (
             <div className="space-y-3">
               <div className="rounded-2xl border border-dashed border-border bg-card p-6 text-center">
-                <HelpCircle className="mx-auto h-8 w-8 text-muted-foreground" />
-                <p className="mt-2 text-xs text-muted-foreground">Sin preguntas frecuentes.</p>
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                  <HelpCircle className="h-6 w-6 text-primary" />
+                </div>
+                <p className="mt-2 text-sm font-semibold text-foreground">Sin preguntas frecuentes</p>
+                <p className="mt-1 text-xs text-muted-foreground">Agrega FAQs en el paso correspondiente del wizard.</p>
               </div>
               {EditBtn}
             </div>
@@ -573,8 +582,11 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
           return (
             <div className="space-y-3">
               <div className="rounded-2xl border border-dashed border-border bg-card p-6 text-center">
-                <Clock className="mx-auto h-8 w-8 text-muted-foreground" />
-                <p className="mt-2 text-xs text-muted-foreground">Sin agenda configurada.</p>
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                  <Clock className="h-6 w-6 text-primary" />
+                </div>
+                <p className="mt-2 text-sm font-semibold text-foreground">Sin agenda configurada</p>
+                <p className="mt-1 text-xs text-muted-foreground">Define días y actividades en el paso de agenda.</p>
               </div>
               {EditBtn}
             </div>
@@ -639,7 +651,7 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
         {SECTIONS.map(({ key, label, icon: Icon }) => {
           const isOpen = open[key];
           return (
-            <div key={key} className="rounded-2xl bg-card shadow-sm">
+            <div key={key} className="rounded-2xl border border-border bg-card shadow-sm">
               <button
                 onClick={() => toggle(key)}
                 className="flex w-full items-center gap-3 px-4 py-4 text-left"
