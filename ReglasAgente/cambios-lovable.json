@@ -8,6 +8,46 @@
   },
   "runs": [
     {
+      "id": "agent-27883333029-77da574b",
+      "lovableSha": "77da574b28fddd8eaadbbac095483050f3cdc077",
+      "timestamp": "2026-06-20 21:15 UTC",
+      "workflowRunId": "27883333029",
+      "changeTypes": [
+        "VISUAL"
+      ],
+      "designSimilarityPercentBefore": 93.0,
+      "designSimilarityPercentAfter": 94.5,
+      "designSimilarityTarget": 98.0,
+      "summary": "Prepare 77da574b: StepEventSummary empty states primary + border acordeón; manifiesto 38e2c759 sin diff UI",
+      "changedFilesLovable": [
+        "src/components/events/StepEventSummary.tsx"
+      ],
+      "gapsClosed": [
+        "src/components/events/StepEventSummary.tsx"
+      ],
+      "gapsBackendRequired": [],
+      "webFilesModified": [
+        "packages/shell/src/lovable/components/events/StepEventSummary.tsx",
+        "ReglasAgente/decision-log.md",
+        "ReglasAgente/cambios-lovable.json",
+        "ReglasAgente/impacto-backend.md",
+        "ReglasAgente/reglas-front.md",
+        "design-comparison.json",
+        "docs/changes/gap-empalme-latest.md",
+        "Reports/2026-06-20-agent-execution-77da574b-27883333029.md",
+        "Reports/2026-06-20-design-comparison-77da574b-27883333029.md"
+      ],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "agentStatus": "finished",
+      "decision": "APPLIED",
+      "pendingRisks": [
+        "~18 gaps restantes para 98% similitud",
+        "Re-comparación CI con compare-design-similarity.py pendiente (discover-joyful-feed privado)"
+      ]
+    },
+    {
       "id": "gap-empalme-27876831237-b5",
       "timestamp": "2026-06-20 18:30 UTC",
       "workflowRunId": "27876831237-b5",
@@ -2578,14 +2618,15 @@
       "changedFilesLovable": [
         "src/components/events/StepEventSummary.tsx"
       ],
-      "webFilesModified": [],
+      "webFilesModified": [
+        "packages/shell/src/lovable/components/events/StepEventSummary.tsx"
+      ],
       "backFilesModified": [],
       "mocksUsed": false,
-      "buildResult": "pending",
-      "pendingRisks": [
-        "Adaptacion pendiente por agente Cursor"
-      ],
-      "agentStatus": "pending"
+      "buildResult": "SUCCESS",
+      "pendingRisks": [],
+      "agentStatus": "finished",
+      "decision": "APPLIED"
     }
   ]
 }

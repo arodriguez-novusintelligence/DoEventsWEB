@@ -99,6 +99,17 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-20 prepare-77da574b (run 27883333029)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| StepEventSummary FAQ empty | VISUAL | Sí | `events/StepEventSummary.tsx` | HelpCircle círculo primary + copy |
+| StepEventSummary agenda empty | VISUAL | Sí | `events/StepEventSummary.tsx` | Clock círculo primary + copy wizard |
+| StepEventSummary access empty | VISUAL | Sí | `events/StepEventSummary.tsx` | ShieldCheck círculo primary |
+| StepEventSummary acordeón border | VISUAL | Sí | `events/StepEventSummary.tsx` | `border-border` paridad cards Lovable |
+| Manifiesto vacío 38e2c759 | Validación | Sí | — | Sin diff UI; build:devaws OK |
+| Prepare 77da574b (1 gap) | Empalme | Sí | ver `decision-log.md` | 1 DONE + 0 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-20 gap-empalme batch 5 (run 27876831237-b5)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

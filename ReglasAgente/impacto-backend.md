@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `agent-27883333029-77da574b`: prepare StepEventSummary — 1 gap DONE frontend; sin cambios backend. Manifiesto `38e2c759` sin diff UI; build:devaws OK.
+
 Run `gap-empalme-27876831237-b5`: batch 5 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`KycCertificationView` submit documentos KYC). Auth RISKY con APIs reales intactas.
 
 Run `gap-empalme-27876831237-b4`: batch 4 (20 gaps) — 16 DONE frontend; 4 BACKEND_REQUIRED (`PaymentMethodsDashboard`/`BankingHub` delete, `StoryViewersSheet`, `GlobalSearchView` posts).

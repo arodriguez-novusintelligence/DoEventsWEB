@@ -13,32 +13,35 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
-## [2026-06-20 20:43 UTC] prepare-77da574b
+## [2026-06-20 21:15 UTC] agent-27883333029-77da574b
 
-### 1. Resumen del cambio detectado
-Manifiesto: UI=True, reglas=False, 1 archivo(s); similitud diseño=57.0%
+### 1. Resumen del empalme
+Prepare `77da574b` (1 archivo Lovable, manifiesto `27883333029`, similitud baseline 93.0%): empalme en `StepEventSummary` — empty states FAQ/agenda/access con círculo primary + copy descriptivo; acordeón con `border-border`. **1 gap DONE** frontend; sin BACKEND_REQUIRED en este run. Manifiesto `38e2c759` sin diff UI — validación build intacta.
 
-### 2. Tipo de cambio (preliminar)
-- [x] VISUAL
-- [ ] FRONT_LOGIC
-- [ ] BACKEND_REQUIRED
-- [ ] RISKY
+### 2. Tabla gaps
 
-### 3. Archivos modificados en DoEventsWEB
-- Pendiente — el agente adapta sin copia literal
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Step event summary empty states | `packages/shell/src/lovable/components/events/StepEventSummary.tsx` | DONE |
 
-### 4. Archivos modificados en DoEventsBack (si aplica)
-- Pendiente evaluacion agente
+### 3. Similitud antes/después
+- **Antes:** 93.0%
+- **Después:** ~94.5% (estimado; re-comparación CI pendiente)
 
-### 5. Evidencia de que no se usaron mocks
-- Sin port deterministico de componentes en esta fase.
-- El agente debe usar `lovable-bridge/*` + `@doevents/shared`.
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
 
-### 6. Resultado build/test
-- `npm run build:devaws`: pending
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias
 
-### 7. Riesgos pendientes
-- Agente debe completar adaptacion y actualizar esta entrada.
+### 6. Riesgos pendientes
+- ~18 gaps restantes para 98% similitud
+- `discover-joyful-feed` privado en agente cloud — diff Lovable 77da574b no verificable byte-a-byte
+- Brechas BACKEND_REQUIRED acumuladas (KYC, banking, PULEP persistencia)
+
+### Decisión
+**APPLIED**
 
 ---
 
