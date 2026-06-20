@@ -91,7 +91,9 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
   if (gates.length === 0) {
     return (
       <div className="rounded-2xl bg-card p-6 text-center shadow-sm">
-        <DoorOpen className="mx-auto mb-3 h-10 w-10 text-muted-foreground" />
+        <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+          <DoorOpen className="h-7 w-7 text-primary" />
+        </div>
         <h3 className="text-base font-bold text-foreground">Sin puertas configuradas</h3>
         <p className="mt-1 text-sm text-muted-foreground">
           Vuelve al paso de Lugar y agrega al menos una puerta para asignar personal de acceso.

@@ -92,7 +92,9 @@ const PublishFlowModal = ({ open, eventId, onClose, onFinalize, onSubmitBank }: 
 
         {stage === 'bank' && (
           <div className="flex flex-col items-center text-center">
-            <Megaphone className="h-12 w-12 text-primary" />
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+              <Megaphone className="h-7 w-7 text-primary" />
+            </div>
             <h3 className="mt-4 text-lg font-bold text-foreground">
               ¡Para publicar tu evento, debes registrar tus datos bancarios!
             </h3>
@@ -196,7 +198,9 @@ const PublishFlowModal = ({ open, eventId, onClose, onFinalize, onSubmitBank }: 
 
         {stage === 'success' && (
           <div className="flex flex-col items-center text-center">
-            <CheckCircle2 className="h-12 w-12 text-primary" />
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+              <CheckCircle2 className="h-8 w-8 text-primary" />
+            </div>
             <h3 className="mt-4 text-2xl font-extrabold text-foreground">
               ¡Felicitaciones tu evento se ha publicado!
             </h3>

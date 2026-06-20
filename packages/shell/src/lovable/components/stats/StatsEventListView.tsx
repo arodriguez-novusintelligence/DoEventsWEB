@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BarChart3, CalendarDays, Users, ChevronRight, MessageSquare, DollarSign, UserCheck, ScanLine, RefreshCw } from 'lucide-react';
+import { BarChart3, CalendarDays, Users, ChevronRight, MessageSquare, DollarSign, UserCheck, ScanLine, RefreshCw, Loader2, AlertCircle } from 'lucide-react';
 import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBanner';
 import { Avatar, AvatarFallback, AvatarImage } from '@lovable/components/ui/avatar';
 import type { EventChatRoom, EventStatus } from '@lovable/data/chatData';
@@ -142,7 +142,7 @@ const StatsEventListView = ({ events, onBack, loading = false, loadError = null 
         <ProfileSectionBanner title="Estadísticas" subtitle="Cargando eventos…" icon={BarChart3} onBack={onBack} />
         <div className="mx-auto max-w-lg px-4 -mt-6">
           <div className="flex flex-col items-center gap-3 rounded-2xl bg-card p-10 text-center shadow-sm">
-            <RefreshCw className="h-8 w-8 animate-spin text-primary" />
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
             <p className="text-sm text-muted-foreground">Obteniendo tus eventos…</p>
           </div>
         </div>
@@ -156,6 +156,9 @@ const StatsEventListView = ({ events, onBack, loading = false, loadError = null 
         <ProfileSectionBanner title="Estadísticas" subtitle="Error al cargar" icon={BarChart3} onBack={onBack} />
         <div className="mx-auto max-w-lg px-4 -mt-6">
           <div className="rounded-2xl bg-card p-8 text-center shadow-sm">
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
+              <AlertCircle className="h-7 w-7 text-destructive" />
+            </div>
             <p className="text-sm font-semibold text-destructive">{loadError}</p>
             <p className="mt-2 text-xs text-muted-foreground">Intenta de nuevo más tarde.</p>
           </div>

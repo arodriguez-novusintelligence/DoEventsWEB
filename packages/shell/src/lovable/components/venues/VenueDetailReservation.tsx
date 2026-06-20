@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   Plus,
   Briefcase,
+  Loader2,
 } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
 import { Input } from '@lovable/components/ui/input';
@@ -501,7 +502,10 @@ const VenueDetailReservation = ({
             </div>
 
             {loadingAvailability && isLive && (
-              <p className="mt-2 text-center text-xs text-muted-foreground">Cargando disponibilidad…</p>
+              <div className="mt-2 flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                Cargando disponibilidad…
+              </div>
             )}
 
             <div className="mt-2 grid grid-cols-7 gap-1 text-center text-[10px] text-muted-foreground">

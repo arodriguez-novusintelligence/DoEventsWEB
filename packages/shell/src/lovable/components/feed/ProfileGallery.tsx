@@ -10,6 +10,7 @@ import {
   Save,
   Loader2,
   RefreshCw,
+  AlertCircle,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@lovable/components/ui/button';
@@ -105,18 +106,21 @@ const ProfileGallery = ({
 
         <div className="rounded-2xl bg-card p-5 shadow-sm">
           {loadError && (
-            <div className="mb-4 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
-              <p>{loadError}</p>
-              {onRetry && (
-                <button
-                  type="button"
-                  onClick={onRetry}
-                  className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-primary"
-                >
-                  <RefreshCw className="h-3.5 w-3.5" />
-                  Reintentar
-                </button>
-              )}
+            <div className="mb-4 flex gap-3 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+              <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
+              <div className="min-w-0 flex-1">
+                <p>{loadError}</p>
+                {onRetry && (
+                  <button
+                    type="button"
+                    onClick={onRetry}
+                    className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-primary"
+                  >
+                    <RefreshCw className="h-3.5 w-3.5" />
+                    Reintentar
+                  </button>
+                )}
+              </div>
             </div>
           )}
 
@@ -153,10 +157,14 @@ const ProfileGallery = ({
           </div>
 
           {loading ? (
-            <div className="grid grid-cols-3 gap-2 animate-pulse">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="aspect-square rounded-xl bg-muted" />
-              ))}
+            <div className="flex flex-col items-center py-10">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="mt-3 text-sm text-muted-foreground">Cargando galería…</p>
+              <div className="mt-6 grid w-full grid-cols-3 gap-2 animate-pulse">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="aspect-square rounded-xl bg-muted" />
+                ))}
+              </div>
             </div>
           ) : photos.length === 0 ? (
             <button

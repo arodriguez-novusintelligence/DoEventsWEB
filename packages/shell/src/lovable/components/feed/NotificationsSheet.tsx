@@ -376,7 +376,8 @@ const NotificationsSheet = ({
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="max-h-[85vh]">
         <DrawerHeader className="flex items-center justify-between pb-0">
-          <DrawerTitle className="text-base font-bold text-foreground">
+          <DrawerTitle className="flex items-center gap-2 text-base font-bold text-foreground">
+            <Bell className="h-5 w-5 text-primary" />
             Notificaciones
           </DrawerTitle>
           <div className="flex items-center gap-3">

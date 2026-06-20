@@ -102,6 +102,11 @@ export function ContactImportModal({ open, onOpenChange, onImportContacts }: Pro
             </DialogTitle>
           </div>
           <p className="text-xs text-muted-foreground">Importa contactos del dispositivo como invitados.</p>
+          {!isDeviceContactsSupported() && (
+            <div className="rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 text-left text-xs text-muted-foreground">
+              La importación de contactos no está disponible en este navegador. Usa un dispositivo móvil compatible.
+            </div>
+          )}
           <Button
             type="button"
             variant="outline"

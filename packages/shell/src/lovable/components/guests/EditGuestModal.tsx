@@ -72,7 +72,7 @@ export function EditGuestModal({ guest, open, onOpenChange, onUpdateGuest, group
   if (!guest) return null;
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent stacked={nested} className="sm:max-w-md rounded-2xl">
+      <DialogContent stacked={nested} className="sm:max-w-md rounded-2xl shadow-sm">
         <DialogHeader><DialogTitle className="text-xl font-semibold text-primary flex items-center gap-2"><UserRound className="h-5 w-5" />Editar invitado</DialogTitle></DialogHeader>
         <form onSubmit={submit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">

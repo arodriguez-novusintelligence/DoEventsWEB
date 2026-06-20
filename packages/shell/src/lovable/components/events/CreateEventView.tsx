@@ -239,7 +239,7 @@ const CreateEventView = ({
 
         <div className="mt-2 flex items-center gap-2">
           <CalendarDays className="h-5 w-5 text-primary" />
-          <h1 className="text-lg font-bold text-foreground">
+          <h1 className="text-lg font-extrabold text-foreground">
             {headerTitle || (mode === 'edit' ? 'Editar evento' : 'Crear evento')}
           </h1>
         </div>

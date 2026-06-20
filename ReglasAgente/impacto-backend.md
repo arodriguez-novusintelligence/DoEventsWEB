@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27883333029-b2`: batch 2 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`EditProfileView` password/gustos, `BookingSheet` add-ons, `PublishFlowModal` banking). Patrón Lovable: círculos primary h-14, Loader2, AlertCircle.
+
 Run `gap-empalme-27883333029-b1`: batch 1 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingForm` persistencia SWIFT/PayPal). Patrón Lovable: círculos primary, Loader2, AlertCircle retry. `useLiveEventStats` expone loadError.
 
 Run `agent-27883333029-77da574b`: prepare StepEventSummary — 1 gap DONE frontend; sin cambios backend. Manifiesto `38e2c759` sin diff UI; build:devaws OK.
@@ -68,7 +70,24 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27883333029-b1)
+## Empalme realizado (última ejecución — gap-empalme-27883333029-b2)
+
+- **ProfileGallery:** AlertCircle en error + retry; Loader2 en carga con skeleton grid.
+- **ServiceDetailView:** empty foto círculo primary h-14; CTA sticky `bg-primary-foreground`.
+- **NotificationsSheet:** icono Bell en título drawer.
+- **StepAccessControl:** empty puertas DoorOpen círculo primary h-14.
+- **TransferTicketFlow:** empty sin boletas AlertCircle círculo primary.
+- **CreateEventView:** título wizard `font-extrabold`.
+- **VenueDetailReservation:** Loader2 inline al cargar disponibilidad calendario.
+- **BookingSheet:** empty add-ons ShoppingCart círculo primary (catálogo BACKEND_REQUIRED).
+- **FollowersSheet:** TabsList `rounded-xl`.
+- **PublishFlowModal:** Megaphone/CheckCircle2 en círculo primary; banner banco pendiente intacto.
+- **StatsEventListView:** Loader2 carga; AlertCircle en error.
+- **EditProfileView:** banners BACKEND_REQUIRED password/gustos visibles; sin simular persistencia.
+- **ContactImportModal:** aviso navegador sin soporte contactos; botón disabled real.
+- **EditGuestModal / TopHeader / MessagesListView / RefundTicketFlow / StepEventDetails / AIAssistantFAB / StepEventSummary:** verificados alineados.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27883333029-b1)
 
 - **GuestStatsView:** canales con icono en círculo primary; empty Users; error AlertCircle + retry (`useLiveEventStats.loadError`).
 - **StepAgenda:** empty CalendarDays h-14; timeline intacta.

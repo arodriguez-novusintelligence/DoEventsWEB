@@ -238,7 +238,7 @@ const FollowersSheet = ({
         </SheetHeader>
 
         <Tabs defaultValue={defaultTab === 'requests' ? 'requests' : defaultTab} className="flex h-full flex-col">
-          <TabsList className="mx-5 grid grid-cols-3 bg-muted">
+          <TabsList className="mx-5 grid grid-cols-3 rounded-xl bg-muted">
             <TabsTrigger value="followers" className="text-xs font-semibold">
               Seguidores ({followers.length})
             </TabsTrigger>

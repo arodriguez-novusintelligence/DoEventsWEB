@@ -171,7 +171,9 @@ const TransferTicketFlow = ({ ticket, entries, currentUserId, onClose, onComplet
   if (entries.length === 0) {
     return (
       <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-secondary px-6 text-center">
-        <AlertCircle className="h-12 w-12 text-muted-foreground" />
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+          <AlertCircle className="h-7 w-7 text-primary" />
+        </div>
         <p className="mt-4 text-base font-semibold text-foreground">No hay boletas para transferir</p>
         <p className="mt-2 text-sm text-muted-foreground">
           Este ticket no tiene entradas disponibles para compartir.

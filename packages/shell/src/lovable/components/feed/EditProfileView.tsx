@@ -228,6 +228,12 @@ const EditProfileView = ({
               Ingresa el código de seguridad enviado a tu correo electrónico o celular.
             </p>
           </div>
+          <div className="rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 text-left">
+            <p className="text-xs font-semibold text-primary">Cambio de contraseña (BACKEND_REQUIRED)</p>
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              La validación del token y el cambio de contraseña se realizan vía Cognito/shared; no se simula éxito local.
+            </p>
+          </div>
           <div className="flex justify-center gap-2.5">
             {tokenDigits.map((d, i) => (
               <input
@@ -278,6 +284,12 @@ const EditProfileView = ({
           <p className="text-right text-xs text-primary mt-1">60%</p>
         </div>
         <h1 className="text-2xl font-bold text-primary mb-2">Gustos y servicios</h1>
+        <div className="mb-4 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-left">
+          <p className="text-xs font-semibold text-primary">Persistencia pendiente (BACKEND_REQUIRED)</p>
+          <p className="mt-1 text-[11px] text-muted-foreground">
+            Guardar intereses y preferencias requiere endpoint de preferencias en DoEventsBack.
+          </p>
+        </div>
         <p className="text-sm font-medium text-foreground mb-4">
           Selecciona algunos eventos a los cuales te gusta ir o participar
         </p>

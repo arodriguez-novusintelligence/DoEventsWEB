@@ -101,6 +101,32 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-20 gap-empalme batch 2 (run 27883333029-b2)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| ProfileGallery error/retry | Integración | Sí | `feed/ProfileGallery.tsx` | AlertCircle + Loader2 carga |
+| EditGuestModal header | VISUAL | Sí | `guests/EditGuestModal.tsx` | UserRound + rounded-2xl shadow-sm |
+| ServiceDetailView empty/CTA | VISUAL | Sí | `services/ServiceDetailView.tsx` | Círculo primary; bg-primary-foreground |
+| NotificationsSheet title | VISUAL | Sí | `feed/NotificationsSheet.tsx` | Bell en DrawerTitle |
+| EditProfileView password/gustos | Bloqueo | Parcial | `feed/EditProfileView.tsx` | BACKEND_REQUIRED banners |
+| StepAccessControl empty gates | VISUAL | Sí | `events/StepAccessControl.tsx` | DoorOpen h-14 primary |
+| TransferTicketFlow empty | VISUAL | Sí | `tickets/TransferTicketFlow.tsx` | AlertCircle círculo primary |
+| CreateEventView wizard title | VISUAL | Sí | `events/CreateEventView.tsx` | font-extrabold + CalendarDays |
+| StepEventSummary | Empalme | Sí | `events/StepEventSummary.tsx` | Intacto prepare 77da574b |
+| VenueDetailReservation calendar | VISUAL | Sí | `venues/VenueDetailReservation.tsx` | Loader2 disponibilidad |
+| RefundTicketFlow tokens | VISUAL | Sí | `tickets/RefundTicketFlow.tsx` | Verificado batch previo |
+| TopHeader search/avatar | VISUAL | Sí | `feed/TopHeader.tsx` | Verificado intacto |
+| BookingSheet add-ons | Bloqueo | Parcial | `services/BookingSheet.tsx` | BACKEND_REQUIRED catálogo |
+| FollowersSheet tabs | VISUAL | Sí | `feed/FollowersSheet.tsx` | TabsList rounded-xl |
+| ContactImportModal device | FRONTEND_LOGIC | Sí | `guests/ContactImportModal.tsx` | Disabled sin soporte |
+| AIAssistantFAB PRO | VISUAL | Sí | `ai/AIAssistantFAB.tsx` | Verificado intacto |
+| MessagesListView loading | VISUAL | Sí | `chat/MessagesListView.tsx` | Verificado Loader2 |
+| PublishFlowModal banking | Bloqueo | Parcial | `events/PublishFlowModal.tsx` | BACKEND_REQUIRED onSubmitBank |
+| StepEventDetails header | VISUAL | Sí | `events/StepEventDetails.tsx` | CalendarDays intacto |
+| StatsEventListView error | VISUAL | Sí | `stats/StatsEventListView.tsx` | AlertCircle + Loader2 |
+| Batch 2 gaps (20) | Empalme | Sí | ver `decision-log.md` | 17 DONE + 3 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-20 gap-empalme batch 1 (run 27883333029-b1)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

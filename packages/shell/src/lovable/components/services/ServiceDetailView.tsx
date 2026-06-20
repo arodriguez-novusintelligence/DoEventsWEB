@@ -121,7 +121,9 @@ const ServiceDetailView = ({
             </button>
           ) : (
             <div className="flex h-56 w-full flex-col items-center justify-center gap-2 rounded-2xl bg-muted text-sm text-muted-foreground">
-              <Briefcase className="h-10 w-10 text-primary/40" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                <Briefcase className="h-7 w-7 text-primary" />
+              </div>
               Sin foto del servicio
             </div>
           )}
@@ -281,7 +283,7 @@ const ServiceDetailView = ({
               }
               setOpenBooking(true);
             }}
-            className="ml-auto rounded-full bg-white px-5 py-2.5 text-sm font-bold text-primary"
+            className="ml-auto rounded-full bg-primary-foreground px-5 py-2.5 text-sm font-bold text-primary"
           >
             {liveBooking ? 'Reservar servicio' : 'Inicia sesión para reservar'}
           </button>

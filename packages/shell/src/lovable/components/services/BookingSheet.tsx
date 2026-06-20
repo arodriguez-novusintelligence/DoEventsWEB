@@ -459,7 +459,9 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
             </div>
             ) : (
               <div className="rounded-xl border border-dashed border-primary/25 bg-card px-4 py-6 text-center">
-                <ShoppingCart className="mx-auto mb-2 h-8 w-8 text-primary/40" />
+                <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                  <ShoppingCart className="h-7 w-7 text-primary" />
+                </div>
                 <p className="text-sm font-semibold text-foreground">No hay servicios adicionales</p>
                 <p className="mt-1 text-xs text-muted-foreground">
                   Este servicio no ofrece complementos por el momento.
