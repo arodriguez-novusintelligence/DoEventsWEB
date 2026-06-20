@@ -97,6 +97,24 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-20 gap-empalme batch 2 (run 27876831237-b2)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| PostCard repost StoryAvatar | VISUAL | Sí | `feed/PostCard.tsx` | Anillos historia en repost embebido |
+| ProfileGallery viewer tokens | VISUAL | Sí | `feed/ProfileGallery.tsx` | Controles `background/20` fullscreen |
+| ServiceDetailView MapPin | VISUAL | Sí | `services/ServiceDetailView.tsx` | Ubicación sin emoji |
+| NotificationsSheet tokens | VISUAL | Sí | `feed/NotificationsSheet.tsx` | Secondary en lugar de amber; «Ver lugar» |
+| TransferTicketFlow success | VISUAL | Sí | `tickets/TransferTicketFlow.tsx` | `text-primary-foreground` en check |
+| FollowersSheet respond API | Integración | Sí | `feed/FollowersSheet.tsx` | `respondFollowRequest` aceptar |
+| PublishFlowModal anti-sim | Bloqueo | Parcial | `events/PublishFlowModal.tsx` | BACKEND_REQUIRED onSubmitBank |
+| PaymentGateway PSP banner | Bloqueo | Parcial | `services/PaymentGatewaySheet.tsx` | BACKEND_REQUIRED PSP |
+| ContactImportModal disabled | FRONTEND_LOGIC | Sí | `guests/ContactImportModal.tsx` | Sin contactos si no soportado |
+| StatsEventListView badge | VISUAL | Sí | `stats/StatsEventListView.tsx` | Status chip rounded-full |
+| EditProfileView password | Bloqueo | Parcial | `feed/EditProfileView.tsx` | BACKEND_REQUIRED |
+| BookingSheet add-ons | Bloqueo | Parcial | `services/BookingSheet.tsx` | BACKEND_REQUIRED catálogo |
+| Batch 2 gaps (20) | Empalme | Sí | ver `decision-log.md` | 16 DONE + 4 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-20 gap-empalme batch 1 (run 27876831237-b1)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

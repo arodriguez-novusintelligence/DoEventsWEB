@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27876831237-b2`: batch 2 (20 gaps) — 16 DONE frontend; 4 BACKEND_REQUIRED (`EditProfileView`, `BookingSheet` add-ons, `PublishFlowModal` banking, `PaymentGatewaySheet` PSP).
+
 Run `gap-empalme-27876831237-b1`: batch 1 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingForm` SWIFT/PayPal/persistencia). Polish retry maps + tokens MyVenuesView.
 
 Run `agent-27876831237-a8b70853`: prepare StepEventSummary + TicketDetailView — 5 gaps DONE frontend; sin cambios backend. `ticketsData` Lovable ignorado en runtime (tipos only).
@@ -56,19 +58,28 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27876831237-b1)
+## Empalme realizado (última ejecución — gap-empalme-27876831237-b2)
 
-- **GuestStatsView:** empty state con icono Users en círculo primary/10.
-- **EventLocationMap:** overlay error con MapPinOff + botón Reintentar (reset script Google Maps).
-- **MapView:** banner error rounded-2xl + Reintentar carga mapa.
-- **HostPickerModal:** error búsqueda AlertCircle + Reintentar vía `searchUsers` API.
-- **MyVenuesView:** status badges `amber-500/15`; Loader2 en drawer opiniones.
-- **Batch 1 restante (15):** StepAgenda, MyServicesView, SeatingCategoryDialog, GuestManagementView, MyEventsView, SuccessModal, InvitationEventDetailView, PrivateChatView, StepUnified, StepEventLocation, EventPreviewModal, SideMenu, ChatRoomView, StepEventSummary — verificados intactos.
+- **PostCard:** StoryAvatar en repost embebido.
+- **ProfileGallery:** Controles visor con tokens `background/20`.
+- **ServiceDetailView:** MapPin en ubicación.
+- **NotificationsSheet:** Tokens secondary; CTA «Ver lugar» en reservas venue.
+- **TransferTicketFlow:** Check éxito `text-primary-foreground`.
+- **FollowersSheet:** `respondFollowRequest` para aceptar solicitudes.
+- **PublishFlowModal:** Error persistente sin `onSubmitBank` — no simula éxito.
+- **PaymentGatewaySheet:** Banner confirmación orden; PSP BACKEND_REQUIRED.
+- **ContactImportModal:** Deshabilitado si contactos no soportados.
+- **StatsEventListView:** Badge status `rounded-full`.
+- **Batch 2 restante (10):** EditGuestModal, StepAccessControl, CreateEventView, VenueDetailReservation, TopHeader, AIAssistantFAB, MessagesListView, StepEventDetails, BookingSheet (empty add-ons), EditProfileView (bloqueos) — verificados.
 
 ## Backend pendiente para 100%
 
 | Gap / Feature | lovablePath | webPath | Motivo | Endpoint / Lambda | Tabla DynamoDB | Acción | Prioridad |
 |---------------|-------------|---------|--------|-------------------|----------------|--------|-----------|
+| EditProfile password/gustos | `src/components/feed/EditProfileView.tsx` | `packages/shell/src/lovable/components/feed/EditProfileView.tsx` | Cambio contraseña + intereses persistentes | Cognito `ChangePassword` + `PATCH /users/{id}` | `Users` | Batch 2 BACKEND_REQUIRED | Media |
+| Booking add-ons | `src/components/services/BookingSheet.tsx` | `packages/shell/src/lovable/components/services/BookingSheet.tsx` | Catálogo servicios adicionales | `GET /services/{id}/addons` | `Services` | Batch 2 BACKEND_REQUIRED | Media |
+| PublishFlow banking | `src/components/events/PublishFlowModal.tsx` | `packages/shell/src/lovable/components/events/PublishFlowModal.tsx` | Persistencia banco post-publicación | `POST /events/{id}/bank-link` | `Events` | Batch 2 BACKEND_REQUIRED | Media |
+| PaymentGateway PSP | `src/components/services/PaymentGatewaySheet.tsx` | `packages/shell/src/lovable/components/services/PaymentGatewaySheet.tsx` | Cobro tarjeta/PSE real | PSP webhook + `POST /payments/confirm` | `Orders` | Batch 2 BACKEND_REQUIRED | Alta |
 | Banking delete | `src/components/banking/BankingHub.tsx` | `packages/shell/src/lovable/components/banking/BankingHub.tsx` | Sin endpoint eliminar cuenta | `DELETE /bank-accounts/{id}` (propuesto) | `BankAccounts` | Implementar en DoEventsBack; UI documenta bloqueo | Alta |
 | PaymentMethods delete | `src/components/banking/PaymentMethodsDashboard.tsx` | `packages/shell/src/lovable/components/banking/PaymentMethodsDashboard.tsx` | Mismo contrato delete | `DELETE /bank-accounts/{id}` | `BankAccounts` | Reutilizar endpoint delete | Alta |
 | GlobalSearch posts | `src/components/feed/GlobalSearchView.tsx` | `packages/shell/src/lovable/components/feed/GlobalSearchView.tsx` | Sin búsqueda full-text publicaciones | `GET /publications/search?q=` | `Publications` | Endpoint dedicado; UI filtra feed reciente | Media |

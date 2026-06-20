@@ -248,7 +248,7 @@ const ProfileGallery = ({
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); setViewingIndex(null); }}
-            className="absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white z-10"
+            className="absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-background/20 text-background z-10 backdrop-blur-sm"
           >
             <X className="h-5 w-5" />
           </button>
@@ -257,7 +257,7 @@ const ProfileGallery = ({
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); navigateViewer('prev'); }}
-              className="absolute left-3 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white z-10"
+              className="absolute left-3 flex h-10 w-10 items-center justify-center rounded-full bg-background/20 text-background z-10 backdrop-blur-sm"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -267,7 +267,7 @@ const ProfileGallery = ({
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); navigateViewer('next'); }}
-              className="absolute right-3 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white z-10"
+              className="absolute right-3 flex h-10 w-10 items-center justify-center rounded-full bg-background/20 text-background z-10 backdrop-blur-sm"
             >
               <ChevronRight className="h-5 w-5" />
             </button>

@@ -33,22 +33,22 @@ const iconMap: Record<NotificationType, { icon: typeof Heart; color: string; bg:
   follow_request: { icon: UserPlus, color: 'text-primary', bg: 'bg-primary/10' },
   event_created: { icon: CalendarPlus, color: 'text-primary', bg: 'bg-primary/10' },
   event_invite: { icon: Mail, color: 'text-primary', bg: 'bg-primary/10' },
-  ticket_transfer: { icon: Ticket, color: 'text-amber-600', bg: 'bg-amber-500/15' },
+  ticket_transfer: { icon: Ticket, color: 'text-secondary-foreground', bg: 'bg-secondary' },
   refund: { icon: CreditCard, color: 'text-primary', bg: 'bg-primary/10' },
   access_assignment: { icon: ShieldCheck, color: 'text-primary', bg: 'bg-primary/10' },
-  event_finished: { icon: Star, color: 'text-amber-600', bg: 'bg-amber-500/15' },
+  event_finished: { icon: Star, color: 'text-secondary-foreground', bg: 'bg-secondary' },
   followed_event: { icon: Megaphone, color: 'text-primary', bg: 'bg-primary/10' },
   followed_post: { icon: FileText, color: 'text-primary', bg: 'bg-primary/10' },
   chatroom_invite: { icon: MessagesSquare, color: 'text-primary', bg: 'bg-primary/10' },
   user_mention: { icon: AtSign, color: 'text-primary', bg: 'bg-primary/10' },
-  event_mention: { icon: AtSign, color: 'text-amber-600', bg: 'bg-amber-500/15' },
+  event_mention: { icon: AtSign, color: 'text-secondary-foreground', bg: 'bg-secondary' },
   ticket_purchase: { icon: Ticket, color: 'text-primary', bg: 'bg-primary/10' },
   ticket_sold: { icon: Ticket, color: 'text-primary', bg: 'bg-primary/10' },
   venue_reservation: { icon: Building2, color: 'text-primary', bg: 'bg-primary/10' },
   venue_reserved: { icon: Building2, color: 'text-primary', bg: 'bg-primary/10' },
   service_booking: { icon: Briefcase, color: 'text-primary', bg: 'bg-primary/10' },
   service_booked: { icon: Briefcase, color: 'text-primary', bg: 'bg-primary/10' },
-  subscription_purchase: { icon: Crown, color: 'text-amber-600', bg: 'bg-amber-500/15' },
+  subscription_purchase: { icon: Crown, color: 'text-secondary-foreground', bg: 'bg-secondary' },
 };
 
 const getNotificationText = (n: Notification): string => {
@@ -177,8 +177,8 @@ const NotificationRow = ({
             className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-primary hover:underline w-fit"
             onClick={(e) => { e.stopPropagation(); onGoToPlace?.(); }}
           >
-            <CalendarPlus className="h-3.5 w-3.5" />
-            Ver evento
+            <Building2 className="h-3.5 w-3.5" />
+            Ver lugar
           </button>
         )}
 

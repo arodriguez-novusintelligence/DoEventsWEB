@@ -1,4 +1,3 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@lovable/components/ui/avatar';
 import { cn } from '@lovable/lib/utils';
 import type { FeedUiPost as Post, FeedUiUser as User } from '@doevents/shared';
 import ImageCarousel from './ImageCarousel';
@@ -162,14 +161,13 @@ const PostCard = ({
               onClick={canOpen ? () => onOpenDetail!(post) : undefined}
             >
               <div className="flex items-center gap-2 px-3 py-2.5">
-                <Avatar className="h-8 w-8">
-                  {post.repostOf!.user.avatarUrl ? (
-                    <AvatarImage src={post.repostOf!.user.avatarUrl} alt={post.repostOf!.user.name} />
-                  ) : null}
-                  <AvatarFallback className="bg-accent text-xs font-semibold text-accent-foreground">
-                    {post.repostOf!.user.initials}
-                  </AvatarFallback>
-                </Avatar>
+                <StoryAvatar
+                  userId={post.repostOf!.user.id}
+                  name={post.repostOf!.user.name}
+                  imageUrl={post.repostOf!.user.avatarUrl}
+                  size={32}
+                  onClick={() => onViewProfile?.(post.repostOf!.user)}
+                />
                 <div className="leading-tight">
                   <p className="text-sm font-semibold text-card-foreground">
                     {post.repostOf!.user.name}

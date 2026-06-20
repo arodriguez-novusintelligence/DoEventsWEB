@@ -53,9 +53,9 @@ const PublishFlowModal = ({ open, eventId, onClose, onFinalize, onSubmitBank }: 
       return;
     }
     if (!onSubmitBank) {
-      // BACKEND_REQUIRED: persistencia vía API banking — no simular guardado
-      toast.info('Registro bancario pendiente de activación en plataforma');
-      setStage('success');
+      // BACKEND_REQUIRED: persistencia vía API banking — no simular guardado ni éxito
+      setErrorMessage('El registro bancario post-publicación aún no está disponible. Puedes continuar y registrar tus datos más tarde.');
+      setStage('error');
       return;
     }
     setSaving(true);

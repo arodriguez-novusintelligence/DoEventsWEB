@@ -6,7 +6,7 @@ import { Button } from '@lovable/components/ui/button';
 import { Input } from '@lovable/components/ui/input';
 import { Search, UserPlus, Check, Shield, Users, Clock, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { followUser, unfollowUser, fetchPendingFollowRequests } from '@doevents/shared';
+import { followUser, unfollowUser, fetchPendingFollowRequests, respondFollowRequest } from '@doevents/shared';
 
 export type ProfileListUser = {
   id: string;
@@ -129,7 +129,7 @@ const RequestRow = ({
     if (!currentUserId || pending) return;
     setPending(true);
     try {
-      await followUser(currentUserId, user.id);
+      await respondFollowRequest(currentUserId, user.id, 'accept');
       toast.success(`Aceptaste a ${user.name}`);
       onFollowChange?.();
     } catch (err) {

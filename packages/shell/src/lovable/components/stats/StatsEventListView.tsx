@@ -195,7 +195,7 @@ const StatsEventListView = ({ events, onBack, loading = false, loadError = null 
                 <h1 className="truncate text-base font-bold text-foreground leading-tight">
                   {selectedEvent.eventName}
                 </h1>
-                <span className={`mt-0.5 shrink-0 text-[10px] font-bold uppercase tracking-widest ${status.className}`}>
+                <span className={`mt-0.5 shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest ${status.className}`}>
                   {status.label}
                 </span>
               </div>

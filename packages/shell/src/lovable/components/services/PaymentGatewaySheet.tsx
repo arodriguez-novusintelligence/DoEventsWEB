@@ -144,6 +144,14 @@ const PaymentGatewaySheet = ({ open, onOpenChange, booking, onSuccess, sellerNam
               </p>
             </div>
           )}
+          {booking.orderId && step !== 'success' && step !== 'processing' && (
+            <div className="mb-4 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
+              <p className="text-xs font-semibold text-primary">Confirmación de orden</p>
+              <p className="mt-1 text-[11px] text-muted-foreground">
+                El cobro con tarjeta/PSE se activará cuando el PSP esté integrado. Por ahora solo se confirma la orden existente.
+              </p>
+            </div>
+          )}
           {(step === 'method' || step === 'form' || step === 'processing') && (
             <div className="mb-5 flex items-center gap-2">
               {(['method', 'form', 'processing'] as const).map((s, i) => {

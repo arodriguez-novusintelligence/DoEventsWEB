@@ -590,7 +590,7 @@ const TransferTicketFlow = ({ ticket, entries, currentUserId, onClose, onComplet
       {step === 'success' && recipient && (
         <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
           <div className="h-28 w-28 rounded-full bg-primary grid place-items-center shadow-xl">
-            <Check className="h-16 w-16 text-white" strokeWidth={3} />
+            <Check className="h-16 w-16 text-primary-foreground" strokeWidth={3} />
           </div>
           <h1 className="mt-6 text-3xl font-extrabold text-foreground">¡Boleta compartida!</h1>
           <p className="mt-3 text-foreground">

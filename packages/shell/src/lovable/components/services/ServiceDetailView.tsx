@@ -7,6 +7,7 @@ import {
   CalendarDays,
   ShieldCheck,
   Star,
+  MapPin,
 } from 'lucide-react';
 import { useState } from 'react';
 import BookingSheet, { BookingData } from '@lovable/components/services/BookingSheet';
@@ -153,7 +154,10 @@ const ServiceDetailView = ({
           <p className="mt-3 text-sm leading-relaxed text-foreground/80">{description}</p>
         )}
         {locationLabel && locationLabel !== description && (
-          <p className="mt-2 text-xs text-muted-foreground">📍 {locationLabel}</p>
+          <p className="mt-2 flex items-center gap-1 text-xs text-muted-foreground">
+            <MapPin className="h-3.5 w-3.5 shrink-0 text-primary/70" />
+            {locationLabel}
+          </p>
         )}
         {providerUserId && onOpenProvider && (
           <button

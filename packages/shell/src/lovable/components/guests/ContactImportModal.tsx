@@ -107,7 +107,7 @@ export function ContactImportModal({ open, onOpenChange, onImportContacts }: Pro
             variant="outline"
             className="w-full gap-2 rounded-xl"
             onClick={() => void loadFromDevice()}
-            disabled={loading}
+            disabled={loading || !isDeviceContactsSupported()}
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Smartphone className="h-4 w-4" />}
             {isDeviceContactsSupported() ? 'Seleccionar del dispositivo' : 'Contactos no disponibles en este navegador'}
