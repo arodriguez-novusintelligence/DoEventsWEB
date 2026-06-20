@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27883333029-b1`: batch 1 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingForm` persistencia SWIFT/PayPal). Patrón Lovable: círculos primary, Loader2, AlertCircle retry. `useLiveEventStats` expone loadError.
+
 Run `agent-27883333029-77da574b`: prepare StepEventSummary — 1 gap DONE frontend; sin cambios backend. Manifiesto `38e2c759` sin diff UI; build:devaws OK.
 
 Run `gap-empalme-27876831237-b5`: batch 5 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`KycCertificationView` submit documentos KYC). Auth RISKY con APIs reales intactas.
@@ -66,7 +68,26 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27876831237-b5)
+## Empalme realizado (última ejecución — gap-empalme-27883333029-b1)
+
+- **GuestStatsView:** canales con icono en círculo primary; empty Users; error AlertCircle + retry (`useLiveEventStats.loadError`).
+- **StepAgenda:** empty CalendarDays h-14; timeline intacta.
+- **MyServicesView:** empty reseñas con Star en círculo primary (API reviews pendiente).
+- **SeatingCategoryDialog:** DialogContent rounded-2xl; Armchair rounded-full.
+- **EventLocationMap:** AlertCircle en error de carga Google Maps.
+- **HostPickerModal:** verificado — referencia Loader2/AlertCircle intacta.
+- **GuestManagementView:** Loader2 centrado en carga inicial.
+- **MyEventsView / MyVenuesView:** empty reseñas MessageSquare círculo primary.
+- **SuccessModal:** CheckCircle2 en círculo primary (paridad MyServicesView).
+- **InvitationEventDetailView / EventPreviewModal:** hero empty primary; mapa preview no interactivo.
+- **StepUnified:** Loader2 en geolocalización; empty actividades Briefcase h-14.
+- **StepEventLocation:** Loader2 venues; empty Home círculo primary.
+- **SideMenu:** ring en fila perfil.
+- **ChatRoomView / PrivateChatView:** empty MessageSquare primary; border dashed primary.
+- **PostCard / MapView:** ring card; Loader2 + AlertCircle + empty MapPin círculo.
+- **BankingForm:** banner BACKEND_REQUIRED visible; Wallet rounded-full; sin simular persistencia.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27876831237-b5)
 
 - **ProfileCommentsView:** ProfileSectionBanner; Loader2; AlertCircle retry; empty círculo primary.
 - **StoriesContext:** re-export documentado con `loadErrorMessage`, `isEmpty`, `authorCount`, `refreshStories`.
@@ -121,6 +142,8 @@ Sí (parcial)
 
 | Gap / Feature | lovablePath | webPath | Motivo | Endpoint / Lambda | Tabla DynamoDB | Acción | Prioridad |
 |---------------|-------------|---------|--------|-------------------|----------------|--------|-----------|
+| BankingForm SWIFT/PayPal | `src/components/banking/BankingForm.tsx` | `packages/shell/src/lovable/components/banking/BankingForm.tsx` | Persistencia cuentas + PayPal + lookup SWIFT | `POST /bank-accounts` + lookup SWIFT | `BankAccounts` | Batch 1 BACKEND_REQUIRED | Alta |
+| Service reviews | `src/components/services/MyServicesView.tsx` | `packages/shell/src/lovable/components/services/MyServicesView.tsx` | Reseñas vacías sin API | `GET /services/{id}/reviews` | `ServiceReviews` | Exponer endpoint; UI lista vacía real | Baja |
 | EditProfile password/gustos | `src/components/feed/EditProfileView.tsx` | `packages/shell/src/lovable/components/feed/EditProfileView.tsx` | Cambio contraseña + intereses persistentes | Cognito `ChangePassword` + `PATCH /users/{id}` | `Users` | Batch 2 BACKEND_REQUIRED | Media |
 | Booking add-ons | `src/components/services/BookingSheet.tsx` | `packages/shell/src/lovable/components/services/BookingSheet.tsx` | Catálogo servicios adicionales | `GET /services/{id}/addons` | `Services` | Batch 2 BACKEND_REQUIRED | Media |
 | PublishFlow banking | `src/components/events/PublishFlowModal.tsx` | `packages/shell/src/lovable/components/events/PublishFlowModal.tsx` | Persistencia banco post-publicación | `POST /events/{id}/bank-link` | `Events` | Batch 2 BACKEND_REQUIRED | Media |
@@ -130,9 +153,7 @@ Sí (parcial)
 | GlobalSearch posts | `src/components/feed/GlobalSearchView.tsx` | `packages/shell/src/lovable/components/feed/GlobalSearchView.tsx` | Sin búsqueda full-text publicaciones | `GET /publications/search?q=` | `Publications` | Endpoint dedicado; UI filtra feed reciente | Media |
 | Story viewers | `src/components/feed/StoryViewersSheet.tsx` | `packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx` | Sin lista de visualizaciones | `GET /stories/{id}/viewers` | `StoryViews` | Implementar endpoint; skeleton listo | Media |
 | KYC submit | `src/components/feed/KycCertificationView.tsx` | `packages/shell/src/lovable/components/feed/KycCertificationView.tsx` | Sin envío documentos KYC | `POST /users/{id}/kyc` | `Users` / proveedor KYC | Integración proveedor; botón deshabilitado | Alta |
-| EditProfile password | `src/components/feed/EditProfileView.tsx` | `packages/shell/src/lovable/components/feed/EditProfileView.tsx` | Cambio contraseña Cognito | Cognito `ChangePassword` | — | Batch previo | Media |
-| PublishFlow banking | `src/components/events/PublishFlowModal.tsx` | `packages/shell/src/lovable/components/events/PublishFlowModal.tsx` | Persistencia banco post-publicación | `POST /events/{id}/bank-link` | `Events` | Batch previo | Media |
-| BankingForm SWIFT/PayPal | `src/components/banking/BankingForm.tsx` | `packages/shell/src/lovable/components/banking/BankingForm.tsx` | Verificación SWIFT + persistencia PayPal | `POST /bank-accounts` + lookup SWIFT | `BankAccounts` | Batch 1 BACKEND_REQUIRED | Alta |
+| PULEP Colombia campos | `src/data/eventFormData.ts` | `packages/shell/src/lovable/data/eventFormData.ts` | Registro PULEP no persiste en evento | Extender `POST/PATCH /events` con `pulep*` | Events | Persistir + validar registro | Media |
 
 ## Empalme realizado (ejecución anterior — gap-empalme-27876228669-b5)
 

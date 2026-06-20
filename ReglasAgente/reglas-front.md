@@ -99,6 +99,34 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+---
+
+## Ejecución 2026-06-20 gap-empalme batch 1 (run 27883333029-b1)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| GuestStatsView error/retry | Integración | Sí | `stats/GuestStatsView.tsx`, `useLiveEventStats.ts` | loadError + AlertCircle |
+| GuestStatsView channel icons | VISUAL | Sí | `stats/GuestStatsView.tsx` | Círculo primary en canales |
+| StepAgenda empty h-14 | VISUAL | Sí | `events/StepAgenda.tsx` | CalendarDays círculo primary |
+| MyServicesView reviews empty | VISUAL | Sí | `services/MyServicesView.tsx` | Star círculo primary |
+| SeatingCategoryDialog rounded | VISUAL | Sí | `venues/seating/SeatingCategoryDialog.tsx` | Dialog rounded-2xl |
+| EventLocationMap AlertCircle | VISUAL | Sí | `events/EventLocationMap.tsx` | Error parity Lovable |
+| HostPickerModal reference | Integración | Sí | `events/HostPickerModal.tsx` | Intacto batch previo |
+| GuestManagementView Loader2 | VISUAL | Sí | `guests/GuestManagementView.tsx` | Carga centrada |
+| MyEventsView reviews empty | VISUAL | Sí | `feed/MyEventsView.tsx` | MessageSquare primary |
+| SuccessModal primary | VISUAL | Sí | `banking/SuccessModal.tsx` | CheckCircle2 primary |
+| InvitationEventDetail hero | VISUAL | Sí | `invitations/InvitationEventDetailView.tsx` | CalendarDays círculo |
+| StepUnified geo Loader2 | VISUAL | Sí | `services/StepUnified.tsx` | Spinner en botones geo |
+| StepEventLocation venues | VISUAL | Sí | `events/StepEventLocation.tsx` | Loader2 + Home empty |
+| EventPreviewModal preview | VISUAL | Sí | `events/EventPreviewModal.tsx` | Mapa no interactivo |
+| SideMenu profile ring | VISUAL | Sí | `feed/SideMenu.tsx` | Ring primary-foreground/15 |
+| ChatRoomView empty border | VISUAL | Sí | `chat/ChatRoomView.tsx` | Dashed primary/25 |
+| BankingForm persistencia | Bloqueo | Parcial | `banking/BankingForm.tsx` | BACKEND_REQUIRED banner |
+| MyVenuesView reviews empty | VISUAL | Sí | `venues/MyVenuesView.tsx` | MessageSquare primary |
+| PostCard card ring | VISUAL | Sí | `feed/PostCard.tsx` | ring-border/40 |
+| MapView Loader2/AlertCircle | VISUAL | Sí | `feed/MapView.tsx` | Empty MapPin círculo |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-20 prepare-77da574b (run 27883333029)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

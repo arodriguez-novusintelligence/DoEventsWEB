@@ -1,33 +1,38 @@
-# Gap empalme — resumen ejecutivo (prepare 77da574b)
+# Gap empalme — resumen ejecutivo (batch 1)
 
-**Run:** `agent-27883333029-77da574b`  
+**Run:** `gap-empalme-27883333029-b1`  
 **Fecha:** 2026-06-20  
 **Rama:** `feature/cicd/dev-automation`
 
 ## Resultado
 
-Prepare Lovable `77da574b`: 1 archivo (`StepEventSummary.tsx`). Similitud estimada **93.0% → 94.5%** (objetivo 98%; re-comparación CI pendiente). **1 gap DONE** frontend; **0 BACKEND_REQUIRED** en este run.
+Batch 1 del manifiesto (20 gaps, similitud baseline **57.0%**). Tras empalme estimado **~62.0%** (objetivo 98%; re-comparación CI pendiente). **19 gaps DONE** frontend; **1 BACKEND_REQUIRED** (`BankingForm` persistencia SWIFT/PayPal).
 
 ## Empalme realizado
 
 | Área | Cambios principales |
 |------|---------------------|
-| **StepEventSummary FAQ empty** | HelpCircle en círculo primary + copy descriptivo |
-| **StepEventSummary agenda empty** | Clock en círculo primary + copy wizard |
-| **StepEventSummary access empty** | ShieldCheck en círculo primary + CTA ubicación |
-| **StepEventSummary acordeón** | `border border-border` en secciones (paridad cards Lovable) |
+| **GuestStatsView** | Canales con círculo primary; error `AlertCircle` + retry vía `useLiveEventStats` |
+| **StepAgenda / StepEventLocation / StepUnified** | Empty states h-14; Loader2 en carga geo/venues |
+| **MyServicesView / MyEventsView / MyVenuesView** | Reseñas empty con círculo primary + copy |
+| **EventLocationMap / MapView** | AlertCircle en error; Loader2; empty dashed primary |
+| **GuestManagementView** | Loader2 centrado en carga inicial |
+| **SuccessModal / SeatingCategoryDialog** | Tokens primary; dialog `rounded-2xl` |
+| **InvitationEventDetail / EventPreview** | Hero empty primary; preview mapa no interactivo |
+| **SideMenu / PostCard / ChatRoomView** | Ring perfil; card ring; empty dashed primary |
+| **HostPickerModal / PrivateChatView** | Verificados alineados (referencia previa intacta) |
 
-## Backend pendiente (acumulado)
+## Backend pendiente
 
 | Gap | Motivo |
 |-----|--------|
-| `KycCertificationView` | `POST /users/{id}/kyc` — envío documentos |
-| PULEP persistencia | Campos Ley 1493 en API eventos |
-| Banking / PSP / viewers | Brechas documentadas en runs previos |
+| `BankingForm` | Persistencia cuentas, PayPal, lookup SWIFT — `POST /bank-accounts` |
+| `MyServicesView` reviews | `getReviewsForService` retorna vacío hasta API reseñas |
+| Acumulado previo | KYC, PULEP, delete banking, story viewers, global search posts |
 
 ## Gaps restantes
 
-- **~18 gaps** pendientes para 98% similitud.
+- **~100 gaps** pendientes (batches 2–6 del manifiesto).
 - Re-comparación con `compare-design-similarity.py` requiere checkout `discover-joyful-feed`.
 
 ## Validación
