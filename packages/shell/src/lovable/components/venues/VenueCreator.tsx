@@ -84,7 +84,8 @@ function VenueCreatorBody({
             <Button variant="ghost" size="icon" className="shrink-0 rounded-full" onClick={() => onBack?.(form)}>
               <ChevronLeft className="w-5 h-5" />
             </Button>
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 flex items-center gap-2">
+              <MapPinPlus className="h-5 w-5 shrink-0 text-primary" />
               <h1 className="text-lg font-extrabold text-primary truncate">
                 {headerTitle || (mode === 'edit' ? 'Editar lugar' : 'Mi Lugar de Eventos')}
               </h1>

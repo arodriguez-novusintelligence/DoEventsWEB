@@ -228,7 +228,7 @@ const CommentsSheet = ({
       <DrawerContent>
         <div className="mx-auto w-full max-w-lg">
           <DrawerHeader className="flex items-center gap-2 text-left">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
               <MessageSquare className="h-5 w-5 text-primary" />
             </div>
             <DrawerTitle className="text-xl font-bold">

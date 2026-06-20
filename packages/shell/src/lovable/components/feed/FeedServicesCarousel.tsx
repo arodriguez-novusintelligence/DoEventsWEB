@@ -118,7 +118,7 @@ const FeedServicesCarousel = ({
                     onToggleServiceLike(p.id);
                   }}
                   aria-label={isLiked ? 'Quitar me gusta' : 'Me gusta'}
-                  className="absolute top-2.5 right-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-primary shadow-sm"
+                  className="absolute top-2.5 right-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-background/90 text-primary shadow-sm"
                 >
                   <Heart
                     className={`h-4 w-4 ${isLiked ? 'fill-primary text-primary' : ''}`}

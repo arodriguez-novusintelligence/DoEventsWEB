@@ -188,7 +188,7 @@ const EventMedia = ({ event }: { event: EventItem }) => {
 const FavoriteHeartButton = ({
   active,
   onToggle,
-  className = 'absolute top-2.5 right-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-primary shadow-sm',
+  className = 'absolute top-2.5 right-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-background/90 text-primary shadow-sm',
   iconClassName = 'h-4 w-4',
 }: {
   active?: boolean;
@@ -238,7 +238,7 @@ const EventCard = ({
           onToggle={() => { if (event.id) onToggleFavorite(event.id); }}
         />
       ) : (
-        <span className="absolute top-2.5 right-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-primary shadow-sm">
+        <span className="absolute top-2.5 right-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-background/90 text-primary shadow-sm">
           <Heart className="h-4 w-4" strokeWidth={2.2} />
         </span>
       )}
@@ -460,7 +460,7 @@ const VenueCard = ({
       {onToggleLike ? (
         <FavoriteHeartButton active={isLiked} onToggle={onToggleLike} />
       ) : (
-        <span className="absolute top-2.5 right-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-primary shadow-sm">
+        <span className="absolute top-2.5 right-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-background/90 text-primary shadow-sm">
           <Heart className="h-4 w-4" strokeWidth={2.2} />
         </span>
       )}
@@ -522,15 +522,15 @@ const ProviderProfileCard = ({
           <FavoriteHeartButton
             active={isLiked}
             onToggle={onToggleLike}
-            className="absolute top-3 left-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-primary shadow-sm"
+            className="absolute top-3 left-3 flex h-8 w-8 items-center justify-center rounded-full bg-background/90 text-primary shadow-sm"
           />
         ) : null}
         <h3 className="mt-3 text-sm font-bold text-foreground text-center line-clamp-2">{provider.name}</h3>
         <p className="mt-1 text-xs text-muted-foreground text-center line-clamp-1">
           {provider.username ? `@${provider.username}` : provider.primaryRole}
         </p>
-        <div className="mt-2 flex items-center gap-1 text-xs text-amber-600 font-semibold">
-          <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+        <div className="mt-2 flex items-center gap-1 text-xs text-primary font-semibold">
+          <Star className="h-3.5 w-3.5 fill-primary text-primary" />
           {provider.rating > 0 ? provider.rating.toFixed(1) : 'Nuevo'}
         </div>
       </div>
@@ -962,7 +962,9 @@ const EventsView = ({
       {!isInitialDiscoverLoad && showEvents && (
         <section className="px-4 pt-8 text-center">
           <div className="rounded-2xl bg-card border border-dashed border-border p-6 flex flex-col items-center">
-            <CalendarDays className="h-12 w-12 text-primary/60" />
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+              <CalendarDays className="h-7 w-7 text-primary" />
+            </div>
             <p className="mt-3 text-sm text-muted-foreground">
               Crea tu primer evento y hazte conocer<br />en nuestra red de <strong className="text-foreground">eventers</strong>
             </p>

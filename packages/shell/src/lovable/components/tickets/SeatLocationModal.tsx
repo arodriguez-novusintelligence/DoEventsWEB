@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@lovable/components/ui/dialog';
 import { Button } from '@lovable/components/ui/button';
-import { Armchair, MapPin, DoorOpen, Loader2, RefreshCw } from 'lucide-react';
+import { Armchair, MapPin, DoorOpen, Loader2, RefreshCw, AlertCircle } from 'lucide-react';
 import type { Ticket } from '@lovable/data/ticketsData';
 import MultiFloorVenueMap from '@lovable/components/venue/MultiFloorVenueMap';
 import { parseSeatLabel } from '../../../lovable-bridge/venueToFigures';
@@ -111,8 +111,8 @@ const SeatLocationModal = ({ open, onOpenChange, ticket }: Props) => {
 
           {!ticketHasSeat(ticket) ? (
             <div className="flex h-[200px] flex-col items-center justify-center gap-2 rounded-2xl bg-secondary px-4 text-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                <Armchair className="h-6 w-6 text-primary" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                <Armchair className="h-7 w-7 text-primary" />
               </div>
               <p className="text-sm text-muted-foreground">Esta boleta no tiene asiento numerado.</p>
             </div>
@@ -122,8 +122,10 @@ const SeatLocationModal = ({ open, onOpenChange, ticket }: Props) => {
               <p className="text-xs text-muted-foreground">Cargando mapa…</p>
             </div>
           ) : error || !floors.length ? (
-            <div className="flex h-[200px] flex-col items-center justify-center gap-3 rounded-lg bg-secondary px-4 text-center">
-              <MapPin className="h-8 w-8 text-muted-foreground/60" />
+            <div className="flex h-[200px] flex-col items-center justify-center gap-3 rounded-2xl bg-secondary px-4 text-center">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
+                <AlertCircle className="h-7 w-7 text-destructive" />
+              </div>
               <p className="text-sm text-muted-foreground">{error || 'Mapa de asientos no disponible'}</p>
               <Button
                 type="button"

@@ -126,8 +126,8 @@ const CreatePostSheet = ({
         <div className="mx-auto w-full max-w-lg">
           <DrawerHeader className="flex items-center justify-between text-left">
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10">
-                <PenLine className="h-4 w-4 text-primary" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                <PenLine className="h-5 w-5 text-primary" />
               </div>
               <DrawerTitle className="text-xl font-bold">Nueva publicación</DrawerTitle>
             </div>

@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27883333029-b3`: batch 3 (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED. Patrón Lovable: tokens primary/accent/success, círculos h-14 ring-primary/20, AlertCircle/Loader2/CheckCircle2.
+
 Run `gap-empalme-27883333029-b2`: batch 2 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`EditProfileView` password/gustos, `BookingSheet` add-ons, `PublishFlowModal` banking). Patrón Lovable: círculos primary h-14, Loader2, AlertCircle.
 
 Run `gap-empalme-27883333029-b1`: batch 1 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingForm` persistencia SWIFT/PayPal). Patrón Lovable: círculos primary, Loader2, AlertCircle retry. `useLiveEventStats` expone loadError.
@@ -70,7 +72,22 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27883333029-b2)
+## Empalme realizado (última ejecución — gap-empalme-27883333029-b3)
+
+- **EventInvitationModal:** AlertCircle en error eventos; tokens accent en correos nuevos; badge Nuevo success; ring en empty CalendarDays.
+- **EventsView:** CTA crear evento círculo h-14 ring; estrellas provider primary; favoritos bg-background/90.
+- **StepAccessControl:** empty DoorOpen ring-primary/20.
+- **CommentsSheet / CreatePostSheet:** headers MessageSquare/PenLine h-10 ring-primary/20.
+- **ProfileView:** barra experiencia gradiente primary continua.
+- **MyInvitationsView:** empty Ticket icon (paridad Lovable).
+- **SeatLocationModal:** AlertCircle error h-14; empty Armchair ring; rounded-2xl error container.
+- **VenueCreator:** MapPinPlus en header sticky junto al título.
+- **AIAssistantView:** CheckCircle2 en CreatedEntityCard; Loader2 «Pensando…»; Button shadcn reemplaza de-access-btn.
+- **MainInfoSection / LocationSection:** shadow-sm en cards.
+- **FeedServicesCarousel:** bg-background/90 en botón corazón.
+- **MyTicketsView / TicketDetailView / AuthLogo / FavoritesView / PreferencesRefundSection / EventDetailView / NotificationsContext:** verificados alineados (empalmes previos intactos).
+
+## Empalme realizado (ejecución anterior — gap-empalme-27883333029-b2)
 
 - **ProfileGallery:** AlertCircle en error + retry; Loader2 en carga con skeleton grid.
 - **ServiceDetailView:** empty foto círculo primary h-14; CTA sticky `bg-primary-foreground`.

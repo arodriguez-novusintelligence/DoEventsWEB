@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, Mail, MessageCircle, Bell, Smartphone, Heart, Plus, Edit, Trash2, MoreHorizontal, Check, X, AlertTriangle, AtSign, UserCheck, CalendarDays, Loader2, Users } from "lucide-react";
+import { ArrowLeft, Mail, MessageCircle, Bell, Smartphone, Heart, Plus, Edit, Trash2, MoreHorizontal, Check, X, AlertCircle, AlertTriangle, AtSign, UserCheck, CalendarDays, Loader2, Users } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@lovable/components/ui/dialog";
 import { Button } from "@lovable/components/ui/button";
 import { Badge } from "@lovable/components/ui/badge";
@@ -249,8 +249,8 @@ export const EventInvitationModal = ({
 
   const event = eventId ? events.find((e) => e.id === eventId) : null;
   const channelDefs = [
-    { id: 'mail', name: 'Mail', icon: Mail, color: 'text-blue-500' },
-    { id: 'whatsapp', name: 'WhatsApp', icon: MessageCircle, color: 'text-green-500' },
+    { id: 'mail', name: 'Mail', icon: Mail, color: 'text-primary' },
+    { id: 'whatsapp', name: 'WhatsApp', icon: MessageCircle, color: 'text-success' },
     { id: 'campana', name: 'Campaña', icon: Bell, color: 'text-primary' },
     { id: 'push', name: 'Push', icon: Smartphone, color: 'text-purple-500' },
   ];
@@ -889,8 +889,8 @@ export const EventInvitationModal = ({
                 )}
                 {!loadingEvents && eventsLoadError && (
                   <div className="flex flex-col items-center gap-3 py-12 text-center">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
-                      <AlertTriangle className="h-7 w-7 text-destructive" />
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
+                      <AlertCircle className="h-7 w-7 text-destructive" />
                     </div>
                     <p className="text-sm font-semibold text-foreground">{eventsLoadError}</p>
                     <Button type="button" variant="outline" size="sm" className="rounded-xl" onClick={() => void loadEvents()}>
@@ -900,7 +900,7 @@ export const EventInvitationModal = ({
                 )}
                 {!loadingEvents && !eventsLoadError && events.length === 0 && (
                   <div className="flex flex-col items-center gap-3 py-12 text-center">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                       <CalendarDays className="h-7 w-7 text-primary" />
                     </div>
                     <p className="text-sm font-semibold text-foreground">Sin eventos activos</p>
@@ -1223,9 +1223,9 @@ export const EventInvitationModal = ({
                                 bad ? 'border-destructive bg-destructive/10' : 'border-border bg-background'
                               }`}
                             >
-                              <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${isEmailOnly ? 'bg-blue-500/10' : 'bg-primary/10'}`}>
+                              <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${isEmailOnly ? 'bg-accent/10' : 'bg-primary/10'}`}>
                                 {isEmailOnly ? (
-                                  <AtSign className="h-3 w-3 text-blue-500" />
+                                  <AtSign className="h-3 w-3 text-accent-foreground" />
                                 ) : (
                                   <span className="text-[9px] font-semibold text-primary">{g.name.charAt(0)}{g.lastName.charAt(0)}</span>
                                 )}
@@ -1300,8 +1300,8 @@ export const EventInvitationModal = ({
                 <p className="text-lg font-bold text-primary">{existingUsers.length}</p>
                 <p className="text-[10px] text-muted-foreground">Usuarios</p>
               </div>
-              <div className="rounded-xl bg-blue-500/5 border border-blue-500/20 p-2">
-                <p className="text-lg font-bold text-blue-500">{emailOnly.length}</p>
+              <div className="rounded-xl bg-accent/5 border border-accent/20 p-2">
+                <p className="text-lg font-bold text-accent-foreground">{emailOnly.length}</p>
                 <p className="text-[10px] text-muted-foreground">Correos nuevos</p>
               </div>
             </div>
@@ -1319,9 +1319,9 @@ export const EventInvitationModal = ({
                   const isEmailOnly = !g.username && !!g.email;
                   return (
                     <div key={g.id} className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted/50">
-                      <div className={`w-7 h-7 rounded-full flex items-center justify-center ${isEmailOnly ? 'bg-blue-500/10' : 'bg-primary/10'}`}>
+                      <div className={`w-7 h-7 rounded-full flex items-center justify-center ${isEmailOnly ? 'bg-accent/10' : 'bg-primary/10'}`}>
                         {isEmailOnly ? (
-                          <AtSign className="h-3.5 w-3.5 text-blue-500" />
+                          <AtSign className="h-3.5 w-3.5 text-accent-foreground" />
                         ) : (
                           <span className="text-[10px] font-semibold text-primary">{g.name.charAt(0)}{g.lastName.charAt(0)}</span>
                         )}

@@ -101,6 +101,32 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-20 gap-empalme batch 3 (run 27883333029-b3)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| EventInvitationModal tokens | VISUAL | Sí | `guests/EventInvitationModal.tsx` | AlertCircle error; accent en correos; badge Nuevo success |
+| LocationSection shadow | VISUAL | Sí | `venues/sections/LocationSection.tsx` | shadow-sm card; empty MapPin ring |
+| MyTicketsView tabs | VISUAL | Sí | `tickets/MyTicketsView.tsx` | Verificado intacto batch previo |
+| StepAccessControl ring | VISUAL | Sí | `events/StepAccessControl.tsx` | DoorOpen h-14 ring-primary/20 |
+| EventsView CTA/stars | VISUAL | Sí | `feed/EventsView.tsx` | CTA h-14; estrellas primary; bg-background/90 |
+| CommentsSheet header | VISUAL | Sí | `feed/CommentsSheet.tsx` | MessageSquare h-10 ring-primary/20 |
+| ProfileView experience | VISUAL | Sí | `feed/ProfileView.tsx` | Barra gradiente primary |
+| TicketDetailView chips | VISUAL | Sí | `tickets/TicketDetailView.tsx` | Verificado intacto |
+| AuthLogo gradient | VISUAL | Sí | `auth/AuthLogo.tsx` | Verificado intacto |
+| NotificationsContext isEmpty | Integración | Sí | `contexts/NotificationsContext.tsx` | loadErrorMessage + isEmpty |
+| CreatePostSheet header | VISUAL | Sí | `feed/CreatePostSheet.tsx` | PenLine h-10 ring-primary/20 |
+| PreferencesRefundSection | VISUAL | Sí | `venues/sections/PreferencesRefundSection.tsx` | Verificado shadow-sm cards |
+| FavoritesView status | VISUAL | Sí | `feed/FavoritesView.tsx` | Verificado ProfileSectionBanner |
+| MyInvitationsView empty | VISUAL | Sí | `invitations/MyInvitationsView.tsx` | Ticket icon empty state |
+| VenueCreator header | VISUAL | Sí | `venues/VenueCreator.tsx` | MapPinPlus en título sticky |
+| SeatLocationModal error | VISUAL | Sí | `tickets/SeatLocationModal.tsx` | AlertCircle h-14; empty Armchair ring |
+| FeedServicesCarousel tokens | VISUAL | Sí | `feed/FeedServicesCarousel.tsx` | bg-background/90 heart button |
+| AIAssistantView entity | VISUAL | Sí | `ai/AIAssistantView.tsx` | CheckCircle2; Loader2; Button shadcn |
+| EventDetailView API | Integración | Sí | `events/EventDetailView.tsx` | Verificado retry API intacto |
+| MainInfoSection card | VISUAL | Sí | `venues/sections/MainInfoSection.tsx` | shadow-sm; stepper primary |
+| Batch 3 gaps (20) | Empalme | Sí | ver `decision-log.md` | 20 DONE + 0 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-20 gap-empalme batch 2 (run 27883333029-b2)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

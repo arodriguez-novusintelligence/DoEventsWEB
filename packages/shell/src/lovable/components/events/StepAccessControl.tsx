@@ -91,7 +91,7 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
   if (gates.length === 0) {
     return (
       <div className="rounded-2xl bg-card p-6 text-center shadow-sm">
-        <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+        <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
           <DoorOpen className="h-7 w-7 text-primary" />
         </div>
         <h3 className="text-base font-bold text-foreground">Sin puertas configuradas</h3>

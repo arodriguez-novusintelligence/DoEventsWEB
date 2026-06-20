@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ImagePlus, Send, RotateCcw, Sparkles, ChevronLeft } from 'lucide-react';
+import { ImagePlus, Send, RotateCcw, Sparkles, ChevronLeft, Loader2, CheckCircle2 } from 'lucide-react';
+import { Button } from '@lovable/components/ui/button';
 import {
   sendAIAssistantMessage,
   resetAIAssistantSession,
@@ -304,20 +305,16 @@ export const AIAssistantView: React.FC<AIAssistantViewProps> = ({ userId, onBack
                   {m.actions && m.actions.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {m.actions.map((action) => (
-                        <button
+                        <Button
                           key={`${action.type}-${action.label}`}
                           type="button"
+                          variant={action.type === 'confirm' ? 'default' : 'outline'}
+                          size="sm"
+                          className="rounded-xl text-xs"
                           onClick={() => handleAction(action)}
-                          className={
-                            action.type === 'confirm'
-                              ? 'de-access-btn de-access-btn--primary text-xs'
-                              : action.type === 'refund'
-                                ? 'rounded-xl border border-border bg-card px-3 py-2 text-left text-xs leading-snug'
-                                : 'rounded-xl border border-border bg-card px-3 py-2 text-xs'
-                          }
                         >
                           {action.label}
-                        </button>
+                        </Button>
                       ))}
                     </div>
                   )}
@@ -362,7 +359,7 @@ export const AIAssistantView: React.FC<AIAssistantViewProps> = ({ userId, onBack
         {loading && (
           <div className="flex justify-start">
             <div className="flex items-center gap-2 rounded-2xl bg-muted px-3.5 py-2.5 text-sm text-muted-foreground">
-              <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-primary" />
+              <Loader2 className="h-4 w-4 animate-spin text-primary" />
               Pensando…
             </div>
           </div>
@@ -522,9 +519,9 @@ const DraftCard: React.FC<{ draft: AIEventDraft; onUse: () => void }> = ({ draft
         ) : null}
       </ul>
       {draft.status !== 'awaiting_image' && draft.status !== 'awaiting_refund' && (
-        <button type="button" onClick={onUse} className="de-access-btn de-access-btn--primary w-full text-xs">
+        <Button type="button" onClick={onUse} className="w-full rounded-xl text-xs" size="sm">
           {buttonLabel}
-        </button>
+        </Button>
       )}
     </div>
   );
@@ -545,7 +542,9 @@ const CreatedEntityCard: React.FC<{
     {imageUrl ? (
       <img src={imageUrl} alt="" className="h-16 w-16 shrink-0 rounded-xl object-cover" />
     ) : (
-      <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-success/10 text-xl">✅</div>
+      <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-success/10">
+        <CheckCircle2 className="h-7 w-7 text-success" />
+      </div>
     )}
     <div className="min-w-0 flex-1 space-y-1">
       <p className="text-[10px] font-bold uppercase tracking-wider text-success">{label}</p>

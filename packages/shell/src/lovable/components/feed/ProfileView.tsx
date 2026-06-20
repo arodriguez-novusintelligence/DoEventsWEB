@@ -448,10 +448,7 @@ const ProfileView = ({
               <div className="h-0 w-0 border-l-[6px] border-r-[6px] border-t-[8px] border-l-transparent border-r-transparent border-t-foreground" />
             </div>
             <div className="flex gap-2 items-center">
-              <div className="h-1.5 flex-1 rounded-full bg-primary/20" />
-              <div className="h-2 flex-1 rounded-full bg-primary/35" />
-              <div className="h-3 flex-1 rounded-full bg-primary/50" />
-              <div className="h-4 flex-1 rounded-full bg-primary/70" />
+              <div className="h-3 flex-1 rounded-full bg-gradient-to-r from-primary/25 via-primary/50 to-primary/70" />
             </div>
             <p className="mt-3 text-center text-sm font-medium text-muted-foreground">
               {experienceLabel}

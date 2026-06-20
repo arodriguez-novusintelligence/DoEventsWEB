@@ -97,7 +97,7 @@ const MainInfoSection = () => {
           <p className="text-xs text-muted-foreground">Datos básicos del lugar que verán los organizadores</p>
         </div>
       </div>
-      <div className="rounded-2xl bg-card border border-border p-4 space-y-6">
+      <div className="rounded-2xl bg-card border border-border shadow-sm p-4 space-y-6">
       <MediaUpload />
 
       <div>
