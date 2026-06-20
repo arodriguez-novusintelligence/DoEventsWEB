@@ -78,14 +78,14 @@ function VenueCreatorBody({
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border shadow-sm">
         <div className="container max-w-3xl mx-auto px-4 py-3">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" className="shrink-0" onClick={() => onBack?.(form)}>
+            <Button variant="ghost" size="icon" className="shrink-0 rounded-full" onClick={() => onBack?.(form)}>
               <ChevronLeft className="w-5 h-5" />
             </Button>
             <div className="flex-1 min-w-0">
-              <h1 className="text-lg font-semibold italic text-primary truncate">
+              <h1 className="text-lg font-extrabold text-primary truncate">
                 {headerTitle || (mode === 'edit' ? 'Editar lugar' : 'Mi Lugar de Eventos')}
               </h1>
               {mode !== 'edit' && (

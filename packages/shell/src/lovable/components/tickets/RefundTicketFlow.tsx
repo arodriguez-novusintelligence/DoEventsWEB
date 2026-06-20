@@ -206,7 +206,7 @@ const RefundTicketFlow = ({
                   <div className="p-4 grid grid-cols-2 gap-3">
                     <div>
                       <p className="text-xs text-muted-foreground">Categoría</p>
-                      <span className="inline-block mt-1 rounded-full bg-orange-100 px-3 py-1 text-[10px] font-bold text-orange-800 uppercase">
+                      <span className="inline-block mt-1 rounded-full bg-primary/10 px-3 py-1 text-[10px] font-bold text-primary uppercase">
                         {ticket.category}
                       </span>
                       <p className="mt-2 text-sm font-extrabold text-foreground">Silla - {e.code}</p>
@@ -385,7 +385,7 @@ const RefundTicketFlow = ({
           <div className="px-4 pt-12 flex flex-col items-center text-center">
             <div className="h-32 w-32 rounded-full bg-primary/10 grid place-items-center">
               <div className="h-20 w-20 rounded-full bg-primary grid place-items-center">
-                <Check className="h-12 w-12 text-white" strokeWidth={3} />
+                <Check className="h-12 w-12 text-primary-foreground" strokeWidth={3} />
               </div>
             </div>
             <h1 className="mt-6 text-3xl font-extrabold text-foreground">Reembolso solicitado</h1>

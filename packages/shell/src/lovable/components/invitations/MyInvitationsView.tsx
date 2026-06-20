@@ -20,7 +20,7 @@ const statusLabel: Record<InvitationEvent['status'], string> = {
 };
 
 const statusBadgeClass: Record<InvitationEvent['status'], string> = {
-  pendiente: 'bg-amber-500/15 text-amber-800',
+  pendiente: 'bg-secondary text-secondary-foreground',
   aceptada: 'bg-primary/10 text-primary',
   rechazada: 'bg-destructive/10 text-destructive',
 };
@@ -80,13 +80,14 @@ const MyInvitationsView = ({
               key={inv.id}
               type="button"
               onClick={() => onOpenInvitation?.(inv)}
-              className="flex w-full items-stretch gap-3 rounded-2xl bg-card shadow-sm text-left overflow-hidden transition-colors hover:bg-accent/40"
+              className="flex w-full items-stretch gap-0 rounded-2xl border border-border/50 bg-card shadow-sm text-left overflow-hidden transition-colors hover:border-primary/30 active:scale-[0.99]"
             >
               {inv.image ? (
                 <img src={inv.image} alt={inv.title} className="h-36 w-28 flex-shrink-0 object-cover" />
               ) : (
-                <div className="flex h-36 w-28 flex-shrink-0 items-center justify-center bg-muted text-xs text-muted-foreground">
-                  Sin imagen
+                <div className="flex h-36 w-28 flex-shrink-0 flex-col items-center justify-center gap-1 bg-primary/5 text-primary">
+                  <Ticket className="h-6 w-6" />
+                  <span className="text-[10px] font-medium">Evento</span>
                 </div>
               )}
               <div className="flex-1 min-w-0 py-3 pr-3">

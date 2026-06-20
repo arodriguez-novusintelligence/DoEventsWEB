@@ -47,7 +47,7 @@ const STATUS_LABELS: Record<TicketStatus, string> = {
 
 const STATUS_CHIP: Record<TicketStatus, string> = {
   aprobada: 'bg-primary/10 text-primary border-primary/20',
-  pendiente: 'bg-amber-500/15 text-amber-900 border-amber-500/30',
+  pendiente: 'bg-secondary text-secondary-foreground border-border',
   cancelada: 'bg-destructive/10 text-destructive border-destructive/20',
   finalizada: 'bg-muted text-muted-foreground border-border',
 };
@@ -58,7 +58,7 @@ const PendingCountdown = ({ expiresAtTs }: { expiresAtTs?: number }) => {
   return (
     <div
       className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold ${
-        isExpired ? 'bg-destructive/10 text-destructive' : 'bg-amber-500/15 text-amber-800'
+        isExpired ? 'bg-destructive/10 text-destructive' : 'bg-secondary text-secondary-foreground'
       }`}
     >
       <Clock className="h-3.5 w-3.5" />
@@ -366,7 +366,7 @@ const TicketDetailView = ({
               <div className="flex flex-col items-center gap-1.5 rounded-2xl bg-foreground px-5 py-3 shadow-xl">
                 <div className="flex items-center gap-2">
                   <div className="h-5 w-5 rounded-full bg-primary grid place-items-center">
-                    <Check className="h-3 w-3 text-white" strokeWidth={4} />
+                    <Check className="h-3 w-3 text-primary-foreground" strokeWidth={4} />
                   </div>
                   <span className="text-sm font-bold text-background">Transferida</span>
                 </div>

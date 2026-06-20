@@ -69,6 +69,7 @@ interface NotificationsContextType {
   unreadCount: number;
   loading: boolean;
   loadError: string | null;
+  loadErrorMessage: string | null;
   isEmpty: boolean;
   reload: () => Promise<void>;
   addNotification: (n: Omit<Notification, 'id' | 'timeAgo' | 'read'>) => void;
@@ -84,6 +85,7 @@ const fallbackContext: NotificationsContextType = {
   unreadCount: 0,
   loading: false,
   loadError: null,
+  loadErrorMessage: null,
   isEmpty: true,
   reload: async () => undefined,
   addNotification: () => undefined,
@@ -236,6 +238,7 @@ export const NotificationsProvider = ({
         unreadCount,
         loading,
         loadError,
+        loadErrorMessage: loadError,
         isEmpty: !loading && !loadError && notifications.length === 0,
         reload: reloadFromApi,
         addNotification,

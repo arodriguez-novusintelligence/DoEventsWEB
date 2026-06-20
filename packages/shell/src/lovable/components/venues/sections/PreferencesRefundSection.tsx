@@ -19,7 +19,7 @@ const PreferencesRefundSection = () => {
           <p className="text-xs text-muted-foreground">Configura reservas y política de devolución</p>
         </div>
       </div>
-      <div className="rounded-2xl bg-card border border-border p-4 space-y-5">
+      <div className="rounded-2xl bg-card border border-border p-4 space-y-5 shadow-sm">
         <div className="form-section">
           <Label className="form-label">Preferencias en las reservas</Label>
         <p className="form-sublabel text-sm text-muted-foreground">
@@ -71,7 +71,7 @@ const PreferencesRefundSection = () => {
         </div>
       </div>
 
-      <div className="rounded-2xl bg-card border border-border p-4">
+      <div className="rounded-2xl bg-card border border-border p-4 shadow-sm">
       <div className="form-section">
         <Label className="form-label">¿Cuándo pueden solicitar reembolsos? *</Label>
         <RadioGroup

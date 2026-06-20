@@ -106,7 +106,7 @@ const FeedServicesCarousel = ({
             <div className="relative h-48 w-full overflow-hidden bg-muted">
               <ServiceCardImage src={p.image} alt={p.name} />
               {p.distanceKm != null && (
-                <span className="absolute top-2.5 left-2.5 rounded-full bg-black/55 px-2.5 py-1 text-[10px] font-semibold text-white backdrop-blur-sm">
+                <span className="absolute top-2.5 left-2.5 rounded-full bg-primary/90 px-2.5 py-1 text-[10px] font-semibold text-primary-foreground backdrop-blur-sm">
                   {p.distanceKm} km
                 </span>
               )}
@@ -133,7 +133,7 @@ const FeedServicesCarousel = ({
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-1 text-xs text-muted-foreground">
                   <span className="font-bold text-foreground">{p.rating.toFixed(1)}</span>
-                  <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                  <Star className="h-3.5 w-3.5 fill-primary text-primary" />
                   {p.reviewCount != null && p.reviewCount > 0 && (
                     <span>({p.reviewCount})</span>
                   )}

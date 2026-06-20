@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27876831237-b3`: batch 3 (20 gaps) — 20 DONE frontend; tokens primary/success/secondary; sin nuevos BACKEND_REQUIRED.
+
 Run `gap-empalme-27876831237-b2`: batch 2 (20 gaps) — 16 DONE frontend; 4 BACKEND_REQUIRED (`EditProfileView`, `BookingSheet` add-ons, `PublishFlowModal` banking, `PaymentGatewaySheet` PSP).
 
 Run `gap-empalme-27876831237-b1`: batch 1 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingForm` SWIFT/PayPal/persistencia). Polish retry maps + tokens MyVenuesView.
@@ -58,19 +60,21 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27876831237-b2)
+## Empalme realizado (última ejecución — gap-empalme-27876831237-b3)
 
-- **PostCard:** StoryAvatar en repost embebido.
-- **ProfileGallery:** Controles visor con tokens `background/20`.
-- **ServiceDetailView:** MapPin en ubicación.
-- **NotificationsSheet:** Tokens secondary; CTA «Ver lugar» en reservas venue.
-- **TransferTicketFlow:** Check éxito `text-primary-foreground`.
-- **FollowersSheet:** `respondFollowRequest` para aceptar solicitudes.
-- **PublishFlowModal:** Error persistente sin `onSubmitBank` — no simula éxito.
-- **PaymentGatewaySheet:** Banner confirmación orden; PSP BACKEND_REQUIRED.
-- **ContactImportModal:** Deshabilitado si contactos no soportados.
-- **StatsEventListView:** Badge status `rounded-full`.
-- **Batch 2 restante (10):** EditGuestModal, StepAccessControl, CreateEventView, VenueDetailReservation, TopHeader, AIAssistantFAB, MessagesListView, StepEventDetails, BookingSheet (empty add-ons), EditProfileView (bloqueos) — verificados.
+- **RefundTicketFlow / TicketDetailView / MyTicketsView:** tokens primary/success/secondary; sin emerald/amber hardcoded en runtime.
+- **EventInvitationModal / MyInvitationsView:** cards y badges Lovable; banner éxito primary; status chips secondary/primary.
+- **CommentsSheet / CreatePostSheet:** headers con iconografía (MessageSquare, PenLine) en círculo primary.
+- **EventsView:** filter pills dots primary/accent/success; badge borrador secondary.
+- **ProfileView:** barra experiencia gradiente primary; iconos menú mis eventos/servicios/boletos con tokens diseño.
+- **NotificationsContext:** `loadErrorMessage` alias expuesto en contexto (paridad Lovable).
+- **FavoritesView:** badge «Próximamente» secondary.
+- **VenueCreator / MainInfoSection / LocationSection / PreferencesRefundSection:** headers y empty states tokens primary; stepper aforo primary.
+- **AuthLogo:** Sparkles + ring primary en card gradiente.
+- **SeatLocationModal:** empty sin asiento numerado con icono primary.
+- **FeedServicesCarousel:** badge distancia y estrellas primary.
+- **AIAssistantView:** CreatedEntityCard tokens success.
+- **EventDetailView:** verificado intacto — `fetchEventDetail` + retry + `InvitationEventDetailView`.
 
 ## Backend pendiente para 100%
 

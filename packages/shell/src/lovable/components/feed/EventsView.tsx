@@ -121,7 +121,7 @@ function statusBadgeLabel(status?: string): string {
 }
 
 function statusBadgeClass(status?: string): string {
-  if (status === 'borrador') return 'bg-amber-500/90 text-white';
+  if (status === 'borrador') return 'bg-secondary text-secondary-foreground';
   if (status === 'inactivo' || status === 'finalizado') return 'bg-muted/90 text-muted-foreground';
   return 'bg-primary/90 text-primary-foreground';
 }
@@ -668,9 +668,9 @@ const EventsView = ({
 
   const filterPills: { id: FilterType; label: string; dot: string }[] = [
     { id: 'todos', label: 'Todos', dot: '' },
-    { id: 'eventos', label: 'Eventos', dot: 'bg-violet-500' },
-    { id: 'lugares', label: 'Lugares', dot: 'bg-orange-500' },
-    { id: 'servicios', label: 'Servicios', dot: 'bg-emerald-500' },
+    { id: 'eventos', label: 'Eventos', dot: 'bg-primary' },
+    { id: 'lugares', label: 'Lugares', dot: 'bg-accent-foreground/70' },
+    { id: 'servicios', label: 'Servicios', dot: 'bg-success' },
   ];
 
   const isInitialDiscoverLoad = discoverLoading

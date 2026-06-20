@@ -1051,7 +1051,7 @@ export const EventInvitationModal = ({
                   </div>
 
                   {lastAddMessage && (
-                    <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+                    <div className="rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 text-sm text-foreground">
                       {lastAddMessage}
                     </div>
                   )}
@@ -1154,7 +1154,7 @@ export const EventInvitationModal = ({
                             </div>
                             <div className="flex items-center gap-0.5 shrink-0 flex-wrap justify-end max-w-[42%] sm:max-w-none">
                               {isRecentlyAdded && (
-                                <Badge variant="default" className="text-[10px] bg-emerald-600">Nuevo</Badge>
+                                <Badge variant="default" className="text-[10px] bg-success text-success-foreground">Nuevo</Badge>
                               )}
                               {invited && <Badge variant="secondary" className="text-[10px]">Invitado</Badge>}
                               {isEventOnly && <Badge variant="outline" className="text-[10px]">Evento</Badge>}

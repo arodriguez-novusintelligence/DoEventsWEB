@@ -110,8 +110,10 @@ const SeatLocationModal = ({ open, onOpenChange, ticket }: Props) => {
           </div>
 
           {!ticketHasSeat(ticket) ? (
-            <div className="flex h-[200px] flex-col items-center justify-center gap-2 rounded-lg bg-secondary px-4 text-center">
-              <Armchair className="h-8 w-8 text-muted-foreground/60" />
+            <div className="flex h-[200px] flex-col items-center justify-center gap-2 rounded-2xl bg-secondary px-4 text-center">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                <Armchair className="h-6 w-6 text-primary" />
+              </div>
               <p className="text-sm text-muted-foreground">Esta boleta no tiene asiento numerado.</p>
             </div>
           ) : loading ? (

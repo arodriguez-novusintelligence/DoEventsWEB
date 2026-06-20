@@ -448,10 +448,10 @@ const ProfileView = ({
               <div className="h-0 w-0 border-l-[6px] border-r-[6px] border-t-[8px] border-l-transparent border-r-transparent border-t-foreground" />
             </div>
             <div className="flex gap-2 items-center">
-              <div className="h-1.5 flex-1 rounded-full bg-rose-200" />
-              <div className="h-2 flex-1 rounded-full bg-orange-200" />
-              <div className="h-3 flex-1 rounded-full bg-amber-200" />
-              <div className="h-4 flex-1 rounded-full bg-emerald-300" />
+              <div className="h-1.5 flex-1 rounded-full bg-primary/20" />
+              <div className="h-2 flex-1 rounded-full bg-primary/35" />
+              <div className="h-3 flex-1 rounded-full bg-primary/50" />
+              <div className="h-4 flex-1 rounded-full bg-primary/70" />
             </div>
             <p className="mt-3 text-center text-sm font-medium text-muted-foreground">
               {experienceLabel}
@@ -605,7 +605,7 @@ const ProfileView = ({
       >
         <h3 className="text-base font-bold text-foreground">Mis publicaciones</h3>
         <div className="mt-6 flex items-end justify-between">
-          <Megaphone className="h-7 w-7 text-orange-500" />
+          <Megaphone className="h-7 w-7 text-primary" />
           <span className="text-2xl font-bold text-muted-foreground">{myPostsCount}</span>
         </div>
       </button>
@@ -623,11 +623,11 @@ const ProfileView = ({
       <div className="grid grid-cols-2 gap-3">
         {[
           { title: 'Mis Eventos', icon: PartyPopper, count: myEventsCount, color: 'text-primary', action: onOpenMyEvents },
-          { title: 'Mis lugares de eventos', icon: MapPin, count: myVenuesCount, color: 'text-sky-500', action: onOpenMyVenues },
+          { title: 'Mis lugares de eventos', icon: MapPin, count: myVenuesCount, color: 'text-primary', action: onOpenMyVenues },
           { title: 'Mis Estadísticas', icon: BarChart3, count: myEventsCount, color: 'text-destructive', action: onNavigateStats },
-          { title: 'Mis servicios', icon: TrendingUp, count: myServicesCount || publishedServices?.length || 0, color: 'text-emerald-600', action: onOpenServices },
-          { title: 'Mis invitaciones a eventos', icon: Ticket, count: myInvitationsCount, color: 'text-amber-500', action: onOpenMyInvitations },
-          { title: 'Mis Boletos', icon: DollarSign, count: myTicketsCount, color: 'text-emerald-500', action: onOpenMyTickets },
+          { title: 'Mis servicios', icon: TrendingUp, count: myServicesCount || publishedServices?.length || 0, color: 'text-success', action: onOpenServices },
+          { title: 'Mis invitaciones a eventos', icon: Ticket, count: myInvitationsCount, color: 'text-accent-foreground', action: onOpenMyInvitations },
+          { title: 'Mis Boletos', icon: DollarSign, count: myTicketsCount, color: 'text-success', action: onOpenMyTickets },
         ].map((item) => (
           <button
             key={item.title}

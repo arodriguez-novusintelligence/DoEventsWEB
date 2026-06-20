@@ -227,7 +227,10 @@ const CommentsSheet = ({
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent>
         <div className="mx-auto w-full max-w-lg">
-          <DrawerHeader className="text-left">
+          <DrawerHeader className="flex items-center gap-2 text-left">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10">
+              <MessageSquare className="h-5 w-5 text-primary" />
+            </div>
             <DrawerTitle className="text-xl font-bold">
               ¡Comentarios!{totalComments > 0 ? ` (${totalComments})` : ''}
             </DrawerTitle>

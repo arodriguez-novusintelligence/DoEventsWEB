@@ -5,7 +5,7 @@ import {
   DrawerTitle,
 } from '@lovable/components/ui/drawer';
 import { Avatar, AvatarFallback } from '@lovable/components/ui/avatar';
-import { ImagePlus, Video, X, Globe, Lock, Loader2 } from 'lucide-react';
+import { ImagePlus, Video, X, Globe, Lock, Loader2, PenLine } from 'lucide-react';
 import { useState, useRef, useMemo } from 'react';
 import { cn } from '@lovable/lib/utils';
 import type { Post } from '@doevents/shared';
@@ -125,7 +125,12 @@ const CreatePostSheet = ({
       <DrawerContent>
         <div className="mx-auto w-full max-w-lg">
           <DrawerHeader className="flex items-center justify-between text-left">
-            <DrawerTitle className="text-xl font-bold">Nueva publicación</DrawerTitle>
+            <div className="flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10">
+                <PenLine className="h-4 w-4 text-primary" />
+              </div>
+              <DrawerTitle className="text-xl font-bold">Nueva publicación</DrawerTitle>
+            </div>
           </DrawerHeader>
 
           <div className="max-h-[65vh] overflow-y-auto px-4 pb-6">

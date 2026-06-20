@@ -68,9 +68,9 @@ const LocationSection = () => {
         )}
 
         {!hasCoords && !locating && (
-          <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-border bg-muted/30 py-6 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-              <MapPin className="h-6 w-6 text-primary" />
+          <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-border bg-muted/30 py-8 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+              <MapPin className="h-7 w-7 text-primary" />
             </div>
             <p className="text-sm font-medium text-foreground">Sin ubicación en el mapa</p>
             <p className="text-xs text-muted-foreground max-w-[240px]">

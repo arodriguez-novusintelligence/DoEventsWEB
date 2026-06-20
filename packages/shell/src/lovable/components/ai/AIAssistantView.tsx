@@ -540,18 +540,18 @@ const CreatedEntityCard: React.FC<{
   <button
     type="button"
     onClick={onOpen}
-    className="flex w-full gap-3 rounded-2xl border-2 border-emerald-500/30 bg-emerald-500/5 p-3 text-left transition-colors hover:border-emerald-500/50"
+    className="flex w-full gap-3 rounded-2xl border-2 border-success/30 bg-success/5 p-3 text-left transition-colors hover:border-success/50"
   >
     {imageUrl ? (
       <img src={imageUrl} alt="" className="h-16 w-16 shrink-0 rounded-xl object-cover" />
     ) : (
-      <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-xl">✅</div>
+      <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-success/10 text-xl">✅</div>
     )}
     <div className="min-w-0 flex-1 space-y-1">
-      <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-700">{label}</p>
+      <p className="text-[10px] font-bold uppercase tracking-wider text-success">{label}</p>
       <p className="text-sm font-extrabold">{name}</p>
       {city && <p className="text-xs text-muted-foreground">📍 {city}</p>}
-      <p className="text-[11px] font-semibold text-emerald-700">Ver detalle →</p>
+      <p className="text-[11px] font-semibold text-success">Ver detalle →</p>
     </div>
   </button>
 );

@@ -97,6 +97,32 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-20 gap-empalme batch 3 (run 27876831237-b3)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| RefundTicketFlow tokens | VISUAL | Sí | `tickets/RefundTicketFlow.tsx` | Badge primary; check primary-foreground |
+| EventInvitationModal success | VISUAL | Sí | `guests/EventInvitationModal.tsx` | Banner primary; badge Nuevo success |
+| MyTicketsView tabs | VISUAL | Sí | `tickets/MyTicketsView.tsx` | Dot success/secondary; countdown secondary |
+| MyInvitationsView cards | VISUAL | Sí | `invitations/MyInvitationsView.tsx` | Border Lovable; empty Ticket icon |
+| CommentsSheet header | VISUAL | Sí | `feed/CommentsSheet.tsx` | MessageSquare en círculo primary |
+| EventsView filter pills | VISUAL | Sí | `feed/EventsView.tsx` | Dots primary/accent/success |
+| ProfileView experience bar | VISUAL | Sí | `feed/ProfileView.tsx` | Gradiente primary; iconos menú tokens |
+| CreatePostSheet header | VISUAL | Sí | `feed/CreatePostSheet.tsx` | PenLine icon header |
+| TicketDetailView chips | VISUAL | Sí | `tickets/TicketDetailView.tsx` | Pendiente secondary; check primary-foreground |
+| NotificationsContext loadErrorMessage | Integración | Sí | `contexts/NotificationsContext.tsx` | Alias expuesto en contexto |
+| FavoritesView status | VISUAL | Sí | `feed/FavoritesView.tsx` | Próximamente secondary |
+| VenueCreator header | VISUAL | Sí | `venues/VenueCreator.tsx` | font-extrabold + shadow sticky |
+| AuthLogo gradient | VISUAL | Sí | `auth/AuthLogo.tsx` | Sparkles + ring primary |
+| SeatLocationModal empty | VISUAL | Sí | `tickets/SeatLocationModal.tsx` | Círculo primary sin asiento |
+| FeedServicesCarousel tokens | VISUAL | Sí | `feed/FeedServicesCarousel.tsx` | Distancia y estrellas primary |
+| AIAssistantView entity card | VISUAL | Sí | `ai/AIAssistantView.tsx` | CreatedEntityCard success tokens |
+| LocationSection empty | VISUAL | Sí | `venues/sections/LocationSection.tsx` | MapPin ring primary |
+| MainInfoSection stepper | VISUAL | Sí | `venues/sections/MainInfoSection.tsx` | Botones aforo primary |
+| PreferencesRefundSection cards | VISUAL | Sí | `venues/sections/PreferencesRefundSection.tsx` | shadow-sm cards |
+| EventDetailView API | Integración | Sí | `events/EventDetailView.tsx` | Verificado intacto retry API |
+| Batch 3 gaps (20) | Empalme | Sí | ver `decision-log.md` | 20 DONE + 0 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-20 gap-empalme batch 2 (run 27876831237-b2)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

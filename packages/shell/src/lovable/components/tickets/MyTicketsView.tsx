@@ -20,8 +20,8 @@ interface MyTicketsViewProps {
 }
 
 const TABS: { key: TicketStatus; label: string; dot: string }[] = [
-  { key: 'aprobada', label: 'Aprobadas', dot: 'bg-emerald-500' },
-  { key: 'pendiente', label: 'Pendientes', dot: 'bg-amber-500' },
+  { key: 'aprobada', label: 'Aprobadas', dot: 'bg-success' },
+  { key: 'pendiente', label: 'Pendientes', dot: 'bg-secondary-foreground/60' },
   { key: 'cancelada', label: 'Canceladas', dot: 'bg-destructive' },
   { key: 'finalizada', label: 'Finalizadas', dot: 'bg-muted-foreground' },
 ];
@@ -37,7 +37,7 @@ const PendingCountdown = ({ expiresAtTs }: { expiresAtTs?: number }) => {
   const { isExpired, label } = useReservationTimer(expiresAtTs ?? null);
   if (!expiresAtTs) return null;
   return (
-    <div className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold ${isExpired ? 'bg-destructive/10 text-destructive' : 'bg-amber-500/15 text-amber-800'}`}>
+    <div className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold ${isExpired ? 'bg-destructive/10 text-destructive' : 'bg-secondary text-secondary-foreground'}`}>
       <Clock className="h-3.5 w-3.5" />
       {isExpired ? 'Reserva expirada' : `Paga en ${label} para conservar tus boletas`}
     </div>

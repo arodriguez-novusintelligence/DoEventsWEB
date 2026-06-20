@@ -44,7 +44,7 @@ const statusStyle = (s: FavEventItem['status']) => {
     case 'Finalizado':
       return 'bg-muted text-muted-foreground';
     case 'Próximamente':
-      return 'bg-amber-500/15 text-amber-800';
+      return 'bg-secondary text-secondary-foreground';
     default:
       return 'bg-primary/10 text-primary';
   }
