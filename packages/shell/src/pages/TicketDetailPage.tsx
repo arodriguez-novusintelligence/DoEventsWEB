@@ -14,7 +14,9 @@ import {
   resolveEventImageUrl,
   resolveEventVideoUrl,
   isPlaceholderEventImage,
+  listStoredReservationsForUser,
   RootState,
+  resolveOrderExpiresAtTs,
   transferTicketsToUser,
   useToast,
 } from '@doevents/shared';
@@ -75,6 +77,8 @@ export const TicketDetailPage: React.FC = () => {
   const [tickets, setTickets] = useState<TicketWithOrderRef[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [paymentStatus, setPaymentStatus] = useState<string | undefined>();
+  const [orderExpiresAtTs, setOrderExpiresAtTs] = useState<number | undefined>();
+  const [orderCreatedAt, setOrderCreatedAt] = useState<string | undefined>();
   const [refundEligible, setRefundEligible] = useState(true);
   const [refundEligibilityMessage, setRefundEligibilityMessage] = useState('');
   const [resolvedEventImage, setResolvedEventImage] = useState(eventMeta?.eventImage || '');
@@ -159,6 +163,12 @@ export const TicketDetailPage: React.FC = () => {
           })) as TicketWithOrderRef[];
           setTickets(orderTickets);
           setPaymentStatus(enriched.payment_status);
+          setOrderExpiresAtTs(resolveOrderExpiresAtTs(enriched) || undefined);
+          setOrderCreatedAt(
+            enriched.created_at
+            || enriched.metadata?.created_at
+            || (enriched as { order_date?: string }).order_date,
+          );
           if (preferredTicketId) {
             const preferredIdx = orderTickets.findIndex(
               (t) => (t.ticket_id || t.ticketInstanceId) === preferredTicketId,
@@ -236,10 +246,16 @@ export const TicketDetailPage: React.FC = () => {
 
   const ticketMeta: Ticket = useMemo(() => {
     const active = tickets[activeIndex] || tickets[0];
+    const pendingReservation = !isPaid && userId
+      ? listStoredReservationsForUser(userId).find((r) => r.orderId === decodedOrderId)
+      : undefined;
+    const purchaseDate = orderCreatedAt
+      ? new Date(orderCreatedAt).toLocaleDateString('es-CO')
+      : eventDate;
     return {
       id: active?.ticket_id || active?.ticketInstanceId || decodedOrderId,
       orderNumber: decodedOrderId.slice(-6).toUpperCase(),
-      orderDate: eventDate,
+      orderDate: purchaseDate,
       eventTitle: eventName,
       eventImage,
       eventVideo: eventVideo || undefined,
@@ -255,8 +271,25 @@ export const TicketDetailPage: React.FC = () => {
       orderId: decodedOrderId,
       status: isPaid ? 'aprobada' : 'pendiente',
       eventId: eventIdResolved,
+      price: typeof active?.price === 'number' ? active.price : undefined,
+      paymentExpiresAtTs: orderExpiresAtTs || pendingReservation?.expiresAtTs,
+      eventTicketCount: tickets.length > 1 ? tickets.length : undefined,
     };
-  }, [tickets, activeIndex, decodedOrderId, eventDate, eventName, eventImage, eventVideo, eventTime, isPaid, eventIdResolved]);
+  }, [
+    tickets,
+    activeIndex,
+    decodedOrderId,
+    orderCreatedAt,
+    eventDate,
+    eventName,
+    eventImage,
+    eventVideo,
+    eventTime,
+    isPaid,
+    eventIdResolved,
+    orderExpiresAtTs,
+    userId,
+  ]);
 
   const entries: BoletaEntry[] = useMemo(() => {
     return tickets.map((t, i) => {

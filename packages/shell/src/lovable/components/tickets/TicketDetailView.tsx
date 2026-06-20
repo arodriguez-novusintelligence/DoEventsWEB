@@ -9,8 +9,10 @@ import {
   Clock,
   Check,
   MapPin,
+  Ticket as TicketIcon,
 } from 'lucide-react';
-import type { Ticket } from '@lovable/data/ticketsData';
+import type { Ticket, TicketStatus } from '@lovable/data/ticketsData';
+import { useReservationTimer } from '@doevents/shared';
 import TransferTicketFlow, { type BoletaEntry, type TransferRecipient } from './TransferTicketFlow';
 import RefundTicketFlow from './RefundTicketFlow';
 import SeatLocationModal from './SeatLocationModal';
@@ -35,6 +37,44 @@ export interface TicketDetailViewProps {
   transferredAt?: Map<string, Date>;
   refundedAt?: Map<string, Date>;
 }
+
+const STATUS_LABELS: Record<TicketStatus, string> = {
+  aprobada: 'Aprobada',
+  pendiente: 'Pendiente de pago',
+  cancelada: 'Cancelada',
+  finalizada: 'Finalizada',
+};
+
+const STATUS_CHIP: Record<TicketStatus, string> = {
+  aprobada: 'bg-primary/10 text-primary border-primary/20',
+  pendiente: 'bg-amber-500/15 text-amber-900 border-amber-500/30',
+  cancelada: 'bg-destructive/10 text-destructive border-destructive/20',
+  finalizada: 'bg-muted text-muted-foreground border-border',
+};
+
+const PendingCountdown = ({ expiresAtTs }: { expiresAtTs?: number }) => {
+  const { isExpired, label } = useReservationTimer(expiresAtTs ?? null);
+  if (!expiresAtTs) return null;
+  return (
+    <div
+      className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold ${
+        isExpired ? 'bg-destructive/10 text-destructive' : 'bg-amber-500/15 text-amber-800'
+      }`}
+    >
+      <Clock className="h-3.5 w-3.5" />
+      {isExpired ? 'Reserva expirada' : `Paga en ${label} para conservar tu boleta`}
+    </div>
+  );
+};
+
+const formatPrice = (value?: number) => {
+  if (typeof value !== 'number' || value <= 0) return null;
+  return new Intl.NumberFormat('es-CO', {
+    style: 'currency',
+    currency: 'COP',
+    maximumFractionDigits: 0,
+  }).format(value);
+};
 
 const TicketDetailView = ({
   ticket,
@@ -92,6 +132,10 @@ const TicketDetailView = ({
   ].filter(Boolean).join(' · ');
   const isTransferred = activeEntry ? transferMap.has(activeEntry.id) : false;
   const isRefunded = activeEntry ? refundMap.has(activeEntry.id) : false;
+  const isPending = ticket.status === 'pendiente';
+  const ticketPrice = activeEntry?.value || ticket.price;
+  const priceLabel = formatPrice(ticketPrice);
+  const boletaPosition = entries.length > 1 ? `${activeIndex + 1} de ${entries.length}` : null;
 
   const handleTransferComplete = async (ids: string[], recipient: TransferRecipient) => {
     if (!onTransfer) return;
@@ -169,6 +213,29 @@ const TicketDetailView = ({
           )}
         </div>
 
+        <div className="mb-3 space-y-2">
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-lg font-extrabold text-foreground leading-tight line-clamp-2">
+                {ticket.eventTitle}
+              </h1>
+              {ticket.orderDate && (
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Comprada el {ticket.orderDate}
+                </p>
+              )}
+            </div>
+            <span
+              className={`inline-flex shrink-0 items-center rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide ${
+                STATUS_CHIP[ticket.status]
+              }`}
+            >
+              {STATUS_LABELS[ticket.status]}
+            </span>
+          </div>
+          {isPending && <PendingCountdown expiresAtTs={ticket.paymentExpiresAtTs} />}
+        </div>
+
         <p className="text-sm font-semibold text-muted-foreground mb-2">Orden de compra</p>
         {entries.length > 1 ? (
           <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
@@ -199,7 +266,17 @@ const TicketDetailView = ({
           </div>
         )}
 
-        <div className="relative mt-4 rounded-3xl border border-border/60 bg-card shadow-lg overflow-hidden">
+        <div
+          className={`relative mt-4 rounded-3xl border border-border/60 bg-card shadow-lg overflow-hidden ${
+            isPending ? 'opacity-90' : ''
+          }`}
+        >
+          {boletaPosition && (
+            <div className="absolute left-4 top-4 z-10 inline-flex items-center gap-1 rounded-full bg-background/90 px-2.5 py-1 text-[10px] font-bold text-foreground shadow-sm backdrop-blur">
+              <TicketIcon className="h-3 w-3 text-primary" />
+              Boleta {boletaPosition}
+            </div>
+          )}
           <div className={(isTransferred || isRefunded) ? 'opacity-30' : ''}>
             <div className="p-3 pb-0">
               <div className="h-40 w-full overflow-hidden rounded-2xl">
@@ -228,6 +305,9 @@ const TicketDetailView = ({
                     {ticket.category}
                   </span>
                   <p className="mt-3 text-base font-extrabold text-foreground">Silla - {seatLabel}</p>
+                  {priceLabel && (
+                    <p className="mt-1 text-sm font-semibold text-primary">{priceLabel}</p>
+                  )}
                 </div>
                 <div className="text-right">
                   <p className="text-sm text-muted-foreground mb-2">Puerta de ingreso</p>

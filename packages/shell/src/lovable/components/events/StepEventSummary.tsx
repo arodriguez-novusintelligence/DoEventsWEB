@@ -3,7 +3,8 @@ import {
   FileText, MapPin, ShieldCheck, Calendar, HelpCircle, Clock,
   ChevronDown, ChevronUp, Save, Eye, Megaphone, Menu, Pencil, ExternalLink, Home,
 } from 'lucide-react';
-import { EventFormData, REFUND_POLICY_OPTIONS } from '@lovable/data/eventFormData';
+import { EventFormData, REFUND_POLICY_OPTIONS, SEATING_CURRENCIES } from '@lovable/data/eventFormData';
+import { PULEP_PORTAL_URL } from '@lovable/lib/pulepColombia';
 import { SeatingPreview } from './StepEventLocation';
 
 interface StepEventSummaryProps {
@@ -186,6 +187,42 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
               </div>
             )}
 
+            {formData.pulepRequired && (
+              <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4 space-y-3">
+                <div>
+                  <p className="text-sm font-bold text-primary">Cumplimiento PULEP (Colombia)</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Ley 1493 — artes escénicas.{' '}
+                    <a
+                      href={PULEP_PORTAL_URL}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="font-semibold text-primary underline-offset-2 hover:underline"
+                    >
+                      Portal PULEP
+                    </a>
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+                  <Field
+                    label="Tipo de productor"
+                    value={
+                      formData.pulepProducerType === 'permanente'
+                        ? 'Permanente'
+                        : formData.pulepProducerType === 'ocasional'
+                          ? 'Ocasional'
+                          : '—'
+                    }
+                  />
+                  <Field label="Número de registro PULEP" value={formData.pulepRegistrationNumber} />
+                </div>
+                <Field
+                  label="Confirmación"
+                  value={formData.pulepAcknowledged ? 'Registro verificado por el organizador' : 'Pendiente de confirmación'}
+                />
+              </div>
+            )}
+
             {onEdit && (
               <button
                 onClick={() => onEdit(1)}
@@ -202,6 +239,7 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
       case 'location': {
         const l = formData.location;
         const figures = l.seatingMap?.figures ?? [];
+        const ticketCategories = figures.filter((f) => f.role === 'category' && f.priceEnabled);
         const floors = Array.from(new Set(figures.map((f) => f.floor ?? 1))).sort();
         const mapQuery = encodeURIComponent(
           l.customLat && l.customLng
@@ -270,6 +308,41 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
                       Abrir en Maps <ExternalLink className="h-3 w-3" />
                     </a>
                   )}
+                </div>
+              </div>
+            )}
+
+            {ticketCategories.length > 0 && (
+              <div>
+                <p className="text-sm font-bold text-primary">Categorías de boletas</p>
+                <div className="mt-2 space-y-2">
+                  {ticketCategories.map((cat) => {
+                    const currency = cat.currency && SEATING_CURRENCIES.includes(cat.currency)
+                      ? cat.currency
+                      : 'COP';
+                    const priceLabel = typeof cat.price === 'number' && cat.price > 0
+                      ? new Intl.NumberFormat('es-CO', {
+                        style: 'currency',
+                        currency,
+                        maximumFractionDigits: 0,
+                      }).format(cat.price)
+                      : '—';
+                    return (
+                      <div
+                        key={cat.id}
+                        className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-3 py-2.5"
+                      >
+                        <div className="flex min-w-0 items-center gap-2">
+                          <span
+                            className="h-3 w-3 shrink-0 rounded-full"
+                            style={{ backgroundColor: cat.color }}
+                          />
+                          <span className="truncate text-sm font-semibold text-foreground">{cat.name}</span>
+                        </div>
+                        <span className="shrink-0 text-sm font-bold text-primary">{priceLabel}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
