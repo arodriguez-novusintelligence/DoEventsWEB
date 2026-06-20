@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@lovable/components/ui/select";
-import { Minus, Plus } from "lucide-react";
+import { Armchair, Minus, Plus } from "lucide-react";
 import {
   SeatingCategory,
   CATEGORY_COLORS,
@@ -111,7 +111,7 @@ const SeatingCategoryDialog = ({
   const renderSeatPreview = () => {
     const rowLabels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
     return (
-      <div className="p-4 bg-secondary/30 rounded-lg">
+      <div className="p-4 bg-card border border-border rounded-2xl">
         <p className="text-xs text-muted-foreground mb-2">
           Vista previa ({totalSeats} sillas) - Arrastra A1 para reorganizar
         </p>
@@ -124,7 +124,7 @@ const SeatingCategoryDialog = ({
                   className="w-8 h-6 rounded text-xs flex items-center justify-center font-medium"
                   style={{
                     backgroundColor: selectedColor,
-                    color: "white",
+                    color: "hsl(var(--primary-foreground))",
                   }}
                 >
                   {rowLabels[rowIndex]}
@@ -145,12 +145,19 @@ const SeatingCategoryDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>
-            {editCategory ? "Editar Categoría" : "Crear Categoría"}
-          </DialogTitle>
-          <p className="text-sm text-muted-foreground">
-            Configura los detalles de la categoría y organiza la distribución de asientos
-          </p>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+              <Armchair className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <DialogTitle>
+                {editCategory ? "Editar Categoría" : "Crear Categoría"}
+              </DialogTitle>
+              <p className="text-sm text-muted-foreground">
+                Configura los detalles de la categoría y organiza la distribución de asientos
+              </p>
+            </div>
+          </div>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
@@ -326,10 +333,10 @@ const SeatingCategoryDialog = ({
         </div>
 
         <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" className="rounded-full" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
-          <Button onClick={handleSave} disabled={!name.trim() || !floorId || rows < 1 || seatsPerRow < 1}>
+          <Button className="rounded-full" onClick={handleSave} disabled={!name.trim() || !floorId || rows < 1 || seatsPerRow < 1}>
             {editCategory ? "Guardar cambios" : "Crear categoría"}
           </Button>
         </div>

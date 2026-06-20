@@ -91,6 +91,32 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-20 gap-empalme batch 1 (run 27876228669-b1)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| GuestStatsView tokens | VISUAL | Sí | `stats/GuestStatsView.tsx` | Header + chart primary + skeleton |
+| PrivateChatView online | VISUAL | Sí | `chat/PrivateChatView.tsx` | bg-success + empty MessageSquare |
+| EventLocationMap rounded | VISUAL | Sí | `events/EventLocationMap.tsx` | rounded-2xl + pulse |
+| StepAgenda empty icon | VISUAL | Sí | `events/StepAgenda.tsx` | CalendarDays empty state |
+| MyServicesView badges | VISUAL | Sí | `services/MyServicesView.tsx` | Tokens primary/amber |
+| SeatingCategoryDialog header | VISUAL | Sí | `venues/seating/SeatingCategoryDialog.tsx` | Armchair + preview card |
+| StepEventSummary FAQ/agenda empty | VISUAL | Sí | `events/StepEventSummary.tsx` | HelpCircle/Clock icons |
+| HostPickerModal search UX | VISUAL | Sí | `events/HostPickerModal.tsx` | Loader2 + empty icons |
+| GuestManagementView login | VISUAL | Sí | `guests/GuestManagementView.tsx` | Empty login con CTA |
+| MyEventsView status chips | VISUAL | Sí | `feed/MyEventsView.tsx` | amber-500/15 tokens |
+| SuccessModal rounded | VISUAL | Sí | `banking/SuccessModal.tsx` | rounded-2xl + rounded-full CTA |
+| InvitationEventDetail hero | VISUAL | Sí | `invitations/InvitationEventDetailView.tsx` | CalendarDays fallback |
+| StepUnified prerequisite | VISUAL | Sí | `services/StepUnified.tsx` | Briefcase empty card |
+| EventPreviewModal ES copy | VISUAL | Sí | `events/EventPreviewModal.tsx` | Público/Privado + Eye header |
+| StepEventLocation skeleton | VISUAL | Sí | `events/StepEventLocation.tsx` | Pulse venues + Home empty |
+| SideMenu soporte active | VISUAL | Sí | `feed/SideMenu.tsx` | Imports limpios |
+| EditProfileView header | Bloqueo | Parcial | `feed/EditProfileView.tsx` | BACKEND_REQUIRED password/gustos |
+| BankingForm primary CTAs | Bloqueo | Parcial | `banking/BankingForm.tsx` | BACKEND_REQUIRED SWIFT/PayPal |
+| ChatRoomView empty messages | VISUAL | Sí | `chat/ChatRoomView.tsx` | MessageSquare empty |
+| MapView pin tokens | VISUAL | Sí | `feed/MapView.tsx` | CSS vars + pulse load |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 18 DONE + 2 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-20 agent-ef7b3dfd + batch 6 (run 27876228669)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, ChevronLeft, Calendar, Clock, Tag, Users, MapPin, Home as HomeIcon, ShieldCheck, ArrowRight, Star, Play } from 'lucide-react';
+import { X, ChevronLeft, Calendar, Clock, Tag, Users, MapPin, Home as HomeIcon, ShieldCheck, ArrowRight, Star, Play, Eye } from 'lucide-react';
 import { EventFormData, REFUND_POLICY_OPTIONS } from '@lovable/data/eventFormData';
 
 interface EventPreviewModalProps {
@@ -45,7 +45,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
         {/* Top bar */}
         <div className="sticky top-0 z-10 flex items-center justify-between bg-secondary px-4 pt-4 pb-3">
           <button onClick={onClose} className="flex items-center gap-1 text-sm font-medium text-primary">
-            <ChevronLeft className="h-4 w-4" /> Atras
+            <ChevronLeft className="h-4 w-4" /> Atrás
           </button>
           <button onClick={onClose} className="rounded-full bg-card p-1.5 text-muted-foreground shadow-sm">
             <X className="h-4 w-4" />
@@ -58,13 +58,19 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
             {heroImg ? (
               <img src={heroImg} alt={data.name} className="h-44 w-full object-cover" />
             ) : (
-              <div className="flex h-44 w-full items-center justify-center bg-muted text-muted-foreground">Sin imagen</div>
+              <div className="flex h-44 w-full flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-muted">
+                <Eye className="h-8 w-8 text-muted-foreground" />
+                <p className="mt-2 text-sm text-muted-foreground">Sin imagen</p>
+              </div>
             )}
           </div>
 
-          <h1 className="mt-4 text-2xl font-extrabold text-primary leading-tight">{data.name || 'Sin nombre'}</h1>
+          <div className="mt-4 flex items-start gap-2">
+            <Eye className="mt-1 h-5 w-5 shrink-0 text-primary" />
+            <h1 className="text-2xl font-extrabold text-primary leading-tight">{data.name || 'Sin nombre'}</h1>
+          </div>
           <div className="mt-2">
-            <span className="inline-block rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
+            <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
               {data.persistedEventId ? 'Borrador guardado' : 'Vista previa — borrador'}
             </span>
           </div>
@@ -83,7 +89,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
             <div className="my-4 border-t border-border" />
             <div className="grid grid-cols-2 gap-4">
               <Field icon={Tag} label="Categoría" value={data.category} />
-              <Field icon={Tag} label="Clase de evento" value={data.eventClass === 'public' ? 'Public' : 'Private'} />
+              <Field icon={Tag} label="Clase de evento" value={data.eventClass === 'public' ? 'Público' : 'Privado'} />
               <Field icon={Users} label="Aforo" value={data.capacity} />
               <Field icon={HomeIcon} label="Tipo de lugar" value={data.location.customType || '—'} />
             </div>

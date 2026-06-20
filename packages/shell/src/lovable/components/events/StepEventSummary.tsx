@@ -464,7 +464,10 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
         if (formData.faqs.length === 0) {
           return (
             <div className="space-y-3">
-              <p className="text-xs text-muted-foreground">Sin preguntas frecuentes.</p>
+              <div className="rounded-2xl border border-dashed border-border bg-card p-6 text-center">
+                <HelpCircle className="mx-auto h-8 w-8 text-muted-foreground" />
+                <p className="mt-2 text-xs text-muted-foreground">Sin preguntas frecuentes.</p>
+              </div>
               {EditBtn}
             </div>
           );
@@ -496,7 +499,10 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
         if (formData.agenda.length === 0) {
           return (
             <div className="space-y-3">
-              <p className="text-xs text-muted-foreground">Sin agenda configurada.</p>
+              <div className="rounded-2xl border border-dashed border-border bg-card p-6 text-center">
+                <Clock className="mx-auto h-8 w-8 text-muted-foreground" />
+                <p className="mt-2 text-xs text-muted-foreground">Sin agenda configurada.</p>
+              </div>
               {EditBtn}
             </div>
           );

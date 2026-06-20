@@ -485,16 +485,24 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
             ) : (
               <>
             {(venuesLoading || (venueTab === 'nearby' && nearbyLoading)) && (
-              <p className="w-full py-6 text-center text-sm text-muted-foreground">
-                Cargando venues…
-              </p>
+              <div className="w-full space-y-3 py-4">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="animate-pulse rounded-2xl border border-border bg-card p-4">
+                    <div className="h-4 w-2/3 rounded bg-muted" />
+                    <div className="mt-2 h-3 w-1/2 rounded bg-muted" />
+                  </div>
+                ))}
+              </div>
             )}
             {!venuesLoading && !(venueTab === 'nearby' && nearbyLoading) && filteredVenues.length === 0 && (
-              <p className="w-full py-6 text-center text-sm text-muted-foreground">
-                {venueTab === 'nearby'
-                  ? 'No hay venues cercanos. Activa tu ubicación o prueba más tarde.'
-                  : 'No hay venues disponibles.'}
-              </p>
+              <div className="w-full rounded-2xl border border-dashed border-border bg-card py-8 text-center">
+                <HomeIcon className="mx-auto h-8 w-8 text-muted-foreground" />
+                <p className="mt-2 px-4 text-sm text-muted-foreground">
+                  {venueTab === 'nearby'
+                    ? 'No hay venues cercanos. Activa tu ubicación o prueba más tarde.'
+                    : 'No hay venues disponibles.'}
+                </p>
+              </div>
             )}
             {filteredVenues.map((v) => (
               <VenueCard

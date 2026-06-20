@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Search, X, UserPlus, BookUser, ChevronDown } from 'lucide-react';
+import { Search, X, UserPlus, BookUser, ChevronDown, Loader2 } from 'lucide-react';
 import { searchUsers } from '@doevents/shared';
 import { EventHost } from '@lovable/data/eventFormData';
 
@@ -171,9 +171,14 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center">
       <div className="flex max-h-[90vh] w-full max-w-md flex-col rounded-t-3xl bg-card shadow-2xl sm:rounded-3xl">
         <div className="flex items-center justify-between p-5 pb-3">
-          <div>
-            <h3 className="text-lg font-bold text-foreground">Seleccionar anfitrión</h3>
-            <p className="text-xs text-muted-foreground mt-0.5">Busca en la plataforma o agrega manualmente</p>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+              <UserPlus className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-foreground">Seleccionar anfitrión</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">Busca en la plataforma o agrega manualmente</p>
+            </div>
           </div>
           <button
             type="button"
@@ -236,19 +241,32 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
 
               <div className="space-y-2">
                 {query.trim().length < 2 ? (
-                  <p className="py-8 text-center text-sm text-muted-foreground">
-                    Escribe al menos 2 caracteres para buscar usuarios de Do•events
-                  </p>
+                  <div className="py-8 text-center">
+                    <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                      <Search className="h-6 w-6 text-primary" />
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Escribe al menos 2 caracteres para buscar usuarios de Do•events
+                    </p>
+                  </div>
                 ) : searching ? (
-                  <p className="py-8 text-center text-sm text-muted-foreground">Buscando…</p>
+                  <p className="flex items-center justify-center gap-2 py-8 text-sm text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                    Buscando…
+                  </p>
                 ) : searchError ? (
                   <p className="py-8 text-center text-sm text-destructive">
                     Error al buscar usuarios. Intenta de nuevo.
                   </p>
                 ) : searched && results.length === 0 ? (
-                  <p className="py-8 text-center text-sm text-muted-foreground">
-                    No se encontraron usuarios con “{query}”
-                  </p>
+                  <div className="py-8 text-center">
+                    <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                      <UserPlus className="h-6 w-6 text-muted-foreground" />
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      No se encontraron usuarios con “{query}”
+                    </p>
+                  </div>
                 ) : (
                   results.map((u) => (
                     <UserRow
@@ -265,7 +283,7 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
 
           {tab === 'manual' && (
             <div className="space-y-3">
-              <div className="flex items-center gap-2 rounded-xl bg-accent/60 p-3 text-xs text-accent-foreground">
+              <div className="flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 p-3 text-xs text-foreground">
                 <BookUser className="h-4 w-4 shrink-0" />
                 Agrega un anfitrión que no está registrado en la plataforma.
               </div>

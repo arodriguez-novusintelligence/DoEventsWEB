@@ -28,9 +28,9 @@ interface MapItem {
 
 // Pin color per category
 const PIN_COLOR: Record<Category, string> = {
-  eventos: 'hsl(245, 72%, 59%)',     // primary blue (events)
-  lugares: 'hsl(28, 92%, 55%)',      // orange (venues)
-  servicios: 'hsl(152, 65%, 42%)',   // emerald (services / profiles)
+  eventos: 'hsl(var(--primary))',
+  lugares: 'hsl(var(--accent-foreground, var(--primary)) / 0.85)',
+  servicios: 'hsl(var(--chart-2, var(--primary)) / 0.75)',
 };
 
 const CATEGORY_LABEL: Record<Category, string> = {
@@ -227,7 +227,7 @@ const MapView = ({
         icon: {
           path: google.maps.SymbolPath.CIRCLE,
           scale: 8,
-          fillColor: '#2563EB',
+          fillColor: 'hsl(var(--primary))',
           fillOpacity: 1,
           strokeColor: '#ffffff',
           strokeWeight: 2,
@@ -288,7 +288,8 @@ const MapView = ({
     >
       {loading && (
         <div className="absolute inset-0 z-40 flex items-center justify-center bg-background/60 backdrop-blur-sm">
-          <div className="rounded-2xl bg-card px-6 py-4 shadow-lg text-sm font-medium text-muted-foreground">
+          <div className="absolute inset-0 animate-pulse bg-muted/40" />
+          <div className="relative rounded-2xl bg-card px-6 py-4 shadow-lg text-sm font-medium text-muted-foreground">
             Cargando mapa…
           </div>
         </div>

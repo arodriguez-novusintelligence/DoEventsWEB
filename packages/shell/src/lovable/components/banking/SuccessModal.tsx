@@ -61,7 +61,7 @@ export default function SuccessModal({ isOpen, onClose, isInternational = false,
             />
           </div>
         ) : (
-          <div className="bg-muted/50 rounded-lg p-4 mt-4">
+          <div className="bg-muted/50 rounded-2xl p-4 mt-4">
             <p className="text-sm text-muted-foreground">
               Este proceso nos tomará un máximo de <span className="font-semibold text-foreground">24 horas</span>.
             </p>
@@ -70,7 +70,7 @@ export default function SuccessModal({ isOpen, onClose, isInternational = false,
 
         <Button 
           onClick={onClose} 
-          className="w-full h-12 mt-4 font-semibold bg-primary text-primary-foreground hover:bg-primary/90"
+          className="w-full h-12 mt-4 font-semibold rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
         >
           {isInternational ? "Listo" : "Finalizar"}
         </Button>

@@ -1,6 +1,6 @@
-# Gap empalme — Resumen ejecutivo (batch 6 + PULEP)
+# Gap empalme — Resumen ejecutivo (batch 1)
 
-**Run:** `gap-empalme-27876228669-b6` + `agent-ef7b3dfd-27876228669`  
+**Run:** `gap-empalme-27876228669-b1`  
 **Fecha:** 2026-06-20  
 **Rama:** `feature/cicd/dev-automation`
 
@@ -8,27 +8,32 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Gaps batch 6 | 18 |
+| Gaps batch 1 | 20 |
 | DONE (frontend) | 18 |
-| BACKEND_REQUIRED | 1 (PULEP persistencia) |
-| Similitud antes | 91.5% |
-| Similitud después (estimado) | ~96.5% |
+| BACKEND_REQUIRED | 2 |
+| Similitud antes | 57.54% |
+| Similitud después (estimado) | ~64.5% |
 | Build `npm run build:devaws` | SUCCESS |
 | Mocks en runtime | No |
+| Gaps restantes | 100 (batches 2–6) |
 
-## Empalme PULEP (prepare-ef7b3dfd)
+## Empalme realizado
 
-- Reglas YAML `reglasActuacion/eventos/pulep-colombia.yml` (Ley 1493 / artes escénicas).
-- Campos frontend: `pulepProducerType`, `pulepRegistrationNumber`, `pulepAcknowledged`.
-- Validación paso 1 wizard cuando categoría/tipo aplica artes escénicas.
-- Sin persistencia backend — documentado BACKEND_REQUIRED.
+- **Stats / invitados:** GuestStatsView header + chart tokens + skeleton; GuestManagementView login empty con icono.
+- **Chat:** PrivateChatView online `bg-success` + empty MessageSquare; ChatRoomView empty messages + tokens admin.
+- **Eventos:** StepAgenda/StepEventSummary/StepEventLocation empty states; EventLocationMap rounded-2xl; HostPickerModal icon header + Loader2; EventPreviewModal badge primary + copy ES.
+- **Servicios:** MyServicesView badges token; StepUnified prerequisite empty con Briefcase; reviews empty con Star.
+- **Feed:** MyEventsView status chips token; MapView pins CSS vars + pulse loading; SideMenu imports limpios + active soporte; EditProfileView header Settings2 + tokens.
+- **Banking:** SuccessModal rounded-2xl; BankingForm header Wallet + CTAs primary (persistencia BACKEND_REQUIRED).
+- **Invitaciones:** InvitationEventDetailView hero fallback CalendarDays + «Atrás».
+- **Venues:** SeatingCategoryDialog header Armchair + preview card Lovable.
 
-## Batch 6
+## Backend pendiente
 
-- **Stats:** SalesStatsView empty/loading; RefundsView tokens primary; GuestStatsView empty channels.
-- **Feed:** FeedVenuesCarousel skeleton + empty state.
-- **Eventos:** StepFaqs empty state; EventLocationMap loading/error overlay.
-- **Auth:** SignUpView con AuthLogo + card Lovable (mfe-auth intacto).
+| Gap | Motivo |
+|-----|--------|
+| `EditProfileView` | Cambio contraseña e intereses/gustos sin endpoint persistencia |
+| `BankingForm` | Verificación SWIFT internacional y persistencia PayPal |
 
 ## Evidencia anti-mock
 
@@ -36,3 +41,7 @@
 grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages
 # sin coincidencias
 ```
+
+## Próximo paso
+
+Batch 2 del manifiesto (20 gaps) — objetivo incremental hacia 98% similitud tras re-comparación CI con `discover-joyful-feed`.

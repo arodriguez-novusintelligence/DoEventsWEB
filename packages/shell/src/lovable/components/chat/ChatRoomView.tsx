@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { ChevronLeft, Send, Settings, UserPlus, Megaphone, Copy, Pencil, Trash2, X, Shield, Ban, Clock, CalendarDays, ChevronRight, Plus, CornerUpLeft, UserMinus } from 'lucide-react';
+import { ChevronLeft, Send, Settings, UserPlus, Megaphone, Copy, Pencil, Trash2, X, Shield, Ban, Clock, CalendarDays, ChevronRight, Plus, CornerUpLeft, UserMinus, MessageSquare } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@lovable/components/ui/avatar';
 import type { EventChatRoom, ChatMessage, ChatAttendee } from '@lovable/data/chatData';
 import { cn } from '@lovable/lib/utils';
@@ -50,7 +50,7 @@ const AttendeeBubble = ({ attendee }: { attendee: ChatAttendee }) => (
       {/* Status dot */}
       <span className={cn(
         'absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full border-2 border-card',
-        attendee.isOnline ? 'bg-emerald-500' : 'bg-destructive',
+        attendee.isOnline ? 'bg-success' : 'bg-muted-foreground/40',
       )} />
       {/* Admin badge */}
       {attendee.isAdmin && (
@@ -64,7 +64,7 @@ const AttendeeBubble = ({ attendee }: { attendee: ChatAttendee }) => (
       attendee.isAdmin ? "text-primary font-bold" : "text-foreground"
     )}>{attendee.name}</span>
     {attendee.isAdmin && (
-      <span className="text-[9px] font-bold uppercase tracking-wider text-amber-500">Admin</span>
+      <span className="text-[9px] font-bold uppercase tracking-wider text-primary">Admin</span>
     )}
   </div>
 );
@@ -345,7 +345,7 @@ const ChatRoomView = ({
               {chatRoom.attendees.filter(a => !a.isAdmin).map(att => (
                 <div key={att.id} className="flex items-center justify-between rounded-xl bg-secondary px-3 py-2.5">
                   <div className="flex items-center gap-2">
-                    <span className={cn('h-2.5 w-2.5 rounded-full', att.isOnline ? 'bg-emerald-500' : 'bg-muted-foreground/40')} />
+                    <span className={cn('h-2.5 w-2.5 rounded-full', att.isOnline ? 'bg-success' : 'bg-muted-foreground/40')} />
                     <span className="text-sm font-medium text-foreground">{att.name}</span>
                   </div>
                   <div className="flex gap-2">
@@ -364,6 +364,15 @@ const ChatRoomView = ({
 
         {/* Messages */}
         <div className="space-y-3">
+          {chatRoom.messages.length === 0 && (
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card py-12 text-center">
+              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                <MessageSquare className="h-6 w-6 text-primary" />
+              </div>
+              <p className="text-sm font-semibold text-foreground">Aún no hay mensajes</p>
+              <p className="mt-1 text-xs text-muted-foreground">Sé el primero en escribir en este chat</p>
+            </div>
+          )}
           {chatRoom.messages.map((msg) => {
             if (msg.isAnnouncement) {
               return (

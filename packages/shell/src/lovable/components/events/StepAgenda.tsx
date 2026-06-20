@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Calendar, Clock, Pencil, Plus, User, X } from 'lucide-react';
+import { Calendar, CalendarDays, Clock, Pencil, Plus, User, X } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
 import { Input } from '@lovable/components/ui/input';
 import {
@@ -205,6 +205,9 @@ const StepAgenda = ({ formData, updateForm }: Props) => {
 
       {selectedDay.activities.length === 0 && (
         <div className="rounded-2xl border border-dashed border-primary/30 bg-primary/5 px-4 py-8 text-center">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+            <CalendarDays className="h-6 w-6 text-primary" />
+          </div>
           <p className="text-sm font-semibold text-foreground">Sin actividades en este día</p>
           <p className="mt-1 text-xs text-muted-foreground">Agrega la primera actividad al itinerario</p>
         </div>

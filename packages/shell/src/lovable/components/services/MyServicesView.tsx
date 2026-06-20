@@ -45,7 +45,7 @@ const Stars = ({ rating, size = 12 }: { rating: number; size?: number }) => {
       {[1, 2, 3, 4, 5].map((s) => (
         <Star
           key={s}
-          className={`h-[${size}px] w-[${size}px] ${s <= rating ? 'fill-amber-400 text-amber-400' : 'fill-muted text-muted'}`}
+          className={`h-[${size}px] w-[${size}px] ${s <= rating ? 'fill-primary text-primary' : 'fill-muted text-muted'}`}
           style={{ width: size, height: size }}
         />
       ))}
@@ -370,7 +370,7 @@ const MyServicesView = ({
                         <Briefcase className="h-3.5 w-3.5 text-primary" />
                       </div>
                       {statusLabel && (
-                        <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-800">
+                        <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
                           {statusLabel}
                         </span>
                       )}
@@ -515,9 +515,12 @@ const MyServicesView = ({
                         </div>
                       </div>
                       ) : (
-                      <p className="mb-4 rounded-2xl bg-secondary p-4 text-center text-sm text-muted-foreground">
-                        Aún no hay reseñas para este servicio.
-                      </p>
+                      <div className="mb-4 rounded-2xl border border-dashed border-border bg-secondary p-6 text-center">
+                        <Star className="mx-auto h-8 w-8 text-muted-foreground" />
+                        <p className="mt-2 text-sm text-muted-foreground">
+                          Aún no hay reseñas para este servicio.
+                        </p>
+                      </div>
                       )}
                       <div className="flex flex-col gap-3">
                         {list.map((r, idx) => (

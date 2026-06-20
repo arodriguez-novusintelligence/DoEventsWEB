@@ -71,10 +71,10 @@ interface Props {
 
 const STATUS_STYLES: Record<MyEventStatus, { label: string; className: string; grayscale?: boolean }> = {
   activo: { label: 'activo', className: 'bg-primary text-primary-foreground' },
-  borrador: { label: 'Borrador', className: 'bg-amber-100 text-amber-800', grayscale: true },
+  borrador: { label: 'Borrador', className: 'bg-amber-500/15 text-amber-700', grayscale: true },
   finalizado: { label: 'Finalizado', className: 'bg-primary text-primary-foreground' },
   inactivo: { label: 'inactivo', className: 'bg-muted text-muted-foreground', grayscale: true },
-  reagendado: { label: 'Reagendado', className: 'bg-amber-100 text-amber-700' },
+  reagendado: { label: 'Reagendado', className: 'bg-amber-500/15 text-amber-700' },
   cancelado: { label: 'Cancelado', className: 'bg-destructive text-destructive-foreground' },
 };
 
@@ -368,7 +368,10 @@ const MyEventsView = ({
             </div>
             <div className="mt-3 space-y-3 overflow-y-auto">
               {reviewsList.length === 0 && (
-                <p className="py-8 text-center text-sm text-muted-foreground">Aún no hay comentarios.</p>
+                <div className="py-8 text-center">
+                  <MessageSquare className="mx-auto h-8 w-8 text-muted-foreground" />
+                  <p className="mt-2 text-sm text-muted-foreground">Aún no hay comentarios.</p>
+                </div>
               )}
               {reviewsList.map((r, i) => (
                 <div key={i} className="rounded-2xl bg-primary/5 p-3">

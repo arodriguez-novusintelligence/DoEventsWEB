@@ -474,9 +474,12 @@ const StepUnified = ({
         <SectionHeader icon={ListChecks} title="Selecciona las actividades" sectionKey="activities" />
         <CollapsibleContent className="mt-2 space-y-3 px-1">
           {!hasSectors ? (
-            <p className="rounded-2xl bg-card p-4 text-sm text-muted-foreground shadow-sm">
-              Selecciona al menos un servicio primero.
-            </p>
+            <div className="rounded-2xl border border-dashed border-border bg-card p-6 text-center shadow-sm">
+              <Briefcase className="mx-auto h-8 w-8 text-primary" />
+              <p className="mt-2 text-sm text-muted-foreground">
+                Selecciona al menos un servicio primero.
+              </p>
+            </div>
           ) : (
             formData.sectors.map((sector) => {
               const activities = SECTOR_ACTIVITIES[sector] || [];

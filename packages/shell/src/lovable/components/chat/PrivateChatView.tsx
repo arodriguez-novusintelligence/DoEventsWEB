@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { ChevronLeft, CornerUpLeft, Copy, Pencil, Trash2, X } from 'lucide-react';
+import { ChevronLeft, CornerUpLeft, Copy, MessageSquare, Pencil, Trash2, X } from 'lucide-react';
 import ChatRichMessage from './ChatRichMessage';
 import ChatComposeBar from './ChatComposeBar';
 import { Avatar, AvatarFallback, AvatarImage } from '@lovable/components/ui/avatar';
@@ -108,7 +108,7 @@ const PrivateChatView = ({
           <div className="min-w-0">
             <h2 className="text-base font-bold text-foreground truncate">{chat.user.name}</h2>
             <div className="flex items-center gap-1.5">
-              <span className={cn('h-2 w-2 rounded-full', chat.user.isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-muted-foreground/50')} />
+              <span className={cn('h-2 w-2 rounded-full', chat.user.isOnline ? 'bg-success animate-pulse' : 'bg-muted-foreground/50')} />
               <span className="text-xs text-muted-foreground">
                 {chat.user.isOnline ? 'En línea' : 'Desconectado'}
               </span>
@@ -122,6 +122,9 @@ const PrivateChatView = ({
         <div className="space-y-3">
           {chat.messages.length === 0 && (
             <div className="flex flex-col items-center justify-center py-20 text-center">
+              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                <MessageSquare className="h-7 w-7 text-primary" />
+              </div>
               <Avatar className="h-16 w-16 mb-3">
                 <AvatarFallback className="bg-accent text-accent-foreground text-lg font-bold">
                   {chat.user.initials}

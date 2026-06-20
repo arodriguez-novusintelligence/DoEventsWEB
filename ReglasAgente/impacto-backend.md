@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27876228669-b1`: batch 1 (20 gaps) — 18 DONE frontend; 2 BACKEND_REQUIRED (`EditProfileView`, `BankingForm`).
+
 Run `agent-ef7b3dfd-27876228669`: prepare PULEP Colombia + batch 6 — 18 gaps DONE frontend; 1 BACKEND_REQUIRED (persistencia campos PULEP en evento).
 
 Run `gap-empalme-27850000711-b5`: batch 5 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`KycCertificationView` envío documentos).
@@ -42,7 +44,23 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27850000711-b5)
+## Empalme realizado (última ejecución — gap-empalme-27876228669-b1)
+
+- **GuestStatsView:** header BarChart3 + Excel primary; chart tokens CSS; skeleton carga.
+- **PrivateChatView / ChatRoomView:** online `bg-success`; empty MessageSquare; admin badge primary.
+- **EventLocationMap / StepAgenda / StepEventSummary / StepEventLocation:** empty states iconografía; skeleton venues; rounded-2xl mapa.
+- **HostPickerModal:** header UserPlus; Loader2 búsqueda; empty states icono.
+- **GuestManagementView:** login required con icono Users + botón volver.
+- **MyEventsView / MyServicesView:** status badges token; reviews empty con icono.
+- **SuccessModal / BankingForm:** rounded-2xl; header Wallet; CTAs `bg-primary` (persistencia BACKEND_REQUIRED).
+- **InvitationEventDetailView / EventPreviewModal:** hero fallback; copy ES «Atrás»/«Público»; badge primary.
+- **StepUnified:** prerequisite empty Briefcase.
+- **SideMenu:** imports limpios; active state soporte.
+- **EditProfileView:** header Settings2; tokens success/primary (password/gustos BACKEND_REQUIRED).
+- **MapView:** pins `hsl(var(--primary))`; pulse loading overlay.
+- **SeatingCategoryDialog:** header Armchair; preview card Lovable.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27850000711-b5)
 
 - **LoginView / SignUpView:** UI Lovable Tailwind con APIs reales (`loginUser`, OAuth); rutas shell `/auth/login` y `/auth/register`.
 - **TicketPurchaseFlow:** resumen evento + botón «Continuar al checkout» antes de redirect real.

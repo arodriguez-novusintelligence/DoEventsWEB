@@ -1,23 +1,16 @@
 {
-  "generatedAt": "2026-06-20T16:30:00Z",
+  "generatedAt": "2026-06-20T16:45:00Z",
   "lovableSha": "ef7b3dfda21848cb792b708e6a65718f0506dbc5",
   "webBranch": "feature/cicd/dev-automation",
-  "comparisonSource": "gap-empalme batch 6 + prepare-ef7b3dfd (discover-joyful-feed no accesible en agente cloud)",
-  "overallSimilarityPercent": 96.5,
-  "overallSimilarityPercentBefore": 91.5,
-  "overallSimilarityPercentAfter": 96.5,
+  "comparisonSource": "gap-empalme batch 1 (27876228669-b1) — discover-joyful-feed no accesible en agente cloud",
+  "overallSimilarityPercent": 64.5,
+  "overallSimilarityPercentBefore": 57.54,
+  "overallSimilarityPercentAfter": 64.5,
   "targetSimilarityPercent": 98.0,
-  "alignmentGapPercent": 1.5,
+  "alignmentGapPercent": 33.5,
   "missingInWebCount": 0,
-  "needsAdaptationCount": 0,
-  "manifestChangedFiles": [
-    "reglasActuacion/eventos/pulep-colombia.yml",
-    "src/components/events/CreateEventView.tsx",
-    "src/components/events/StepEventDetails.tsx",
-    "src/data/eventFormData.ts"
-  ],
-  "hasUiChanges": true,
-  "lastGapEmpalmeRunId": "gap-empalme-27876228669-b6",
-  "lastAgentRunId": "agent-ef7b3dfd-27876228669",
-  "notes": "Run agent-ef7b3dfd + batch 6: PULEP Colombia empalme + 18 gaps visuales; build:devaws OK; re-comparación CI pendiente (repo privado)."
+  "needsAdaptationCount": 100,
+  "lastGapEmpalmeRunId": "gap-empalme-27876228669-b1",
+  "lastAgentRunId": "27876228669-b1",
+  "notes": "Batch 1: 18 gaps DONE frontend + 2 BACKEND_REQUIRED (EditProfileView, BankingForm); build:devaws OK; re-comparación CI pendiente."
 }

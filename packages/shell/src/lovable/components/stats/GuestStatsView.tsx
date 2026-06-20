@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ChevronLeft, ChevronDown, ChevronUp, MessageSquare, Mail, Smartphone, Bell, TrendingUp, Eye, CheckCircle, Users, Download, List, Loader2 } from 'lucide-react';
+import { ChevronLeft, ChevronDown, ChevronUp, MessageSquare, Mail, Smartphone, Bell, TrendingUp, Eye, CheckCircle, Users, Download, List, Loader2, BarChart3 } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@lovable/components/ui/avatar';
 import type { EventChatRoom } from '@lovable/data/chatData';
 import type { ChannelData } from '@lovable/data/guestStatsData';
@@ -195,13 +195,16 @@ const GuestStatsView = ({ event, onBack }: GuestStatsViewProps) => {
         <button onClick={onBack} className="text-foreground">
           <ChevronLeft className="h-5 w-5" />
         </button>
-        <div className="min-w-0 flex-1">
-          <h1 className="text-base font-bold text-foreground truncate">Gestión de Invitados</h1>
-          <p className="text-xs text-muted-foreground truncate">{event.eventName}</p>
+        <div className="min-w-0 flex-1 flex items-center gap-2">
+          <BarChart3 className="h-5 w-5 shrink-0 text-primary" />
+          <div className="min-w-0">
+            <h1 className="text-base font-bold text-foreground truncate">Estadísticas de Invitados</h1>
+            <p className="text-xs text-muted-foreground truncate">{event.eventName}</p>
+          </div>
         </div>
         <button
           onClick={() => exportGuestExcel(data, event.eventName)}
-          className="flex items-center gap-1.5 rounded-lg bg-primary/10 px-3 py-2 text-xs font-medium text-primary transition-colors hover:bg-primary/20"
+          className="flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-xs font-medium text-primary-foreground transition-opacity hover:opacity-90"
         >
           <Download className="h-4 w-4" />
           Excel
@@ -210,10 +213,18 @@ const GuestStatsView = ({ event, onBack }: GuestStatsViewProps) => {
 
       <div className="mx-auto max-w-lg px-4 py-4 space-y-8">
         {loading && (
-          <p className="flex items-center justify-center gap-2 py-6 text-sm text-muted-foreground">
-            <Loader2 className="h-4 w-4 animate-spin text-primary" />
-            Cargando gestión de invitados…
-          </p>
+          <div className="space-y-3">
+            <div className="flex items-center justify-center gap-2 py-4 text-sm text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin text-primary" />
+              Cargando estadísticas de invitados…
+            </div>
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="animate-pulse rounded-2xl border border-border bg-card p-5">
+                <div className="h-4 w-1/3 rounded bg-muted" />
+                <div className="mt-3 h-8 w-1/4 rounded bg-muted" />
+              </div>
+            ))}
+          </div>
         )}
         {!loading && data.channels.length === 0 && (
           <div className="rounded-2xl border border-dashed border-border bg-card p-8 text-center">
@@ -275,10 +286,10 @@ const GuestStatsView = ({ event, onBack }: GuestStatsViewProps) => {
                     fontSize: 12,
                   }}
                 />
-                <Bar dataKey="Entregados" fill="hsl(245, 72%, 59%)" radius={[3, 3, 0, 0]} />
-                <Bar dataKey="Abiertos" fill="hsl(245, 72%, 75%)" radius={[3, 3, 0, 0]} />
-                <Bar dataKey="Clics" fill="hsl(142, 60%, 50%)" radius={[3, 3, 0, 0]} />
-                <Bar dataKey="Conversión" fill="hsl(38, 92%, 60%)" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="Entregados" fill="hsl(var(--primary))" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="Abiertos" fill="hsl(var(--primary) / 0.6)" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="Clics" fill="hsl(var(--chart-2, var(--primary)) / 0.8)" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="Conversión" fill="hsl(var(--accent-foreground, var(--primary)) / 0.7)" radius={[3, 3, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

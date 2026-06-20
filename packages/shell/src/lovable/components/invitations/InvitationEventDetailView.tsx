@@ -5,6 +5,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Calendar,
+  CalendarDays,
   Clock,
   Shapes,
   Tag,
@@ -190,7 +191,7 @@ const InvitationEventDetailView = ({
       <div className="px-4 pt-4">
         <button onClick={onBack} className="flex items-center gap-1 text-primary font-medium mb-3">
           <ChevronLeft className="h-5 w-5" />
-          Atras
+          Atrás
         </button>
       </div>
 
@@ -206,8 +207,9 @@ const InvitationEventDetailView = ({
               <img src={images[imgIdx] || images[0]} alt={event.title} className="w-full h-56 object-cover" />
             </button>
           ) : (
-            <div className="flex h-56 w-full items-center justify-center bg-muted text-sm text-muted-foreground">
-              Sin imagen
+            <div className="flex h-56 w-full flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-muted">
+              <CalendarDays className="h-8 w-8 text-muted-foreground" />
+              <p className="mt-2 text-sm text-muted-foreground">Sin imagen del evento</p>
             </div>
           )}
         </div>

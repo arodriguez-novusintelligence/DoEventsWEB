@@ -163,7 +163,7 @@ const EditProfileView = ({
     return (
       <div className="mx-auto max-w-lg px-4 pt-4 pb-24">
         <button onClick={() => setSubView(null)} className="flex items-center text-primary mb-4">
-          <ChevronLeft className="h-5 w-5" /> <span className="text-sm">Atras</span>
+          <ChevronLeft className="h-5 w-5" /> <span className="text-sm">Atrás</span>
         </button>
         <h1 className="text-2xl font-bold text-primary mb-3">Olvide mi contraseña</h1>
         <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
@@ -198,7 +198,7 @@ const EditProfileView = ({
       <div className="mx-auto max-w-lg px-4 pt-20 pb-24">
         <div className="rounded-2xl bg-card shadow-sm p-8 text-center space-y-5">
           <div className="mx-auto flex h-16 w-16 items-center justify-center">
-            <Send className="h-14 w-14 text-emerald-600" strokeWidth={2.2} />
+            <Send className="h-14 w-14 text-success" strokeWidth={2.2} />
           </div>
           <h2 className="text-lg font-bold text-foreground leading-snug">
             Hemos enviado un token de seguridad a tu correo electrónico registrado.
@@ -269,7 +269,7 @@ const EditProfileView = ({
     return (
       <div className="mx-auto max-w-lg px-4 pt-4 pb-28">
         <button onClick={() => setSubView(null)} className="flex items-center text-foreground mb-4">
-          <ChevronLeft className="h-5 w-5" /> <span className="text-sm">Atras</span>
+          <ChevronLeft className="h-5 w-5" /> <span className="text-sm">Atrás</span>
         </button>
         <div className="mb-4">
           <div className="h-1.5 w-full bg-primary/15 rounded-full overflow-hidden">
@@ -346,9 +346,14 @@ const EditProfileView = ({
   return (
     <div className="mx-auto max-w-lg px-4 pt-4 pb-32 space-y-4 bg-[hsl(var(--secondary))] min-h-screen">
       <button onClick={onBack} className="flex items-center text-primary -mb-1">
-        <ChevronLeft className="h-5 w-5" /> <span className="text-sm">Atras</span>
+        <ChevronLeft className="h-5 w-5" /> <span className="text-sm">Atrás</span>
       </button>
-      <h1 className="text-3xl font-bold text-primary">Editar mis datos</h1>
+      <div className="flex items-center gap-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+          <Settings2 className="h-5 w-5 text-primary" />
+        </div>
+        <h1 className="text-3xl font-bold text-primary">Editar mis datos</h1>
+      </div>
 
       {/* Datos de contacto accordion */}
       <div className="rounded-2xl bg-card shadow-sm overflow-hidden">
@@ -473,7 +478,7 @@ const EditProfileView = ({
           onClick={() => setSubOpen((o) => !o)}
           className="flex w-full items-center gap-3 px-4 py-4"
         >
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-amber-100">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10">
             <CreditCard className="h-6 w-6 text-amber-600" />
           </div>
           <div className="flex-1 text-left">

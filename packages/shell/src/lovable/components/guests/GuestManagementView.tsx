@@ -78,8 +78,15 @@ const GuestManagementView = ({ onBack, guestsController, userId, initialEventId,
 
   if (!userId) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-secondary px-6 text-center">
-        <p className="text-sm text-muted-foreground">Inicia sesión para gestionar tus invitados.</p>
+      <div className="flex min-h-screen flex-col items-center justify-center bg-secondary px-6 text-center">
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+          <Users className="h-7 w-7 text-primary" />
+        </div>
+        <p className="text-sm font-semibold text-foreground">Inicia sesión para gestionar tus invitados</p>
+        <p className="mt-1 text-xs text-muted-foreground">Necesitas una cuenta activa para acceder a esta sección</p>
+        <Button variant="outline" className="mt-4 rounded-full" onClick={onBack}>
+          <ChevronLeft className="h-4 w-4 mr-1" /> Volver
+        </Button>
       </div>
     );
   }

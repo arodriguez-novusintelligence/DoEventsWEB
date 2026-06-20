@@ -17,9 +17,8 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Avatar, AvatarFallback, AvatarImage } from '@lovable/components/ui/avatar';
-import TermsConditionsView from '@lovable/components/legal/TermsConditionsView';
 import { StoryAvatar } from '../../../components/StoryAvatar';
+import TermsConditionsView from '@lovable/components/legal/TermsConditionsView';
 import PrivacyPolicyView from '@lovable/components/legal/PrivacyPolicyView';
 import PlatformCostsView from '@lovable/components/legal/PlatformCostsView';
 import RefundPolicyView from '@lovable/components/invitations/RefundPolicyView';
@@ -214,7 +213,7 @@ const SideMenu = ({
                 <button
                   key={item.label}
                   onClick={item.onClick}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-primary-foreground/90 transition-colors hover:bg-primary-foreground/10"
+                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-primary-foreground/90 transition-colors hover:bg-primary-foreground/10 active:bg-primary-foreground/15"
                 >
                   <item.icon className="h-[18px] w-[18px] shrink-0" strokeWidth={2} />
                   <span className="text-[14px] font-medium">{item.label}</span>

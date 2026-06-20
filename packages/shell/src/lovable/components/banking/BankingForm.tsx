@@ -527,24 +527,31 @@ export default function BankingForm({ onComplete, editingMethod }: BankingFormPr
 
   return (
     <>
-      <div className="min-h-screen bg-background py-8 px-4">
+      <div className="min-h-screen bg-secondary py-8 px-4">
         <div className="max-w-lg mx-auto">
           {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-foreground mb-2">
-              {paymentMethod === "international" 
-                ? "Cuenta Internacional USD" 
-                : paymentMethod === "paypal"
-                ? "Cuenta PayPal"
-                : "Datos Bancarios"}
-            </h1>
-            <p className="text-muted-foreground text-sm">
-              {paymentMethod === "international"
-                ? "Añade la información de tu cuenta bancaria internacional"
-                : paymentMethod === "paypal"
-                ? "Añade la información de tu cuenta PayPal para recibir pagos"
-                : "Verifica que la información ingresada sea correcta antes de continuar"}
-            </p>
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                <Wallet className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-foreground">
+                  {paymentMethod === "international" 
+                    ? "Cuenta Internacional USD" 
+                    : paymentMethod === "paypal"
+                    ? "Cuenta PayPal"
+                    : "Datos Bancarios"}
+                </h1>
+                <p className="text-muted-foreground text-sm">
+                  {paymentMethod === "international"
+                    ? "Añade la información de tu cuenta bancaria internacional"
+                    : paymentMethod === "paypal"
+                    ? "Añade la información de tu cuenta PayPal para recibir pagos"
+                    : "Verifica que la información ingresada sea correcta antes de continuar"}
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Payment Method Selection */}
@@ -1376,7 +1383,7 @@ export default function BankingForm({ onComplete, editingMethod }: BankingFormPr
                 {/* Submit Button */}
                 <Button
                   type="submit"
-                  className="w-full h-14 text-base font-semibold bg-foreground text-background hover:bg-foreground/90"
+                  className="w-full h-14 text-base font-semibold rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
                 >
                   Registrar cuenta internacional
                 </Button>
@@ -1647,7 +1654,7 @@ export default function BankingForm({ onComplete, editingMethod }: BankingFormPr
                 {/* Submit Button */}
                 <Button
                   type="submit"
-                  className="w-full h-14 text-base font-semibold bg-foreground text-background hover:bg-foreground/90"
+                  className="w-full h-14 text-base font-semibold rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
                 >
                   Registrar cuenta PayPal
                 </Button>
