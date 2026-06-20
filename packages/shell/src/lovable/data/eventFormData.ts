@@ -224,6 +224,8 @@ export interface EventDay {
   activities: EventActivity[];
 }
 
+export type PulepProducerType = 'permanente' | 'ocasional' | '';
+
 export interface EventFormData {
   // InformaciÃ³n principal
   name: string;
@@ -261,6 +263,11 @@ export interface EventFormData {
   persistedEventId?: string;
   /** Paso actual del wizard (1-7) para reanudar */
   wizardStep?: number;
+  /** Ley 1493 / PULEP — obligatorio para artes escÃ©nicas (validaciÃ³n frontend) */
+  pulepRequired?: boolean;
+  pulepProducerType?: PulepProducerType;
+  pulepRegistrationNumber?: string;
+  pulepAcknowledged?: boolean;
 }
 
 export const initialEventFormData: EventFormData = {
@@ -299,6 +306,10 @@ export const initialEventFormData: EventFormData = {
   salesEndTime: '',
   faqs: [],
   agenda: [],
+  pulepRequired: false,
+  pulepProducerType: '',
+  pulepRegistrationNumber: '',
+  pulepAcknowledged: false,
 };
 
 export const EVENT_TYPES = [

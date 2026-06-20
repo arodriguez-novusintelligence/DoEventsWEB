@@ -25,7 +25,7 @@ const statusMeta: Record<RefundStatus, { label: string; icon: typeof Clock; clas
   pending:   { label: 'Pendiente', icon: Clock,        className: 'bg-amber-500/10 text-amber-600',   dot: 'bg-amber-500' },
   approved:  { label: 'Aprobado',  icon: CheckCircle2, className: 'bg-primary/10 text-primary',       dot: 'bg-primary' },
   rejected:  { label: 'Rechazado', icon: XCircle,      className: 'bg-destructive/10 text-destructive', dot: 'bg-destructive' },
-  processed: { label: 'Procesado', icon: ShieldCheck,  className: 'bg-emerald-500/10 text-emerald-600', dot: 'bg-emerald-500' },
+  processed: { label: 'Procesado', icon: ShieldCheck,  className: 'bg-primary/10 text-primary', dot: 'bg-primary' },
 };
 
 const sourceMeta: Record<RefundSource, { label: string; icon: typeof User; className: string; bgClass: string }> = {

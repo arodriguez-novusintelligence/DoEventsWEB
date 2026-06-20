@@ -12,6 +12,7 @@ import StepEventSummary from './StepEventSummary';
 import EventPreviewModal from './EventPreviewModal';
 import PublishFlowModal from './PublishFlowModal';
 import { toast } from 'sonner';
+import { isPulepFormValid } from '@lovable/lib/pulepColombia';
 
 interface CreateEventViewProps {
   onBack: (formData: EventFormData) => void;
@@ -92,8 +93,12 @@ const CreateEventView = ({
       ...(typeof partial === 'function' ? partial(prev) : partial),
     }));
 
-  const isStep1Valid = () =>
-    !!(
+  const isStep1Valid = () => {
+    const datesOk =
+      !formData.startDate ||
+      !formData.endDate ||
+      formData.endDate >= formData.startDate;
+    return !!(
       formData.name.trim() &&
       formData.description.trim() &&
       formData.type.trim() &&
@@ -102,8 +107,11 @@ const CreateEventView = ({
       formData.startDate.trim() &&
       formData.startTime.trim() &&
       formData.endDate.trim() &&
-      formData.endTime.trim()
+      formData.endTime.trim() &&
+      datesOk &&
+      isPulepFormValid(formData)
     );
+  };
 
   const isStep2Valid = () => {
     const l = formData.location;

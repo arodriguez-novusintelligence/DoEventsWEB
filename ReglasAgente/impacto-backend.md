@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `agent-ef7b3dfd-27876228669`: prepare PULEP Colombia + batch 6 — 18 gaps DONE frontend; 1 BACKEND_REQUIRED (persistencia campos PULEP en evento).
+
 Run `gap-empalme-27850000711-b5`: batch 5 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`KycCertificationView` envío documentos).
 
 Run `gap-empalme-27850000711-b4`: batch 4 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`PaymentMethodsDashboard` delete, `StoryViewersSheet`, `GlobalSearchView` posts).
@@ -162,6 +164,7 @@ Sí (parcial)
 
 | Gap / Feature | lovablePath | webPath | Motivo | Endpoint / Lambda | Tabla DynamoDB | Acción | Prioridad |
 |---------------|-------------|---------|--------|-------------------|----------------|--------|-----------|
+| PULEP Colombia campos | `src/data/eventFormData.ts` | `packages/shell/src/lovable/data/eventFormData.ts` | Registro PULEP no persiste en evento | Extender `POST/PATCH /events` con `pulep*` | Events | Persistir + validar registro | Media |
 | Edit profile password/intereses | `src/components/feed/EditProfileView.tsx` | `packages/shell/src/lovable/components/feed/EditProfileView.tsx` | Reset password e intereses no persisten | Auth Cognito + `PATCH /users/{id}` | Users | Conectar flujos UI | Media |
 | Banking form SWIFT/intl | `src/components/banking/BankingForm.tsx` | `packages/shell/src/lovable/components/banking/BankingForm.tsx` | Validación SWIFT servidor; cert upload | Extender `POST /bank-data` | BankAccounts | Validación backend | Alta |
 | Chat ban | `src/components/chat/ChatRoomView.tsx` | `packages/shell/src/lovable/components/chat/ChatRoomView.tsx` | Ban participantes sin endpoint | `POST /chat/rooms/{id}/ban` (TBD) | Chats | Endpoint ban | Baja |

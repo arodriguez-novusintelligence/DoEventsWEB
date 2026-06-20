@@ -91,6 +91,24 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-20 agent-ef7b3dfd + batch 6 (run 27876228669)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| PULEP Colombia YAML | FRONTEND_LOGIC | Sí | `reglasActuacion/eventos/pulep-colombia.yml` | Ley 1493 artes escénicas |
+| PULEP campos formulario | FRONTEND_LOGIC | Sí | `eventFormData.ts`, `pulepColombia.ts` | Validación UI sin mocks |
+| PULEP StepEventDetails | VISUAL | Sí | `events/StepEventDetails.tsx` | Card + campos obligatorios |
+| PULEP CreateEventView | FRONTEND_LOGIC | Sí | `events/CreateEventView.tsx` | Bloqueo paso 1 + fechas |
+| PULEP persistencia | Bloqueo | Parcial | DoEventsBack | BACKEND_REQUIRED |
+| SalesStatsView empty | VISUAL | Sí | `stats/SalesStatsView.tsx` | Empty + tokens primary |
+| FeedVenuesCarousel | VISUAL | Sí | `feed/FeedVenuesCarousel.tsx` | Skeleton + empty |
+| StepFaqs empty | VISUAL | Sí | `events/StepFaqs.tsx` | Icono HelpCircle |
+| EventLocationMap | VISUAL | Sí | `events/EventLocationMap.tsx` | Loading/error overlay |
+| SignUpView layout | VISUAL | Sí | `auth/SignUpView.tsx` | AuthLogo + card mfe-auth |
+| GuestStatsView empty | VISUAL | Sí | `stats/GuestStatsView.tsx` | Sin canales |
+| RefundsView tokens | VISUAL | Sí | `stats/RefundsView.tsx` | Sin emerald hardcoded |
+| Batch 6 gaps (18) | Empalme | Sí | ver `decision-log.md` | 18 DONE + PULEP BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-20 gap-empalme batch 5 (run 27850000711-b5)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

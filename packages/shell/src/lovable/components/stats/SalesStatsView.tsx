@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronLeft, Ticket, TrendingUp, BarChart3, Users, Download, List } from 'lucide-react';
+import { ChevronLeft, Ticket, TrendingUp, BarChart3, Users, Download, List, Loader2 } from 'lucide-react';
 import type { EventChatRoom } from '@lovable/data/chatData';
 import type { EventSalesData, CategorySales } from '@lovable/data/salesStatsData';
 import { getEmptySalesData, resolveSalesData } from '../../../lovable-bridge/statsAdapter';
@@ -57,8 +57,22 @@ const SalesStatsView = ({ event, onBack }: SalesStatsViewProps) => {
 
       <div className="mx-auto max-w-lg px-4 py-4">
         {loading && (
-          <p className="mb-4 py-4 text-center text-sm text-muted-foreground">Cargando estadísticas de ventas…</p>
+          <p className="mb-4 flex items-center justify-center gap-2 py-4 text-sm text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin text-primary" />
+            Cargando estadísticas de ventas…
+          </p>
         )}
+        {!loading && salesData.categories.length === 0 && (
+          <div className="rounded-2xl border border-dashed border-border bg-card p-8 text-center">
+            <Ticket className="mx-auto h-8 w-8 text-muted-foreground" />
+            <p className="mt-2 text-sm font-semibold text-foreground">Sin ventas registradas</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Cuando se vendan boletos para este evento, verás el desglose por categoría aquí.
+            </p>
+          </div>
+        )}
+        {!loading && salesData.categories.length > 0 && (
+        <>
         {/* Summary cards */}
         <div className="grid grid-cols-3 gap-2 mb-5">
           <div className="flex flex-col items-center rounded-xl bg-card p-3 shadow-sm border border-border">
@@ -67,7 +81,7 @@ const SalesStatsView = ({ event, onBack }: SalesStatsViewProps) => {
             <span className="text-[10px] text-muted-foreground">Boletos vendidos</span>
           </div>
           <div className="flex flex-col items-center rounded-xl bg-card p-3 shadow-sm border border-primary/30">
-            <TrendingUp className="h-4 w-4 text-emerald-500 mb-1" />
+            <TrendingUp className="h-4 w-4 text-primary mb-1" />
             <span className="text-base font-bold text-foreground">{formatCurrency(totalRevenue, salesData.currency)}</span>
             <span className="text-[10px] text-muted-foreground">Ingreso total</span>
           </div>
@@ -209,6 +223,8 @@ const SalesStatsView = ({ event, onBack }: SalesStatsViewProps) => {
               </div>
             </div>
           </>
+        )}
+        </>
         )}
       </div>
     </div>

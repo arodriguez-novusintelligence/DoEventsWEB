@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Loader2, MapPinOff } from 'lucide-react';
 
 interface Props {
   lat: number;
@@ -41,6 +42,7 @@ const EventLocationMap = ({ lat, lng, onPick }: Props) => {
   const mapRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
   const [ready, setReady] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -69,6 +71,7 @@ const EventLocationMap = ({ lat, lng, onPick }: Props) => {
       })
       .catch((err) => {
         console.error(err);
+        setLoadError(true);
       });
     return () => {
       cancelled = true;
@@ -84,10 +87,24 @@ const EventLocationMap = ({ lat, lng, onPick }: Props) => {
   }, [lat, lng, ready]);
 
   return (
-    <div
-      ref={containerRef}
-      className="h-48 w-full overflow-hidden rounded-xl border border-border bg-muted"
-    />
+    <div className="relative h-48 w-full overflow-hidden rounded-xl border border-border bg-muted">
+      {!ready && !loadError && (
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-muted/80">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <span className="text-xs text-muted-foreground">Cargando mapa…</span>
+        </div>
+      )}
+      {loadError && (
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-muted px-4 text-center">
+          <MapPinOff className="h-6 w-6 text-muted-foreground" />
+          <p className="text-xs font-medium text-foreground">No se pudo cargar el mapa</p>
+          <p className="text-[10px] text-muted-foreground">
+            Verifica la clave de Google Maps o ingresa la dirección manualmente.
+          </p>
+        </div>
+      )}
+      <div ref={containerRef} className="h-full w-full" />
+    </div>
   );
 };
 

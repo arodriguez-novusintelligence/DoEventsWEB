@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, X } from 'lucide-react';
+import { Plus, X, HelpCircle } from 'lucide-react';
 import { EventFaq, EventFormData } from '@lovable/data/eventFormData';
 
 interface Props {
@@ -42,6 +42,16 @@ const StepFaqs = ({ formData, updateForm }: Props) => {
       </div>
 
       <p className="text-sm font-bold text-primary">Preguntas frecuentes</p>
+
+      {faqs.length === 0 && (
+        <div className="flex flex-col items-center rounded-2xl border border-dashed border-border bg-card px-4 py-8 text-center">
+          <HelpCircle className="h-8 w-8 text-muted-foreground" />
+          <p className="mt-2 text-sm font-semibold text-foreground">Aún no hay preguntas</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Usa el formulario de abajo para agregar la primera FAQ de tu evento.
+          </p>
+        </div>
+      )}
 
       {/* Draft card */}
       <div className="rounded-2xl bg-card p-4 shadow-sm">

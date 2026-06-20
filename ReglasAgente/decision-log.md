@@ -13,6 +13,67 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-20 16:30 UTC] agent-ef7b3dfd-27876228669 + batch 6
+
+### 1. Resumen del empalme
+Prepare `ef7b3dfd`: reglas PULEP Colombia (Ley 1493) en wizard crear evento — campos productor, número registro y confirmación cuando aplica artes escénicas. Batch 6 (18 gaps): stats empty/loading, FeedVenuesCarousel skeleton, StepFaqs empty, EventLocationMap error, SignUpView layout Lovable.
+
+### 2. Tabla gaps batch 6
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Sales stats | `packages/shell/src/lovable/components/stats/SalesStatsView.tsx` | DONE |
+| Publish flow | `packages/shell/src/lovable/components/events/PublishFlowModal.tsx` | DONE* |
+| Payment gateway | `packages/shell/src/lovable/components/services/PaymentGatewaySheet.tsx` | BACKEND_REQUIRED |
+| Story viewers | `packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx` | BACKEND_REQUIRED |
+| KYC certification | `packages/shell/src/lovable/components/feed/KycCertificationView.tsx` | BACKEND_REQUIRED |
+| Step FAQs | `packages/shell/src/lovable/components/events/StepFaqs.tsx` | DONE |
+| Step refund | `packages/shell/src/lovable/components/events/StepRefundPolicy.tsx` | DONE |
+| Seating map editor | `packages/shell/src/lovable/components/events/SeatingMapEditor.tsx` | DONE* |
+| Feed venues carousel | `packages/shell/src/lovable/components/feed/FeedVenuesCarousel.tsx` | DONE |
+| Add story | `packages/shell/src/lovable/components/feed/AddStorySheet.tsx` | DONE* |
+| Forgot password | `packages/shell/src/lovable/components/auth/ForgotPasswordView.tsx` | DONE* |
+| Login | `packages/shell/src/lovable/components/auth/LoginView.tsx` | DONE* |
+| Sign up | `packages/shell/src/lovable/components/auth/SignUpView.tsx` | DONE |
+| Refunds stats | `packages/shell/src/lovable/components/stats/RefundsView.tsx` | DONE |
+| Guest stats | `packages/shell/src/lovable/components/stats/GuestStatsView.tsx` | DONE |
+| Access control stats | `packages/shell/src/lovable/components/stats/AccessControlView.tsx` | DONE* |
+| Event location map | `packages/shell/src/lovable/components/events/EventLocationMap.tsx` | DONE |
+| Bottom nav | `packages/shell/src/lovable/components/feed/BottomNav.tsx` | DONE* |
+
+\* Sin diff adicional — ya alineado en empalmes previos.
+
+### PULEP (prepare-ef7b3dfd)
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Reglas YAML | `reglasActuacion/eventos/pulep-colombia.yml` | DONE |
+| Event form data | `packages/shell/src/lovable/data/eventFormData.ts` | DONE |
+| Step event details | `packages/shell/src/lovable/components/events/StepEventDetails.tsx` | DONE |
+| Create event view | `packages/shell/src/lovable/components/events/CreateEventView.tsx` | DONE |
+| Persistencia PULEP | DoEventsBack | BACKEND_REQUIRED |
+
+### 3. Similitud antes/después
+- **Antes:** 91.5%
+- **Después:** ~96.5% (estimado; re-comparación CI pendiente)
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias
+
+### 6. Riesgos pendientes
+- Similitud <98% hasta re-comparación CI con `discover-joyful-feed`
+- Campos PULEP no persisten en API eventos
+- Brechas BACKEND_REQUIRED previas (KYC, banking, PaymentGateway) intactas
+
+### Decisión
+**APPLIED**
+
+---
+
 ## [2026-06-20 15:55 UTC] prepare-ef7b3dfd
 
 ### 1. Resumen del cambio detectado

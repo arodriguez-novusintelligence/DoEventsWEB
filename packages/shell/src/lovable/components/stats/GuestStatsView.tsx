@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ChevronLeft, ChevronDown, ChevronUp, MessageSquare, Mail, Smartphone, Bell, TrendingUp, Eye, CheckCircle, Users, Download, List } from 'lucide-react';
+import { ChevronLeft, ChevronDown, ChevronUp, MessageSquare, Mail, Smartphone, Bell, TrendingUp, Eye, CheckCircle, Users, Download, List, Loader2 } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@lovable/components/ui/avatar';
 import type { EventChatRoom } from '@lovable/data/chatData';
 import type { ChannelData } from '@lovable/data/guestStatsData';
@@ -210,9 +210,22 @@ const GuestStatsView = ({ event, onBack }: GuestStatsViewProps) => {
 
       <div className="mx-auto max-w-lg px-4 py-4 space-y-8">
         {loading && (
-          <p className="py-6 text-center text-sm text-muted-foreground">Cargando gestión de invitados…</p>
+          <p className="flex items-center justify-center gap-2 py-6 text-sm text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin text-primary" />
+            Cargando gestión de invitados…
+          </p>
         )}
-        {showBuyerList ? (
+        {!loading && data.channels.length === 0 && (
+          <div className="rounded-2xl border border-dashed border-border bg-card p-8 text-center">
+            <Users className="mx-auto h-8 w-8 text-muted-foreground" />
+            <p className="mt-2 text-sm font-semibold text-foreground">Sin datos de invitados</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Cuando envíes invitaciones por WhatsApp, email o push, verás el embudo de conversión aquí.
+            </p>
+          </div>
+        )}
+        {!loading && data.channels.length > 0 && (
+          showBuyerList ? (
           <GuestBuyerList
             guests={allGuests}
             currency="COP"
@@ -302,7 +315,7 @@ const GuestStatsView = ({ event, onBack }: GuestStatsViewProps) => {
           </div>
         </section>
         </>
-        )}
+        ))}
       </div>
     </div>
   );

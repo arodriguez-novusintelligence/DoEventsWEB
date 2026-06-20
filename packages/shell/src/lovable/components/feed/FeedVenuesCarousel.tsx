@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MapPin } from 'lucide-react';
+import { MapPin, Building2, Loader2 } from 'lucide-react';
 import { resolveEventImageUrl } from '@doevents/shared';
 import type { FeedVenueCard } from '../../../lovable-bridge/useNearbyVenues';
 
@@ -24,8 +24,44 @@ function VenueCardImage({ src, alt }: { src: string; alt: string }) {
 
 const FeedVenuesCarousel = ({ venues = [], loading, onOpenVenue }: FeedVenuesCarouselProps) => {
   const list = venues.filter((v) => v.id);
-  if (loading) return null;
-  if (!list.length) return null;
+
+  if (loading) {
+    return (
+      <section className="my-5 px-4">
+        <div className="mb-3 h-5 w-48 animate-pulse rounded-lg bg-muted" />
+        <div className="flex gap-3 overflow-x-auto pb-2">
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className="flex h-[200px] w-[72%] shrink-0 flex-col overflow-hidden rounded-2xl border border-border/50 bg-card sm:w-[280px]"
+            >
+              <div className="aspect-[4/3] w-full animate-pulse bg-muted" />
+              <div className="space-y-2 p-3">
+                <div className="h-4 w-3/4 animate-pulse rounded bg-muted" />
+                <div className="h-3 w-1/2 animate-pulse rounded bg-muted" />
+              </div>
+            </div>
+          ))}
+        </div>
+        <p className="mt-2 flex items-center justify-center gap-2 text-xs text-muted-foreground">
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          Cargando lugares cercanos…
+        </p>
+      </section>
+    );
+  }
+
+  if (!list.length) {
+    return (
+      <section className="mx-4 my-5 rounded-2xl border border-dashed border-border bg-card p-6 text-center">
+        <Building2 className="mx-auto h-8 w-8 text-muted-foreground" />
+        <p className="mt-2 text-sm font-semibold text-foreground">Sin lugares cercanos</p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Publica un lugar o ajusta tu ubicación para ver espacios para alquilar.
+        </p>
+      </section>
+    );
+  }
 
   return (
     <section className="my-5">

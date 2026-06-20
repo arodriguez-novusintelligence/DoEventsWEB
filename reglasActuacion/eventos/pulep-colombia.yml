@@ -1,0 +1,47 @@
+# Reglas frontend — cumplimiento PULEP (Ley 1493 / espectáculos públicos artes escénicas)
+# Fuente: prepare-ef7b3dfd (discover-joyful-feed)
+# Adaptación DoEventsWEB: validación UI sin mocks; persistencia → DoEventsBack
+
+id: pulep-colombia
+version: "1.0"
+scope: event_wizard
+country: CO
+
+applies_when:
+  category_patterns:
+    - "artes escénicas"
+    - "teatro"
+    - "danza"
+  type_patterns:
+    - "concierto"
+    - "actuación"
+    - "teatro"
+    - "stand up"
+    - "comedia en vivo"
+    - "presentación musical"
+
+frontend_rules:
+  - id: pulep_producer_type_required
+    field: pulepProducerType
+    validation: "required when applies_when"
+    message: "Selecciona si eres productor permanente u ocasional en PULEP"
+  - id: pulep_registration_number
+    field: pulepRegistrationNumber
+    validation: "min_length:5 when applies_when"
+    message: "Ingresa el número de registro del evento en PULEP"
+  - id: pulep_acknowledgment
+    field: pulepAcknowledged
+    validation: "must_be_true when applies_when"
+    message: "Debes confirmar que el evento cumple con la Ley 1493 y PULEP"
+  - id: end_date_after_start
+    field: endDate
+    validation: "endDate >= startDate"
+    message: "La fecha fin debe ser igual o posterior a la fecha inicio"
+
+backend_required:
+  - persist_pulep_fields_on_event
+  - validate_pulep_registration_with_ministerio
+
+references:
+  portal: "https://pulep.mincultura.gov.co/"
+  law: "Ley 1493 de 2011"

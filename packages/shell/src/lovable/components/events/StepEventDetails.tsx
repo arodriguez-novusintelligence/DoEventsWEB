@@ -28,6 +28,11 @@ import {
 } from '@lovable/data/eventFormData';
 import HostPickerModal from './HostPickerModal';
 import { toast } from 'sonner';
+import {
+  isPulepApplicable,
+  PULEP_PORTAL_URL,
+} from '@lovable/lib/pulepColombia';
+import { ExternalLink, ShieldCheck } from 'lucide-react';
 
 interface StepEventDetailsProps {
   formData: EventFormData;
@@ -80,6 +85,35 @@ const StepEventDetails = ({
       })
       .catch(() => undefined);
   }, []);
+
+  const categoryLabel =
+    categories.find((c) => c.id === formData.category)?.label ?? formData.category;
+  const typeLabel =
+    eventTypes.find((t) => t.id === formData.type)?.label ?? formData.type;
+  const pulepApplies = isPulepApplicable(categoryLabel, typeLabel);
+
+  useEffect(() => {
+    if (formData.pulepRequired !== pulepApplies) {
+      updateForm({ pulepRequired: pulepApplies });
+    }
+    if (!pulepApplies && (formData.pulepProducerType || formData.pulepRegistrationNumber)) {
+      updateForm({
+        pulepProducerType: '',
+        pulepRegistrationNumber: '',
+        pulepAcknowledged: false,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pulepApplies]);
+
+  const pulepErr =
+    showErrors &&
+    pulepApplies &&
+    !(
+      formData.pulepProducerType &&
+      formData.pulepRegistrationNumber?.trim().length >= 5 &&
+      formData.pulepAcknowledged
+    );
 
   const inputBase =
     'w-full rounded-xl border border-border bg-background px-3.5 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors';
@@ -253,6 +287,94 @@ const StepEventDetails = ({
           </div>
           <ErrorText show={err(formData.capacity)} />
         </div>
+
+        {pulepApplies && (
+          <div
+            className={`space-y-4 rounded-2xl border bg-card p-4 shadow-sm ${
+              pulepErr ? 'border-destructive' : 'border-primary/30'
+            }`}
+          >
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                <ShieldCheck className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-primary">Cumplimiento PULEP (Colombia)</h3>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Espectáculo de artes escénicas — Ley 1493. Registra tu evento en el portal PULEP
+                  antes de publicar boletas.
+                </p>
+                <a
+                  href={PULEP_PORTAL_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+                >
+                  Ir a pulep.mincultura.gov.co
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              </div>
+            </div>
+
+            <div>
+              <Label>Tipo de productor</Label>
+              <div className="relative">
+                <select
+                  value={formData.pulepProducerType ?? ''}
+                  onChange={(e) =>
+                    updateForm({
+                      pulepProducerType: e.target.value as '' | 'permanente' | 'ocasional',
+                    })
+                  }
+                  className={`${inputBase} appearance-none pr-9 ${
+                    pulepErr && !formData.pulepProducerType ? errorBorder : ''
+                  }`}
+                >
+                  <option value="">Selecciona</option>
+                  <option value="permanente">Productor permanente</option>
+                  <option value="ocasional">Productor ocasional</option>
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary" />
+              </div>
+            </div>
+
+            <div>
+              <Label>Número de registro PULEP</Label>
+              <input
+                type="text"
+                value={formData.pulepRegistrationNumber ?? ''}
+                onChange={(e) => updateForm({ pulepRegistrationNumber: e.target.value })}
+                placeholder="Ej. REG-2026-000123"
+                className={`${inputBase} ${
+                  pulepErr && !(formData.pulepRegistrationNumber?.trim().length >= 5)
+                    ? errorBorder
+                    : ''
+                }`}
+              />
+              <p className="mt-1 text-xs text-muted-foreground">
+                Número asignado al inscribir el evento en PULEP (mínimo 5 caracteres).
+              </p>
+            </div>
+
+            <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-background p-3">
+              <input
+                type="checkbox"
+                checked={!!formData.pulepAcknowledged}
+                onChange={(e) => updateForm({ pulepAcknowledged: e.target.checked })}
+                className="mt-0.5 h-4 w-4 rounded border-border text-primary focus:ring-primary"
+              />
+              <span className="text-xs text-foreground">
+                Confirmo que este evento cumple con la Ley 1493 y está registrado o en trámite
+                en PULEP según corresponda.
+              </span>
+            </label>
+            {pulepErr && (
+              <p className="text-xs font-medium text-destructive">
+                Completa los datos PULEP para continuar.
+              </p>
+            )}
+          </div>
+        )}
 
         {/* Fechas y horas */}
         <div className="grid grid-cols-2 gap-3">

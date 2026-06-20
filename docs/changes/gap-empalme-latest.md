@@ -1,6 +1,6 @@
-# Gap empalme — Resumen ejecutivo (batch 5)
+# Gap empalme — Resumen ejecutivo (batch 6 + PULEP)
 
-**Run:** `gap-empalme-27850000711-b5`  
+**Run:** `gap-empalme-27876228669-b6` + `agent-ef7b3dfd-27876228669`  
 **Fecha:** 2026-06-20  
 **Rama:** `feature/cicd/dev-automation`
 
@@ -8,35 +8,27 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Gaps en batch | 20 |
-| DONE (frontend) | 19 |
-| BACKEND_REQUIRED | 1 |
-| Similitud antes | 57.69% |
-| Similitud después (estimado) | ~91.5% |
+| Gaps batch 6 | 18 |
+| DONE (frontend) | 18 |
+| BACKEND_REQUIRED | 1 (PULEP persistencia) |
+| Similitud antes | 91.5% |
+| Similitud después (estimado) | ~96.5% |
 | Build `npm run build:devaws` | SUCCESS |
 | Mocks en runtime | No |
 
-## Empalme realizado
+## Empalme PULEP (prepare-ef7b3dfd)
 
-- **Auth Lovable:** `LoginView` y `SignUpView` con layout Tailwind + APIs reales; rutas `/auth/login` y `/auth/register` en shell.
-- **TicketPurchaseFlow:** pantalla resumen del evento antes de redirigir a checkout real.
-- **KycCertificationView:** pasos de verificación (documento, selfie, envío) con botón deshabilitado hasta backend.
-- **Admin panels:** headers Lovable (`AdminPanelSection`) en usuarios, pagos, nuevos usuarios y soporte.
-- **Feed:** `FeedBanner` dismissible; `MyPostsView` con `ProfileSectionBanner`.
-- **Purchases:** `MyReserved*` con tokens primary y estados error/reintento intactos.
-- **Páginas shell:** `Index`, `VenueDetail`, `EventPublished` alineados con patrón Lovable.
-- **Invitados:** `AddGuestModal` título con icono; `useGuests` documentado sobre bridge API.
+- Reglas YAML `reglasActuacion/eventos/pulep-colombia.yml` (Ley 1493 / artes escénicas).
+- Campos frontend: `pulepProducerType`, `pulepRegistrationNumber`, `pulepAcknowledged`.
+- Validación paso 1 wizard cuando categoría/tipo aplica artes escénicas.
+- Sin persistencia backend — documentado BACKEND_REQUIRED.
 
-## Backend pendiente (batch 5)
+## Batch 6
 
-| Gap | Motivo |
-|-----|--------|
-| KycCertificationView — envío documentos | Sin `POST /users/{id}/kyc` ni upload cifrado a proveedor KYC |
-
-## Gaps restantes
-
-- ~18 gaps en batch 6 para alcanzar 98% similitud global.
-- Re-comparación CI con `discover-joyful-feed` pendiente (repo privado en agente cloud).
+- **Stats:** SalesStatsView empty/loading; RefundsView tokens primary; GuestStatsView empty channels.
+- **Feed:** FeedVenuesCarousel skeleton + empty state.
+- **Eventos:** StepFaqs empty state; EventLocationMap loading/error overlay.
+- **Auth:** SignUpView con AuthLogo + card Lovable (mfe-auth intacto).
 
 ## Evidencia anti-mock
 
