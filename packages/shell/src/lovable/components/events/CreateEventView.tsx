@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, CalendarDays } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
 import { EventFormData, initialEventFormData } from '@lovable/data/eventFormData';
 import StepEventDetails from './StepEventDetails';
@@ -236,6 +236,13 @@ const CreateEventView = ({
         >
           <ChevronLeft className="h-4 w-4" /> Volver
         </button>
+
+        <div className="mt-2 flex items-center gap-2">
+          <CalendarDays className="h-5 w-5 text-primary" />
+          <h1 className="text-lg font-bold text-foreground">
+            {headerTitle || (mode === 'edit' ? 'Editar evento' : 'Crear evento')}
+          </h1>
+        </div>
 
         {/* Stepper */}
         <div className="mt-3 flex items-center gap-1.5 overflow-x-auto rounded-full bg-card p-1.5 shadow-sm">

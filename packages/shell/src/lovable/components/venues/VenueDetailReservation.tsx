@@ -519,10 +519,10 @@ const VenueDetailReservation = ({
                 const status = cell.status || 'unavailable';
                 const base = 'rounded-md py-1.5 text-[10px] font-semibold leading-tight';
                 let cls = '';
-                if (status === 'reserved') cls = 'bg-rose-100 text-rose-600';
+                if (status === 'reserved') cls = 'bg-destructive/10 text-destructive';
                 else if (status === 'unavailable') cls = 'bg-muted text-muted-foreground';
                 else if (selected) cls = 'bg-primary text-primary-foreground';
-                else cls = 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200';
+                else cls = 'bg-primary/10 text-primary hover:bg-primary/20';
                 const priceLabel = cell.price
                   ? `$${Math.round(cell.price / 1000)}K`
                   : '';
@@ -543,10 +543,10 @@ const VenueDetailReservation = ({
 
             <div className="mt-3 flex flex-wrap items-center gap-3 text-[10px] text-muted-foreground">
               <span className="flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-emerald-500" /> Disponible
+                <span className="h-2 w-2 rounded-full bg-primary" /> Disponible
               </span>
               <span className="flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-rose-500" /> Reservado
+                <span className="h-2 w-2 rounded-full bg-destructive" /> Reservado
               </span>
               <span className="flex items-center gap-1">
                 <span className="h-2 w-2 rounded-full bg-muted-foreground" /> No disponible
@@ -832,7 +832,7 @@ const VenueDetailReservation = ({
 
       <div className="mx-auto max-w-lg space-y-4 px-4 pt-2">
         <div className="flex flex-col items-center text-center">
-          <CheckCircle2 className="h-20 w-20 text-emerald-500" strokeWidth={2} />
+          <CheckCircle2 className="h-20 w-20 text-primary" strokeWidth={2} />
           <h2 className="mt-3 text-2xl font-bold text-foreground">¡Felicidades!</h2>
           <p className="mt-1 text-sm text-muted-foreground">Tu reserva está lista</p>
           {reservationNumber !== '—' ? (

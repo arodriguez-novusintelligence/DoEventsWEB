@@ -92,7 +92,7 @@ const PublishFlowModal = ({ open, eventId, onClose, onFinalize, onSubmitBank }: 
 
         {stage === 'bank' && (
           <div className="flex flex-col items-center text-center">
-            <Megaphone className="h-12 w-12 text-emerald-600" />
+            <Megaphone className="h-12 w-12 text-primary" />
             <h3 className="mt-4 text-lg font-bold text-foreground">
               ¡Para publicar tu evento, debes registrar tus datos bancarios!
             </h3>
@@ -196,7 +196,7 @@ const PublishFlowModal = ({ open, eventId, onClose, onFinalize, onSubmitBank }: 
 
         {stage === 'success' && (
           <div className="flex flex-col items-center text-center">
-            <CheckCircle2 className="h-12 w-12 text-emerald-600" />
+            <CheckCircle2 className="h-12 w-12 text-primary" />
             <h3 className="mt-4 text-2xl font-extrabold text-foreground">
               ¡Felicitaciones tu evento se ha publicado!
             </h3>
@@ -205,9 +205,9 @@ const PublishFlowModal = ({ open, eventId, onClose, onFinalize, onSubmitBank }: 
             </p>
 
             {!bankSaved && (
-            <div className="mt-4 w-full rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-left">
-              <p className="text-xs font-semibold text-amber-800">Datos bancarios pendientes</p>
-              <p className="mt-1 text-[11px] text-amber-700">
+            <div className="mt-4 w-full rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-left">
+              <p className="text-xs font-semibold text-primary">Datos bancarios pendientes</p>
+              <p className="mt-1 text-[11px] text-muted-foreground">
                 Registra tu cuenta para recibir pagos de entradas vendidas.
               </p>
             </div>

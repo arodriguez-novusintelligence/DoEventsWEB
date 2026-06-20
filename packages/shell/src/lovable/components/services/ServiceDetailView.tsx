@@ -119,7 +119,8 @@ const ServiceDetailView = ({
               />
             </button>
           ) : (
-            <div className="flex h-56 w-full items-center justify-center bg-muted text-sm text-muted-foreground">
+            <div className="flex h-56 w-full flex-col items-center justify-center gap-2 rounded-2xl bg-muted text-sm text-muted-foreground">
+              <Briefcase className="h-10 w-10 text-primary/40" />
               Sin foto del servicio
             </div>
           )}
@@ -248,7 +249,7 @@ const ServiceDetailView = ({
                   className="p-1"
                   onClick={() => { void onRate(s); }}
                 >
-                  <Star className={`h-6 w-6 ${s <= Math.round(rating) ? 'fill-amber-400 text-amber-400' : 'text-muted'}`} />
+                  <Star className={`h-6 w-6 ${s <= Math.round(rating) ? 'fill-primary text-primary' : 'text-muted'}`} />
                 </button>
               ))}
             </div>

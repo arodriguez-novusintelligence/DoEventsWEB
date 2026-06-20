@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, ShoppingCart, Minus, Plus, X, CalendarDays, Clock, CreditCard } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ShoppingCart, Minus, Plus, X, CalendarDays, Clock, CreditCard, Loader2 } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@lovable/components/ui/sheet';
 import { Button } from '@lovable/components/ui/button';
 import { Switch } from '@lovable/components/ui/switch';
@@ -288,15 +288,18 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
             <button onClick={() => onOpenChange(false)} className="flex h-8 w-8 items-center justify-center rounded-full bg-accent text-muted-foreground hover:text-foreground">
               <X className="h-4 w-4" />
             </button>
-            <SheetTitle className="text-base font-bold text-foreground">Reservar servicio</SheetTitle>
+            <SheetTitle className="flex items-center gap-2 text-base font-bold text-foreground">
+              <CalendarDays className="h-5 w-5 text-primary" />
+              Reservar servicio
+            </SheetTitle>
           </div>
         </SheetHeader>
 
         <div className="px-5 py-4 space-y-5">
           {!isLive && (
-            <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
-              <p className="text-xs font-semibold text-amber-800">Vista previa</p>
-              <p className="mt-1 text-[11px] text-amber-700">
+            <div className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
+              <p className="text-xs font-semibold text-primary">Vista previa</p>
+              <p className="mt-1 text-[11px] text-muted-foreground">
                 Inicia sesión para reservar fechas reales y generar una orden de pago.
               </p>
             </div>
@@ -364,7 +367,10 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
             </div>
 
             {loadingAvailability && isLive && (
-              <p className="mb-2 text-center text-[11px] text-muted-foreground">Actualizando disponibilidad…</p>
+              <div className="mb-2 flex items-center justify-center gap-2 text-[11px] text-muted-foreground">
+                <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                Actualizando disponibilidad…
+              </div>
             )}
 
             {/* Day headers */}
@@ -453,6 +459,7 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
             </div>
             ) : (
               <div className="rounded-xl border border-dashed border-primary/25 bg-card px-4 py-6 text-center">
+                <ShoppingCart className="mx-auto mb-2 h-8 w-8 text-primary/40" />
                 <p className="text-sm font-semibold text-foreground">No hay servicios adicionales</p>
                 <p className="mt-1 text-xs text-muted-foreground">
                   Este servicio no ofrece complementos por el momento.

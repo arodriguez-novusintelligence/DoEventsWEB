@@ -13,6 +13,58 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-20 17:15 UTC] gap-empalme-27876228669-b2
+
+### 1. Resumen del empalme
+Batch 2 (20 gaps, manifiesto `27876228669-b2`, similitud baseline 64.5%): empalme focalizado en perfil/galería, feed (PostCard/TopHeader/Followers), servicios (ServiceDetail/Booking), eventos (CreateEvent/StepAccessControl/StepEventDetails/PublishFlow), tickets (Transfer/Detail/Refund), chat (MessagesList), invitados (EditGuest/ContactImport), stats, venues reserva, IA FAB. Tokens primary/success/destructive; empty/loading con iconos Lucide; sin mocks. **EditProfileView**, **PublishFlowModal** y **BookingSheet** permanecen BACKEND_REQUIRED.
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Profile gallery | `packages/shell/src/lovable/components/feed/ProfileGallery.tsx` | DONE |
+| Post card | `packages/shell/src/lovable/components/feed/PostCard.tsx` | DONE |
+| Service detail | `packages/shell/src/lovable/components/services/ServiceDetailView.tsx` | DONE |
+| Step access control | `packages/shell/src/lovable/components/events/StepAccessControl.tsx` | DONE |
+| Edit guest | `packages/shell/src/lovable/components/guests/EditGuestModal.tsx` | DONE |
+| Create event | `packages/shell/src/lovable/components/events/CreateEventView.tsx` | DONE |
+| Edit profile | `packages/shell/src/lovable/components/feed/EditProfileView.tsx` | BACKEND_REQUIRED |
+| Transfer ticket | `packages/shell/src/lovable/components/tickets/TransferTicketFlow.tsx` | DONE |
+| AI assistant FAB | `packages/shell/src/lovable/components/ai/AIAssistantFAB.tsx` | DONE |
+| Venue detail reservation | `packages/shell/src/lovable/components/venues/VenueDetailReservation.tsx` | DONE |
+| Top header | `packages/shell/src/lovable/components/feed/TopHeader.tsx` | DONE |
+| Booking sheet | `packages/shell/src/lovable/components/services/BookingSheet.tsx` | BACKEND_REQUIRED |
+| Followers sheet | `packages/shell/src/lovable/components/feed/FollowersSheet.tsx` | DONE |
+| Publish flow | `packages/shell/src/lovable/components/events/PublishFlowModal.tsx` | BACKEND_REQUIRED |
+| Ticket detail | `packages/shell/src/lovable/components/tickets/TicketDetailView.tsx` | DONE |
+| Contact import | `packages/shell/src/lovable/components/guests/ContactImportModal.tsx` | DONE |
+| Stats event list | `packages/shell/src/lovable/components/stats/StatsEventListView.tsx` | DONE |
+| Messages list | `packages/shell/src/lovable/components/chat/MessagesListView.tsx` | DONE |
+| Refund ticket | `packages/shell/src/lovable/components/tickets/RefundTicketFlow.tsx` | DONE |
+| Step event details | `packages/shell/src/lovable/components/events/StepEventDetails.tsx` | DONE |
+
+### 3. Similitud antes/después
+- **Antes:** 64.5%
+- **Después:** ~72.0% (estimado; re-comparación CI pendiente)
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias
+
+### 6. Riesgos pendientes
+- 80 gaps restantes (batches 3–6) para alcanzar 98% similitud
+- BACKEND_REQUIRED: password/intereses (`EditProfileView`); persistencia banco post-publicación (`PublishFlowModal`); catálogo add-ons (`BookingSheet`)
+- Flujos tickets/pagos RISKY — revisión humana recomendada
+- `discover-joyful-feed` privado en agente cloud
+
+### Decisión
+**APPLIED**
+
+---
+
 ## [2026-06-20 16:45 UTC] gap-empalme-27876228669-b1
 
 ### 1. Resumen del empalme

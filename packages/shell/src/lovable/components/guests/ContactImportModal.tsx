@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Search, Smartphone, Loader2 } from "lucide-react";
+import { Search, Smartphone, Loader2, UserPlus } from "lucide-react";
 import { CreateGuestRequest } from "@lovable/types/guest";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@lovable/components/ui/dialog";
 import { Button } from "@lovable/components/ui/button";
@@ -96,7 +96,10 @@ export function ContactImportModal({ open, onOpenChange, onImportContacts }: Pro
       <DialogContent className="sm:max-w-md rounded-2xl h-[80vh] flex flex-col">
         <DialogHeader className="space-y-3">
           <div className="flex items-center justify-between">
-            <DialogTitle className="text-lg font-semibold text-foreground">Importa contactos como invitados</DialogTitle>
+            <DialogTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
+              <UserPlus className="h-5 w-5 text-primary" />
+              Importa contactos como invitados
+            </DialogTitle>
           </div>
           <p className="text-xs text-muted-foreground">Importa contactos del dispositivo como invitados.</p>
           <Button

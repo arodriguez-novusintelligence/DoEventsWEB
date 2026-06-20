@@ -224,7 +224,7 @@ const TicketDetailView = ({
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">Categoría</p>
-                  <span className="inline-block rounded-full bg-emerald-100 px-4 py-2 text-xs font-bold text-emerald-800 uppercase max-w-full">
+                  <span className="inline-block rounded-full bg-primary/10 px-4 py-2 text-xs font-bold text-primary uppercase max-w-full">
                     {ticket.category}
                   </span>
                   <p className="mt-3 text-base font-extrabold text-foreground">Silla - {seatLabel}</p>
@@ -285,7 +285,7 @@ const TicketDetailView = ({
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="flex flex-col items-center gap-1.5 rounded-2xl bg-foreground px-5 py-3 shadow-xl">
                 <div className="flex items-center gap-2">
-                  <div className="h-5 w-5 rounded-full bg-emerald-500 grid place-items-center">
+                  <div className="h-5 w-5 rounded-full bg-primary grid place-items-center">
                     <Check className="h-3 w-3 text-white" strokeWidth={4} />
                   </div>
                   <span className="text-sm font-bold text-background">Transferida</span>

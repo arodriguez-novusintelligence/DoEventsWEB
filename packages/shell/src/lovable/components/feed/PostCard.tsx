@@ -131,10 +131,10 @@ const PostCard = ({
       </div>
 
       {/* White card */}
-      <div className="overflow-hidden rounded-2xl bg-card shadow-sm">
+      <div className="overflow-hidden rounded-2xl border border-border/40 bg-card shadow-sm">
         {/* Type badge */}
         <div className="px-4 pt-3">
-          <span className="inline-block rounded-full bg-secondary px-3 py-1 text-xs font-medium text-primary">
+          <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
             {badge}
           </span>
         </div>

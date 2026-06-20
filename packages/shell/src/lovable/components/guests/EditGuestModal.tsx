@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Edit, Loader2 } from "lucide-react";
+import { Loader2, UserRound } from "lucide-react";
 import { Guest, UpdateGuestRequest, GuestGroup } from "@lovable/types/guest";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@lovable/components/ui/dialog";
 import { Button } from "@lovable/components/ui/button";
@@ -73,7 +73,7 @@ export function EditGuestModal({ guest, open, onOpenChange, onUpdateGuest, group
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent stacked={nested} className="sm:max-w-md rounded-2xl">
-        <DialogHeader><DialogTitle className="text-xl font-semibold text-primary flex items-center gap-2"><Edit className="h-5 w-5" />Editar invitado</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle className="text-xl font-semibold text-primary flex items-center gap-2"><UserRound className="h-5 w-5" />Editar invitado</DialogTitle></DialogHeader>
         <form onSubmit={submit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2"><Label>Nombre *</Label><Input className="rounded-xl" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></div>

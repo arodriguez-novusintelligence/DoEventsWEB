@@ -17,8 +17,8 @@ interface StatsEventListViewProps {
 }
 
 const statusConfig: Record<EventStatus, { label: string; className: string; order: number }> = {
-  en_ejecucion: { label: 'En ejecución', className: 'bg-blue-100 text-blue-700', order: 0 },
-  activo: { label: 'Activo', className: 'bg-green-100 text-green-700', order: 1 },
+  en_ejecucion: { label: 'En ejecución', className: 'bg-primary/10 text-primary', order: 0 },
+  activo: { label: 'Activo', className: 'bg-success/10 text-success', order: 1 },
   finalizado: { label: 'Finalizado', className: 'bg-muted text-muted-foreground', order: 2 },
   cancelado: { label: 'Cancelado', className: 'bg-destructive/10 text-destructive', order: 3 },
 };
@@ -41,10 +41,10 @@ const statsOptions = [
     title: 'Estadísticas de Ventas',
     description: 'Ingresos, boletas vendidas y métodos de pago',
     icon: DollarSign,
-    color: 'text-emerald-600',
-    bg: 'bg-emerald-50/60',
-    border: 'border-emerald-100',
-    chevron: 'text-emerald-300',
+    color: 'text-primary',
+    bg: 'bg-primary/5',
+    border: 'border-primary/15',
+    chevron: 'text-primary/30',
   },
   {
     id: 'invitados',
@@ -61,20 +61,20 @@ const statsOptions = [
     title: 'Control de Accesos',
     description: 'Check-ins, horarios de entrada y asistencia',
     icon: ScanLine,
-    color: 'text-amber-600',
-    bg: 'bg-amber-50/60',
-    border: 'border-amber-100',
-    chevron: 'text-amber-300',
+    color: 'text-primary',
+    bg: 'bg-primary/5',
+    border: 'border-primary/15',
+    chevron: 'text-primary/30',
   },
   {
     id: 'reembolsos',
     title: 'Estadísticas de Reembolsos',
     description: 'Pendientes, procesados por app y estados de devolución',
     icon: RefreshCw,
-    color: 'text-rose-600',
-    bg: 'bg-rose-50/60',
-    border: 'border-rose-100',
-    chevron: 'text-rose-300',
+    color: 'text-primary',
+    bg: 'bg-primary/5',
+    border: 'border-primary/15',
+    chevron: 'text-primary/30',
   },
 ];
 
@@ -195,7 +195,7 @@ const StatsEventListView = ({ events, onBack, loading = false, loadError = null 
                 <h1 className="truncate text-base font-bold text-foreground leading-tight">
                   {selectedEvent.eventName}
                 </h1>
-                <span className={`mt-0.5 shrink-0 text-[10px] font-bold uppercase tracking-widest ${status.className.includes('green') ? 'text-emerald-600' : status.className.includes('blue') ? 'text-primary' : status.className.includes('destructive') ? 'text-destructive' : 'text-muted-foreground'}`}>
+                <span className={`mt-0.5 shrink-0 text-[10px] font-bold uppercase tracking-widest ${status.className}`}>
                   {status.label}
                 </span>
               </div>
@@ -288,7 +288,7 @@ const StatsEventListView = ({ events, onBack, loading = false, loadError = null 
         {activeEvents.length > 0 && (
           <div className="mb-5">
             <div className="mb-2 flex items-center gap-2">
-              <span className="inline-block rounded-full bg-emerald-100 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700">
+              <span className="inline-block rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold text-primary">
                 Activos / En ejecución
               </span>
               <span className="text-xs text-muted-foreground">({activeEvents.length})</span>

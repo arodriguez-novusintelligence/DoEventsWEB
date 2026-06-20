@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-06-20T16:45:00Z",
+  "generatedAt": "2026-06-20T17:15:00Z",
   "lovableSha": "ef7b3dfda21848cb792b708e6a65718f0506dbc5",
   "webBranch": "feature/cicd/dev-automation",
-  "comparisonSource": "gap-empalme batch 1 (27876228669-b1) — discover-joyful-feed no accesible en agente cloud",
-  "overallSimilarityPercent": 64.5,
-  "overallSimilarityPercentBefore": 57.54,
-  "overallSimilarityPercentAfter": 64.5,
+  "comparisonSource": "gap-empalme batch 2 (27876228669-b2) — discover-joyful-feed no accesible en agente cloud",
+  "overallSimilarityPercent": 72.0,
+  "overallSimilarityPercentBefore": 64.5,
+  "overallSimilarityPercentAfter": 72.0,
   "targetSimilarityPercent": 98.0,
-  "alignmentGapPercent": 33.5,
+  "alignmentGapPercent": 26.0,
   "missingInWebCount": 0,
-  "needsAdaptationCount": 100,
-  "lastGapEmpalmeRunId": "gap-empalme-27876228669-b1",
-  "lastAgentRunId": "27876228669-b1",
-  "notes": "Batch 1: 18 gaps DONE frontend + 2 BACKEND_REQUIRED (EditProfileView, BankingForm); build:devaws OK; re-comparación CI pendiente."
+  "needsAdaptationCount": 80,
+  "lastGapEmpalmeRunId": "gap-empalme-27876228669-b2",
+  "lastAgentRunId": "27876228669-b2",
+  "notes": "Batch 2: 17 gaps DONE frontend + 3 BACKEND_REQUIRED (EditProfileView, PublishFlowModal, BookingSheet); build:devaws OK; re-comparación CI pendiente."
 }

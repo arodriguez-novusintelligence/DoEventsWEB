@@ -91,6 +91,34 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+---
+
+## Ejecución 2026-06-20 gap-empalme batch 2 (run 27876228669-b2)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| ProfileGallery retry | Integración | Sí | `feed/ProfileGallery.tsx` | onRetry + RefreshCw |
+| PostCard badge primary | VISUAL | Sí | `feed/PostCard.tsx` | bg-primary/10 + borde card |
+| ServiceDetailView empty | VISUAL | Sí | `services/ServiceDetailView.tsx` | Briefcase + estrellas primary |
+| StepAccessControl tokens | VISUAL | Sí | `events/StepAccessControl.tsx` | success/primary; empty UserPlus |
+| EditGuestModal header | VISUAL | Sí | `guests/EditGuestModal.tsx` | UserRound icon |
+| CreateEventView title | VISUAL | Sí | `events/CreateEventView.tsx` | CalendarDays + modo crear/editar |
+| EditProfileView plan | Bloqueo | Parcial | `feed/EditProfileView.tsx` | BACKEND_REQUIRED password/gustos |
+| TransferTicketFlow tokens | VISUAL | Sí | `tickets/TransferTicketFlow.tsx` | Sin emerald/amber |
+| AIAssistantFAB PRO badge | VISUAL | Sí | `ai/AIAssistantFAB.tsx` | Token primary |
+| VenueDetailReservation calendar | VISUAL | Sí | `venues/VenueDetailReservation.tsx` | primary/destructive |
+| TopHeader search card | VISUAL | Sí | `feed/TopHeader.tsx` | Botón búsqueda card |
+| BookingSheet add-ons | Bloqueo | Parcial | `services/BookingSheet.tsx` | BACKEND_REQUIRED catálogo |
+| FollowersSheet loading | VISUAL | Sí | `feed/FollowersSheet.tsx` | Users header + Loader2 |
+| PublishFlowModal banking | Bloqueo | Parcial | `events/PublishFlowModal.tsx` | BACKEND_REQUIRED onSubmitBank |
+| TicketDetailView badges | VISUAL | Sí | `tickets/TicketDetailView.tsx` | Tokens primary |
+| ContactImportModal header | VISUAL | Sí | `guests/ContactImportModal.tsx` | UserPlus icon |
+| StatsEventListView tokens | VISUAL | Sí | `stats/StatsEventListView.tsx` | Status + opciones primary |
+| MessagesListView loading | VISUAL | Sí | `chat/MessagesListView.tsx` | Loader2 + status tokens |
+| RefundTicketFlow tokens | VISUAL | Sí | `tickets/RefundTicketFlow.tsx` | Sin amber/emerald |
+| StepEventDetails header | VISUAL | Sí | `events/StepEventDetails.tsx` | CalendarDays icon |
+| Batch 2 gaps (20) | Empalme | Sí | ver `decision-log.md` | 17 DONE + 3 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-20 gap-empalme batch 1 (run 27876228669-b1)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

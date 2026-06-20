@@ -21,7 +21,7 @@ const Avatar = ({ user, size = 40 }: { user: { name: string; avatar?: string; in
   }
   return (
     <div
-      className="flex items-center justify-center rounded-full bg-emerald-700 text-sm font-bold text-white"
+      className="flex items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground"
       style={{ width: size, height: size }}
     >
       {user.initials || user.name.charAt(0)}
@@ -139,12 +139,12 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
 
       {/* Banner */}
       {allAssigned ? (
-        <div className="flex items-center gap-2 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700 dark:bg-emerald-950/30">
+        <div className="flex items-center gap-2 rounded-xl bg-success/10 px-4 py-3 text-sm font-semibold text-success">
           <CheckCircle2 className="h-5 w-5" />
           Asignación completa
         </div>
       ) : (
-        <div className="flex items-center gap-2 rounded-xl bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-700 dark:bg-amber-950/30">
+        <div className="flex items-center gap-2 rounded-xl bg-primary/10 px-4 py-3 text-sm font-semibold text-primary">
           <HelpCircle className="h-5 w-5" />
           Asigna al menos una persona por puerta
         </div>
@@ -173,9 +173,9 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
               </div>
 
               {assigned.length === 0 ? (
-                <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-secondary/40 py-8 text-center">
-                  <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground text-lg font-bold">
-                    ?
+                <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-primary/25 bg-secondary/40 py-8 text-center">
+                  <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <UserPlus className="h-4 w-4" />
                   </div>
                   <p className="text-xs text-muted-foreground">Sin personal asignado</p>
                 </div>

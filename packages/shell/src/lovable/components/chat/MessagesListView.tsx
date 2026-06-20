@@ -13,6 +13,7 @@ import {
   PencilLine,
   Settings,
   Archive,
+  Loader2,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@lovable/components/ui/avatar';
 import { Badge } from '@lovable/components/ui/badge';
@@ -76,8 +77,8 @@ const sortByEventDate = (a: EventChatRoom, b: EventChatRoom) => {
 };
 
 const statusConfig: Record<EventStatus, { label: string; className: string }> = {
-  activo: { label: 'Activo', className: 'bg-green-100 text-green-700' },
-  en_ejecucion: { label: 'En ejecución', className: 'bg-blue-100 text-blue-700' },
+  activo: { label: 'Activo', className: 'bg-success/10 text-success' },
+  en_ejecucion: { label: 'En ejecución', className: 'bg-primary/10 text-primary' },
   cancelado: { label: 'Cancelado', className: 'bg-destructive/10 text-destructive' },
   finalizado: { label: 'Finalizado', className: 'bg-muted text-muted-foreground' },
 };
@@ -448,7 +449,8 @@ const MessagesListView = ({
     <div className="min-h-screen bg-secondary pb-24">
       <div className="mx-auto max-w-lg">
         {loading && (
-          <div className="mx-4 mt-3 rounded-xl border border-border bg-card px-4 py-2.5 text-center text-xs font-medium text-muted-foreground shadow-sm">
+          <div className="mx-4 mt-3 flex items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-xs font-medium text-muted-foreground shadow-sm">
+            <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
             Actualizando conversaciones…
           </div>
         )}
@@ -600,7 +602,10 @@ const MessagesListView = ({
         {/* List */}
         <div className="px-4 pt-2 space-y-2">
           {loading && (
-            <p className="py-8 text-center text-sm text-muted-foreground">Cargando conversaciones…</p>
+            <div className="flex flex-col items-center py-8 text-center">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="mt-3 text-sm text-muted-foreground">Cargando conversaciones…</p>
+            </div>
           )}
           {filter === 'archivados' && (
             counts.archivados > 0 ? (

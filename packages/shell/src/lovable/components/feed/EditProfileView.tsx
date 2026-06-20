@@ -479,7 +479,7 @@ const EditProfileView = ({
           className="flex w-full items-center gap-3 px-4 py-4"
         >
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10">
-            <CreditCard className="h-6 w-6 text-amber-600" />
+            <CreditCard className="h-6 w-6 text-primary" />
           </div>
           <div className="flex-1 text-left">
             <p className="text-sm text-muted-foreground">Mi suscripción</p>

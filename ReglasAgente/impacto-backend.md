@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27876228669-b2`: batch 2 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`EditProfileView`, `PublishFlowModal`, `BookingSheet`).
+
 Run `gap-empalme-27876228669-b1`: batch 1 (20 gaps) — 18 DONE frontend; 2 BACKEND_REQUIRED (`EditProfileView`, `BankingForm`).
 
 Run `agent-ef7b3dfd-27876228669`: prepare PULEP Colombia + batch 6 — 18 gaps DONE frontend; 1 BACKEND_REQUIRED (persistencia campos PULEP en evento).
@@ -44,7 +46,20 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27876228669-b1)
+## Empalme realizado (última ejecución — gap-empalme-27876228669-b2)
+
+- **ProfileGallery / PostCard / TopHeader:** reintento carga galería; badge primary en posts; botón búsqueda card.
+- **ServiceDetailView / BookingSheet:** empty Briefcase; header CalendarDays; Loader2 disponibilidad; empty add-ons sin mock (catálogo BACKEND_REQUIRED).
+- **CreateEventView / StepAccessControl / StepEventDetails:** título wizard; tokens success/primary accesos; header CalendarDays detalles.
+- **PublishFlowModal:** iconos y banners primary (persistencia banco BACKEND_REQUIRED).
+- **TransferTicketFlow / TicketDetailView / RefundTicketFlow:** badges y éxito con tokens primary; sin colores hardcoded.
+- **FollowersSheet / MessagesListView:** header Users; Loader2 carga; status chips tokens.
+- **EditGuestModal / ContactImportModal:** headers UserRound/UserPlus.
+- **StatsEventListView:** status y opciones stats con tokens diseño.
+- **VenueDetailReservation / AIAssistantFAB:** calendario primary/destructive; badge PRO primary.
+- **EditProfileView:** tokens primary en plan (password/gustos BACKEND_REQUIRED).
+
+## Empalme realizado (ejecución anterior — gap-empalme-27876228669-b1)
 
 - **GuestStatsView:** header BarChart3 + Excel primary; chart tokens CSS; skeleton carga.
 - **PrivateChatView / ChatRoomView:** online `bg-success`; empty MessageSquare; admin badge primary.

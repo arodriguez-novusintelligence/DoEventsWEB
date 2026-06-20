@@ -98,7 +98,7 @@ const TopHeader = ({
             <button
               type="button"
               onClick={onSearch}
-              className="p-1 text-primary transition-colors hover:opacity-80"
+              className="rounded-xl bg-card p-1.5 text-primary shadow-sm transition-colors hover:bg-accent"
               aria-label="Buscar"
             >
               <Search className="h-6 w-6" strokeWidth={2} />

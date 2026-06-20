@@ -4,7 +4,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@lovable/components/ui
 import { Avatar, AvatarFallback, AvatarImage } from '@lovable/components/ui/avatar';
 import { Button } from '@lovable/components/ui/button';
 import { Input } from '@lovable/components/ui/input';
-import { Search, UserPlus, Check, Shield, Users, Clock } from 'lucide-react';
+import { Search, UserPlus, Check, Shield, Users, Clock, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { followUser, unfollowUser, fetchPendingFollowRequests } from '@doevents/shared';
 
@@ -231,7 +231,10 @@ const FollowersSheet = ({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl p-0">
         <SheetHeader className="px-5 pt-5 pb-3">
-          <SheetTitle className="text-left text-base font-bold">Seguidores y seguidos</SheetTitle>
+          <SheetTitle className="flex items-center gap-2 text-left text-base font-bold">
+            <Users className="h-5 w-5 text-primary" />
+            Seguidores y seguidos
+          </SheetTitle>
         </SheetHeader>
 
         <Tabs defaultValue={defaultTab === 'requests' ? 'requests' : defaultTab} className="flex h-full flex-col">
@@ -311,7 +314,10 @@ const FollowersSheet = ({
 
           <TabsContent value="requests" className="mt-0 flex-1 overflow-y-auto px-5 pb-8">
             {loadingRequests ? (
-              <p className="py-12 text-center text-sm text-muted-foreground">Cargando solicitudes…</p>
+              <div className="flex flex-col items-center py-12 text-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="mt-3 text-sm text-muted-foreground">Cargando solicitudes…</p>
+              </div>
             ) : filter(requests).length === 0 ? (
               <div className="flex flex-col items-center py-12 text-center">
                 <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">

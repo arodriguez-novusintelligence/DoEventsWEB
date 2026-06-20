@@ -9,6 +9,7 @@ import {
   Trash2,
   Save,
   Loader2,
+  RefreshCw,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@lovable/components/ui/button';
@@ -25,6 +26,7 @@ interface ProfileGalleryProps {
   photos: GalleryPhotoItem[];
   loading?: boolean;
   loadError?: string | null;
+  onRetry?: () => void;
   saving?: boolean;
   hasChanges?: boolean;
   onAddFiles: (files: File[]) => void;
@@ -37,6 +39,7 @@ const ProfileGallery = ({
   photos,
   loading = false,
   loadError = null,
+  onRetry,
   saving = false,
   hasChanges = false,
   onAddFiles,
@@ -103,7 +106,17 @@ const ProfileGallery = ({
         <div className="rounded-2xl bg-card p-5 shadow-sm">
           {loadError && (
             <div className="mb-4 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
-              {loadError}
+              <p>{loadError}</p>
+              {onRetry && (
+                <button
+                  type="button"
+                  onClick={onRetry}
+                  className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-primary"
+                >
+                  <RefreshCw className="h-3.5 w-3.5" />
+                  Reintentar
+                </button>
+              )}
             </div>
           )}
 

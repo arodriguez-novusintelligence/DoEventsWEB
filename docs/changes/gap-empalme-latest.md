@@ -1,6 +1,6 @@
-# Gap empalme — Resumen ejecutivo (batch 1)
+# Gap empalme — Resumen ejecutivo (batch 2)
 
-**Run:** `gap-empalme-27876228669-b1`  
+**Run:** `gap-empalme-27876228669-b2`  
 **Fecha:** 2026-06-20  
 **Rama:** `feature/cicd/dev-automation`
 
@@ -8,32 +8,32 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Gaps batch 1 | 20 |
-| DONE (frontend) | 18 |
-| BACKEND_REQUIRED | 2 |
-| Similitud antes | 57.54% |
-| Similitud después (estimado) | ~64.5% |
+| Gaps batch 2 | 20 |
+| DONE (frontend) | 17 |
+| BACKEND_REQUIRED | 3 |
+| Similitud antes | 64.5% |
+| Similitud después (estimado) | ~72.0% |
 | Build `npm run build:devaws` | SUCCESS |
 | Mocks en runtime | No |
-| Gaps restantes | 100 (batches 2–6) |
+| Gaps restantes | 80 (batches 3–6) |
 
 ## Empalme realizado
 
-- **Stats / invitados:** GuestStatsView header + chart tokens + skeleton; GuestManagementView login empty con icono.
-- **Chat:** PrivateChatView online `bg-success` + empty MessageSquare; ChatRoomView empty messages + tokens admin.
-- **Eventos:** StepAgenda/StepEventSummary/StepEventLocation empty states; EventLocationMap rounded-2xl; HostPickerModal icon header + Loader2; EventPreviewModal badge primary + copy ES.
-- **Servicios:** MyServicesView badges token; StepUnified prerequisite empty con Briefcase; reviews empty con Star.
-- **Feed:** MyEventsView status chips token; MapView pins CSS vars + pulse loading; SideMenu imports limpios + active soporte; EditProfileView header Settings2 + tokens.
-- **Banking:** SuccessModal rounded-2xl; BankingForm header Wallet + CTAs primary (persistencia BACKEND_REQUIRED).
-- **Invitaciones:** InvitationEventDetailView hero fallback CalendarDays + «Atrás».
-- **Venues:** SeatingCategoryDialog header Armchair + preview card Lovable.
+- **Perfil / feed:** ProfileGallery reintento en error; PostCard badge primary + borde card; TopHeader búsqueda card; FollowersSheet header Users + Loader2 solicitudes.
+- **Servicios:** ServiceDetailView empty Briefcase + estrellas primary; BookingSheet header CalendarDays + Loader2 disponibilidad + empty add-ons (catálogo BACKEND_REQUIRED).
+- **Eventos:** CreateEventView título CalendarDays; StepAccessControl tokens success/primary + empty UserPlus; StepEventDetails header icono; PublishFlowModal tokens primary (persistencia banco BACKEND_REQUIRED).
+- **Tickets:** TransferTicketFlow/RefundTicketFlow/TicketDetailView badges y éxito con tokens primary; sin emerald/amber hardcoded.
+- **Invitados:** EditGuestModal header UserRound; ContactImportModal header UserPlus.
+- **Stats / chat:** StatsEventListView status y opciones con tokens diseño; MessagesListView Loader2 + status tokens.
+- **Venues / IA:** VenueDetailReservation calendario primary/destructive; AIAssistantFAB badge PRO primary.
 
 ## Backend pendiente
 
 | Gap | Motivo |
 |-----|--------|
 | `EditProfileView` | Cambio contraseña e intereses/gustos sin endpoint persistencia |
-| `BankingForm` | Verificación SWIFT internacional y persistencia PayPal |
+| `PublishFlowModal` | Persistencia datos bancarios post-publicación (`onSubmitBank`) |
+| `BookingSheet` | Catálogo servicios adicionales por reserva (`GET /services/{id}/addons`) |
 
 ## Evidencia anti-mock
 
@@ -44,4 +44,4 @@ grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages
 
 ## Próximo paso
 
-Batch 2 del manifiesto (20 gaps) — objetivo incremental hacia 98% similitud tras re-comparación CI con `discover-joyful-feed`.
+Batch 3 del manifiesto (20 gaps) — objetivo incremental hacia 98% similitud tras re-comparación CI con `discover-joyful-feed`.

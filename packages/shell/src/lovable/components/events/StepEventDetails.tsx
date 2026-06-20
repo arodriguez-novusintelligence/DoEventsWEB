@@ -184,7 +184,8 @@ const StepEventDetails = ({
     <div className="space-y-5">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-bold text-primary">
+        <h2 className="flex items-center gap-2 text-xl font-bold text-primary">
+          <CalendarDays className="h-5 w-5" />
           Detalles del evento
         </h2>
         <p className="mt-1 text-sm text-foreground">

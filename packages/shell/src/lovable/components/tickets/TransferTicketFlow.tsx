@@ -245,7 +245,7 @@ const TransferTicketFlow = ({ ticket, entries, currentUserId, onClose, onComplet
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <p className="text-xs text-muted-foreground">Categoría</p>
-                        <span className="inline-block mt-1 rounded-full bg-emerald-100 px-3 py-1 text-[10px] font-bold text-emerald-800 uppercase">
+                        <span className="inline-block mt-1 rounded-full bg-primary/10 px-3 py-1 text-[10px] font-bold text-primary uppercase">
                           {ticket.category}
                         </span>
                         <p className="mt-2 text-sm font-extrabold text-foreground">{entryLocationLabel(e)}</p>
@@ -302,9 +302,9 @@ const TransferTicketFlow = ({ ticket, entries, currentUserId, onClose, onComplet
           </div>
 
           <div className="px-4 pt-5 space-y-5">
-            <div className="rounded-2xl bg-amber-50 border border-amber-200 p-4">
+            <div className="rounded-2xl bg-primary/5 border border-primary/20 p-4">
               <div className="flex items-center gap-2 mb-2">
-                <AlertCircle className="h-5 w-5 text-amber-600" />
+                <AlertCircle className="h-5 w-5 text-primary" />
                 <span className="font-extrabold text-foreground">¡Importante!</span>
               </div>
               <p className="text-sm text-foreground/80 leading-relaxed">
@@ -557,8 +557,8 @@ const TransferTicketFlow = ({ ticket, entries, currentUserId, onClose, onComplet
               </div>
             </div>
 
-            <div className="rounded-2xl bg-card border-l-4 border-amber-500 p-4 flex gap-3">
-              <AlertCircle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+            <div className="rounded-2xl bg-card border-l-4 border-primary p-4 flex gap-3">
+              <AlertCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
               <p className="text-sm text-foreground leading-relaxed">
                 Al confirmar, se generará un nuevo QR vinculado al perfil del destinatario.
               </p>
@@ -589,7 +589,7 @@ const TransferTicketFlow = ({ ticket, entries, currentUserId, onClose, onComplet
 
       {step === 'success' && recipient && (
         <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
-          <div className="h-28 w-28 rounded-full bg-emerald-500 grid place-items-center shadow-xl">
+          <div className="h-28 w-28 rounded-full bg-primary grid place-items-center shadow-xl">
             <Check className="h-16 w-16 text-white" strokeWidth={3} />
           </div>
           <h1 className="mt-6 text-3xl font-extrabold text-foreground">¡Boleta compartida!</h1>

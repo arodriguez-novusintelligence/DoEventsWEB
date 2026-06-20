@@ -149,9 +149,9 @@ const RefundTicketFlow = ({
           </div>
 
           <div className="px-4 pt-4">
-            <div className="rounded-2xl bg-amber-50 border border-amber-300 p-3 flex gap-2">
-              <Info className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
-              <p className="text-sm text-amber-800 leading-snug">
+            <div className="rounded-2xl bg-primary/5 border border-primary/20 p-3 flex gap-2">
+              <Info className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+              <p className="text-sm text-foreground leading-snug">
                 Los reembolsos se procesarán de 3 a 5 días hábiles. Se aplican términos y condiciones.
               </p>
             </div>
@@ -295,12 +295,12 @@ const RefundTicketFlow = ({
               </div>
             </div>
 
-            <div className="rounded-2xl bg-amber-50 border border-amber-300 p-4 space-y-2">
+            <div className="rounded-2xl bg-primary/5 border border-primary/20 p-4 space-y-2">
               <div className="flex items-center gap-2">
-                <Info className="h-5 w-5 text-amber-600" />
-                <span className="font-extrabold text-amber-900">Comisiones no reembolsables</span>
+                <Info className="h-5 w-5 text-primary" />
+                <span className="font-extrabold text-foreground">Comisiones no reembolsables</span>
               </div>
-              <p className="text-sm text-amber-900/90 leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Las comisiones de la plataforma <span className="font-bold">no son reembolsables</span>.
               </p>
               <button type="button" onClick={() => setStep('policy')} className="text-sm font-bold text-primary underline underline-offset-2">
@@ -383,8 +383,8 @@ const RefundTicketFlow = ({
       {step === 'success' && (
         <div className="min-h-screen pb-28">
           <div className="px-4 pt-12 flex flex-col items-center text-center">
-            <div className="h-32 w-32 rounded-full bg-emerald-100 grid place-items-center">
-              <div className="h-20 w-20 rounded-full bg-emerald-600 grid place-items-center">
+            <div className="h-32 w-32 rounded-full bg-primary/10 grid place-items-center">
+              <div className="h-20 w-20 rounded-full bg-primary grid place-items-center">
                 <Check className="h-12 w-12 text-white" strokeWidth={3} />
               </div>
             </div>
