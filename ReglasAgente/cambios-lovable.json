@@ -2560,6 +2560,32 @@
       "buildResult": "SUCCESS",
       "pendingRisks": [],
       "agentStatus": "finished"
+    },
+    {
+      "id": "prepare-77da574b",
+      "lovableSha": "77da574b28fddd8eaadbbac095483050f3cdc077",
+      "before": "HEAD~1",
+      "timestamp": "2026-06-20 20:43 UTC",
+      "workflowRunId": "27883333029",
+      "changeTypes": [
+        "VISUAL"
+      ],
+      "designSimilarityPercent": 57.0,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 41.0,
+      "requiresDesignAlignment": true,
+      "summary": "Manifiesto: UI=True, reglas=False, 1 archivo(s); similitud diseño=57.0%",
+      "changedFilesLovable": [
+        "src/components/events/StepEventSummary.tsx"
+      ],
+      "webFilesModified": [],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "pending",
+      "pendingRisks": [
+        "Adaptacion pendiente por agente Cursor"
+      ],
+      "agentStatus": "pending"
     }
   ]
 }
