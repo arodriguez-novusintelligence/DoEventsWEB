@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ChevronLeft, ChevronDown, ChevronUp, MessageSquare, Mail, Smartphone, Bell, TrendingUp, Eye, CheckCircle, Users, Download, List, Loader2, BarChart3 } from 'lucide-react';
+import { ChevronLeft, ChevronDown, ChevronUp, MessageSquare, Mail, Smartphone, Bell, TrendingUp, Eye, CheckCircle, Users, Download, List, Loader2, BarChart3, AlertCircle, RefreshCw } from 'lucide-react';
+import { Button } from '@lovable/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@lovable/components/ui/avatar';
 import type { EventChatRoom } from '@lovable/data/chatData';
 import type { ChannelData } from '@lovable/data/guestStatsData';
@@ -39,8 +40,8 @@ const ChannelFunnelCard = ({ channel }: { channel: ChannelData }) => {
         onClick={() => setExpanded(!expanded)}
         className="flex w-full items-center gap-3 p-4 transition-colors hover:bg-accent/30"
       >
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent">
-          <Icon className="h-5 w-5 text-accent-foreground" />
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
+          <Icon className="h-5 w-5 text-primary" />
         </div>
         <span className="text-sm font-semibold text-card-foreground whitespace-pre-line text-left">
           {channel.name}
@@ -100,8 +101,8 @@ const ChannelGuestsCard = ({ channel }: { channel: ChannelData }) => {
         onClick={() => setExpanded(!expanded)}
         className="flex w-full items-center gap-3 p-4 transition-colors hover:bg-accent/30"
       >
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent">
-          <Icon className="h-5 w-5 text-accent-foreground" />
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
+          <Icon className="h-5 w-5 text-primary" />
         </div>
         <span className="text-sm font-semibold text-card-foreground whitespace-pre-line text-left">
           {channel.name}
@@ -154,7 +155,7 @@ const ChannelGuestsCard = ({ channel }: { channel: ChannelData }) => {
 };
 
 const GuestStatsView = ({ event, onBack }: GuestStatsViewProps) => {
-  const { data, loading } = useLiveEventStats(event, resolveGuestStatsData, getEmptyGuestStats());
+  const { data, loading, loadError, reload } = useLiveEventStats(event, resolveGuestStatsData, getEmptyGuestStats());
   const [refundedFirstNames, setRefundedFirstNames] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -226,7 +227,26 @@ const GuestStatsView = ({ event, onBack }: GuestStatsViewProps) => {
             ))}
           </div>
         )}
-        {!loading && data.channels.length === 0 && (
+        {loadError && !loading && (
+          <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-8 text-center shadow-sm">
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
+              <AlertCircle className="h-7 w-7 text-destructive" />
+            </div>
+            <p className="text-sm font-semibold text-foreground">No se pudieron cargar las estadísticas</p>
+            <p className="mt-1 text-xs text-muted-foreground">{loadError}</p>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="mt-4 gap-1.5 rounded-full"
+              onClick={reload}
+            >
+              <RefreshCw className="h-3.5 w-3.5" />
+              Reintentar
+            </Button>
+          </div>
+        )}
+        {!loading && !loadError && data.channels.length === 0 && (
           <div className="rounded-2xl border border-dashed border-primary/25 bg-card p-8 text-center shadow-sm">
             <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
               <Users className="h-7 w-7 text-primary" />
@@ -237,7 +257,7 @@ const GuestStatsView = ({ event, onBack }: GuestStatsViewProps) => {
             </p>
           </div>
         )}
-        {!loading && data.channels.length > 0 && (
+        {!loading && !loadError && data.channels.length > 0 && (
           showBuyerList ? (
           <GuestBuyerList
             guests={allGuests}

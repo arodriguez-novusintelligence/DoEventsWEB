@@ -13,7 +13,7 @@ import { cn } from '@lovable/lib/utils';
 import {
   Zap, ClipboardCheck, Plus, Trash2, GripVertical, FileText, HelpCircle,
   ChevronDown, Briefcase, ListChecks, DollarSign, CalendarDays, Camera, User,
-  MapPin, Crosshair, Video, X,
+  MapPin, Crosshair, Video, X, Loader2,
 } from 'lucide-react';
 import { resolveDisplayLocation, resolveManualUserLocation, resolveUserLocation, MediaSourcePicker, RootState } from '@doevents/shared';
 import { newWizardId } from '@doevents/shared';
@@ -474,10 +474,12 @@ const StepUnified = ({
         <SectionHeader icon={ListChecks} title="Selecciona las actividades" sectionKey="activities" />
         <CollapsibleContent className="mt-2 space-y-3 px-1">
           {!hasSectors ? (
-            <div className="rounded-2xl border border-dashed border-border bg-card p-6 text-center shadow-sm">
-              <Briefcase className="mx-auto h-8 w-8 text-primary" />
-              <p className="mt-2 text-sm text-muted-foreground">
-                Selecciona al menos un servicio primero.
+            <div className="rounded-2xl border border-dashed border-primary/25 bg-card p-6 text-center shadow-sm">
+              <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                <Briefcase className="h-7 w-7 text-primary" />
+              </div>
+              <p className="text-sm font-semibold text-foreground">
+                Selecciona al menos un servicio primero
               </p>
             </div>
           ) : (
@@ -612,11 +614,11 @@ const StepUnified = ({
             />
             <div className="flex flex-col gap-2 sm:flex-row">
               <Button type="button" variant="outline" className="flex-1" disabled={locating} onClick={() => void applyDeviceLocation()}>
-                <Crosshair className="mr-2 h-4 w-4" />
+                {locating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Crosshair className="mr-2 h-4 w-4" />}
                 Usar mi ubicación
               </Button>
               <Button type="button" variant="outline" className="flex-1" disabled={locating} onClick={() => void searchServiceLocation()}>
-                <MapPin className="mr-2 h-4 w-4" />
+                {locating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <MapPin className="mr-2 h-4 w-4" />}
                 Buscar en mapa
               </Button>
             </div>

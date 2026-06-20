@@ -1,6 +1,6 @@
 /// <reference types="google.maps" />
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Search, Crosshair, Ruler, ChevronDown, Navigation, MapPin, Calendar, Clock, ArrowRight, Users, Star, RefreshCw } from 'lucide-react';
+import { Search, Crosshair, Ruler, ChevronDown, Navigation, MapPin, Calendar, Clock, ArrowRight, Users, Star, RefreshCw, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
 import { cn } from '@lovable/lib/utils';
 import type { PublishedVenueDraft } from '@lovable/components/venues/VenueCreator';
@@ -296,9 +296,9 @@ const MapView = ({
     >
       {loading && (
         <div className="absolute inset-0 z-40 flex items-center justify-center bg-background/60 backdrop-blur-sm">
-          <div className="absolute inset-0 animate-pulse bg-muted/40" />
-          <div className="relative rounded-2xl bg-card px-6 py-4 shadow-lg text-sm font-medium text-muted-foreground">
-            Cargando mapa…
+          <div className="relative flex flex-col items-center rounded-2xl bg-card px-6 py-4 shadow-lg">
+            <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            <p className="mt-2 text-sm font-medium text-muted-foreground">Cargando mapa…</p>
           </div>
         </div>
       )}
@@ -386,15 +386,17 @@ const MapView = ({
 
       {!loaded && !error && (
         <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-secondary/80">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary/30 border-t-primary" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
           <p className="mt-3 text-sm font-medium text-muted-foreground">Cargando mapa…</p>
         </div>
       )}
 
       {loaded && items.length === 0 && !error && (
-        <div className="absolute inset-x-6 top-1/3 z-20 flex flex-col items-center rounded-2xl border border-border bg-card/95 p-6 text-center shadow-lg">
-          <MapPin className="h-10 w-10 text-primary" />
-          <p className="mt-3 text-sm font-semibold text-foreground">Sin eventos cerca</p>
+        <div className="absolute inset-x-6 top-1/3 z-20 flex flex-col items-center rounded-2xl border border-dashed border-primary/25 bg-card/95 p-6 text-center shadow-lg">
+          <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+            <MapPin className="h-7 w-7 text-primary" />
+          </div>
+          <p className="text-sm font-semibold text-foreground">Sin eventos cerca</p>
           <p className="mt-1 text-xs text-muted-foreground">
             Ajusta el radio de búsqueda o explora otra categoría.
           </p>
@@ -403,6 +405,9 @@ const MapView = ({
 
       {error && (
         <div className="absolute inset-x-4 top-28 z-30 rounded-2xl border border-destructive/30 bg-destructive/10 p-4 text-center">
+          <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10">
+            <AlertCircle className="h-5 w-5 text-destructive" />
+          </div>
           <p className="text-sm text-destructive">No se pudo cargar Google Maps: {error}</p>
           <Button
             type="button"

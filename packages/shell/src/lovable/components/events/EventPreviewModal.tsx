@@ -58,9 +58,11 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
             {heroImg ? (
               <img src={heroImg} alt={data.name} className="h-44 w-full object-cover" />
             ) : (
-              <div className="flex h-44 w-full flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-muted">
-                <Eye className="h-8 w-8 text-muted-foreground" />
-                <p className="mt-2 text-sm text-muted-foreground">Sin imagen</p>
+              <div className="flex h-44 w-full flex-col items-center justify-center rounded-2xl border border-dashed border-primary/25 bg-muted">
+                <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                  <Eye className="h-7 w-7 text-primary" />
+                </div>
+                <p className="text-sm font-semibold text-foreground">Sin imagen</p>
               </div>
             )}
           </div>
@@ -168,9 +170,9 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
                     )}
                   </div>
                 )}
-                <button className="mt-3 flex items-center gap-1 text-sm font-semibold text-primary">
-                  <MapPin className="h-4 w-4" /> Ver ubicación en el mapa
-                </button>
+                <p className="mt-3 flex items-center gap-1 text-sm font-semibold text-muted-foreground">
+                  <MapPin className="h-4 w-4" /> Ubicación visible al publicar el evento
+                </p>
               </div>
 
               {/* Video */}

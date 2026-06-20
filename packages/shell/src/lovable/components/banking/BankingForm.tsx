@@ -532,7 +532,7 @@ export default function BankingForm({ onComplete, editingMethod }: BankingFormPr
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
                 <Wallet className="h-5 w-5 text-primary" />
               </div>
               <div>
@@ -552,6 +552,15 @@ export default function BankingForm({ onComplete, editingMethod }: BankingFormPr
                 </p>
               </div>
             </div>
+          </div>
+
+          <div className="mb-6 flex items-start gap-3 rounded-2xl border border-border bg-card p-4 shadow-sm">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10">
+              <AlertCircle className="h-4 w-4 text-primary" />
+            </div>
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              La validación de formato es local. La persistencia de cuentas bancarias, PayPal y SWIFT requiere API DoEventsBack (BACKEND_REQUIRED).
+            </p>
           </div>
 
           {/* Payment Method Selection */}

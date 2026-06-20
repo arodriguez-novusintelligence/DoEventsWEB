@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Search, Users, Heart, Calendar, Plus, CheckSquare, Square, Trash2, Tag, BarChart3, ChevronLeft, FolderInput } from "lucide-react";
+import { Search, Users, Heart, Calendar, Plus, CheckSquare, Square, Trash2, Tag, BarChart3, ChevronLeft, FolderInput, Loader2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuLabel } from "@lovable/components/ui/dropdown-menu";
 import { guestErrorMessage } from "@lovable/utils/guestErrorMessage";
 import { DraggableGuestCard } from "./DraggableGuestCard";
@@ -174,14 +174,9 @@ const GuestManagementView = ({ onBack, guestsController, userId, initialEventId,
 
   if (guestsLoading && !invitationOpen) {
     return (
-      <div className="min-h-screen bg-secondary px-4 pt-4">
-        <div className="mx-auto max-w-2xl space-y-3 animate-pulse">
-          <div className="h-24 rounded-3xl bg-muted" />
-          <div className="h-10 rounded-xl bg-muted" />
-          <div className="h-16 rounded-2xl bg-muted" />
-          <div className="h-16 rounded-2xl bg-muted" />
-          <div className="h-16 rounded-2xl bg-muted" />
-        </div>
+      <div className="flex min-h-screen flex-col items-center justify-center bg-secondary px-4">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="mt-3 text-sm font-medium text-muted-foreground">Cargando invitados…</p>
       </div>
     );
   }

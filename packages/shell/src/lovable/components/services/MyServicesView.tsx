@@ -515,9 +515,11 @@ const MyServicesView = ({
                         </div>
                       </div>
                       ) : (
-                      <div className="mb-4 rounded-2xl border border-dashed border-border bg-secondary p-6 text-center">
-                        <Star className="mx-auto h-8 w-8 text-muted-foreground" />
-                        <p className="mt-2 text-sm text-muted-foreground">
+                      <div className="mb-4 rounded-2xl border border-dashed border-primary/25 bg-secondary p-6 text-center">
+                        <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                          <Star className="h-7 w-7 text-primary" />
+                        </div>
+                        <p className="text-sm font-semibold text-foreground">
                           Aún no hay reseñas para este servicio.
                         </p>
                       </div>

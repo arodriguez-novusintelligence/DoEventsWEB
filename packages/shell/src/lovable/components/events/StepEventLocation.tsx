@@ -54,7 +54,7 @@ import {
 import SeatingTemplateInfoPanel from '@lovable/components/venues/seating/SeatingTemplateInfoPanel';
 import SeatingMapEditor, { shapeStyle, SeatsGrid } from './SeatingMapEditor';
 import EventLocationMap from './EventLocationMap';
-import { Maximize2, EyeOff as EyeOffIcon, Expand, Menu, Home as HomeIcon } from 'lucide-react';
+import { Maximize2, EyeOff as EyeOffIcon, Expand, Menu, Home as HomeIcon, Loader2 } from 'lucide-react';
 
 interface Props {
   formData: EventFormData;
@@ -485,22 +485,25 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
             ) : (
               <>
             {(venuesLoading || (venueTab === 'nearby' && nearbyLoading)) && (
-              <div className="w-full space-y-3 py-4">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="animate-pulse rounded-2xl border border-border bg-card p-4">
-                    <div className="h-4 w-2/3 rounded bg-muted" />
-                    <div className="mt-2 h-3 w-1/2 rounded bg-muted" />
-                  </div>
-                ))}
+              <div className="flex w-full flex-col items-center gap-2 py-8">
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                <p className="text-sm text-muted-foreground">Cargando lugares…</p>
               </div>
             )}
             {!venuesLoading && !(venueTab === 'nearby' && nearbyLoading) && filteredVenues.length === 0 && (
-              <div className="w-full rounded-2xl border border-dashed border-border bg-card py-8 text-center">
-                <HomeIcon className="mx-auto h-8 w-8 text-muted-foreground" />
-                <p className="mt-2 px-4 text-sm text-muted-foreground">
+              <div className="w-full rounded-2xl border border-dashed border-primary/25 bg-card py-8 text-center">
+                <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                  <HomeIcon className="h-7 w-7 text-primary" />
+                </div>
+                <p className="px-4 text-sm font-semibold text-foreground">
                   {venueTab === 'nearby'
-                    ? 'No hay venues cercanos. Activa tu ubicación o prueba más tarde.'
-                    : 'No hay venues disponibles.'}
+                    ? 'No hay venues cercanos'
+                    : 'No hay venues disponibles'}
+                </p>
+                <p className="mt-1 px-4 text-xs text-muted-foreground">
+                  {venueTab === 'nearby'
+                    ? 'Activa tu ubicación o prueba más tarde.'
+                    : 'Crea un lugar o selecciona otra opción.'}
                 </p>
               </div>
             )}

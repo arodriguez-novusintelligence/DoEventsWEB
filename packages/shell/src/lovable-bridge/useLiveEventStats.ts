@@ -8,17 +8,27 @@ export function useLiveEventStats<T>(
   resolver: (room: EventChatRoom) => Promise<T>,
   empty: T,
   refreshMs = DEFAULT_REFRESH_MS,
-): { data: T; loading: boolean } {
+): { data: T; loading: boolean; loadError: string | null; reload: () => void } {
   const [data, setData] = useState<T>(empty);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadToken, setReloadToken] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
     const run = async () => {
-      const next = await resolver(event);
-      if (!cancelled) {
-        setData(next);
-        setLoading(false);
+      try {
+        const next = await resolver(event);
+        if (!cancelled) {
+          setData(next);
+          setLoadError(null);
+          setLoading(false);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setLoadError(err instanceof Error ? err.message : 'Error al cargar estadísticas');
+          setLoading(false);
+        }
       }
     };
     setLoading(true);
@@ -28,7 +38,12 @@ export function useLiveEventStats<T>(
       cancelled = true;
       window.clearInterval(timer);
     };
-  }, [event.eventId, event.id, event.eventName, resolver, refreshMs]);
+  }, [event.eventId, event.id, event.eventName, resolver, refreshMs, reloadToken]);
 
-  return { data, loading };
+  return {
+    data,
+    loading,
+    loadError,
+    reload: () => setReloadToken((t) => t + 1),
+  };
 }

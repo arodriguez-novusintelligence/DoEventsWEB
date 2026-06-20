@@ -349,7 +349,13 @@ const MyVenuesView = ({
                     </div>
                   )}
                   {!loadingReviews && rs.length === 0 && (
-                    <p className="text-center text-sm text-muted-foreground">Aún no hay opiniones para este lugar.</p>
+                    <div className="py-8 text-center">
+                      <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                        <MessageSquare className="h-7 w-7 text-primary" />
+                      </div>
+                      <p className="text-sm font-semibold text-foreground">Aún no hay opiniones</p>
+                      <p className="mt-1 text-xs text-muted-foreground">Las calificaciones aparecerán aquí</p>
+                    </div>
                   )}
                   {rs.map((r, i) => (
                     <div key={i} className="rounded-2xl bg-primary/5 p-3">

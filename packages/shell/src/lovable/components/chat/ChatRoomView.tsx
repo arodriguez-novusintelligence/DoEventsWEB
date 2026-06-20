@@ -365,7 +365,7 @@ const ChatRoomView = ({
         {/* Messages */}
         <div className="space-y-3">
           {chatRoom.messages.length === 0 && (
-            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card py-12 text-center">
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-primary/25 bg-card py-12 text-center">
               <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
                 <MessageSquare className="h-6 w-6 text-primary" />
               </div>

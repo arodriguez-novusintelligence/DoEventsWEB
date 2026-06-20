@@ -207,9 +207,11 @@ const InvitationEventDetailView = ({
               <img src={images[imgIdx] || images[0]} alt={event.title} className="w-full h-56 object-cover" />
             </button>
           ) : (
-            <div className="flex h-56 w-full flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-muted">
-              <CalendarDays className="h-8 w-8 text-muted-foreground" />
-              <p className="mt-2 text-sm text-muted-foreground">Sin imagen del evento</p>
+            <div className="flex h-56 w-full flex-col items-center justify-center rounded-2xl border border-dashed border-primary/25 bg-muted">
+              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                <CalendarDays className="h-7 w-7 text-primary" />
+              </div>
+              <p className="text-sm font-semibold text-foreground">Sin imagen del evento</p>
             </div>
           )}
         </div>

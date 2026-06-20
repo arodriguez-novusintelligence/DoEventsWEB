@@ -25,10 +25,10 @@ export default function SuccessModal({ isOpen, onClose, isInternational = false,
     <Dialog open={isOpen} onOpenChange={(open) => {
       if (!open) onClose();
     }}>
-      <DialogContent className="sm:max-w-md text-center">
+      <DialogContent className="sm:max-w-md text-center rounded-2xl">
         <div className="flex justify-center mb-4">
-          <div className="w-20 h-20 rounded-full bg-success/10 flex items-center justify-center">
-            <CheckCircle2 className="w-12 h-12 text-success" />
+          <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
+            <CheckCircle2 className="w-12 h-12 text-primary" />
           </div>
         </div>
         <DialogHeader className="text-center">
