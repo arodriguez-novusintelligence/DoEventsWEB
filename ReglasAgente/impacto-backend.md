@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27876831237-b5`: batch 5 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`KycCertificationView` submit documentos KYC). Auth RISKY con APIs reales intactas.
+
 Run `gap-empalme-27876831237-b4`: batch 4 (20 gaps) — 16 DONE frontend; 4 BACKEND_REQUIRED (`PaymentMethodsDashboard`/`BankingHub` delete, `StoryViewersSheet`, `GlobalSearchView` posts).
 
 Run `gap-empalme-27876831237-b3`: batch 3 (20 gaps) — 20 DONE frontend; tokens primary/success/secondary; sin nuevos BACKEND_REQUIRED.
@@ -62,7 +64,24 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27876831237-b4)
+## Empalme realizado (última ejecución — gap-empalme-27876831237-b5)
+
+- **ProfileCommentsView:** ProfileSectionBanner; Loader2; AlertCircle retry; empty círculo primary.
+- **StoriesContext:** re-export documentado con `loadErrorMessage`, `isEmpty`, `authorCount`, `refreshStories`.
+- **VenueReservationDetail:** badge status header gradiente; AlertCircle error; empty primary circle.
+- **EventPublished:** verificado intacto — `fetchEventById` + share/copy sin mocks.
+- **NotFound:** MapPinOff + anillo primary/20.
+- **Auth (Login/Forgot/Reset/SignUp):** vistas Lovable + `@doevents/shared`/Cognito/mfe-auth; páginas thin re-export.
+- **FeedBanner:** dismissible KYC CTA en feed (`SocialWallTab`).
+- **AdminPanelView / NewUsersPanel / AdminUsersPanel / SupportSearchPanel:** header gradiente; AdminPanelSection badges.
+- **MyPostsView:** ProfileSectionBanner; empty círculo primary; delete API real.
+- **StoryViewer:** fullscreen Lovable; Sparkles empty; barras progreso (viewers BACKEND_REQUIRED previo).
+- **AddGuestModal:** TabsList rounded-xl; UserPlus header; APIs `searchUsers`/`fetchAllGuestContacts`.
+- **useGuests:** re-export `useApiGuests` documentado.
+- **TicketPurchaseFlow:** redirect `/events/:id/checkout`; empty primary circle; sin pasarela simulada.
+- **KycCertificationView:** pasos upload Lovable; botón submit deshabilitado — BACKEND_REQUIRED.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27876831237-b4)
 
 - **PaymentMethodsDashboard / BankingHub:** empty círculo primary; badges predeterminado primary/secondary; subtítulo dinámico conteo métodos; delete deshabilitado (BACKEND_REQUIRED).
 - **BookingReviewSheet:** términos con ShieldCheck en card secondary; cancelar + confirmError intactos.

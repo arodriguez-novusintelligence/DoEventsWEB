@@ -1,46 +1,40 @@
-# Gap empalme — resumen ejecutivo (batch 4)
+# Gap empalme — resumen ejecutivo (batch 5)
 
-**Run:** `gap-empalme-27876831237-b4`  
+**Run:** `gap-empalme-27876831237-b5`  
 **Fecha:** 2026-06-20  
 **Rama:** `feature/cicd/dev-automation`
 
 ## Resultado
 
-Empalme focalizado de **20 gaps** del manifiesto batch 4. Similitud estimada **81.5% → 88.0%** (objetivo 98%; re-comparación CI pendiente). **16 DONE** frontend; **4 BACKEND_REQUIRED** documentados.
+Empalme focalizado de **20 gaps** del manifiesto batch 5. Similitud estimada **88.0% → 93.0%** (objetivo 98%; re-comparación CI pendiente). **19 DONE** frontend; **1 BACKEND_REQUIRED** documentado.
 
 ## Empalme realizado
 
 | Área | Cambios principales |
 |------|---------------------|
-| **PaymentMethodsDashboard** | Empty círculo primary; badges predeterminado/pendiente tokens; shadow-sm cards |
-| **BankingHub** | Subtítulo dinámico con conteo métodos; retry intacto |
-| **BookingReviewSheet** | Términos con ShieldCheck en card secondary |
-| **MediaUpload / FAQSection** | shadow-sm en previews y cards FAQ |
-| **ScanQRSheet** | Feedback éxito/error tokens primary/destructive + Reintentar |
-| **ReportPostDialog** | Shield en descripción; variant destructive submit |
-| **FeedHero** | Indicador «Cerca de ti» token primary; «Ver todas» en historias |
-| **AccessControlListView** | Empty Shield en círculo primary |
-| **MyPurchases / MyReserved*** | Empty states iconografía en círculo primary |
-| **ServiceReservationDetail** | Error AlertCircle; empty primary circle |
-| **KycContext** | `isEmpty` derivado expuesto |
-| **CompanyContext** | `hasCompany` + `isEmpty` derivados |
-| **GlobalSearchView** | Empty Search en círculo primary; banner posts BACKEND_REQUIRED |
-| **ChangeLocationSheet** | Navigation2 en botón Localízame |
-| **TermsDialog** | CheckCircle2 en CTA aceptar |
-| **StoryViewersSheet** | Empty Eye primary; skeleton listo — BACKEND_REQUIRED viewers API |
-| **VenueDetail** | Shell pb-24 verificado intacto |
+| **ProfileCommentsView** | ProfileSectionBanner; Loader2; AlertCircle retry; empty círculo primary |
+| **StoriesContext** | Re-export documentado: `loadErrorMessage`, `isEmpty`, `authorCount`, `refreshStories` |
+| **VenueReservationDetail** | Badge status header; AlertCircle error; empty primary circle |
+| **EventPublished** | Verificado intacto — `fetchEventById` + share/copy API |
+| **NotFound** | MapPinOff + anillo primary/20 |
+| **Auth (Login/Forgot/Reset/SignUp)** | Vistas Lovable + APIs `@doevents/shared`/Cognito/mfe-auth; páginas re-export |
+| **FeedBanner** | Dismissible KYC CTA en SocialWallTab |
+| **AdminPanelView + panels** | Header gradiente sticky; AdminPanelSection badges en users/newusers/support |
+| **MyPostsView** | ProfileSectionBanner; empty círculo primary |
+| **StoryViewer** | Fullscreen Lovable; Sparkles empty; barras progreso (viewers BACKEND_REQUIRED previo) |
+| **AddGuestModal** | TabsList rounded-xl; UserPlus header |
+| **useGuests** | Re-export `useApiGuests` documentado |
+| **TicketPurchaseFlow** | Redirect checkout real; empty primary circle |
 
-## Backend pendiente (batch 4)
+## Backend pendiente (batch 5)
 
 | Gap | Motivo |
 |-----|--------|
-| `PaymentMethodsDashboard` / `BankingHub` | DELETE `/bank-accounts/{id}` no expuesto |
-| `StoryViewersSheet` | GET `/stories/{id}/viewers` no implementado |
-| `GlobalSearchView` tab posts | Búsqueda full-text publicaciones — filtra feed reciente |
+| `KycCertificationView` | `POST /users/{id}/kyc` — envío documentos; botón deshabilitado sin simulación |
 
 ## Gaps restantes
 
-- **40 gaps** pendientes (batches 5–6 del manifiesto).
+- **20 gaps** pendientes (batch 6 del manifiesto).
 - Re-comparación con `compare-design-similarity.py` requiere checkout `discover-joyful-feed`.
 
 ## Validación
