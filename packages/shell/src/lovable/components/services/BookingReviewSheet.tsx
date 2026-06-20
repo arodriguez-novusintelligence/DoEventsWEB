@@ -1,4 +1,4 @@
-import { Calendar, CreditCard, Clock, ShieldCheck } from 'lucide-react';
+import { Calendar, CreditCard, Loader2, ShieldCheck, AlertCircle } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@lovable/components/ui/sheet';
 import { Button } from '@lovable/components/ui/button';
 
@@ -61,7 +61,7 @@ export const BookingReviewSheet = ({
         </SheetHeader>
 
         <div className="mt-4 space-y-4">
-          <div className="rounded-2xl bg-muted/40 p-4">
+          <div className="rounded-2xl border border-border bg-muted/40 p-4 shadow-sm">
             <p className="text-base font-bold text-foreground">{summary.title}</p>
             {summary.subtitle && (
               <p className="mt-1 text-sm text-muted-foreground">{summary.subtitle}</p>
@@ -104,7 +104,10 @@ export const BookingReviewSheet = ({
           </div>
 
           {confirmError && (
-            <p className="text-xs text-center text-destructive">{confirmError}</p>
+            <div className="flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/5 p-3 text-xs text-destructive">
+              <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+              <span>{confirmError}</span>
+            </div>
           )}
 
           <Button
@@ -115,7 +118,7 @@ export const BookingReviewSheet = ({
           >
             {confirming ? (
               <>
-                <Clock className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Procesando…
               </>
             ) : (

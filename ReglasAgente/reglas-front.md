@@ -101,6 +101,32 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-20 gap-empalme batch 4 (run 27883333029-b4)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| PaymentMethodsDashboard cards | VISUAL | Parcial | `banking/PaymentMethodsDashboard.tsx` | BACKEND_REQUIRED delete; empty ring-primary/20 |
+| MediaUpload empty | VISUAL | Sí | `venues/MediaUpload.tsx` | FileUp h-14 ring-primary/20 |
+| FAQSection empty | VISUAL | Sí | `venues/sections/FAQSection.tsx` | HelpCircle h-14 ring |
+| ScanQR feedback | Integración | Sí | `access/ScanQRSheet.tsx` | AlertCircle cámara; rounded-2xl; Reintentar |
+| StoryViewersSheet skeleton | Bloqueo | Parcial | `feed/StoryViewersSheet.tsx` | BACKEND_REQUIRED viewers API |
+| BookingReviewSheet términos | VISUAL | Sí | `services/BookingReviewSheet.tsx` | Loader2; AlertCircle; shadow-sm |
+| BankingHub banner | VISUAL | Parcial | `banking/BankingHub.tsx` | BACKEND_REQUIRED PayPal/delete |
+| FeedHero stories | VISUAL | Sí | `feed/FeedHero.tsx` | shadow-sm categorías; Sparkles ring |
+| ReportPostDialog destructive | VISUAL | Sí | `feed/ReportPostDialog.tsx` | Loader2; rounded-2xl; shadow-sm radios |
+| AccessControlListView empty | VISUAL | Sí | `access/AccessControlListView.tsx` | shadow-sm cards; Shield ring |
+| MyPurchases retry | Integración | Sí | `purchases/MyPurchasesView.tsx` | Loader2; empty Ticket ring |
+| MyReservedServices | Integración | Sí | `purchases/MyReservedServicesView.tsx` | Loader2; login/empty ring |
+| MyReservedVenues | Integración | Sí | `purchases/MyReservedVenuesView.tsx` | Loader2; login/empty ring |
+| KycContext isEmpty | Integración | Sí | `contexts/KycContext.tsx` | needsCertification derivado |
+| TermsDialog privacidad | VISUAL | Sí | `auth/TermsDialog.tsx` | rounded-2xl shadow-sm |
+| GlobalSearch posts | Bloqueo | Parcial | `feed/GlobalSearchView.tsx` | BACKEND_REQUIRED tab posts |
+| VenueDetail shell | Navegación | Sí | `pages/VenueDetail.tsx` | pb-24 aria-label intacto |
+| ChangeLocation inline | VISUAL | Sí | `feed/ChangeLocationSheet.tsx` | shadow-sm card ubicación |
+| ProfileComments banner | VISUAL | Sí | `feed/ProfileCommentsView.tsx` | MessageSquare ring empty |
+| ServiceReservationDetail | VISUAL | Sí | `purchases/ServiceReservationDetail.tsx` | Loader2; rings error/empty |
+| Batch 4 gaps (20) | Empalme | Sí | ver `decision-log.md` | 16 DONE + 4 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-20 gap-empalme batch 3 (run 27883333029-b3)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

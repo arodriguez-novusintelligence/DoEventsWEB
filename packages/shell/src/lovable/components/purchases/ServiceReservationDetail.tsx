@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Briefcase, Calendar, CreditCard, Hash, AlertCircle } from 'lucide-react';
+import { Briefcase, Calendar, CreditCard, Hash, AlertCircle, Loader2 } from 'lucide-react';
 import {
   fetchUserServiceBookings,
-  Loader,
   RootState,
   type UserServiceBooking,
 } from '@doevents/shared';
@@ -60,8 +59,9 @@ export const ServiceReservationDetail = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Loader />
+      <div className="flex min-h-screen flex-col items-center justify-center gap-3">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="text-sm text-muted-foreground">Cargando reserva…</p>
       </div>
     );
   }
@@ -69,7 +69,7 @@ export const ServiceReservationDetail = () => {
   if (loadError) {
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
           <AlertCircle className="h-7 w-7 text-destructive" />
         </div>
         <p className="mt-3 text-sm font-semibold text-foreground">Error al cargar</p>
@@ -89,7 +89,7 @@ export const ServiceReservationDetail = () => {
   if (!booking) {
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
           <Briefcase className="h-7 w-7 text-primary" />
         </div>
         <p className="mt-3 text-sm font-semibold text-foreground">Reserva no encontrada</p>

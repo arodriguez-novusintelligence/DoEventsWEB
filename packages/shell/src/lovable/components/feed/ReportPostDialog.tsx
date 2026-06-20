@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Flag, AlertCircle, Shield } from 'lucide-react';
+import { Flag, AlertCircle, Shield, Loader2 } from 'lucide-react';
 import { reportPublication, useToast } from '@doevents/shared';
 import {
   Dialog,
@@ -63,7 +63,7 @@ export const ReportPostDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-lg rounded-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Flag className="h-5 w-5 text-destructive" />
@@ -82,7 +82,7 @@ export const ReportPostDialog = ({
             {REASONS.map((item) => (
               <label
                 key={item.id}
-                className={`flex items-center gap-2 rounded-lg border p-3 text-sm cursor-pointer transition-colors ${
+                className={`flex items-center gap-2 rounded-xl border p-3 text-sm cursor-pointer transition-colors shadow-sm ${
                   reason === item.id
                     ? 'border-primary bg-primary/5 ring-1 ring-primary/30'
                     : 'border-border hover:bg-accent/50'
@@ -120,7 +120,14 @@ export const ReportPostDialog = ({
             Cancelar
           </Button>
           <Button type="button" variant="destructive" onClick={handleSubmit} disabled={submitting}>
-            {submitting ? 'Enviando…' : 'Enviar reporte'}
+            {submitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Enviando…
+              </>
+            ) : (
+              'Enviar reporte'
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

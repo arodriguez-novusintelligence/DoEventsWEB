@@ -1,44 +1,43 @@
-# Gap empalme — resumen ejecutivo (batch 3)
+# Gap empalme — resumen ejecutivo (batch 4)
 
-**Run:** `gap-empalme-27883333029-b3`  
+**Run:** `gap-empalme-27883333029-b4`  
 **Fecha:** 2026-06-20  
 **Rama:** `feature/cicd/dev-automation`
 
 ## Resultado
 
-Batch 3 del manifiesto (20 gaps, similitud baseline manifiesto **56.8%**, post-b2 **67.0%**). Tras empalme estimado **~77.0%** (objetivo 98%; re-comparación CI pendiente). **20 gaps DONE** frontend; **0 BACKEND_REQUIRED** en este batch.
+Batch 4 del manifiesto (20 gaps, similitud baseline manifiesto **56.81%**, post-b3 **77.0%**). Tras empalme estimado **~87.0%** (objetivo 98%; re-comparación CI pendiente). **16 gaps DONE** frontend; **4 BACKEND_REQUIRED** documentados.
 
 ## Empalme realizado
 
 | Área | Cambios principales |
 |------|---------------------|
-| **EventInvitationModal** | AlertCircle error; tokens accent en correos; badge Nuevo success |
-| **EventsView** | CTA crear evento h-14 ring; estrellas primary; bg-background/90 |
-| **StepAccessControl** | Empty DoorOpen con ring-primary/20 |
-| **CommentsSheet / CreatePostSheet** | Headers icono h-10 ring-primary/20 |
-| **ProfileView** | Barra experiencia gradiente primary |
-| **MyInvitationsView** | Empty state Ticket icon |
-| **SeatLocationModal** | AlertCircle error h-14; empty Armchair ring |
-| **VenueCreator** | MapPinPlus en header sticky |
-| **AIAssistantView** | CheckCircle2 entity card; Loader2 pensando; Button shadcn |
-| **MainInfoSection / LocationSection** | shadow-sm cards |
-| **FeedServicesCarousel** | bg-background/90 en botón favorito |
-| **MyTicketsView / TicketDetailView / AuthLogo / FavoritesView / PreferencesRefundSection / EventDetailView / NotificationsContext** | Verificados alineados (empalmes previos intactos) |
+| **PaymentMethodsDashboard** | Empty Wallet ring-primary/20; banner delete backend; cards shadow-sm |
+| **BankingHub** | Banner PayPal payout BACKEND_REQUIRED |
+| **MediaUpload / FAQSection** | Empty h-14 ring-primary/20; shadow-sm previews |
+| **ScanQRSheet** | Dialog rounded-2xl; AlertCircle cámara off |
+| **BookingReviewSheet** | Loader2 confirm; AlertCircle error; shadow-sm resumen |
+| **FeedHero** | Categorías shadow-sm; empty historias ring-primary/20 |
+| **ReportPostDialog** | Loader2 submit; rounded-2xl; radios shadow-sm |
+| **AccessControlListView** | Cards shadow-sm; empty Shield ring |
+| **MyPurchases / MyReserved*** | Loader2 carga; empty/login ring-primary/20 |
+| **KycContext** | Flag `needsCertification` derivado |
+| **TermsDialog** | rounded-2xl shadow-sm |
+| **ChangeLocationSheet / ProfileCommentsView** | shadow-sm card; ring empty |
+| **ServiceReservationDetail** | Loader2; rings error/empty |
+| **VenueDetail** | Shell pb-24 aria-label sobre PlaceDetailPage |
 
-## Backend pendiente (acumulado batches previos)
+## Backend pendiente (batch 4)
 
 | Gap | Motivo |
 |-----|--------|
-| `EditProfileView` | Cambio contraseña Cognito + persistencia intereses |
-| `BookingSheet` | Catálogo servicios adicionales vía API |
-| `PublishFlowModal` | Persistencia datos bancarios post-publicación |
-| `BankingForm` | SWIFT/PayPal persistencia |
-| `KycCertificationView` | Envío documentos KYC |
-| Otros | Delete banking, story viewers, global search posts, PULEP, PaymentGateway PSP |
+| `PaymentMethodsDashboard` / `BankingHub` | `DELETE /bank-accounts/{id}`; PayPal payout |
+| `StoryViewersSheet` | `GET /stories/{id}/viewers` |
+| `GlobalSearchView` | `GET /publications/search?q=` full-text |
 
 ## Gaps restantes
 
-- **~60 gaps** pendientes (batches 4–6 del manifiesto).
+- **~40 gaps** pendientes (batches 5–6 del manifiesto).
 - Re-comparación con `compare-design-similarity.py` requiere checkout `discover-joyful-feed`.
 
 ## Validación

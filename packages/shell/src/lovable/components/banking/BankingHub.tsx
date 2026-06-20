@@ -147,6 +147,16 @@ const BankingHub = ({ onBack }: BankingHubProps) => {
           }}
         />
       )}
+      {view === 'dashboard' && !loading && !loadError && methods.some((m) => m.type === 'paypal') && (
+        <div className="mx-auto max-w-4xl px-4 pb-6">
+          <div className="flex gap-3 rounded-xl border border-warning/30 bg-warning/5 p-4">
+            <AlertCircle className="h-5 w-5 shrink-0 text-warning" />
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              PayPal payout requiere integración backend pendiente. Los cobros vía cuenta bancaria siguen operativos.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

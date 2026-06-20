@@ -1,14 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { ChevronLeft, Search, UserPlus, Check, MessageCircle, AlertCircle } from 'lucide-react';
+import { ChevronLeft, Search, UserPlus, Check, MessageCircle, AlertCircle, Loader2 } from 'lucide-react';
 import {
   EventSection,
   FeedPublication,
   fetchFollowersCount,
   fetchPendingFollowRequests,
   followUser,
-  Loader,
   PostCard,
   RootState,
   SearchUserResult,
@@ -192,8 +191,9 @@ export const GlobalSearchView = ({
         </TabsList>
 
         {loading ? (
-          <div className="py-12">
-            <Loader />
+          <div className="flex flex-col items-center justify-center gap-3 py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="text-sm text-muted-foreground">Buscando…</p>
           </div>
         ) : searchError ? (
           <div className="mt-4 rounded-2xl border border-destructive/30 bg-card p-8 text-center shadow-sm">
@@ -211,11 +211,16 @@ export const GlobalSearchView = ({
         ) : (
           <>
             {tab === 'posts' && (
-              <div className="mt-3 flex gap-2 rounded-xl border border-warning/30 bg-warning/5 p-3 text-xs text-muted-foreground">
-                <AlertCircle className="h-4 w-4 shrink-0 text-warning" />
-                <span>
-                  La búsqueda de publicaciones filtra resultados recientes del feed.
-                  Un endpoint dedicado de búsqueda full-text está pendiente en backend.
+              <div className="mt-3 flex flex-col gap-2 rounded-xl border border-warning/30 bg-warning/5 p-3 text-xs text-muted-foreground">
+                <div className="flex gap-2">
+                  <AlertCircle className="h-4 w-4 shrink-0 text-warning" />
+                  <span>
+                    La búsqueda de publicaciones filtra resultados recientes del feed.
+                    Un endpoint dedicado de búsqueda full-text está pendiente en backend.
+                  </span>
+                </div>
+                <span className="inline-block self-start rounded-full bg-warning/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-warning">
+                  Backend requerido
                 </span>
               </div>
             )}
@@ -305,7 +310,7 @@ export const GlobalSearchView = ({
               })}
               {hasSearched && query.trim() && !userResults.length && (
                 <div className="rounded-2xl bg-card py-10 text-center shadow-sm">
-                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                     <Search className="h-7 w-7 text-primary" />
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground">Sin usuarios para «{query.trim()}»</p>
@@ -324,7 +329,7 @@ export const GlobalSearchView = ({
               ))}
               {hasSearched && query.trim() && !postResults.length && (
                 <div className="rounded-2xl bg-card py-10 text-center shadow-sm">
-                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                     <Search className="h-7 w-7 text-primary" />
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground">Sin publicaciones para «{query.trim()}»</p>

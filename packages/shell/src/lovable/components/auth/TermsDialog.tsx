@@ -48,7 +48,7 @@ const SECTIONS = [
 
 export const TermsDialog = ({ open, onClose, onAccept }: TermsDialogProps) => (
   <Dialog open={open} onOpenChange={(next) => !next && onClose()}>
-    <DialogContent className="max-w-lg">
+    <DialogContent className="max-w-lg rounded-2xl shadow-sm">
       <DialogHeader>
         <DialogTitle className="flex items-center gap-2">
           <ScrollText className="h-5 w-5 text-primary" />

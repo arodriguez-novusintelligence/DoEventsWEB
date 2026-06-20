@@ -108,7 +108,7 @@ const FeedHero = ({
 
       {/* Categorías card overlapping */}
       <div className="-mt-12 px-4">
-        <div className="mx-auto max-w-lg rounded-2xl bg-card p-4 shadow-lg">
+        <div className="mx-auto max-w-lg rounded-2xl bg-card p-4 shadow-sm">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-base font-extrabold text-foreground">Categorías</h2>
             <button
@@ -179,9 +179,9 @@ const FeedHero = ({
                 </>
               )}
               {!storiesLoading && useApiStories && apiStories!.length === 0 && (
-                <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-border bg-card py-6 px-4 w-full">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                    <Sparkles className="h-6 w-6 text-primary" />
+                <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-border bg-card py-6 px-4 w-full shadow-sm">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                    <Sparkles className="h-7 w-7 text-primary" />
                   </div>
                   <p className="text-xs font-medium text-foreground">No hay historias cerca de ti aún</p>
                   <p className="text-[10px] text-muted-foreground text-center">Sé el primero en compartir lo que está pasando</p>

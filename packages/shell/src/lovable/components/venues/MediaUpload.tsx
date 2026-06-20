@@ -35,8 +35,8 @@ const MediaUpload = () => {
       {form.media.length === 0 ? (
         <div className="space-y-3">
           <label className="flex w-full cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 border-dashed border-primary/30 bg-secondary/40 py-10 px-4 hover:border-primary hover:bg-primary/5 transition-colors">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-              <FileUp className="w-6 h-6 text-primary" />
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+              <FileUp className="w-7 h-7 text-primary" />
             </div>
             <p className="text-sm font-semibold text-foreground">Subir fotos o videos</p>
             <p className="text-xs text-muted-foreground">JPG, PNG o MP4 — máximo {MAX_MEDIA} archivos</p>

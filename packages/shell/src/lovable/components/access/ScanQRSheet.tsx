@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@lovable/components/ui/dialog';
 import { Input } from '@lovable/components/ui/input';
 import { Button } from '@lovable/components/ui/button';
-import { ScanLine, ShieldCheck, CameraOff, KeyRound, Loader2, CheckCircle2, XCircle } from 'lucide-react';
+import { ScanLine, ShieldCheck, CameraOff, KeyRound, Loader2, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
 import { scanTicketFromQr } from '@doevents/shared';
 import { toast } from 'sonner';
 
@@ -110,7 +110,7 @@ const ScanQRSheet = ({ open, onOpenChange, eventTitle, eventId }: ScanQRSheetPro
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md p-0 overflow-hidden gap-0 bg-card">
+      <DialogContent className="max-w-md p-0 overflow-hidden gap-0 bg-card rounded-2xl">
         <DialogHeader className="px-5 pt-5 pb-3">
           <DialogTitle className="flex items-center gap-2 text-xl font-extrabold text-foreground">
             <ScanLine className="h-5 w-5 text-primary" />
@@ -130,7 +130,10 @@ const ScanQRSheet = ({ open, onOpenChange, eventTitle, eventId }: ScanQRSheetPro
             />
             {!cameraReady && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-muted text-muted-foreground px-4 text-center">
-                <CameraOff className="h-8 w-8" />
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                  <AlertCircle className="h-7 w-7 text-primary" />
+                </div>
+                <CameraOff className="h-5 w-5 opacity-60" />
                 <span className="text-xs">Cámara no disponible — permite el acceso en ajustes del navegador o usa código manual</span>
               </div>
             )}

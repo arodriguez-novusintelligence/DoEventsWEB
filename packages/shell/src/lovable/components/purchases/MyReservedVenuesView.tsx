@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Building2, ChevronRight, AlertCircle } from 'lucide-react';
+import { Building2, ChevronRight, AlertCircle, Loader2 } from 'lucide-react';
 import {
   fetchUserVenueBookings,
-  Loader,
   RootState,
   type UserVenueBooking,
 } from '@doevents/shared';
@@ -72,8 +71,9 @@ export const MyReservedVenuesView = ({ onBack }: MyReservedVenuesViewProps) => {
 
       <div className="px-4 pt-4">
         {loading ? (
-          <div className="py-12">
-            <Loader />
+          <div className="flex flex-col items-center justify-center gap-3 py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="text-sm text-muted-foreground">Cargando reservas…</p>
           </div>
         ) : loadError ? (
           <div className="rounded-2xl border border-destructive/30 bg-card p-8 text-center shadow-sm">
@@ -90,7 +90,9 @@ export const MyReservedVenuesView = ({ onBack }: MyReservedVenuesViewProps) => {
           </div>
         ) : !userId ? (
           <div className="rounded-2xl bg-card p-10 text-center shadow-sm">
-            <Building2 className="mx-auto h-10 w-10 text-muted-foreground/40" />
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+              <Building2 className="h-7 w-7 text-primary" />
+            </div>
             <p className="mt-3 text-sm font-medium text-foreground">Inicia sesión para ver tus reservas</p>
             <Button type="button" className="mt-4 rounded-full" onClick={() => navigate('/auth/login')}>
               Iniciar sesión
@@ -98,7 +100,7 @@ export const MyReservedVenuesView = ({ onBack }: MyReservedVenuesViewProps) => {
           </div>
         ) : bookings.length === 0 ? (
           <div className="rounded-2xl bg-card p-10 text-center shadow-sm">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
               <Building2 className="h-7 w-7 text-primary" />
             </div>
             <p className="mt-3 text-sm font-semibold text-foreground">Sin reservas de lugares</p>

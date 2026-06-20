@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27883333029-b4`: batch 4 (20 gaps) — 16 DONE frontend; 4 BACKEND_REQUIRED (`PaymentMethodsDashboard`/`BankingHub` delete+PayPal, `StoryViewersSheet`, `GlobalSearchView` posts). Patrón Lovable: ring-primary/20 h-14, Loader2, shadow-sm, banners BACKEND.
+
 Run `gap-empalme-27883333029-b3`: batch 3 (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED. Patrón Lovable: tokens primary/accent/success, círculos h-14 ring-primary/20, AlertCircle/Loader2/CheckCircle2.
 
 Run `gap-empalme-27883333029-b2`: batch 2 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`EditProfileView` password/gustos, `BookingSheet` add-ons, `PublishFlowModal` banking). Patrón Lovable: círculos primary h-14, Loader2, AlertCircle.
@@ -72,7 +74,27 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27883333029-b3)
+## Empalme realizado (última ejecución — gap-empalme-27883333029-b4)
+
+- **PaymentMethodsDashboard:** banner delete BACKEND_REQUIRED; empty Wallet ring-primary/20; cards shadow-sm; delete deshabilitado en menú.
+- **BankingHub:** banner PayPal payout BACKEND_REQUIRED cuando hay método PayPal; ProfileSectionBanner + Loader2 intactos.
+- **MediaUpload / FAQSection:** empty upload/FAQ con h-14 ring-primary/20; shadow-sm en previews y cards.
+- **ScanQRSheet:** Dialog rounded-2xl; AlertCircle en cámara no disponible; feedback primary/destructive + Reintentar.
+- **BookingReviewSheet:** Loader2 en confirmación; AlertCircle en confirmError; resumen shadow-sm; ShieldCheck términos.
+- **FeedHero:** card categorías shadow-sm; empty historias Sparkles ring-primary/20.
+- **ReportPostDialog:** Loader2 submit; Dialog rounded-2xl; radios shadow-sm borde primary.
+- **AccessControlListView:** event cards shadow-sm; empty Shield ring-primary/20; ProfileSectionBanner intacto.
+- **MyPurchases / MyReservedServices / MyReservedVenues:** Loader2 carga; empty/login con ring-primary/20; APIs reales intactas.
+- **KycContext:** `needsCertification` derivado de status; `loadErrorMessage`/`isEmpty` intactos.
+- **TermsDialog:** DialogContent rounded-2xl shadow-sm; CheckCircle2 CTA.
+- **GlobalSearchView:** Loader2; empty Search ring; badge «Backend requerido» en tab posts.
+- **ChangeLocationSheet:** card ubicación shadow-sm; Loader2/AlertCircle intactos.
+- **ProfileCommentsView:** empty MessageSquare ring-primary/20.
+- **ServiceReservationDetail:** Loader2 carga; rings en error/empty; gradient header intacto.
+- **VenueDetail:** shell pb-24 aria-label sobre PlaceDetailPage.
+- **StoryViewersSheet:** skeleton Loader2; empty Eye ring; badge BACKEND requerido (sin mocks).
+
+## Empalme realizado (ejecución anterior — gap-empalme-27883333029-b3)
 
 - **EventInvitationModal:** AlertCircle en error eventos; tokens accent en correos nuevos; badge Nuevo success; ring en empty CalendarDays.
 - **EventsView:** CTA crear evento círculo h-14 ring; estrellas provider primary; favoritos bg-background/90.

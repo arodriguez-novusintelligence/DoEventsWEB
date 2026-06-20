@@ -114,11 +114,21 @@ export default function PaymentMethodsDashboard({
             </div>
           )}
 
+          {/* Backend: eliminar cuenta pendiente de endpoint */}
+          {methods.length > 0 && (
+            <div className="flex gap-3 rounded-xl border border-warning/30 bg-warning/5 p-4">
+              <AlertCircle className="h-5 w-5 shrink-0 text-warning" />
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Eliminar un método de cobro requiere endpoint backend pendiente. Puedes editar o establecer predeterminado mientras tanto.
+              </p>
+            </div>
+          )}
+
           {/* Methods List */}
           <div className="rounded-2xl border border-border bg-card divide-y divide-border overflow-hidden shadow-sm">
             {methods.length === 0 && (
               <div className="py-12 text-center px-4">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                   <Wallet className="h-7 w-7 text-primary" />
                 </div>
                 <p className="mt-3 text-sm font-semibold text-foreground">Sin métodos de cobro</p>
