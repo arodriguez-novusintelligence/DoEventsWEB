@@ -20,8 +20,8 @@ const statusLabel: Record<InvitationEvent['status'], string> = {
 };
 
 const statusBadgeClass: Record<InvitationEvent['status'], string> = {
-  pendiente: 'bg-amber-100 text-amber-800',
-  aceptada: 'bg-emerald-100 text-emerald-800',
+  pendiente: 'bg-amber-500/15 text-amber-800',
+  aceptada: 'bg-primary/10 text-primary',
   rechazada: 'bg-destructive/10 text-destructive',
 };
 

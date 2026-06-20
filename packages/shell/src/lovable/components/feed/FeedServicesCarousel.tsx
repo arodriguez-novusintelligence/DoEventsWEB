@@ -72,7 +72,9 @@ const FeedServicesCarousel = ({
           </p>
         </div>
         <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border bg-card py-10 text-center">
-          <Briefcase className="h-10 w-10 text-muted-foreground/40" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+            <Briefcase className="h-7 w-7 text-primary" />
+          </div>
           <p className="text-sm font-medium text-foreground">Sin servicios cercanos</p>
           <p className="text-xs text-muted-foreground max-w-[240px]">
             Activa tu ubicación o explora más tarde para ver proveedores cerca de ti.

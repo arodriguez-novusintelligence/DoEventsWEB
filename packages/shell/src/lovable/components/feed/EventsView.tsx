@@ -422,6 +422,8 @@ interface EventsViewProps {
   onCreateEvent?: () => void;
   onViewAllNearby?: () => void;
   onViewAllRecommended?: () => void;
+  onViewAllVenues?: () => void;
+  onViewAllProviders?: () => void;
   favoriteEventIds?: Set<string>;
   onToggleFavorite?: (eventId: string) => void;
   likedVenueIds?: Set<string>;
@@ -568,6 +570,8 @@ const EventsView = ({
   onCreateEvent,
   onViewAllNearby,
   onViewAllRecommended,
+  onViewAllVenues,
+  onViewAllProviders,
   favoriteEventIds,
   onToggleFavorite,
   likedVenueIds,
@@ -829,7 +833,7 @@ const EventsView = ({
 
       {!isInitialDiscoverLoad && showVenues && (
         <section className="px-4 pt-8">
-          <SectionHeader title="Lugares cercanos a tu ubicación" action />
+          <SectionHeader title="Lugares cercanos a tu ubicación" action onAction={onViewAllVenues} />
           {filteredVenues.length > 0 ? (
             <>
               <div className={HORIZONTAL_SCROLL}>
@@ -870,6 +874,7 @@ const EventsView = ({
           <SectionHeader
             title={selectedCategory ? `Perfiles · ${selectedCategory}` : 'Perfiles que prestan servicios'}
             action
+            onAction={onViewAllProviders}
           />
           {servicesLoading ? (
             <div className="mt-4 flex items-center justify-center gap-2 py-8">

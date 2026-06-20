@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Ticket as TicketIcon, Eye, Calendar, Clock, Loader2, RefreshCw } from 'lucide-react';
+import { Ticket as TicketIcon, Eye, Calendar, Clock, Loader2, RefreshCw, AlertCircle } from 'lucide-react';
+import { Button } from '@lovable/components/ui/button';
 import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBanner';
 import type { Ticket, TicketStatus } from '@lovable/data/ticketsData';
 import { groupTicketsForListView } from '../../../lovable-bridge/ticketsAdapter';
@@ -13,6 +14,8 @@ interface MyTicketsViewProps {
   onRefresh?: () => void;
   tickets?: Ticket[];
   loading?: boolean;
+  loadError?: string | null;
+  onRetry?: () => void;
   initialTab?: TicketStatus;
 }
 
@@ -34,7 +37,7 @@ const PendingCountdown = ({ expiresAtTs }: { expiresAtTs?: number }) => {
   const { isExpired, label } = useReservationTimer(expiresAtTs ?? null);
   if (!expiresAtTs) return null;
   return (
-    <div className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold ${isExpired ? 'bg-destructive/10 text-destructive' : 'bg-amber-100 text-amber-800'}`}>
+    <div className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold ${isExpired ? 'bg-destructive/10 text-destructive' : 'bg-amber-500/15 text-amber-800'}`}>
       <Clock className="h-3.5 w-3.5" />
       {isExpired ? 'Reserva expirada' : `Paga en ${label} para conservar tus boletas`}
     </div>
@@ -76,6 +79,8 @@ const MyTicketsView = ({
   onRefresh,
   tickets: ticketsProp = [],
   loading = false,
+  loadError = null,
+  onRetry,
   initialTab,
 }: MyTicketsViewProps) => {
   const [activeTab, setActiveTab] = useState<TicketStatus>(() => pickInitialTab(ticketsProp, initialTab));
@@ -142,14 +147,29 @@ const MyTicketsView = ({
         </div>
 
         <div className="mt-5 space-y-4">
-          {loading && tickets.length === 0 && (
+          {loading && tickets.length === 0 && !loadError && (
             <div className="flex flex-col items-center gap-3 rounded-2xl bg-card p-10 text-center shadow-sm">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
               <p className="text-sm text-muted-foreground">Cargando tus boletas…</p>
             </div>
           )}
 
-          {!loading && tickets.length === 0 && (
+          {loadError && (
+            <div className="flex flex-col items-center gap-3 rounded-2xl bg-card p-10 text-center shadow-sm">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
+                <AlertCircle className="h-7 w-7 text-destructive" />
+              </div>
+              <p className="text-sm font-semibold text-foreground">No se pudieron cargar tus boletas</p>
+              <p className="text-xs text-muted-foreground max-w-[240px]">{loadError}</p>
+              {onRetry && (
+                <Button type="button" variant="outline" size="sm" className="rounded-xl" onClick={onRetry}>
+                  Reintentar
+                </Button>
+              )}
+            </div>
+          )}
+
+          {!loading && !loadError && tickets.length === 0 && (
             <div className="flex flex-col items-center gap-3 rounded-2xl bg-card p-10 text-center shadow-sm">
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
                 <TicketIcon className="h-7 w-7 text-primary" />

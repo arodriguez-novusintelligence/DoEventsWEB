@@ -429,6 +429,10 @@ export const EventsPage: React.FC = () => {
         }
       }}
       onReserveService={(serviceId) => navigate(`/services/${serviceId}`)}
+      onViewAllNearby={() => navigate('/map')}
+      onViewAllRecommended={() => navigate('/events')}
+      onViewAllVenues={() => navigate('/places')}
+      onViewAllProviders={() => navigate('/services')}
       favoriteEventIds={favoriteEventIds}
       onToggleFavorite={(eventId) => { void handleToggleFavorite(eventId); }}
       likedVenueIds={likedVenueIds}

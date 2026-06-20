@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { ChevronLeft, Loader2 } from 'lucide-react';
+import { ChevronLeft, Loader2, Wallet, AlertCircle } from 'lucide-react';
 import {
   createBankAccount,
   fetchBankAccountsByUser,
@@ -95,14 +95,26 @@ const BankingHub = ({ onBack }: BankingHubProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-secondary pb-24">
       <div className="mx-auto max-w-4xl px-4 pt-4">
         <button
+          type="button"
           onClick={view === 'form' ? () => setView('dashboard') : onBack}
           className="flex items-center text-primary text-sm font-medium"
         >
           <ChevronLeft className="h-5 w-5" /> Atrás
         </button>
+        {view === 'dashboard' && (
+          <div className="mt-4 flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+              <Wallet className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-xl font-extrabold text-foreground">Métodos de cobro</h1>
+              <p className="text-xs text-muted-foreground">Administra cuentas bancarias y retiros</p>
+            </div>
+          </div>
+        )}
       </div>
       {view === 'form' ? (
         <BankingForm onComplete={handleFormComplete} editingMethod={editingMethod} />
@@ -113,6 +125,9 @@ const BankingHub = ({ onBack }: BankingHubProps) => {
         </div>
       ) : loadError ? (
         <div className="flex flex-col items-center justify-center gap-3 py-24 px-6 text-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
+            <AlertCircle className="h-7 w-7 text-destructive" />
+          </div>
           <p className="text-sm font-semibold text-foreground">{loadError}</p>
           <button
             type="button"

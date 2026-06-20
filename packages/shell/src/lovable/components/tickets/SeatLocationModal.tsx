@@ -104,8 +104,8 @@ const SeatLocationModal = ({ open, onOpenChange, ticket }: Props) => {
             <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 font-semibold text-primary">
               <Armchair className="h-3.5 w-3.5" /> {displaySeat}
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-2.5 py-1 font-semibold text-amber-700">
-              <DoorOpen className="h-3.5 w-3.5" /> {ticket.entrance || 'Entrada principal'}
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1 font-semibold text-foreground">
+              <DoorOpen className="h-3.5 w-3.5 text-primary" /> {ticket.entrance || 'Entrada principal'}
             </span>
           </div>
 

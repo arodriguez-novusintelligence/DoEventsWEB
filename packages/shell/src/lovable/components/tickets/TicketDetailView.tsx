@@ -299,10 +299,10 @@ const TicketDetailView = ({
 
           {isRefunded && activeEntry && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="flex flex-col items-center gap-1.5 rounded-2xl bg-orange-500 px-5 py-3 shadow-xl">
+              <div className="flex flex-col items-center gap-1.5 rounded-2xl bg-destructive px-5 py-3 shadow-xl">
                 <div className="flex items-center gap-2">
-                  <Banknote className="h-4 w-4 text-white" />
-                  <span className="text-sm font-bold text-white">Reembolsada</span>
+                  <Banknote className="h-4 w-4 text-destructive-foreground" />
+                  <span className="text-sm font-bold text-destructive-foreground">Reembolsada</span>
                 </div>
               </div>
             </div>

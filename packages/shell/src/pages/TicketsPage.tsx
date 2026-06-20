@@ -10,7 +10,6 @@ import {
   invalidateProfilePageCache,
   isPlaceholderEventImage,
   listStoredReservationsForUser,
-  Loader,
   resolveEventImageUrl,
   resolveEventVideoUrl,
   RootState,
@@ -94,6 +93,7 @@ export const TicketsPage: React.FC = () => {
   const userId = useSelector((s: RootState) => s.auth.idUser);
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [initialTab] = useState<TicketStatus | undefined>(() => {
     if (locationState.tab === 'pendiente') return 'pendiente';
     if (locationState.tab === 'aprobada' || locationState.from === 'payment-success') return 'aprobada';
@@ -104,9 +104,11 @@ export const TicketsPage: React.FC = () => {
     if (!userId) {
       setTickets([]);
       setLoading(false);
+      setLoadError(null);
       return;
     }
     setLoading(true);
+    setLoadError(null);
     try {
       const grouped = await fetchGroupedUserTickets(userId);
       const base = groupedTicketsToLovable(grouped);
@@ -114,8 +116,9 @@ export const TicketsPage: React.FC = () => {
       const withMedia = await enrichTicketsWithEventMedia(withExpiry);
       const enriched = await enrichTicketsWithQr(withMedia);
       setTickets(enriched);
-    } catch {
+    } catch (err) {
       setTickets([]);
+      setLoadError(err instanceof Error ? err.message : 'Error al cargar boletas');
     } finally {
       setLoading(false);
     }
@@ -151,18 +154,12 @@ export const TicketsPage: React.FC = () => {
     return () => window.clearInterval(timer);
   }, [userId, showToast]);
 
-  if (loading && !tickets.length) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-secondary">
-        <Loader />
-      </div>
-    );
-  }
-
   return (
     <MyTicketsView
       tickets={tickets}
       loading={loading}
+      loadError={loadError}
+      onRetry={() => void reloadTickets()}
       initialTab={initialTab}
       onBack={() => (fromProfile ? navigate('/profile') : navigate('/'))}
       onViewEventDetail={(eventId) => navigate(`/events/${eventId}`)}

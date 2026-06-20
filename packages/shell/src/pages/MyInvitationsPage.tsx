@@ -1,12 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {
-  EventInvitation,
   fetchEventDetail,
   fetchUserInvitations,
-  Loader,
-  respondToUserInvitation,
   RootState,
   useToast,
 } from '@doevents/shared';
@@ -21,19 +18,36 @@ export const MyInvitationsPage: React.FC = () => {
   const { showToast } = useToast();
   const userId = useSelector((s: RootState) => s.auth.idUser);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [invitations, setInvitations] = useState<InvitationEvent[]>([]);
   const [selected, setSelected] = useState<InvitationEvent | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
 
-  useEffect(() => {
-    if (!userId) return;
-    fetchUserInvitations(userId)
-      .then((data) => {
-        setInvitations((data.invitations || []).map(apiInvitationToLovable));
-      })
-      .catch((err) => showToast(err instanceof Error ? err.message : 'Error al cargar invitaciones', 'error'))
-      .finally(() => setLoading(false));
+  const loadInvitations = useCallback(async () => {
+    if (!userId) {
+      setInvitations([]);
+      setLoading(false);
+      setLoadError(null);
+      return;
+    }
+    setLoading(true);
+    setLoadError(null);
+    try {
+      const data = await fetchUserInvitations(userId);
+      setInvitations((data.invitations || []).map(apiInvitationToLovable));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Error al cargar invitaciones';
+      setLoadError(message);
+      setInvitations([]);
+      showToast(message, 'error');
+    } finally {
+      setLoading(false);
+    }
   }, [userId, showToast]);
+
+  useEffect(() => {
+    void loadInvitations();
+  }, [loadInvitations]);
 
   const openInvitation = async (inv: InvitationEvent) => {
     setSelected(inv);
@@ -51,20 +65,14 @@ export const MyInvitationsPage: React.FC = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-secondary">
-        <Loader />
-      </div>
-    );
-  }
-
   if (selected) {
     if (detailLoading) {
       return (
-        <div className="flex min-h-screen items-center justify-center bg-secondary">
-          <Loader />
-        </div>
+        <MyInvitationsView
+          invitations={[]}
+          loading
+          onBack={() => setSelected(null)}
+        />
       );
     }
     return (
@@ -81,6 +89,9 @@ export const MyInvitationsPage: React.FC = () => {
   return (
     <MyInvitationsView
       invitations={invitations}
+      loading={loading}
+      loadError={loadError}
+      onRetry={() => void loadInvitations()}
       onBack={() => navigate('/profile')}
       onOpenInvitation={(inv) => { void openInvitation(inv); }}
     />

@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { ChevronLeft, Heart, MapPin, User, CalendarDays, FileText, Building2, Loader2 } from 'lucide-react';
+import { Heart, MapPin, User, CalendarDays, FileText, Building2, Loader2, AlertCircle } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@lovable/components/ui/tabs';
+import { Button } from '@lovable/components/ui/button';
+import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBanner';
 import PostCard from './PostCard';
 import type { Post } from '@doevents/shared';
 import type { ProfileListUser } from './FollowersSheet';
@@ -30,6 +32,8 @@ interface FavoritesViewProps {
   favoritePlaces?: FavPlaceItem[];
   favoriteProfiles?: ProfileListUser[];
   loading?: boolean;
+  loadError?: string | null;
+  onRetry?: () => void;
   onViewProfile?: (user: ProfileListUser) => void;
   onToggleEventFavorite?: (eventId: string) => void;
   onOpenEvent?: (eventId: string) => void;
@@ -38,11 +42,11 @@ interface FavoritesViewProps {
 const statusStyle = (s: FavEventItem['status']) => {
   switch (s) {
     case 'Finalizado':
-      return 'bg-primary/80 text-primary-foreground';
+      return 'bg-muted text-muted-foreground';
     case 'Próximamente':
-      return 'bg-amber-400 text-amber-950';
+      return 'bg-amber-500/15 text-amber-800';
     default:
-      return 'bg-emerald-500 text-white';
+      return 'bg-primary/10 text-primary';
   }
 };
 
@@ -239,25 +243,41 @@ const FavoritesView = ({
   favoritePlaces = [],
   favoriteProfiles = [],
   loading = false,
+  loadError = null,
+  onRetry,
   onViewProfile,
   onToggleEventFavorite,
   onOpenEvent,
 }: FavoritesViewProps) => (
   <div className="mx-auto max-w-lg min-h-screen bg-secondary pb-24">
-    <div className="px-4 pt-4">
-      <button onClick={onBack} className="flex items-center gap-1 text-foreground font-medium">
-        <ChevronLeft className="h-5 w-5 text-primary" />
-        Atrás
-      </button>
-      <h1 className="mt-2 text-2xl font-extrabold text-primary">Tus favoritos</h1>
+    <ProfileSectionBanner
+      title="Tus favoritos"
+      subtitle="Eventos, posts, lugares y perfiles que guardaste"
+      icon={Heart}
+      onBack={onBack}
+    />
 
+    <div className="px-4 -mt-4">
       {loading ? (
-        <div className="flex flex-col items-center gap-3 py-16">
+        <div className="flex flex-col items-center gap-3 rounded-2xl bg-card py-16 text-center shadow-sm">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
           <p className="text-sm text-muted-foreground">Cargando favoritos…</p>
         </div>
+      ) : loadError ? (
+        <div className="flex flex-col items-center gap-3 rounded-2xl bg-card py-16 text-center shadow-sm">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
+            <AlertCircle className="h-7 w-7 text-destructive" />
+          </div>
+          <p className="text-sm font-semibold text-foreground">No se pudieron cargar los favoritos</p>
+          <p className="text-xs text-muted-foreground max-w-[240px]">{loadError}</p>
+          {onRetry && (
+            <Button type="button" variant="outline" size="sm" className="rounded-xl" onClick={onRetry}>
+              Reintentar
+            </Button>
+          )}
+        </div>
       ) : (
-      <Tabs defaultValue="eventos" className="mt-4">
+      <Tabs defaultValue="eventos" className="mt-2">
         <TabsList className="w-full grid grid-cols-4 bg-transparent p-0 h-auto border-b border-border rounded-none gap-0">
           {[
             { v: 'eventos', l: 'Eventos' },
