@@ -105,7 +105,7 @@ export function ContactImportModal({ open, onOpenChange, onImportContacts }: Pro
           </div>
           <p className="text-xs text-muted-foreground">Importa contactos del dispositivo como invitados.</p>
           {!isDeviceContactsSupported() && (
-            <div className="rounded-xl border border-border/60 border-primary/20 bg-primary/5 px-3 py-2 text-left text-xs text-muted-foreground shadow-sm">
+            <div className="rounded-xl border border-dashed border-primary/25 border-border/60 bg-primary/5 px-3 py-2 text-left text-xs font-extrabold text-muted-foreground shadow-sm">
               La importación de contactos no está disponible en este navegador. Usa un dispositivo móvil compatible.
             </div>
           )}
@@ -128,7 +128,7 @@ export function ContactImportModal({ open, onOpenChange, onImportContacts }: Pro
           {contacts.length > 0 && (
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Buscar por nombre o teléfono" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10 bg-muted/50 border-0 rounded-xl" />
+              <Input placeholder="Buscar por nombre o teléfono" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10 rounded-xl border-border/60 bg-muted/50 font-extrabold shadow-sm focus-visible:ring-2 focus-visible:ring-primary/20" />
             </div>
           )}
         </DialogHeader>
@@ -141,7 +141,7 @@ export function ContactImportModal({ open, onOpenChange, onImportContacts }: Pro
               </div>
               <div className="flex-1 overflow-y-auto space-y-2">
                 {filtered.map((c) => (
-                  <label key={c.id} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer shadow-sm ${selected.has(c.id) ? 'bg-primary/5 border-primary' : 'bg-muted/30 border-border/60'}`}>
+                  <label key={c.id} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer shadow-sm ${selected.has(c.id) ? 'bg-primary/5 border-primary ring-2 ring-primary/20' : 'bg-muted/30 border-border/60'}`}>
                     <Checkbox checked={selected.has(c.id)} onCheckedChange={(ch) => toggleOne(c.id, !!ch)} />
                     <div className="w-9 h-9 rounded-full bg-primary/10 ring-2 ring-primary/20 flex items-center justify-center shrink-0">
                       <Smartphone className="h-4 w-4 text-primary" />
@@ -155,18 +155,18 @@ export function ContactImportModal({ open, onOpenChange, onImportContacts }: Pro
               </div>
             </>
           ) : (
-            <div className="flex flex-1 flex-col items-center justify-center py-8 text-center px-4">
+            <div className="flex flex-1 flex-col items-center justify-center rounded-2xl border border-dashed border-primary/25 border-border/60 py-8 text-center px-4 shadow-sm">
               <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <UserPlus className="h-7 w-7 text-primary" />
               </div>
               <p className="text-sm font-extrabold text-foreground">Importar desde tu dispositivo</p>
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="mt-1 text-xs font-extrabold text-muted-foreground">
                 Pulsa el botón superior para elegir contactos de tu teléfono o agenda.
               </p>
             </div>
           )}
         </div>
-        <div className="pt-4">
+        <div className="border-t border-border/60 pt-4">
           <Button onClick={handleImport} className="w-full rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-extrabold shadow-sm" disabled={!selected.size}>
             Agregar contactos ({selected.size})
           </Button>
