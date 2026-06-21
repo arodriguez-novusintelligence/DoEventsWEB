@@ -111,6 +111,32 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 1 (run 27904918660)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| FeedBanner title | VISUAL | Sí | `feed/FeedBanner.tsx` | verificado intacto; font-extrabold; dismiss ring-border/60 |
+| SeatingMapEditor canvas | VISUAL | Sí | `events/SeatingMapEditor.tsx` | empty card border-border/60; zoom border-border/60 |
+| AIAssistantFAB polish | VISUAL | Sí | `ai/AIAssistantFAB.tsx` | verificado ring-primary/20; shadow-xl PRO |
+| EventPreviewModal sections | VISUAL | Sí | `events/EventPreviewModal.tsx` | notice/FAQ/refund border-border/60; font-extrabold |
+| RefundTicketFlow cards | VISUAL | Sí | `tickets/RefundTicketFlow.tsx` | counter border-border/60; footer border-border/60 |
+| FAQSection empty | VISUAL | Sí | `venues/sections/FAQSection.tsx` | empty title font-extrabold |
+| HostPickerModal shell | VISUAL | Sí | `events/HostPickerModal.tsx` | sheet border-border/60; inputs border-border/60 |
+| StepAccessControl gates | VISUAL | Sí | `events/StepAccessControl.tsx` | empty/stat tiles border-border/60 shadow-sm |
+| ServiceDetailView hero | VISUAL | Sí | `services/ServiceDetailView.tsx` | hero border-border/60; empty font-extrabold |
+| EventsView EmptyHint | VISUAL | Sí | `feed/EventsView.tsx` | EmptyHint border-border/60 |
+| StepUnified headers | VISUAL | Sí | `services/StepUnified.tsx` | SectionHeader/progress border-border/60; font-extrabold |
+| CompanyContext alias | Integración | Sí | `contexts/CompanyContext.tsx` | useCompanyContext verificado |
+| AddGuestModal search | VISUAL | Sí | `guests/AddGuestModal.tsx` | empty font-extrabold |
+| BankingHub delete/PayPal | Bloqueo | Parcial | `banking/BankingHub.tsx` | BACKEND_REQUIRED; error card border-border/60 |
+| MyPostsView empty | VISUAL | Sí | `feed/MyPostsView.tsx` | empty border-border/60; font-extrabold |
+| SeatLocationModal loading | VISUAL | Sí | `tickets/SeatLocationModal.tsx` | DialogTitle extrabold; loading border-border/60 |
+| MainInfoSection cards | VISUAL | Sí | `venues/sections/MainInfoSection.tsx` | verificado border-border/60 |
+| MyPurchasesView empty | VISUAL | Sí | `purchases/MyPurchasesView.tsx` | aggregate empty border-border/60 |
+| MyReservedServicesView | Integración | Sí | `purchases/MyReservedServicesView.tsx` | cards border-border/60; rows font-extrabold; API real |
+| TicketDetailView order | VISUAL | Sí | `tickets/TicketDetailView.tsx` | single-order border-border/60 shadow-sm |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 1 (run 27904436890)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

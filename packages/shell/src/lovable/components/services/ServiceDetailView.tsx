@@ -112,7 +112,7 @@ const ServiceDetailView = ({
       </div>
 
       <div className="px-4">
-        <div className="relative rounded-2xl overflow-hidden">
+        <div className="relative rounded-2xl overflow-hidden border border-border/60 shadow-sm">
           {images.length > 0 ? (
             <button
               type="button"
@@ -126,11 +126,11 @@ const ServiceDetailView = ({
               />
             </button>
           ) : (
-            <div className="flex h-56 w-full flex-col items-center justify-center gap-2 rounded-2xl bg-muted text-sm text-muted-foreground">
+            <div className="flex h-56 w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-primary/25 bg-muted text-sm text-muted-foreground">
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <Briefcase className="h-7 w-7 text-primary" />
               </div>
-              Sin foto del servicio
+              <span className="font-extrabold text-foreground">Sin foto del servicio</span>
             </div>
           )}
           <span className="absolute top-3 left-3 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">

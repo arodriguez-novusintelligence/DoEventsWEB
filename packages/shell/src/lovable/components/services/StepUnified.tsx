@@ -307,14 +307,14 @@ const StepUnified = ({
     sectionKey: string;
   }) => (
     <CollapsibleTrigger
-      className="flex w-full items-center gap-3 rounded-2xl bg-card px-4 py-4 shadow-sm transition-colors hover:bg-accent/50"
+      className="flex w-full items-center gap-3 rounded-2xl border border-border/60 bg-card px-4 py-4 shadow-sm transition-colors hover:bg-accent/50"
       onClick={() => toggleSection(sectionKey)}
       aria-expanded={openSections[sectionKey]}
     >
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
         <Icon className="h-5 w-5 text-primary" />
       </div>
-      <span className="flex-1 text-left text-sm font-semibold text-foreground">{title}</span>
+      <span className="flex-1 text-left text-sm font-extrabold text-foreground">{title}</span>
       <ChevronDown
         className={cn('h-5 w-5 text-primary transition-transform', openSections[sectionKey] && 'rotate-180')}
       />
@@ -324,7 +324,7 @@ const StepUnified = ({
   return (
     <div className="space-y-4">
       {/* Section progress */}
-      <div className="rounded-2xl bg-card p-3 shadow-sm">
+      <div className="rounded-2xl border border-border/60 bg-card p-3 shadow-sm">
         <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground mb-2">
           <span>Progreso del servicio</span>
           <span className="text-primary">{activeSectionIndex + 1} / {sectionOrder.length}</span>

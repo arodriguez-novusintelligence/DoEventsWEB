@@ -91,7 +91,7 @@ const SeatLocationModal = ({ open, onOpenChange, ticket }: Props) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md p-0 overflow-hidden rounded-2xl">
         <DialogHeader className="bg-gradient-to-br from-primary to-accent p-5 text-primary-foreground">
-          <DialogTitle className="flex items-center gap-2 text-primary-foreground">
+          <DialogTitle className="flex items-center gap-2 font-extrabold text-primary-foreground">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-foreground/15 ring-2 ring-primary-foreground/20">
               <MapPin className="h-5 w-5" />
             </span>
@@ -120,7 +120,7 @@ const SeatLocationModal = ({ open, onOpenChange, ticket }: Props) => {
               <p className="text-sm text-muted-foreground">Esta boleta no tiene asiento numerado.</p>
             </div>
           ) : loading ? (
-            <div className="flex h-[320px] flex-col items-center justify-center gap-3 rounded-2xl bg-card shadow-sm">
+            <div className="flex h-[320px] flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-card shadow-sm">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
               <p className="text-sm text-muted-foreground">Cargando mapa…</p>
             </div>

@@ -90,11 +90,11 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
 
   if (gates.length === 0) {
     return (
-      <div className="rounded-2xl bg-card p-6 text-center shadow-sm">
+      <div className="rounded-2xl border border-border/60 bg-card p-6 text-center shadow-sm">
         <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
           <DoorOpen className="h-7 w-7 text-primary" />
         </div>
-        <h3 className="text-base font-bold text-foreground">Sin puertas configuradas</h3>
+        <h3 className="text-base font-extrabold text-foreground">Sin puertas configuradas</h3>
         <p className="mt-1 text-sm text-muted-foreground">
           Vuelve al paso de Lugar y agrega al menos una puerta para asignar personal de acceso.
         </p>
@@ -123,14 +123,14 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
         )}
         <p className="mt-3 text-sm font-bold text-foreground">Personal asignado</p>
         <div className="mt-2 grid grid-cols-2 gap-3">
-          <div className="rounded-2xl bg-secondary/60 p-4 text-center">
+          <div className="rounded-2xl border border-border/60 bg-secondary/60 p-4 text-center shadow-sm">
             <DoorOpen className="mx-auto mb-1 h-5 w-5 text-primary" />
-            <p className="text-2xl font-bold text-primary tabular-nums">{gates.length}</p>
+            <p className="text-2xl font-extrabold text-primary tabular-nums">{gates.length}</p>
             <p className="text-xs text-muted-foreground">Puertas</p>
           </div>
-          <div className="rounded-2xl bg-secondary/60 p-4 text-center">
+          <div className="rounded-2xl border border-border/60 bg-secondary/60 p-4 text-center shadow-sm">
             <Users className="mx-auto mb-1 h-5 w-5 text-primary" />
-            <p className="text-2xl font-bold text-primary tabular-nums">{totalAssigned}</p>
+            <p className="text-2xl font-extrabold text-primary tabular-nums">{totalAssigned}</p>
             <p className="text-xs text-muted-foreground">Asignados</p>
           </div>
         </div>

@@ -137,11 +137,11 @@ const BankingHub = ({ onBack }: BankingHubProps) => {
           <p className="text-sm text-muted-foreground">Cargando métodos de cobro…</p>
         </div>
       ) : loadError ? (
-        <div className="flex flex-col items-center justify-center gap-3 py-24 px-6 text-center">
+        <div className="mx-4 flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-card py-24 px-6 text-center shadow-sm">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
             <AlertCircle className="h-7 w-7 text-destructive" />
           </div>
-          <p className="text-sm font-semibold text-foreground">{loadError}</p>
+          <p className="text-sm font-extrabold text-foreground">{loadError}</p>
           <Button type="button" variant="outline" className="rounded-full" onClick={() => void loadMethods()}>
             <RefreshCw className="mr-2 h-4 w-4" />
             Reintentar

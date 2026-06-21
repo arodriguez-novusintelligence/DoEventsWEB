@@ -261,7 +261,7 @@ const TicketDetailView = ({
             })}
           </div>
         ) : (
-          <div className="rounded-2xl bg-primary px-4 py-3 text-center shadow-sm">
+          <div className="rounded-2xl border border-border/60 bg-primary px-4 py-3 text-center shadow-sm">
             <p className="text-sm font-bold text-primary-foreground">{orderCode}</p>
           </div>
         )}

@@ -65,7 +65,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
                 <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                   <Eye className="h-7 w-7 text-primary" />
                 </div>
-                <p className="text-sm font-semibold text-foreground">Sin imagen</p>
+                <p className="text-sm font-extrabold text-foreground">Sin imagen</p>
               </div>
             )}
           </div>
@@ -83,7 +83,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
           </div>
 
           {/* Preview-only notice */}
-          <div className="mt-3 flex items-center justify-between rounded-xl bg-primary/5 px-3 py-2">
+          <div className="mt-3 flex items-center justify-between rounded-xl border border-border/60 bg-primary/5 px-3 py-2 shadow-sm">
             <p className="text-xs font-medium text-muted-foreground">Vista previa — las interacciones estarán disponibles al publicar</p>
           </div>
 
@@ -123,7 +123,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
                       <div className="flex items-center gap-2">
                         <Calendar className="h-5 w-5 text-primary" />
                         <div>
-                          <div className="text-base font-bold text-foreground">Agenda Día {i + 1}</div>
+                          <div className="text-base font-extrabold text-foreground">Agenda Día {i + 1}</div>
                           <div className="text-xs text-muted-foreground">{day.name || formatDate(day.date)}</div>
                         </div>
                       </div>
@@ -154,7 +154,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
                     <HomeIcon className="h-5 w-5" />
                   </div>
                   <div className="flex-1">
-                    <div className="font-bold text-foreground">{data.location.customName || '—'}</div>
+                    <div className="font-extrabold text-foreground">{data.location.customName || '—'}</div>
                     <div className="text-xs text-muted-foreground">{data.location.customAddress || data.location.detectedCity}</div>
                   </div>
                 </div>
@@ -190,7 +190,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
                         <Play className="h-5 w-5" />
                       </div>
                     </div>
-                    <a href={data.videoUrl} target="_blank" rel="noreferrer" className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-card px-3 py-1 text-xs font-semibold text-foreground shadow">
+                    <a href={data.videoUrl} target="_blank" rel="noreferrer" className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-card px-3 py-1 text-xs font-semibold text-foreground shadow-sm">
                       Ver video en YouTube ↗
                     </a>
                   </div>
@@ -206,7 +206,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
                       {(data.hosts[0]?.initials || 'TU').slice(0, 2)}
                     </div>
                     <div className="flex-1">
-                      <div className="font-bold text-foreground">{data.hosts[0]?.name || 'Organizador'}</div>
+                      <div className="font-extrabold text-foreground">{data.hosts[0]?.name || 'Organizador'}</div>
                       <p className="mt-1 text-xs text-muted-foreground">
                         Estadísticas del organizador disponibles tras publicar el evento.
                       </p>
@@ -224,7 +224,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
                       <div className="flex items-center gap-3">
                         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/15 ring-2 ring-primary/20 text-base font-bold text-primary">{h.initials || h.name?.slice(0,2).toUpperCase()}</div>
                         <div className="flex-1">
-                          <div className="font-bold text-foreground">{h.name}</div>
+                          <div className="font-extrabold text-foreground">{h.name}</div>
                           {h.role && <div className="text-xs text-muted-foreground">{h.role}</div>}
                         </div>
                       </div>
@@ -235,14 +235,14 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
 
               {/* FAQs */}
               {data.faqs.length > 0 && (
-                <div className="mt-6 rounded-2xl bg-card p-4 shadow-sm flex items-center justify-between">
+                <div className="mt-6 rounded-2xl border border-border/60 bg-card p-4 shadow-sm flex items-center justify-between">
                   <span className="font-semibold text-foreground">Preguntas frecuentes</span>
                   <ArrowRight className="h-4 w-4 text-primary" />
                 </div>
               )}
 
               {/* Reembolsos */}
-              <div className="mt-4 rounded-2xl bg-primary/10 p-4">
+              <div className="mt-4 rounded-2xl border border-border/60 bg-primary/10 p-4 shadow-sm">
                 <div className="flex items-center gap-2 text-primary">
                   <ShieldCheck className="h-5 w-5" />
                   <span className="font-bold">Solicita tu reembolso</span>

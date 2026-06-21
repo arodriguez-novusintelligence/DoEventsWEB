@@ -42,7 +42,7 @@ const FAQSection = () => {
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
             <HelpCircle className="h-7 w-7 text-primary" />
           </div>
-          <p className="mt-3 text-sm text-muted-foreground">Sin preguntas frecuentes aún</p>
+          <p className="mt-3 text-sm font-extrabold text-foreground">Sin preguntas frecuentes aún</p>
           <Button type="button" variant="outline" className="mt-4 w-full border-dashed" onClick={addFAQ}>
             <Plus className="w-4 h-4 mr-2" />
             Agregar pregunta

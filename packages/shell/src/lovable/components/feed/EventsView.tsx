@@ -363,7 +363,7 @@ const SectionHeader = ({
 );
 
 const EmptyHint = ({ children, icon: Icon = Search }: { children: ReactNode; icon?: LucideIcon }) => (
-  <div className="mt-4 flex flex-col items-center gap-2 rounded-2xl bg-card px-4 py-6 text-center shadow-sm">
+  <div className="mt-4 flex flex-col items-center gap-2 rounded-2xl border border-border/60 bg-card px-4 py-6 text-center shadow-sm">
     <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
       <Icon className="h-7 w-7 text-primary" />
     </div>

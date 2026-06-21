@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27904918660`: batch 1 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). IA/feed/eventos/servicios/banca/tickets/invitados/compras DSF polish; incluye `MyReservedServicesView`; similitud ~85.6%; 97 gaps restantes; build:devaws OK.
+
 Run `gap-empalme-27904436890`: batch 1 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). IA/feed/eventos/servicios/banca/tickets/invitados DSF polish; similitud ~83.8%; 97 gaps restantes; build:devaws OK.
 
 Run `gap-empalme-27903532486-b6`: batch 6 final (17 gaps) — 17 DONE frontend; 0 BACKEND_REQUIRED nuevos (brechas acumuladas documentadas). Reservas/invitados/stats/feed/venues/IA polish DSF; similitud ~98.4%; manifiesto agotado; build:devaws OK.
@@ -118,27 +120,30 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27904436890)
+## Empalme realizado (última ejecución — gap-empalme-27904918660)
 
-- **AIAssistantFAB:** hover ring-primary/30; shadow-xl PRO badge intacto.
-- **SeatingMapEditor:** header border-border/60; título piso font-extrabold.
-- **FeedBanner:** título font-extrabold; dismiss button ring-border/60.
-- **FAQSection:** Label font-extrabold; empty/cards border-border/60 intactos.
-- **RefundTicketFlow:** confirm rows border-border/60 shadow-sm; summary card border-border/60.
-- **EventPreviewModal:** cards border-border/60; section h3 font-extrabold; avatar rings; close ring-primary/20.
-- **HostPickerModal:** título extrabold; UserRow border-border/60 shadow-sm; avatar ring-primary/20.
-- **ServiceDetailView:** summary cards border-border/60; h3 font-extrabold; rating card border.
-- **StepAccessControl:** h2 extrabold; summary/gate cards border-border/60; user rows shadow-sm.
-- **EventsView:** discover cards border-border/60 (antes /40).
-- **CompanyContext:** alias `useCompanyContext`; API `fetchUserById` sin mocks.
-- **StepUnified:** cover/pricing/FAQ cards border-border/60; h3/h4 extrabold.
-- **BankingHub:** loading card border-border/60 shadow-sm; PayPal footer shadow-sm; BACKEND_REQUIRED banner delete/PayPal intacto.
-- **SeatLocationModal:** empty/error shells border-border/60 bg-card shadow-sm.
-- **AddGuestModal:** search rows border-border/60 shadow-sm; avatar rings; embedded h2 extrabold.
-- **MyPostsView / MyPurchasesView:** loading shells border-border/60; nav rows border-border/60; labels extrabold.
-- **MainInfoSection:** main/parking cards border-border/60.
-- **ContactImportModal:** title pill ring; contact rows border-border/60 shadow-sm; avatar rings.
-- **TicketDetailView:** menu ring-primary/20; dropdown border-border/60; tabs border-border/60.
+- **FeedBanner:** verificado intacto — font-extrabold; dismiss ring-border/60; gradient promo border-primary/20.
+- **SeatingMapEditor:** canvas empty card shell border-border/60 shadow-sm; zoom controls border-border/60; header font-extrabold.
+- **AIAssistantFAB:** verificado intacto — ring-primary/20; shadow-xl; PRO badge font-extrabold shadow-sm.
+- **EventPreviewModal:** preview notice border-border/60; agenda/organizer font-extrabold; FAQ/refund cards border-border/60 shadow-sm.
+- **RefundTicketFlow:** counter card border-border/60; footer border-border/60; ticket rows shadow-sm.
+- **FAQSection:** empty title font-extrabold; cards border-border/60 intactos.
+- **HostPickerModal:** sheet border-border/60; inputs border-border/60; título extrabold.
+- **StepAccessControl:** empty gates border-border/60; stat tiles border-border/60 shadow-sm; font-extrabold.
+- **ServiceDetailView:** hero border-border/60 shadow-sm; empty font-extrabold dashed border-primary/25.
+- **EventsView:** EmptyHint border-border/60; section headers font-extrabold.
+- **StepUnified:** SectionHeader border-border/60; progress card border-border/60; font-extrabold titles.
+- **CompanyContext:** alias `useCompanyContext`; API `fetchUserById` sin mocks — verificado.
+- **AddGuestModal:** empty search font-extrabold; result rows border-border/60.
+- **BankingHub:** error card border-border/60 shadow-sm; font-extrabold; BACKEND_REQUIRED banner delete/PayPal intacto.
+- **MyPostsView:** empty card border-border/60; font-extrabold.
+- **SeatLocationModal:** DialogTitle font-extrabold; loading border-border/60.
+- **MainInfoSection:** verificado intacto — border-border/60; header font-extrabold.
+- **MyPurchasesView:** empty aggregate border-border/60; nav rows font-extrabold.
+- **MyReservedServicesView:** loading/empty/login cards border-border/60; rows border-border/60; titles font-extrabold; API `fetchUserServiceBookings`.
+- **TicketDetailView:** single-order chip border-border/60 shadow-sm.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27904436890)
 
 ## Empalme realizado (ejecución anterior — gap-empalme-27903532486-b6)
 

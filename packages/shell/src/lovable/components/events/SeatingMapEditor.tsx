@@ -1049,14 +1049,14 @@ const SeatingMapEditor = ({
             })}
 
             {figures.length === 0 && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-card/80 px-6 py-8 text-center shadow-sm backdrop-blur-sm">
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                   <LayoutGrid className={`h-7 w-7 ${dark ? 'text-primary-foreground' : 'text-primary'}`} />
                 </div>
-                <p className={`px-6 text-sm ${dark ? 'text-zinc-400' : 'text-muted-foreground'}`}>
+                <p className={`text-sm ${dark ? 'text-zinc-400' : 'text-muted-foreground'}`}>
                   Toca una figura abajo para agregarla y configurarla como{' '}
-                  <span className="font-semibold">Categoría</span> o{' '}
-                  <span className="font-semibold">Elemento</span>.
+                  <span className="font-extrabold text-foreground">Categoría</span> o{' '}
+                  <span className="font-extrabold text-foreground">Elemento</span>.
                 </p>
               </div>
             )}
@@ -1068,19 +1068,19 @@ const SeatingMapEditor = ({
         <div className="pointer-events-none absolute right-4 top-1/2 z-20 flex -translate-y-1/2 flex-col gap-2">
           <button
             onClick={() => setZoom((z) => Math.min(z + 25, 400))}
-            className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-sm"
+            className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-card text-foreground shadow-sm"
           >
             <Plus className="h-4 w-4" />
           </button>
           <button
             onClick={() => setZoom(100)}
-            className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-sm"
+            className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-card text-foreground shadow-sm"
           >
             <Focus className="h-4 w-4" />
           </button>
           <button
             onClick={() => setZoom((z) => Math.max(z - 25, 50))}
-            className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-sm"
+            className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-card text-foreground shadow-sm"
           >
             <Minus className="h-4 w-4" />
           </button>

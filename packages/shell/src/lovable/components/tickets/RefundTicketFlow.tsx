@@ -163,7 +163,7 @@ const RefundTicketFlow = ({
           </div>
 
           <div className="px-4 pt-5">
-            <div className="rounded-2xl bg-card py-3 text-center shadow-sm">
+            <div className="rounded-2xl border border-border/60 bg-card py-3 text-center shadow-sm">
               <p className="text-lg font-extrabold text-primary">
                 {selected.size} de {entries.length}
               </p>
@@ -229,7 +229,7 @@ const RefundTicketFlow = ({
             })}
           </div>
 
-          <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border px-4 py-4">
+          <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border/60 px-4 py-4">
             <div className="mx-auto max-w-lg">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-base font-bold text-foreground">Monto a reembolsar</span>
