@@ -125,7 +125,7 @@ const RefundTicketFlow = ({
           <button
             type="button"
             onClick={onClose}
-            className="mt-6 w-full rounded-full bg-primary py-3.5 text-sm font-bold text-primary-foreground shadow"
+            className="mt-6 w-full rounded-full bg-primary py-3.5 text-sm font-bold text-primary-foreground shadow-sm"
           >
             Entendido
           </button>
@@ -243,7 +243,7 @@ const RefundTicketFlow = ({
                   type="button"
                   disabled={selected.size === 0}
                   onClick={() => setStep('confirm')}
-                  className="flex-1 rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground shadow disabled:opacity-50"
+                  className="flex-1 rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground shadow-sm disabled:opacity-50"
                 >
                   Continuar
                 </button>
@@ -283,7 +283,7 @@ const RefundTicketFlow = ({
             </div>
 
             <div>
-              <p className="text-sm font-semibold text-muted-foreground mb-2">Boletas a reembolsar</p>
+              <p className="text-sm font-extrabold text-muted-foreground mb-2">Boletas a reembolsar</p>
               <div className="space-y-2">
                 {selectedEntries.map((e, idx) => (
                   <div key={e.id} className="rounded-2xl border border-border/60 p-3 flex items-center gap-3 shadow-sm">
@@ -317,11 +317,11 @@ const RefundTicketFlow = ({
               <div className="rounded-2xl bg-secondary/60 border border-border/60 p-4 space-y-2 shadow-sm">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal boletas</span>
-                  <span className="font-semibold text-foreground">{formatCOP(grossTotal)}</span>
+                  <span className="font-extrabold text-foreground">{formatCOP(grossTotal)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Comisión plataforma (no reembolsable)</span>
-                  <span className="font-semibold text-foreground">- {formatCOP(platformFee)}</span>
+                  <span className="font-extrabold text-foreground">- {formatCOP(platformFee)}</span>
                 </div>
                 <div className="border-t border-border/60 pt-2 flex justify-between">
                   <span className="font-bold text-foreground">Monto a reembolsar</span>
@@ -342,7 +342,7 @@ const RefundTicketFlow = ({
                 type="button"
                 disabled={submitting}
                 onClick={() => void confirmRefund()}
-                className="flex-1 rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground shadow disabled:opacity-50"
+                className="flex-1 rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground shadow-sm disabled:opacity-50"
               >
                 {submitting ? (
                   <span className="inline-flex items-center justify-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Radicando…</span>
@@ -380,7 +380,7 @@ const RefundTicketFlow = ({
               <h2 className="font-extrabold text-foreground mb-2">Tiempos de procesamiento</h2>
               <p>Los reembolsos aprobados se procesan en <span className="font-bold">3 a 5 días hábiles</span>.</p>
             </section>
-            <button type="button" onClick={() => setStep('confirm')} className="w-full rounded-full bg-primary py-3.5 text-sm font-bold text-primary-foreground shadow">
+            <button type="button" onClick={() => setStep('confirm')} className="w-full rounded-full bg-primary py-3.5 text-sm font-bold text-primary-foreground shadow-sm">
               Entendido
             </button>
           </div>
@@ -401,7 +401,7 @@ const RefundTicketFlow = ({
 
           <div className="fixed bottom-0 left-0 right-0 bg-secondary px-4 py-4">
             <div className="mx-auto max-w-lg">
-              <button type="button" onClick={onClose} className="w-full rounded-full bg-primary py-4 text-base font-bold text-primary-foreground shadow">
+              <button type="button" onClick={onClose} className="w-full rounded-full bg-primary py-4 text-base font-bold text-primary-foreground shadow-sm">
                 Finalizar
               </button>
             </div>

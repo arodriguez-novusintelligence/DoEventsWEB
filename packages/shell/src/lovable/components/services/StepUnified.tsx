@@ -325,7 +325,7 @@ const StepUnified = ({
     <div className="space-y-4">
       {/* Section progress */}
       <div className="rounded-2xl border border-border/60 bg-card p-3 shadow-sm">
-        <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground mb-2">
+        <div className="flex items-center justify-between text-xs font-extrabold text-muted-foreground mb-2">
           <span>Progreso del servicio</span>
           <span className="text-primary">{activeSectionIndex + 1} / {sectionOrder.length}</span>
         </div>
@@ -379,7 +379,7 @@ const StepUnified = ({
             <button
               type="button"
               onClick={useProfilePhoto}
-              className="flex w-full items-center justify-center gap-2 rounded-full border border-border px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-muted/60"
+              className="flex w-full items-center justify-center gap-2 rounded-full border border-border/60 px-4 py-2.5 text-sm font-extrabold text-foreground shadow-sm hover:bg-muted/60"
             >
               <User className="h-4 w-4" />
               Usar mi foto de perfil
@@ -466,7 +466,7 @@ const StepUnified = ({
             )}
           </div>
           {!editMode && (
-            <Button onClick={() => guardedOpenNextSection('sectors')} className="mt-4 w-full rounded-full py-5 text-sm font-semibold">
+            <Button onClick={() => guardedOpenNextSection('sectors')} className="mt-4 w-full rounded-full py-5 text-sm font-extrabold shadow-sm">
               Guardar y Continuar
             </Button>
           )}
@@ -533,7 +533,7 @@ const StepUnified = ({
             })
           )}
           {!editMode && (
-            <Button onClick={() => guardedOpenNextSection('activities')} className="mt-4 w-full rounded-full py-5 text-sm font-semibold">
+            <Button onClick={() => guardedOpenNextSection('activities')} className="mt-4 w-full rounded-full py-5 text-sm font-extrabold shadow-sm">
               Guardar y Continuar
             </Button>
           )}
@@ -602,7 +602,7 @@ const StepUnified = ({
             })
           )}
           {!editMode && (
-            <Button onClick={() => guardedOpenNextSection('pricing')} className="mt-4 w-full rounded-full py-5 text-sm font-semibold">
+            <Button onClick={() => guardedOpenNextSection('pricing')} className="mt-4 w-full rounded-full py-5 text-sm font-extrabold shadow-sm">
               Guardar y Continuar
             </Button>
           )}
@@ -636,7 +636,7 @@ const StepUnified = ({
             )}
           </div>
           {!editMode && (
-            <Button onClick={() => guardedOpenNextSection('location')} className="mt-4 w-full rounded-full py-5 text-sm font-semibold">
+            <Button onClick={() => guardedOpenNextSection('location')} className="mt-4 w-full rounded-full py-5 text-sm font-extrabold shadow-sm">
               Guardar y Continuar
             </Button>
           )}
@@ -660,7 +660,7 @@ const StepUnified = ({
             basePriceCurrency={basePriceCurrency}
           />
           {!editMode && (
-            <Button onClick={() => guardedOpenNextSection('calendar')} className="mt-4 w-full rounded-full py-5 text-sm font-semibold">
+            <Button onClick={() => guardedOpenNextSection('calendar')} className="mt-4 w-full rounded-full py-5 text-sm font-extrabold shadow-sm">
               Guardar y Continuar
             </Button>
           )}
@@ -723,7 +723,7 @@ const StepUnified = ({
             </div>
           </div>
           {!editMode && (
-            <Button onClick={() => guardedOpenNextSection('preferences')} className="mt-4 w-full rounded-full py-5 text-sm font-semibold">
+            <Button onClick={() => guardedOpenNextSection('preferences')} className="mt-4 w-full rounded-full py-5 text-sm font-extrabold shadow-sm">
               Guardar y Continuar
             </Button>
           )}
@@ -764,7 +764,7 @@ const StepUnified = ({
             </Button>
           </div>
           {!editMode && (
-            <Button onClick={() => guardedOpenNextSection('faq')} className="mt-4 w-full rounded-full py-5 text-sm font-semibold">
+            <Button onClick={() => guardedOpenNextSection('faq')} className="mt-4 w-full rounded-full py-5 text-sm font-extrabold shadow-sm">
               Guardar y Continuar
             </Button>
           )}

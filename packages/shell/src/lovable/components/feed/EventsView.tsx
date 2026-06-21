@@ -232,7 +232,7 @@ const EventCard = ({
     </div>
     <div className="p-3.5">
       <h3 className="text-sm font-extrabold text-foreground line-clamp-2 leading-snug">{event.title}</h3>
-      <p className="mt-2 text-sm font-semibold text-foreground">{event.date}</p>
+      <p className="mt-2 text-sm font-extrabold text-foreground">{event.date}</p>
       <p className="mt-1.5 text-xs text-muted-foreground line-clamp-1">{event.location}</p>
       {event.description && (
         <p className="mt-2 text-xs text-foreground/80 line-clamp-2">{event.description}</p>
@@ -264,7 +264,7 @@ const UpcomingEventRow = ({
     </div>
     <div className="flex-1 min-w-0">
       <h3 className="text-sm font-extrabold text-foreground line-clamp-3 leading-snug pr-6">{event.title}</h3>
-      {event.date && <p className="mt-1 text-xs font-semibold text-foreground">{event.date}</p>}
+      {event.date && <p className="mt-1 text-xs font-extrabold text-foreground">{event.date}</p>}
     </div>
     <button
       type="button"
@@ -316,7 +316,7 @@ const OtherEventRow = ({
           <Heart className={`h-4 w-4 flex-shrink-0 ${isFavorite ? 'fill-primary text-primary' : 'text-primary'}`} strokeWidth={2} />
         </button>
       </div>
-      <p className="mt-1 text-sm font-semibold text-foreground">{event.date}</p>
+      <p className="mt-1 text-sm font-extrabold text-foreground">{event.date}</p>
       <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{event.location}</p>
     </div>
   </button>
@@ -354,7 +354,7 @@ const SectionHeader = ({
       <button
         type="button"
         onClick={onAction}
-        className="flex items-center gap-0.5 text-sm font-semibold text-primary whitespace-nowrap"
+        className="flex items-center gap-0.5 text-sm font-extrabold text-primary whitespace-nowrap"
       >
         Ver más <ChevronRight className="h-4 w-4" />
       </button>

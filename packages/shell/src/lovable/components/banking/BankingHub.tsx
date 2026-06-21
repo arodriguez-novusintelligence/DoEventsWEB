@@ -144,7 +144,7 @@ const BankingHub = ({ onBack }: BankingHubProps) => {
             <AlertCircle className="h-7 w-7 text-destructive" />
           </div>
           <p className="text-sm font-extrabold text-foreground">{loadError}</p>
-          <Button type="button" variant="outline" className="rounded-full" onClick={() => void loadMethods()}>
+          <Button type="button" variant="outline" className="rounded-full shadow-sm" onClick={() => void loadMethods()}>
             <RefreshCw className="mr-2 h-4 w-4" />
             Reintentar
           </Button>

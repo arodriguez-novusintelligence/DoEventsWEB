@@ -108,20 +108,20 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
         <h2 className="text-xl font-extrabold text-primary">Control de accesos</h2>
         <p className="mt-1 text-sm text-foreground">
           Asigna el personal a cada puerta del lugar, encargado de escanear los QR de los boletos a la entrada de tu evento.{' '}
-          <span className="font-semibold">Recuerda, deben ser usuarios de la plataforma.</span>
+          <span className="font-extrabold">Recuerda, deben ser usuarios de la plataforma.</span>
         </p>
       </div>
 
       {/* Summary */}
       <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
-        <h3 className="text-sm font-bold text-foreground">{formData.name || 'Evento sin nombre'}</h3>
+        <h3 className="text-sm font-extrabold text-foreground">{formData.name || 'Evento sin nombre'}</h3>
         {formData.location.detectedCity && (
-          <p className="mt-0.5 flex items-center gap-1 text-xs font-semibold text-primary">
+          <p className="mt-0.5 flex items-center gap-1 text-xs font-extrabold text-primary">
             <MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden />
             {formData.location.detectedCity}
           </p>
         )}
-        <p className="mt-3 text-sm font-bold text-foreground">Personal asignado</p>
+        <p className="mt-3 text-sm font-extrabold text-foreground">Personal asignado</p>
         <div className="mt-2 grid grid-cols-2 gap-3">
           <div className="rounded-2xl border border-border/60 bg-secondary/60 p-4 text-center shadow-sm">
             <DoorOpen className="mx-auto mb-1 h-5 w-5 text-primary" />
@@ -136,7 +136,7 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
         </div>
         <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
           <span>Configuración de puertas</span>
-          <span className="font-semibold">
+          <span className="font-extrabold">
             {gatesWithStaff}/{gates.length} asignadas
           </span>
         </div>
@@ -144,12 +144,12 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
 
       {/* Banner */}
       {allAssigned ? (
-        <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-success/10 px-4 py-3 text-sm font-semibold text-success shadow-sm">
+        <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-success/10 px-4 py-3 text-sm font-extrabold text-success shadow-sm">
           <CheckCircle2 className="h-5 w-5" />
           Asignación completa
         </div>
       ) : (
-        <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-primary/10 px-4 py-3 text-sm font-semibold text-primary shadow-sm">
+        <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-primary/10 px-4 py-3 text-sm font-extrabold text-primary shadow-sm">
           <HelpCircle className="h-5 w-5" />
           Asigna al menos una persona por puerta
         </div>
@@ -217,7 +217,7 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
               <button
                 type="button"
                 onClick={() => setPickerGateId(gate.id)}
-                className="mt-3 flex w-full items-center justify-center gap-2 rounded-full bg-primary/10 px-4 py-3 text-sm font-bold text-primary"
+                className="mt-3 flex w-full items-center justify-center gap-2 rounded-full bg-primary/10 px-4 py-3 text-sm font-extrabold text-primary shadow-sm"
               >
                 <UserPlus className="h-4 w-4" /> Asignar personal
               </button>

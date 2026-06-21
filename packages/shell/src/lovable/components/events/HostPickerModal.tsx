@@ -199,8 +199,8 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
                 key={t.key}
                 type="button"
                 onClick={() => setTab(t.key)}
-                className={`relative flex-1 px-3 py-3 text-sm font-semibold transition-colors ${
-                  active ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+                className={`relative flex-1 px-3 py-3 text-sm transition-colors ${
+                  active ? 'font-extrabold text-primary' : 'font-medium text-muted-foreground hover:text-foreground'
                 }`}
               >
                 {t.label}
@@ -215,7 +215,7 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
         <div className="flex-1 overflow-y-auto p-5">
           {tab === 'search' && (
             <div className="space-y-3">
-              <p className="text-sm font-semibold text-foreground">
+              <p className="text-sm font-extrabold text-foreground">
                 Buscar por nombre, @usuario, email o teléfono
               </p>
               <div className="relative">
@@ -251,21 +251,23 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
                     </p>
                   </div>
                 ) : searching ? (
-                  <p className="flex items-center justify-center gap-2 py-8 text-sm text-muted-foreground">
-                    <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                    Buscando…
-                  </p>
+                  <div className="flex flex-col items-center justify-center gap-3 py-8">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                      <Loader2 className="h-7 w-7 animate-spin text-primary" />
+                    </div>
+                    <p className="text-sm font-extrabold text-foreground">Buscando…</p>
+                  </div>
                 ) : searchError ? (
                   <div className="flex flex-col items-center py-8 text-center">
                     <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
                       <AlertCircle className="h-7 w-7 text-destructive" />
                     </div>
-                    <p className="text-sm font-semibold text-destructive">Error al buscar usuarios</p>
+                    <p className="text-sm font-extrabold text-destructive">Error al buscar usuarios</p>
                     <Button
                       type="button"
                       variant="outline"
                       size="sm"
-                      className="mt-3 gap-1.5 rounded-full"
+                      className="mt-3 gap-1.5 rounded-full shadow-sm"
                       onClick={() => void runSearch(query)}
                     >
                       <RefreshCw className="h-3.5 w-3.5" />
@@ -348,7 +350,7 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
                 type="button"
                 onClick={addManual}
                 disabled={!manual.name.trim()}
-                className="mt-2 flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground disabled:opacity-50"
+                className="mt-2 flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3 text-sm font-extrabold text-primary-foreground shadow-sm disabled:opacity-50"
               >
                 <UserPlus className="h-4 w-4" /> Agregar anfitrión
               </button>

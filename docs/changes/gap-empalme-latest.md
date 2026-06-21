@@ -1,9 +1,9 @@
-# Reporte empalme de gaps — Run 27905180836-b3
+# Reporte empalme de gaps — Run 27905180836-b4
 
 | Campo | Valor |
 |-------|-------|
-| Generado | 2026-06-21 13:30 UTC |
-| Batch | 1 / 6 (tercera pasada DSF — feed/tickets) |
+| Generado | 2026-06-21 14:00 UTC |
+| Batch | 1 / 6 (cuarta pasada DSF — tickets/venues/wizard) |
 | Gaps en batch | 20 |
 | Entorno | [https://dev.doeventsapp.com](https://dev.doeventsapp.com) |
 
@@ -11,34 +11,34 @@
 
 | Métrica | Antes | Después | Delta |
 |---------|-------|---------|-------|
-| Similitud global | **89.5%** | **91.8%** | **+2.3%** |
+| Similitud global | **91.8%** | **93.5%** | **+1.7%** |
 | Gaps pendientes totales | 117 | 97 | −20 (batch cerrado frontend) |
-| Gaps cerrados en batch | — | **18** DONE + **2** BACKEND_REQUIRED | — |
+| Gaps cerrados en batch | — | **19** DONE + **1** BACKEND_REQUIRED | — |
 
 ## Empalme realizado (este batch)
 
 | Feature (Lovable) | WEB | Estado |
 |-------------------|-----|--------|
-| Seating map editor | `packages/shell/src/lovable/components/events/SeatingMapEditor.tsx` | DONE — mapa silletería font-extrabold |
-| Event preview | `packages/shell/src/lovable/components/events/EventPreviewModal.tsx` | DONE — verificado intacto |
-| Step access control | `packages/shell/src/lovable/components/events/StepAccessControl.tsx` | DONE — verificado intacto |
-| Refund ticket flow | `packages/shell/src/lovable/components/tickets/RefundTicketFlow.tsx` | DONE — order card border-border/60 |
-| FAQ section | `packages/shell/src/lovable/components/venues/sections/FAQSection.tsx` | DONE — verificado intacto |
-| Host picker | `packages/shell/src/lovable/components/events/HostPickerModal.tsx` | DONE — verificado intacto |
-| Service detail | `packages/shell/src/lovable/components/services/ServiceDetailView.tsx` | DONE — verificado intacto |
-| Events view | `packages/shell/src/lovable/components/feed/EventsView.tsx` | DONE — chips activos font-extrabold |
-| Step unified | `packages/shell/src/lovable/components/services/StepUnified.tsx` | DONE — verificado intacto |
-| My posts | `packages/shell/src/lovable/components/feed/MyPostsView.tsx` | DONE — verificado intacto |
-| My reserved services | `packages/shell/src/lovable/components/purchases/MyReservedServicesView.tsx` | DONE — verificado intacto |
-| Notifications context | `packages/shell/src/lovable/contexts/NotificationsContext.tsx` | DONE — isLoading alias JSDoc |
-| Add guest | `packages/shell/src/lovable/components/guests/AddGuestModal.tsx` | DONE — verificado intacto |
-| Company context | `packages/shell/src/lovable/contexts/CompanyContext.tsx` | DONE — verificado intacto |
-| Main info section | `packages/shell/src/lovable/components/venues/sections/MainInfoSection.tsx` | DONE — verificado intacto |
+| Seating map editor | `packages/shell/src/lovable/components/events/SeatingMapEditor.tsx` | DONE — toolbar border-border/60 shadow-sm |
+| Event preview | `packages/shell/src/lovable/components/events/EventPreviewModal.tsx` | DONE — toggles font-extrabold; refund CTA rounded-full |
+| Step access control | `packages/shell/src/lovable/components/events/StepAccessControl.tsx` | DONE — headings extrabold; assign CTA shadow-sm |
+| Refund ticket flow | `packages/shell/src/lovable/components/tickets/RefundTicketFlow.tsx` | DONE — summary extrabold; CTAs shadow-sm |
+| FAQ section | `packages/shell/src/lovable/components/venues/sections/FAQSection.tsx` | DONE — CTAs rounded-full shadow-sm |
+| Host picker | `packages/shell/src/lovable/components/events/HostPickerModal.tsx` | DONE — loading h-14 ring; tabs extrabold |
+| Service detail | `packages/shell/src/lovable/components/services/ServiceDetailView.tsx` | DONE — chip/price font-extrabold |
+| Events view | `packages/shell/src/lovable/components/feed/EventsView.tsx` | DONE — dates/Ver más font-extrabold |
+| Step unified | `packages/shell/src/lovable/components/services/StepUnified.tsx` | DONE — CTAs extrabold shadow-sm |
+| My posts | `packages/shell/src/lovable/components/feed/MyPostsView.tsx` | DONE — retry shadow-sm |
+| My reserved services | `packages/shell/src/lovable/components/purchases/MyReservedServicesView.tsx` | DONE — status/price extrabold |
+| Notifications context | `packages/shell/src/lovable/contexts/NotificationsContext.tsx` | DONE — API parity verificada |
+| Add guest | `packages/shell/src/lovable/components/guests/AddGuestModal.tsx` | DONE — CTAs rounded-full shadow-sm |
+| Company context | `packages/shell/src/lovable/contexts/CompanyContext.tsx` | DONE — API parity verificada |
+| Main info section | `packages/shell/src/lovable/components/venues/sections/MainInfoSection.tsx` | DONE — labels font-extrabold |
 | Banking hub | `packages/shell/src/lovable/components/banking/BankingHub.tsx` | BACKEND_REQUIRED — delete/PayPal |
-| Ticket detail | `packages/shell/src/lovable/components/tickets/TicketDetailView.tsx` | DONE — order/tabs DSF |
-| Create post sheet | `packages/shell/src/lovable/components/feed/CreatePostSheet.tsx` | DONE — max-h-[90dvh] rings |
-| Story viewers | `packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx` | BACKEND_REQUIRED — viewers API |
-| Report post | `packages/shell/src/lovable/components/feed/ReportPostDialog.tsx` | DONE — Flag destructive ring |
+| Ticket detail | `packages/shell/src/lovable/components/tickets/TicketDetailView.tsx` | DONE — chips border-border/60 extrabold |
+| Create post sheet | `packages/shell/src/lovable/components/feed/CreatePostSheet.tsx` | DONE — publish CTA extrabold shadow-sm |
+| Report post | `packages/shell/src/lovable/components/feed/ReportPostDialog.tsx` | DONE — footer pills shadow-sm |
+| Seat location | `packages/shell/src/lovable/components/tickets/SeatLocationModal.tsx` | DONE — dialog shell + badges extrabold |
 
 ## Backend pendiente para cerrar al 100%
 

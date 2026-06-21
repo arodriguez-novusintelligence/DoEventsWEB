@@ -74,7 +74,7 @@ const SelectWithExtras = ({
             />
           </div>
         ) : (
-          <button type="button" onClick={() => setCustomOpen(true)} className="text-sm text-primary font-medium hover:underline">
+          <button type="button" onClick={() => setCustomOpen(true)} className="text-sm font-extrabold text-primary hover:underline">
             {addAnotherLabel} <Plus className="w-3.5 h-3.5 inline" />
           </button>
         )}
@@ -103,7 +103,7 @@ const MainInfoSection = () => {
       <MediaUpload />
 
       <div>
-        <Label className="text-sm font-medium">Nombre del lugar *</Label>
+        <Label className="text-sm font-extrabold">Nombre del lugar *</Label>
         <Input
           value={form.name}
           onChange={(e) => update({ name: e.target.value })}
@@ -113,7 +113,7 @@ const MainInfoSection = () => {
       </div>
 
       <div>
-        <Label className="text-sm font-medium">Tipo de lugar *</Label>
+        <Label className="text-sm font-extrabold">Tipo de lugar *</Label>
         <Select
           value={form.placeType || ''}
           onValueChange={(v) => update({ placeType: v })}
@@ -138,7 +138,7 @@ const MainInfoSection = () => {
       </div>
 
       <div>
-        <Label className="text-sm font-medium">¿El lugar tiene silletería asignada?</Label>
+        <Label className="text-sm font-extrabold">¿El lugar tiene silletería asignada?</Label>
         <RadioGroup
           value={form.hasSeating ? 'yes' : 'no'}
           onValueChange={(v) => update({ hasSeating: v === 'yes' })}
@@ -157,7 +157,7 @@ const MainInfoSection = () => {
 
       {!form.hasSeating && (
         <div>
-          <Label className="text-sm font-medium">Aforo del lugar</Label>
+          <Label className="text-sm font-extrabold">Aforo del lugar</Label>
           <div className="flex items-center justify-between mt-2">
             <div className="flex items-center gap-2 text-muted-foreground">
               <Users className="w-5 h-5 text-primary" />
@@ -167,7 +167,7 @@ const MainInfoSection = () => {
               <button type="button" onClick={() => update({ capacity: String(Math.max(1, capacity - 1)) })} className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center hover:bg-primary/5">
                 <Minus className="w-4 h-4 text-primary" />
               </button>
-              <span className="w-8 text-center font-bold text-primary">{capacity}</span>
+              <span className="w-8 text-center font-extrabold text-primary">{capacity}</span>
               <button type="button" onClick={() => update({ capacity: String(capacity + 1) })} className="w-8 h-8 rounded-full border border-primary bg-primary text-primary-foreground flex items-center justify-center">
                 <Plus className="w-4 h-4" />
               </button>
@@ -185,21 +185,21 @@ const MainInfoSection = () => {
       </div>
 
       <div>
-        <Label className="text-sm font-medium">Servicios y facilidades del lugar</Label>
+        <Label className="text-sm font-extrabold">Servicios y facilidades del lugar</Label>
         <div className="mt-2">
           <FacilitiesPicker selected={form.facilities} onChange={(facilities) => update({ facilities })} />
         </div>
       </div>
 
       <div>
-        <Label className="text-sm font-medium">Eventos que se pueden realizar en el lugar</Label>
+        <Label className="text-sm font-extrabold">Eventos que se pueden realizar en el lugar</Label>
         <div className="mt-2">
           <EventsPicker selected={form.allowedEventTypes} onChange={(allowedEventTypes) => update({ allowedEventTypes })} />
         </div>
       </div>
 
       <div>
-        <Label className="text-sm font-medium">Accesibilidad</Label>
+        <Label className="text-sm font-extrabold">Accesibilidad</Label>
         <div className="mt-1">
           <SelectWithExtras
             options={accesibilidad}
@@ -212,7 +212,7 @@ const MainInfoSection = () => {
       </div>
 
       <div>
-        <Label className="text-sm font-medium">Seguridad</Label>
+        <Label className="text-sm font-extrabold">Seguridad</Label>
         <div className="mt-1">
           <SelectWithExtras
             options={seguridad}
@@ -225,7 +225,7 @@ const MainInfoSection = () => {
       </div>
 
       <div>
-        <Label className="text-sm font-medium">¿Eres dueño/administrador del lugar?</Label>
+        <Label className="text-sm font-extrabold">¿Eres dueño/administrador del lugar?</Label>
         <div className="flex gap-6 mt-3">
           {(['dueno', 'admin'] as const).map((rol) => (
             <label key={rol} className="flex items-center gap-2 cursor-pointer">
@@ -243,7 +243,7 @@ const MainInfoSection = () => {
       </div>
 
       <div>
-        <Label className="text-sm font-medium">Descripción y condiciones del lugar</Label>
+        <Label className="text-sm font-extrabold">Descripción y condiciones del lugar</Label>
         <Textarea
           value={form.description}
           onChange={(e) => update({ description: e.target.value.slice(0, MAX_DESC) })}

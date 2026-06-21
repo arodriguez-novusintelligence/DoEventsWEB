@@ -86,8 +86,8 @@ export const ReportPostDialog = ({
                 key={item.id}
                 className={`flex items-center gap-2 rounded-xl border p-3 text-sm cursor-pointer transition-colors shadow-sm ${
                   reason === item.id
-                    ? 'border-primary bg-primary/5 ring-1 ring-primary/30'
-                    : 'border-border/60 hover:bg-accent/50'
+                    ? 'border-primary bg-primary/5 font-extrabold ring-1 ring-primary/30'
+                    : 'border-border/60 font-medium hover:bg-accent/50'
                 }`}
               >
                 <input
@@ -117,11 +117,11 @@ export const ReportPostDialog = ({
           </div>
         )}
 
-        <DialogFooter className="gap-2 sm:gap-0">
-          <Button type="button" variant="outline" className="rounded-full" onClick={() => onOpenChange(false)}>
+        <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-2">
+          <Button type="button" variant="outline" className="rounded-full shadow-sm" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
-          <Button type="button" variant="destructive" className="rounded-full gap-1.5" onClick={handleSubmit} disabled={submitting}>
+          <Button type="button" variant="destructive" className="gap-1.5 rounded-full shadow-sm" onClick={handleSubmit} disabled={submitting}>
             {submitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

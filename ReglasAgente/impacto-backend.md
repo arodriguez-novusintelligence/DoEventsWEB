@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27905180836-b4`: batch 1 cuarta pasada (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). DSF font-extrabold, border-border/60, shadow-sm, rounded-full CTAs en SeatLocationModal, HostPickerModal, TicketDetailView, StepUnified, FAQSection, etc.; similitud ~93.5%; 97 gaps restantes; build:devaws OK.
+
 Run `gap-empalme-27905180836-b3`: batch 1 tercera pasada (20 gaps) — 18 DONE frontend; 2 BACKEND_REQUIRED (`BankingHub` delete/PayPal, `StoryViewersSheet` viewers API). CreatePostSheet/ReportPostDialog/TicketDetailView DSF; StoryViewersSheet skeleton; similitud ~91.8%; 97 gaps restantes; build:devaws OK.
 
 Run `gap-empalme-27905180836-b2`: batch 1 segunda pasada (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). DSF polish loading h-14 rings, font-extrabold, border-border/60, success tokens SeatingMapEditor; contextos isLoading/refreshCompany; similitud ~89.5%; 97 gaps restantes; build:devaws OK.
@@ -126,7 +128,24 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27905180836-b3)
+## Empalme realizado (última ejecución — gap-empalme-27905180836-b4)
+
+- **SeatLocationModal:** DialogContent border-border/60 shadow-sm; badges font-extrabold; error font-extrabold; retry rounded-full shadow-sm; API `fetchAvailableSeats`/`getVenueById` intacta.
+- **HostPickerModal:** tabs font-extrabold active; search heading extrabold; loading h-14 ring; error retry shadow-sm; manual submit shadow-sm.
+- **TicketDetailView:** STATUS_CHIP border-border/60; countdown shadow-sm font-extrabold; price/QR captions extrabold.
+- **EventPreviewModal:** draft badge + expand toggles font-extrabold; refund CTA rounded-full.
+- **StepAccessControl:** summary headings font-extrabold; status banners extrabold; assign CTA shadow-sm.
+- **RefundTicketFlow:** summary labels font-extrabold; CTAs shadow-sm.
+- **FAQSection:** empty CTAs rounded-full shadow-sm; respuesta label extrabold.
+- **ServiceDetailView / EventsView / MyReservedServicesView:** chip/price/date font-extrabold; retry shadow-sm.
+- **StepUnified:** progress header extrabold; profile-photo border-border/60 shadow-sm; Guardar CTAs extrabold shadow-sm.
+- **MainInfoSection:** field labels font-extrabold; capacity value extrabold.
+- **AddGuestModal / CreatePostSheet / ReportPostDialog / MyPostsView:** CTAs rounded-full shadow-sm; reason rows font-extrabold selected.
+- **SeatingMapEditor:** toolbar/shape tiles border-border/60 shadow-sm; shape labels extrabold.
+- **BankingHub:** BACKEND_REQUIRED banner delete/PayPal intacto; retry shadow-sm.
+- **NotificationsContext / CompanyContext:** API parity Lovable verificada intacta (isLoading, refreshCompany, fetchUserNotifications).
+
+## Empalme realizado (ejecución anterior — gap-empalme-27905180836-b3)
 
 - **CreatePostSheet:** Drawer max-h-[90dvh]; PenLine header ring; avatar ring-primary/20; location border-border/60 shadow-sm; visibility inactive border-border/60; media ring-primary/20; add-media dashed border-primary/25.
 - **ReportPostDialog:** DialogTitle font-extrabold; DialogContent border-border/60; radio rows border-border/60 inactive; `reportPublication` API real intacta.

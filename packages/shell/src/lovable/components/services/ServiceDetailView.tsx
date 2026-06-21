@@ -133,7 +133,7 @@ const ServiceDetailView = ({
               <span className="font-extrabold text-foreground">Sin foto del servicio</span>
             </div>
           )}
-          <span className="absolute top-3 left-3 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
+          <span className="absolute top-3 left-3 rounded-full bg-primary px-3 py-1 text-xs font-extrabold text-primary-foreground">
             Servicio
           </span>
         </div>
@@ -171,7 +171,7 @@ const ServiceDetailView = ({
           <button
             type="button"
             onClick={onOpenProvider}
-            className="mt-2 text-xs font-semibold text-primary"
+            className="mt-2 text-xs font-extrabold text-primary"
           >
             Ver perfil del proveedor
           </button>
@@ -201,7 +201,7 @@ const ServiceDetailView = ({
                 <li key={`${s}-${activity}`} className="flex items-center justify-between text-sm">
                   <span className="text-foreground">{activity}</span>
                   {p?.cost && (
-                    <span className="font-semibold text-primary">
+                    <span className="font-extrabold text-primary">
                       {p.currency} {Number(p.cost).toLocaleString()} · {p.pricingType}
                     </span>
                   )}

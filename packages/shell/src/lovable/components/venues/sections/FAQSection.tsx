@@ -38,12 +38,12 @@ const FAQSection = () => {
       </p>
 
       {form.faqs.length === 0 ? (
-        <div className="mt-4 rounded-xl border border-dashed border-primary/25 bg-secondary/20 p-6 text-center shadow-sm">
+        <div className="mt-4 rounded-xl border border-dashed border-primary/25 border-border/60 bg-secondary/20 p-6 text-center shadow-sm">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
             <HelpCircle className="h-7 w-7 text-primary" />
           </div>
           <p className="mt-3 text-sm font-extrabold text-foreground">Sin preguntas frecuentes aún</p>
-          <Button type="button" variant="outline" className="mt-4 w-full border-dashed" onClick={addFAQ}>
+          <Button type="button" variant="outline" className="mt-4 w-full rounded-full border-dashed shadow-sm" onClick={addFAQ}>
             <Plus className="w-4 h-4 mr-2" />
             Agregar pregunta
           </Button>
@@ -64,7 +64,7 @@ const FAQSection = () => {
                     />
                   </div>
                   <div>
-                    <Label className="text-xs text-muted-foreground">Respuesta</Label>
+                    <Label className="text-xs font-extrabold text-muted-foreground">Respuesta</Label>
                     <Textarea
                       placeholder="Escribe la respuesta aquí..."
                       value={faq.answer}
@@ -80,7 +80,7 @@ const FAQSection = () => {
               </div>
             </div>
           ))}
-          <Button type="button" variant="outline" className="w-full border-dashed" onClick={addFAQ}>
+          <Button type="button" variant="outline" className="w-full rounded-full border-dashed shadow-sm" onClick={addFAQ}>
             <Plus className="w-4 h-4 mr-2" />
             Agregar otra pregunta
           </Button>

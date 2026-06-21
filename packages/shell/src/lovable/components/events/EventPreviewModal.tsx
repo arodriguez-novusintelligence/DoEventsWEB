@@ -77,7 +77,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
             <h1 className="text-2xl font-extrabold text-primary leading-tight">{data.name || 'Sin nombre'}</h1>
           </div>
           <div className="mt-2">
-            <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+            <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-extrabold text-primary">
               {data.persistedEventId ? 'Borrador guardado' : 'Vista previa — borrador'}
             </span>
           </div>
@@ -101,7 +101,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
               <Field icon={HomeIcon} label="Tipo de lugar" value={data.location.customType || '—'} />
             </div>
             <div className="mt-4 text-center">
-              <button onClick={() => setShowDetail((v) => !v)} className="text-sm font-semibold text-primary">
+              <button onClick={() => setShowDetail((v) => !v)} className="text-sm font-extrabold text-primary">
                 {showDetail ? 'Más detalle del evento  -' : 'Más detalle del evento  +'}
               </button>
             </div>
@@ -159,7 +159,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
                   </div>
                 </div>
                 {(venueImgs.length > 0 || seatingFigures.length > 0) && (
-                  <button onClick={() => setShowVenueImgs((v) => !v)} className="mt-3 flex items-center gap-1 text-sm font-semibold text-primary">
+                  <button onClick={() => setShowVenueImgs((v) => !v)} className="mt-3 flex items-center gap-1 text-sm font-extrabold text-primary">
                     {showVenueImgs ? '∧ Ocultar imágenes del lugar' : '∨ Ver imágenes del lugar'}
                   </button>
                 )}
@@ -175,7 +175,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
                     )}
                   </div>
                 )}
-                <p className="mt-3 flex items-center gap-1 text-sm font-semibold text-muted-foreground">
+                <p className="mt-3 flex items-center gap-1 text-sm font-extrabold text-muted-foreground">
                   <MapPin className="h-4 w-4" /> Ubicación visible al publicar el evento
                 </p>
               </div>
@@ -248,7 +248,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
                   <span className="font-bold">Solicita tu reembolso</span>
                 </div>
                 <p className="mt-2 text-sm text-foreground">{refundLabel}</p>
-                <button className="mt-3 w-full rounded-xl bg-card py-2.5 text-sm font-semibold text-primary shadow-sm">
+                <button className="mt-3 w-full rounded-full bg-card py-2.5 text-sm font-extrabold text-primary shadow-sm">
                   Ver política de reembolsos →
                 </button>
               </div>

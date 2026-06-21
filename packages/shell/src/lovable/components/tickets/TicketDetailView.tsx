@@ -47,9 +47,9 @@ const STATUS_LABELS: Record<TicketStatus, string> = {
 
 const STATUS_CHIP: Record<TicketStatus, string> = {
   aprobada: 'bg-primary/10 text-primary border-primary/20',
-  pendiente: 'bg-secondary text-secondary-foreground border-border',
+  pendiente: 'bg-secondary text-secondary-foreground border-border/60',
   cancelada: 'bg-destructive/10 text-destructive border-destructive/20',
-  finalizada: 'bg-muted text-muted-foreground border-border',
+  finalizada: 'bg-muted text-muted-foreground border-border/60',
 };
 
 const PendingCountdown = ({ expiresAtTs }: { expiresAtTs?: number }) => {
@@ -57,7 +57,7 @@ const PendingCountdown = ({ expiresAtTs }: { expiresAtTs?: number }) => {
   if (!expiresAtTs) return null;
   return (
     <div
-      className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold ${
+      className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-extrabold shadow-sm ${
         isExpired ? 'bg-destructive/10 text-destructive' : 'bg-secondary text-secondary-foreground'
       }`}
     >
@@ -311,7 +311,7 @@ const TicketDetailView = ({
                   </span>
                   <p className="mt-3 text-base font-extrabold text-foreground">Silla - {seatLabel}</p>
                   {priceLabel && (
-                    <p className="mt-1 text-sm font-semibold text-primary">{priceLabel}</p>
+                    <p className="mt-1 text-sm font-extrabold text-primary">{priceLabel}</p>
                   )}
                 </div>
                 <div className="text-right">
@@ -344,7 +344,7 @@ const TicketDetailView = ({
                   <div className="flex justify-center">
                     <img src={qrUrl} alt="QR de la boleta" className="h-64 w-64" />
                   </div>
-                  <p className="mt-3 text-center text-sm font-semibold text-foreground leading-snug px-2">
+                  <p className="mt-3 text-center text-sm font-extrabold text-foreground leading-snug px-2">
                     {qrDescription}
                   </p>
                   <p className="mt-2 text-center text-xs font-medium text-muted-foreground tracking-wide break-all">

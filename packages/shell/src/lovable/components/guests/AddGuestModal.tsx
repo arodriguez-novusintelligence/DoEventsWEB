@@ -625,7 +625,7 @@ export function AddGuestModal({
                 <Switch id="fav" checked={form.isFavorite} onCheckedChange={(c) => setForm({ ...form, isFavorite: c })} />
                 <Label htmlFor="fav" className="text-sm">Marcar como invitado favorito</Label>
               </div>
-              <Button type="submit" className="w-full" disabled={isSaving}>
+              <Button type="submit" className="w-full rounded-full shadow-sm" disabled={isSaving}>
                 {isSaving ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Guardando…</> : "Agregar invitado"}
               </Button>
               {keepOpenAfterAdd && (
@@ -660,7 +660,7 @@ export function AddGuestModal({
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
                   <AlertCircle className="h-7 w-7 text-destructive" />
                 </div>
-                <p className="text-sm font-medium text-destructive px-4">{searchError}</p>
+                <p className="px-4 text-sm font-extrabold text-destructive">{searchError}</p>
                 <Button type="button" variant="outline" size="sm" className="rounded-full gap-1.5" onClick={() => void search()}>
                   <RefreshCw className="h-4 w-4" />
                   Reintentar
@@ -697,7 +697,7 @@ export function AddGuestModal({
                         </div>
                       )}
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium">{u.name} {u.lastName}</p>
+                        <p className="truncate text-sm font-extrabold">{u.name} {u.lastName}</p>
                         {u.username && <p className="truncate text-xs text-muted-foreground">@{u.username.replace(/^@/, '')}</p>}
                       </div>
                       {selected && <span className="text-xs font-bold text-primary">✓</span>}
@@ -706,7 +706,7 @@ export function AddGuestModal({
                 })}
                 <Button
                   onClick={() => void addSelectedSearchResults()}
-                  className="w-full"
+                  className="w-full rounded-full shadow-sm"
                   disabled={isSaving || selectedSearchIds.size === 0}
                 >
                   {isSaving ? (
@@ -730,7 +730,7 @@ export function AddGuestModal({
                     {foundUser.username && <p className="text-sm text-muted-foreground">@{foundUser.username.replace(/^@/, '')}</p>}
                   </div>
                 </div>
-                <Button onClick={() => void addFound()} className="w-full" disabled={isSaving}>
+                <Button onClick={() => void addFound()} className="w-full rounded-full shadow-sm" disabled={isSaving}>
                   {isSaving ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Agregando…</> : "Agregar a mis invitados"}
                 </Button>
               </div>
@@ -766,7 +766,7 @@ export function AddGuestModal({
         {!hideTrigger && (
           <DialogTrigger asChild>
             {trigger || (
-              <Button className="rounded-xl gap-2 bg-primary hover:bg-primary/90">
+              <Button className="gap-2 rounded-full bg-primary shadow-sm hover:bg-primary/90">
                 <UserPlus className="h-4 w-4" />Nuevo invitado
               </Button>
             )}

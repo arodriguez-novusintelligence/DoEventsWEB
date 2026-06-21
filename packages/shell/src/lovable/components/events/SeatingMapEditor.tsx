@@ -1101,15 +1101,15 @@ const SeatingMapEditor = ({
           <div className="flex flex-wrap items-center gap-3 px-4 pt-2 text-xs">
             <div className="flex items-center gap-1.5">
               <span className="text-muted-foreground">Curvatura</span>
-              <button onClick={() => bumpInner(-5)} className="flex h-6 w-6 items-center justify-center rounded-full border border-border bg-card text-foreground">−</button>
+              <button onClick={() => bumpInner(-5)} className="flex h-6 w-6 items-center justify-center rounded-full border border-border/60 bg-card shadow-sm text-foreground">−</button>
               <span className="w-8 text-center font-bold tabular-nums">{arcInner}</span>
-              <button onClick={() => bumpInner(5)} className="flex h-6 w-6 items-center justify-center rounded-full border border-border bg-card text-foreground">+</button>
+              <button onClick={() => bumpInner(5)} className="flex h-6 w-6 items-center justify-center rounded-full border border-border/60 bg-card shadow-sm text-foreground">+</button>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="text-muted-foreground">Apertura</span>
-              <button onClick={() => bumpSpan(-10)} className="flex h-6 w-6 items-center justify-center rounded-full border border-border bg-card text-foreground">−</button>
+              <button onClick={() => bumpSpan(-10)} className="flex h-6 w-6 items-center justify-center rounded-full border border-border/60 bg-card shadow-sm text-foreground">−</button>
               <span className="w-10 text-center font-bold tabular-nums">{arcSpan}°</span>
-              <button onClick={() => bumpSpan(10)} className="flex h-6 w-6 items-center justify-center rounded-full border border-border bg-card text-foreground">+</button>
+              <button onClick={() => bumpSpan(10)} className="flex h-6 w-6 items-center justify-center rounded-full border border-border/60 bg-card shadow-sm text-foreground">+</button>
             </div>
           </div>
         )}
@@ -1132,7 +1132,7 @@ const SeatingMapEditor = ({
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => setTextEditId(selected.id)}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-card text-foreground"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-border/60 bg-card shadow-sm text-foreground"
               title="Estilo de texto"
             >
               <Type className="h-4 w-4" />
@@ -1140,7 +1140,7 @@ const SeatingMapEditor = ({
             <button
               onClick={() => updateFigure(selected.id, { name: '' })}
               disabled={!selected.name}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-card text-foreground disabled:opacity-40"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-border/60 bg-card shadow-sm text-foreground disabled:opacity-40"
               title="Eliminar título"
             >
               <Eraser className="h-4 w-4" />
@@ -1204,14 +1204,14 @@ const SeatingMapEditor = ({
                 setPendingShape(s.id);
               }
             }}
-            className="flex min-w-[72px] flex-shrink-0 flex-col items-center justify-center gap-1 rounded-2xl border border-border bg-card px-3 py-2 text-foreground transition-colors hover:border-primary hover:bg-primary/5"
+            className="flex min-w-[72px] flex-shrink-0 flex-col items-center justify-center gap-1 rounded-2xl border border-border/60 bg-card shadow-sm px-3 py-2 text-foreground transition-colors hover:border-primary hover:bg-primary/5"
           >
             {s.id === 'image' ? (
               <ImageIcon className="h-5 w-5 text-primary" aria-hidden />
             ) : (
               <span className="text-xl leading-none">{s.icon}</span>
             )}
-            <span className="text-[11px] font-semibold">{s.label}</span>
+            <span className="text-[11px] font-extrabold">{s.label}</span>
           </button>
         ))}
       </div>
@@ -1407,7 +1407,7 @@ const Chip = ({
   <button
     type="button"
     onClick={onClick}
-    className="flex flex-shrink-0 items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground"
+    className="flex flex-shrink-0 items-center gap-1.5 rounded-full border border-border/60 bg-card shadow-sm px-3 py-1.5 text-xs font-semibold text-foreground"
   >
     {icon}
     {label}
@@ -1443,7 +1443,7 @@ const RolePickerModal = ({
         </button>
         <button
           onClick={() => onPick('element')}
-          className="flex w-full items-start gap-3 rounded-xl border border-border bg-card p-3 text-left"
+          className="flex w-full items-start gap-3 rounded-xl border border-border/60 bg-card shadow-sm p-3 text-left"
         >
           <Box className="mt-0.5 h-4 w-4 text-foreground" />
           <div>
@@ -2488,7 +2488,7 @@ const NameStyleEditor = ({
             <select
               value={family}
               onChange={(e) => onChange({ fontFamily: e.target.value })}
-              className="h-9 w-full rounded-lg border border-border bg-card px-2 text-sm text-foreground"
+              className="h-9 w-full rounded-lg border border-border/60 bg-card shadow-sm px-2 text-sm text-foreground"
             >
               {FONT_FAMILIES.map((f) => (
                 <option key={f.value} value={f.value}>
@@ -2595,7 +2595,7 @@ const NameStyleEditor = ({
                 type="color"
                 value={color}
                 onChange={(e) => onChange({ textColor: e.target.value })}
-                className="h-8 w-10 cursor-pointer rounded-md border border-border bg-card"
+                className="h-8 w-10 cursor-pointer rounded-md border border-border/60 bg-card shadow-sm"
                 title="Color personalizado"
               />
             </div>
@@ -2691,7 +2691,7 @@ const TextStyleModal = ({
                 type="color"
                 value={draft.textColor ?? '#000000'}
                 onChange={(e) => set({ textColor: e.target.value })}
-                className="h-10 w-12 cursor-pointer rounded-md border border-border bg-card"
+                className="h-10 w-12 cursor-pointer rounded-md border border-border/60 bg-card shadow-sm"
               />
               <Input
                 value={draft.textColor ?? ''}
@@ -2730,7 +2730,7 @@ const TextStyleModal = ({
             <div className="flex items-center gap-3">
               <button
                 onClick={() => set({ fontSize: Math.max(8, (draft.fontSize ?? 11) - 1) })}
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-card shadow-sm"
               >
                 <Minus className="h-4 w-4" />
               </button>
@@ -2742,7 +2742,7 @@ const TextStyleModal = ({
               />
               <button
                 onClick={() => set({ fontSize: Math.min(72, (draft.fontSize ?? 11) + 1) })}
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-card shadow-sm"
               >
                 <Plus className="h-4 w-4" />
               </button>

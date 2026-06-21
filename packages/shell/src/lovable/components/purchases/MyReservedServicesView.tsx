@@ -86,7 +86,7 @@ export const MyReservedServicesView = ({ onBack }: MyReservedServicesViewProps) 
               type="button"
               variant="outline"
               size="sm"
-              className="mt-4 gap-1.5 rounded-full"
+              className="mt-4 gap-1.5 rounded-full shadow-sm"
               onClick={() => setReloadKey((k) => k + 1)}
             >
               <RefreshCw className="h-3.5 w-3.5" />
@@ -99,7 +99,7 @@ export const MyReservedServicesView = ({ onBack }: MyReservedServicesViewProps) 
               <Briefcase className="h-7 w-7 text-primary" />
             </div>
             <p className="mt-3 text-sm font-extrabold text-foreground">Inicia sesión para ver tus reservas</p>
-            <Button type="button" className="mt-4 rounded-full" onClick={() => navigate('/auth/login')}>
+            <Button type="button" className="mt-4 rounded-full shadow-sm" onClick={() => navigate('/auth/login')}>
               Iniciar sesión
             </Button>
           </div>
@@ -126,10 +126,10 @@ export const MyReservedServicesView = ({ onBack }: MyReservedServicesViewProps) 
                 <div className="flex-1 min-w-0">
                   <p className="truncate text-sm font-extrabold text-foreground">{booking.serviceName}</p>
                   <p className="text-xs text-muted-foreground">{formatDateRange(booking.startDate, booking.endDate)}</p>
-                  <p className="mt-1 text-xs font-medium text-primary">{formatBookingStatus(booking.status)}</p>
+                  <p className="mt-1 text-xs font-extrabold text-primary">{formatBookingStatus(booking.status)}</p>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className="text-xs font-semibold text-foreground">
+                  <p className="text-xs font-extrabold text-foreground">
                     {formatCurrency(booking.pricing?.total)}
                   </p>
                   <ChevronRight className="mt-1 h-4 w-4 text-muted-foreground ml-auto" />

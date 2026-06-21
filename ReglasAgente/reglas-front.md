@@ -111,6 +111,34 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+---
+
+## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b4)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| SeatLocationModal shell | VISUAL | Sí | `tickets/SeatLocationModal.tsx` | Dialog border-border/60 shadow-sm; badges extrabold; retry rounded-full |
+| HostPickerModal loading | VISUAL | Sí | `events/HostPickerModal.tsx` | h-14 ring loading; tabs extrabold; submit shadow-sm |
+| TicketDetailView chips | VISUAL | Sí | `tickets/TicketDetailView.tsx` | border-border/60; countdown shadow-sm extrabold |
+| EventPreviewModal toggles | VISUAL | Sí | `events/EventPreviewModal.tsx` | font-extrabold; refund CTA rounded-full |
+| StepAccessControl headings | VISUAL | Sí | `events/StepAccessControl.tsx` | extrabold summary; assign CTA shadow-sm |
+| RefundTicketFlow summary | VISUAL | Sí | `tickets/RefundTicketFlow.tsx` | labels extrabold; CTAs shadow-sm |
+| FAQSection CTAs | VISUAL | Sí | `venues/sections/FAQSection.tsx` | rounded-full shadow-sm; respuesta label extrabold |
+| ServiceDetailView chips | VISUAL | Sí | `services/ServiceDetailView.tsx` | servicio/precio font-extrabold |
+| EventsView dates | VISUAL | Sí | `feed/EventsView.tsx` | card dates + Ver más font-extrabold |
+| StepUnified CTAs | VISUAL | Sí | `services/StepUnified.tsx` | Guardar extrabold shadow-sm; photo border-border/60 |
+| MyPostsView retry | VISUAL | Sí | `feed/MyPostsView.tsx` | retry rounded-full shadow-sm |
+| MyReservedServices rows | VISUAL | Sí | `purchases/MyReservedServicesView.tsx` | status/price extrabold; retry shadow-sm |
+| MainInfoSection labels | VISUAL | Sí | `venues/sections/MainInfoSection.tsx` | field labels font-extrabold |
+| CreatePostSheet publish | VISUAL | Sí | `feed/CreatePostSheet.tsx` | publish CTA extrabold shadow-sm |
+| ReportPostDialog footer | VISUAL | Sí | `feed/ReportPostDialog.tsx` | footer pills shadow-sm; reason extrabold selected |
+| AddGuestModal CTAs | VISUAL | Sí | `guests/AddGuestModal.tsx` | rounded-full shadow-sm; search result extrabold |
+| SeatingMapEditor toolbar | VISUAL | Sí | `events/SeatingMapEditor.tsx` | border-border/60 shadow-sm; shape labels extrabold |
+| NotificationsContext API | Integración | Sí | `contexts/NotificationsContext.tsx` | isLoading/refreshNotifications verificados |
+| CompanyContext alias | Integración | Sí | `contexts/CompanyContext.tsx` | isLoading/refreshCompany verificados |
+| BankingHub delete/PayPal | Bloqueo | Parcial | `banking/BankingHub.tsx` | BACKEND_REQUIRED banner intacto |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b3)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

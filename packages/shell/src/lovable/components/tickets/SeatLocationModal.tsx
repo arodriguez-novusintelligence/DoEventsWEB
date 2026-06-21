@@ -89,7 +89,7 @@ const SeatLocationModal = ({ open, onOpenChange, ticket }: Props) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md p-0 overflow-hidden rounded-2xl">
+      <DialogContent className="max-w-md overflow-hidden rounded-2xl border border-border/60 p-0 shadow-sm">
         <DialogHeader className="bg-gradient-to-br from-primary to-accent p-5 text-primary-foreground">
           <DialogTitle className="flex items-center gap-2 font-extrabold text-primary-foreground">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-foreground/15 ring-2 ring-primary-foreground/20">
@@ -104,10 +104,10 @@ const SeatLocationModal = ({ open, onOpenChange, ticket }: Props) => {
 
         <div className="px-5 py-4">
           <div className="flex items-center justify-between text-xs mb-3 gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 font-semibold text-primary">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 font-extrabold text-primary">
               <Armchair className="h-3.5 w-3.5" /> {displaySeat}
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1 font-semibold text-foreground">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1 font-extrabold text-foreground">
               <DoorOpen className="h-3.5 w-3.5 text-primary" /> {ticket.entrance || 'Entrada principal'}
             </span>
           </div>
@@ -132,12 +132,12 @@ const SeatLocationModal = ({ open, onOpenChange, ticket }: Props) => {
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
                 <AlertCircle className="h-7 w-7 text-destructive" />
               </div>
-              <p className="text-sm text-muted-foreground">{error || 'Mapa de asientos no disponible'}</p>
+              <p className="text-sm font-extrabold text-foreground">{error || 'Mapa de asientos no disponible'}</p>
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
-                className="rounded-xl gap-1.5"
+                className="gap-1.5 rounded-full shadow-sm"
                 onClick={() => setReloadKey((k) => k + 1)}
               >
                 <RefreshCw className="h-3.5 w-3.5" />
