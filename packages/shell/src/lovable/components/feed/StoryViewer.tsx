@@ -1,6 +1,7 @@
-export {
+import Component, {
   StoryViewer,
   type StoryViewerProps,
 } from '../../../components/StoryViewer';
 
-export { default } from '../../../components/StoryViewer';
+export { StoryViewer, type StoryViewerProps };
+export default Component;

@@ -5,16 +5,17 @@
     { "lovable": "src/components/", "web": "packages/shell/src/lovable/components/" },
     { "lovable": "src/pages/", "web": "packages/shell/src/pages/" },
     { "lovable": "src/pages/Index.tsx", "web": "packages/shell/src/pages/EventsPage.tsx", "note": "Home feed" },
-    { "lovable": "src/pages/Login.tsx", "web": "packages/mfe-auth/src/pages/LoginPage.tsx", "note": "Auth MFE" },
-    { "lovable": "src/pages/SignUp.tsx", "web": "packages/mfe-auth/src/pages/SignUpPage.tsx" },
-    { "lovable": "src/pages/ForgotPassword.tsx", "web": "packages/mfe-auth/src/pages/ForgotPasswordPage.tsx" },
-    { "lovable": "src/pages/ResetPassword.tsx", "web": "packages/mfe-auth/src/pages/ResetPasswordPage.tsx" },
+    { "lovable": "src/pages/Login.tsx", "web": "packages/mfe-auth/src/pages/LoginPage.tsx", "note": "Auth MFE", "compareMode": "delegated" },
+    { "lovable": "src/pages/SignUp.tsx", "web": "packages/mfe-auth/src/pages/SignUpPage.tsx", "compareMode": "delegated" },
+    { "lovable": "src/pages/ForgotPassword.tsx", "web": "packages/mfe-auth/src/pages/ForgotPasswordPage.tsx", "compareMode": "delegated" },
+    { "lovable": "src/pages/ResetPassword.tsx", "web": "packages/mfe-auth/src/pages/ResetPasswordPage.tsx", "compareMode": "delegated" },
     { "lovable": "src/pages/VenueDetail.tsx", "web": "packages/shell/src/pages/PlaceDetailPage.tsx" },
     { "lovable": "src/pages/EventPublished.tsx", "web": "packages/shell/src/pages/EventDetailPage.tsx" },
     { "lovable": "src/contexts/", "web": "packages/shell/src/lovable/contexts/" },
     { "lovable": "src/hooks/", "web": "packages/shell/src/lovable/hooks/" },
     { "lovable": "public/", "web": "packages/shell/public/" },
-    { "lovable": "reglasActuacion/", "web": "reglasActuacion/" }
+    { "lovable": "reglasActuacion/", "web": "reglasActuacion/", "note": "Referencia — agente lee, no copia literal" },
+    { "lovable": "reglasDiseno/", "web": "docs/design/reglasDiseno/", "note": "Tokens y convenciones diseño DSF" }
   ],
   "forbidden": [
     "src/integrations/supabase/",

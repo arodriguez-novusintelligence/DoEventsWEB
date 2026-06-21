@@ -107,7 +107,7 @@ import RepostSheet from '@lovable/components/feed/RepostSheet';
 import { useFeedStories } from '../lovable-bridge/useFeedStories';
 import { useActiveStoryAuthors } from '../contexts/StoriesContext';
 import { CreateStorySheet } from '../components/CreateStorySheet';
-import { StoryViewer } from '@lovable/components/feed/StoryViewer';
+import { StoryViewer } from '../components/StoryViewer';
 
 
 
