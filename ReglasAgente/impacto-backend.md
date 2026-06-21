@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27902063419-b2`: batch 2 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`StoryViewersSheet` viewers API). Patrón Lovable: ring h-10/h-14, MapPin sin emoji, RefreshCw retry, badge unread notificaciones; similitud ~87.5%; build:devaws OK.
+
 Run `gap-empalme-27902063419-b1`: batch 1 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). Auth routing Lovable, `index.css` port-map, EventsView tokens semánticos; similitud ~83.6%; build:devaws OK.
 
 Run `gap-empalme-27902063419-b6`: batch 6 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`PaymentGatewaySheet` PSP, `StoryViewersSheet`, `KycCertificationView`). Manifiesto `38e2c759` sin diff UI; similitud ~98%; build:devaws OK.
@@ -92,7 +94,23 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27902063419-b1)
+## Empalme realizado (última ejecución — gap-empalme-27902063419-b2)
+
+- **ContactImportModal:** empty state `UserPlus` h-14 ring-primary/20 (paridad título modal).
+- **TicketDetailView:** orden única con `shadow-sm`; fallback media Ticket ring intacto.
+- **NotificationsSheet:** header Bell h-10 ring-primary/20; badge contador unread en título.
+- **NotificationsContext:** alias `hasUnread` derivado de `unreadCount`; `loadErrorMessage`/`isEmpty` intactos.
+- **EventLocationMap:** loading overlay MapPin ring + Loader2; error AlertCircle ring + Reintentar.
+- **CreatePostSheet:** ubicación con `MapPin` Lucide (sin emoji); focus ring primary.
+- **ReportPostDialog:** DialogContent `shadow-sm`; Flag header ring-destructive/20 intacto.
+- **MyInvitationsView / MyTicketsView / CommentsSheet:** botón Reintentar con `RefreshCw`.
+- **MyTicketsView:** fallback card media Ticket h-14 ring cuando sin imagen/video.
+- **FollowersSheet:** header Users h-10 ring-primary/20; tabs rounded-xl intactos.
+- **MessagesListView:** cards conversación `shadow-sm`; empty/error rings intactos.
+- **AccessControlListView / MyReservedServicesView / MyReservedVenuesView / BookingReviewSheet / MediaUpload / EventPublished:** verificados alineados empalmes previos.
+- **StoryViewersSheet:** skeleton + badge BACKEND_REQUIRED — sin mocks viewers.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27902063419-b1)
 
 - **ResetPassword / SignUp:** ruta explícita `/auth/reset-password` → `ResetPasswordView` (Cognito/shared); `SignUpView` con `CreateAccountPage embedded`; aliases port-map `SignUpPage`/`ResetPasswordPage` en mfe-auth.
 - **index.css:** creado `packages/shell/src/index.css` re-exportando tokens DSF; `.floating-action-button` para `VenueCreator` FAB.
@@ -346,18 +364,18 @@ Sí (parcial)
 
 | Gap / Feature | lovablePath | webPath | Motivo | Endpoint / Lambda | Tabla DynamoDB | Acción | Prioridad |
 |---------------|-------------|---------|--------|-------------------|----------------|--------|-----------|
+| Story viewers | `src/components/feed/StoryViewersSheet.tsx` | `packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx` | Sin lista de visualizaciones por historia | `GET /stories/{id}/viewers` | `StoryViews` | Batch 2 BACKEND_REQUIRED; skeleton UI listo | Media |
 | BankingForm SWIFT/PayPal | `src/components/banking/BankingForm.tsx` | `packages/shell/src/lovable/components/banking/BankingForm.tsx` | Persistencia cuentas + PayPal + lookup SWIFT | `POST /bank-accounts` + lookup SWIFT | `BankAccounts` | Batch 1 BACKEND_REQUIRED | Alta |
-| Service reviews | `src/components/services/MyServicesView.tsx` | `packages/shell/src/lovable/components/services/MyServicesView.tsx` | Reseñas vacías sin API | `GET /services/{id}/reviews` | `ServiceReviews` | Exponer endpoint; UI lista vacía real | Baja |
-| EditProfile password/gustos | `src/components/feed/EditProfileView.tsx` | `packages/shell/src/lovable/components/feed/EditProfileView.tsx` | Cambio contraseña + intereses persistentes | Cognito `ChangePassword` + `PATCH /users/{id}` | `Users` | Batch 2 BACKEND_REQUIRED | Media |
-| Booking add-ons | `src/components/services/BookingSheet.tsx` | `packages/shell/src/lovable/components/services/BookingSheet.tsx` | Catálogo servicios adicionales | `GET /services/{id}/addons` | `Services` | Batch 2 BACKEND_REQUIRED | Media |
-| PublishFlow banking | `src/components/events/PublishFlowModal.tsx` | `packages/shell/src/lovable/components/events/PublishFlowModal.tsx` | Persistencia banco post-publicación | `POST /events/{id}/bank-link` | `Events` | Batch 2 BACKEND_REQUIRED | Media |
-| PaymentGateway PSP | `src/components/services/PaymentGatewaySheet.tsx` | `packages/shell/src/lovable/components/services/PaymentGatewaySheet.tsx` | Cobro tarjeta/PSE real | PSP webhook + `POST /payments/confirm` | `Orders` | Batch 2 BACKEND_REQUIRED | Alta |
 | Banking delete | `src/components/banking/BankingHub.tsx` | `packages/shell/src/lovable/components/banking/BankingHub.tsx` | Sin endpoint eliminar cuenta | `DELETE /bank-accounts/{id}` (propuesto) | `BankAccounts` | Implementar en DoEventsBack; UI documenta bloqueo | Alta |
 | PaymentMethods delete | `src/components/banking/PaymentMethodsDashboard.tsx` | `packages/shell/src/lovable/components/banking/PaymentMethodsDashboard.tsx` | Mismo contrato delete | `DELETE /bank-accounts/{id}` | `BankAccounts` | Reutilizar endpoint delete | Alta |
-| GlobalSearch posts | `src/components/feed/GlobalSearchView.tsx` | `packages/shell/src/lovable/components/feed/GlobalSearchView.tsx` | Sin búsqueda full-text publicaciones | `GET /publications/search?q=` | `Publications` | Endpoint dedicado; UI filtra feed reciente | Media |
-| Story viewers | `src/components/feed/StoryViewersSheet.tsx` | `packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx` | Sin lista de visualizaciones | `GET /stories/{id}/viewers` | `StoryViews` | Implementar endpoint; skeleton listo | Media |
 | KYC submit | `src/components/feed/KycCertificationView.tsx` | `packages/shell/src/lovable/components/feed/KycCertificationView.tsx` | Sin envío documentos KYC | `POST /users/{id}/kyc` | `Users` / proveedor KYC | Integración proveedor; botón deshabilitado | Alta |
+| PaymentGateway PSP | `src/components/services/PaymentGatewaySheet.tsx` | `packages/shell/src/lovable/components/services/PaymentGatewaySheet.tsx` | Cobro tarjeta/PSE real | PSP webhook + `POST /payments/confirm` | `Orders` | Batch 2 BACKEND_REQUIRED | Alta |
+| EditProfile password/gustos | `src/components/feed/EditProfileView.tsx` | `packages/shell/src/lovable/components/feed/EditProfileView.tsx` | Cambio contraseña + intereses persistentes | Cognito `ChangePassword` + `PATCH /users/{id}` | `Users` | Conectar flujos UI | Media |
+| Booking add-ons | `src/components/services/BookingSheet.tsx` | `packages/shell/src/lovable/components/services/BookingSheet.tsx` | Catálogo servicios adicionales | `GET /services/{id}/addons` | `Services` | Exponer catálogo real | Media |
+| PublishFlow banking | `src/components/events/PublishFlowModal.tsx` | `packages/shell/src/lovable/components/events/PublishFlowModal.tsx` | Persistencia banco post-publicación | `POST /events/{id}/bank-link` | `Events` | Implementar en DoEventsBack | Media |
+| GlobalSearch posts | `src/components/feed/GlobalSearchView.tsx` | `packages/shell/src/lovable/components/feed/GlobalSearchView.tsx` | Sin búsqueda full-text publicaciones | `GET /publications/search?q=` | `Publications` | Endpoint dedicado; UI filtra feed reciente | Media |
 | PULEP Colombia campos | `src/data/eventFormData.ts` | `packages/shell/src/lovable/data/eventFormData.ts` | Registro PULEP no persiste en evento | Extender `POST/PATCH /events` con `pulep*` | Events | Persistir + validar registro | Media |
+| Service reviews | `src/components/services/MyServicesView.tsx` | `packages/shell/src/lovable/components/services/MyServicesView.tsx` | Reseñas vacías sin API | `GET /services/{id}/reviews` | `ServiceReviews` | Exponer endpoint; UI lista vacía real | Baja |
 
 ## Empalme realizado (ejecución anterior — gap-empalme-27876228669-b5)
 

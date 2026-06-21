@@ -105,6 +105,32 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 2 (run 27902063419-b2)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| ContactImportModal empty | VISUAL | Sí | `guests/ContactImportModal.tsx` | UserPlus h-14 ring-primary/20 |
+| TicketDetailView order card | VISUAL | Sí | `tickets/TicketDetailView.tsx` | shadow-sm orden única |
+| NotificationsSheet badge | VISUAL | Sí | `feed/NotificationsSheet.tsx` | Bell h-10 ring + contador unread |
+| EventLocationMap loading | VISUAL | Sí | `events/EventLocationMap.tsx` | MapPin ring + Loader2 overlay |
+| StoryViewersSheet viewers | Bloqueo | Parcial | `feed/StoryViewersSheet.tsx` | BACKEND_REQUIRED viewers API |
+| NotificationsContext hasUnread | Integración | Sí | `contexts/NotificationsContext.tsx` | Alias `hasUnread` derivado |
+| EventPublished share API | Integración | Sí | `pages/EventPublished.tsx` | fetchEventById + share intacto |
+| MyReservedServicesView | Integración | Sí | `purchases/MyReservedServicesView.tsx` | Loader2 + rings error/empty verificados |
+| CreatePostSheet location | VISUAL | Sí | `feed/CreatePostSheet.tsx` | MapPin Lucide sin emoji |
+| ReportPostDialog shadow | VISUAL | Sí | `feed/ReportPostDialog.tsx` | DialogContent shadow-sm |
+| MyInvitationsView retry | VISUAL | Sí | `invitations/MyInvitationsView.tsx` | RefreshCw Reintentar |
+| MessagesListView cards | VISUAL | Sí | `chat/MessagesListView.tsx` | shadow-sm cards conversación |
+| AccessControlListView | Integración | Sí | `access/AccessControlListView.tsx` | Verificado intacto batch previo |
+| FollowersSheet header | VISUAL | Sí | `feed/FollowersSheet.tsx` | Users h-10 ring-primary/20 |
+| MyReservedVenuesView | Integración | Sí | `purchases/MyReservedVenuesView.tsx` | Verificado intacto batch previo |
+| CommentsSheet retry | VISUAL | Sí | `feed/CommentsSheet.tsx` | RefreshCw Reintentar |
+| BookingReviewSheet | VISUAL | Sí | `services/BookingReviewSheet.tsx` | Calendar header ring verificado |
+| MyTicketsView fallback | VISUAL | Sí | `tickets/MyTicketsView.tsx` | Ticket h-14 ring sin media |
+| LocationSection header | VISUAL | Sí | `venues/sections/LocationSection.tsx` | MapPin h-10 ring header |
+| MediaUpload header | VISUAL | Sí | `venues/MediaUpload.tsx` | ImageIcon h-10 ring verificado |
+| Batch 2 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 1 (run 27902063419-b1)
 
 | Regla | Tipo | Implementada | Archivo | Observación |
