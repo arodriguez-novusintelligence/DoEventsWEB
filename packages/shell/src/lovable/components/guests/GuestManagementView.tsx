@@ -79,7 +79,7 @@ const GuestManagementView = ({ onBack, guestsController, userId, initialEventId,
   if (!userId) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-secondary px-6 text-center">
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
           <Users className="h-7 w-7 text-primary" />
         </div>
         <p className="text-sm font-semibold text-foreground">Inicia sesión para gestionar tus invitados</p>
@@ -398,7 +398,7 @@ const GuestManagementView = ({ onBack, guestsController, userId, initialEventId,
           </div>
         ) : (
           <div className="text-center py-12 rounded-2xl bg-card shadow-sm">
-            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4"><Users className="h-8 w-8 text-primary" /></div>
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20"><Users className="h-7 w-7 text-primary" /></div>
             <h3 className="text-lg font-semibold text-card-foreground mb-2">
               {searchTerm ? "Sin resultados" : selectedGroupId ? "Sin invitados en este grupo" : "Aún no hay invitados"}
             </h3>

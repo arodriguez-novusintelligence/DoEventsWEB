@@ -101,6 +101,32 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 1 (run 27901296255-b1)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| StepAgenda empty ring | VISUAL | Sí | `events/StepAgenda.tsx` | CalendarDays h-14 ring-primary/20 |
+| MyServicesView tokens | VISUAL | Sí | `services/MyServicesView.tsx` | warning tokens; empty h-14 ring |
+| GuestStatsView error ring | VISUAL | Sí | `stats/GuestStatsView.tsx` | AlertCircle ring-destructive/20 |
+| SeatingCategoryDialog header | VISUAL | Sí | `venues/seating/SeatingCategoryDialog.tsx` | Armchair ring-primary/20 |
+| EventLocationMap error | VISUAL | Sí | `events/EventLocationMap.tsx` | h-14 ring-destructive/20 |
+| GuestManagementView empty | VISUAL | Sí | `guests/GuestManagementView.tsx` | Users h-14 ring-primary/20 |
+| HostPickerModal search UX | VISUAL | Sí | `events/HostPickerModal.tsx` | h-14 ring; error destructive |
+| MyEventsView tokens | VISUAL | Sí | `feed/MyEventsView.tsx` | warning borrador; empty ring |
+| BankingForm persistencia | Bloqueo | Parcial | `banking/BankingForm.tsx` | BACKEND_REQUIRED SWIFT/PayPal |
+| SuccessModal icon | VISUAL | Sí | `banking/SuccessModal.tsx` | CheckCircle2 h-14 ring |
+| PrivateChatView empty | VISUAL | Sí | `chat/PrivateChatView.tsx` | MessageSquare ring-primary/20 |
+| InvitationEventDetail hero | VISUAL | Sí | `invitations/InvitationEventDetailView.tsx` | ring; bg-card/90 play |
+| StepUnified prerequisite | VISUAL | Sí | `services/StepUnified.tsx` | Briefcase ring-primary/20 |
+| StepEventLocation venues | VISUAL | Sí | `events/StepEventLocation.tsx` | Home empty ring |
+| EventPreviewModal preview | VISUAL | Sí | `events/EventPreviewModal.tsx` | ring; bg-card/90 play |
+| SideMenu profile ring | VISUAL | Sí | `feed/SideMenu.tsx` | Verificado intacto |
+| ChatRoomView empty | VISUAL | Sí | `chat/ChatRoomView.tsx` | MessageSquare h-14 ring |
+| PostCard card ring | VISUAL | Sí | `feed/PostCard.tsx` | ring-border/40 verificado |
+| MyVenuesView tokens | VISUAL | Sí | `venues/MyVenuesView.tsx` | warning; empty ring |
+| MapView pins/error | VISUAL | Sí | `feed/MapView.tsx` | ring empty; error h-14 |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 6 (run 27901296255-b6)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

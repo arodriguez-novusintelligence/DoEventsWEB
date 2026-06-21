@@ -243,8 +243,8 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
               <div className="space-y-2">
                 {query.trim().length < 2 ? (
                   <div className="py-8 text-center">
-                    <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                      <Search className="h-6 w-6 text-primary" />
+                    <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                      <Search className="h-7 w-7 text-primary" />
                     </div>
                     <p className="text-sm text-muted-foreground">
                       Escribe al menos 2 caracteres para buscar usuarios de Do•events
@@ -257,8 +257,10 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
                   </p>
                 ) : searchError ? (
                   <div className="flex flex-col items-center py-8 text-center">
-                    <AlertCircle className="h-8 w-8 text-destructive" />
-                    <p className="mt-2 text-sm text-destructive">Error al buscar usuarios</p>
+                    <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
+                      <AlertCircle className="h-7 w-7 text-destructive" />
+                    </div>
+                    <p className="text-sm font-semibold text-destructive">Error al buscar usuarios</p>
                     <Button
                       type="button"
                       variant="outline"
@@ -272,8 +274,8 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
                   </div>
                 ) : searched && results.length === 0 ? (
                   <div className="py-8 text-center">
-                    <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-                      <UserPlus className="h-6 w-6 text-muted-foreground" />
+                    <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                      <UserPlus className="h-7 w-7 text-primary" />
                     </div>
                     <p className="text-sm text-muted-foreground">
                       No se encontraron usuarios con “{query}”

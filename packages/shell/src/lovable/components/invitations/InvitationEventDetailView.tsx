@@ -208,7 +208,7 @@ const InvitationEventDetailView = ({
             </button>
           ) : (
             <div className="flex h-56 w-full flex-col items-center justify-center rounded-2xl border border-dashed border-primary/25 bg-muted">
-              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <CalendarDays className="h-7 w-7 text-primary" />
               </div>
               <p className="text-sm font-semibold text-foreground">Sin imagen del evento</p>
@@ -438,7 +438,7 @@ const InvitationEventDetailView = ({
                     className="w-full h-full object-cover opacity-80"
                   />
                   <span className="absolute inset-0 flex items-center justify-center">
-                    <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/90">
+                    <span className="flex h-14 w-14 items-center justify-center rounded-full bg-card/90 ring-2 ring-primary/20">
                       <Play className="h-6 w-6 text-foreground fill-foreground ml-1" />
                     </span>
                   </span>

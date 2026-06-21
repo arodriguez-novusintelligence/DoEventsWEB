@@ -229,7 +229,7 @@ const GuestStatsView = ({ event, onBack }: GuestStatsViewProps) => {
         )}
         {loadError && !loading && (
           <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-8 text-center shadow-sm">
-            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
               <AlertCircle className="h-7 w-7 text-destructive" />
             </div>
             <p className="text-sm font-semibold text-foreground">No se pudieron cargar las estadísticas</p>

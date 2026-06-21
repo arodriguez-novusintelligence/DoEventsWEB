@@ -370,7 +370,7 @@ const MyServicesView = ({
                         <Briefcase className="h-3.5 w-3.5 text-primary" />
                       </div>
                       {statusLabel && (
-                        <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
+                        <span className="rounded-full bg-warning/15 px-2 py-0.5 text-[10px] font-semibold text-warning">
                           {statusLabel}
                         </span>
                       )}
@@ -516,7 +516,7 @@ const MyServicesView = ({
                       </div>
                       ) : (
                       <div className="mb-4 rounded-2xl border border-dashed border-primary/25 bg-secondary p-6 text-center">
-                        <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                        <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                           <Star className="h-7 w-7 text-primary" />
                         </div>
                         <p className="text-sm font-semibold text-foreground">
@@ -621,8 +621,8 @@ const MyServicesView = ({
           </button>
         </div>
         <div className="flex flex-1 flex-col items-center justify-center px-8 text-center">
-          <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
-            <Briefcase className="h-10 w-10 text-primary" />
+          <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+            <Briefcase className="h-7 w-7 text-primary" />
           </div>
           <h2 className="text-xl font-bold text-foreground">
             Parece que aún no has creado los servicios que ofreces para eventos.
@@ -646,8 +646,8 @@ const MyServicesView = ({
     return (
       <div className="mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center bg-secondary px-8 text-center">
         <div className="rounded-3xl bg-card p-10 shadow-sm">
-          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
-            <Smile className="h-12 w-12 text-primary" />
+          <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+            <Smile className="h-7 w-7 text-primary" />
           </div>
           <h2 className="text-2xl font-bold text-foreground">¡Todo listo!</h2>
           <p className="mt-3 text-sm text-muted-foreground">

@@ -185,7 +185,7 @@ const MyVenuesView = ({
       <main className="mx-auto max-w-lg px-4 pt-4">
         {venues.length === 0 ? (
           <div className="flex flex-col items-center rounded-2xl border border-dashed border-primary/25 bg-card p-10 text-center shadow-sm">
-            <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+            <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
               <Building2 className="h-7 w-7 text-primary" />
             </div>
             <p className="text-sm font-semibold text-foreground">Aún no has publicado lugares</p>
@@ -224,7 +224,7 @@ const MyVenuesView = ({
                         <Building2 className="h-3.5 w-3.5 text-primary" />
                       </div>
                       {statusLabel && (
-                        <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
+                        <span className="rounded-full bg-warning/15 px-2 py-0.5 text-[10px] font-semibold text-warning">
                           {statusLabel}
                         </span>
                       )}
@@ -350,7 +350,7 @@ const MyVenuesView = ({
                   )}
                   {!loadingReviews && rs.length === 0 && (
                     <div className="py-8 text-center">
-                      <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                      <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                         <MessageSquare className="h-7 w-7 text-primary" />
                       </div>
                       <p className="text-sm font-semibold text-foreground">Aún no hay opiniones</p>

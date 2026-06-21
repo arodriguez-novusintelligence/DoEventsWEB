@@ -393,7 +393,7 @@ const MapView = ({
 
       {loaded && items.length === 0 && !error && (
         <div className="absolute inset-x-6 top-1/3 z-20 flex flex-col items-center rounded-2xl border border-dashed border-primary/25 bg-card/95 p-6 text-center shadow-lg">
-          <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+          <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
             <MapPin className="h-7 w-7 text-primary" />
           </div>
           <p className="text-sm font-semibold text-foreground">Sin eventos cerca</p>
@@ -405,8 +405,8 @@ const MapView = ({
 
       {error && (
         <div className="absolute inset-x-4 top-28 z-30 rounded-2xl border border-destructive/30 bg-destructive/10 p-4 text-center">
-          <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10">
-            <AlertCircle className="h-5 w-5 text-destructive" />
+          <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
+            <AlertCircle className="h-7 w-7 text-destructive" />
           </div>
           <p className="text-sm text-destructive">No se pudo cargar Google Maps: {error}</p>
           <Button

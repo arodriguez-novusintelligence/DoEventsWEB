@@ -71,10 +71,10 @@ interface Props {
 
 const STATUS_STYLES: Record<MyEventStatus, { label: string; className: string; grayscale?: boolean }> = {
   activo: { label: 'activo', className: 'bg-primary text-primary-foreground' },
-  borrador: { label: 'Borrador', className: 'bg-amber-500/15 text-amber-700', grayscale: true },
+  borrador: { label: 'Borrador', className: 'bg-warning/15 text-warning', grayscale: true },
   finalizado: { label: 'Finalizado', className: 'bg-primary text-primary-foreground' },
   inactivo: { label: 'inactivo', className: 'bg-muted text-muted-foreground', grayscale: true },
-  reagendado: { label: 'Reagendado', className: 'bg-amber-500/15 text-amber-700' },
+  reagendado: { label: 'Reagendado', className: 'bg-warning/15 text-warning' },
   cancelado: { label: 'Cancelado', className: 'bg-destructive text-destructive-foreground' },
 };
 
@@ -276,8 +276,8 @@ const MyEventsView = ({
 
         {events.length === 0 ? (
           <div className="flex flex-col items-center rounded-2xl border border-dashed border-primary/30 bg-card px-6 py-16 text-center">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-              <CalendarDays className="h-8 w-8 text-primary" />
+            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+              <CalendarDays className="h-7 w-7 text-primary" />
             </div>
             <p className="text-base font-bold text-foreground">Aún no has publicado eventos</p>
             <p className="mt-2 text-sm text-muted-foreground">
@@ -369,7 +369,7 @@ const MyEventsView = ({
             <div className="mt-3 space-y-3 overflow-y-auto">
               {reviewsList.length === 0 && (
                 <div className="py-8 text-center">
-                  <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                  <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                     <MessageSquare className="h-7 w-7 text-primary" />
                   </div>
                   <p className="text-sm font-semibold text-foreground">Aún no hay comentarios</p>

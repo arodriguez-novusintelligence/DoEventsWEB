@@ -59,7 +59,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
               <img src={heroImg} alt={data.name} className="h-44 w-full object-cover" />
             ) : (
               <div className="flex h-44 w-full flex-col items-center justify-center rounded-2xl border border-dashed border-primary/25 bg-muted">
-                <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                   <Eye className="h-7 w-7 text-primary" />
                 </div>
                 <p className="text-sm font-semibold text-foreground">Sin imagen</p>
@@ -181,7 +181,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
                   <h3 className="text-sm font-bold text-foreground">Video del evento</h3>
                   <div className="mt-2 relative overflow-hidden rounded-2xl bg-card shadow-sm">
                     <div className="flex h-44 items-center justify-center bg-foreground/10">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-foreground">
+                      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-card/90 text-foreground ring-2 ring-primary/20">
                         <Play className="h-5 w-5" />
                       </div>
                     </div>

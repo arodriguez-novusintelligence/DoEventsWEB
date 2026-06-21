@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27901296255-b1`: batch 1 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingForm` SWIFT/PayPal). Patrón Lovable: ring-primary/20 h-14, warning tokens, ring-destructive/20 errores.
+
 Run `gap-empalme-27901296255-b6`: batch 6 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`PaymentGatewaySheet` PSP, `StoryViewersSheet`, `KycCertificationView`). Manifiesto `38e2c759` sin diff UI; build:devaws OK.
 
 Run `gap-empalme-27883333029-b5`: batch 5 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`KycCertificationView` submit documentos KYC). Auth RISKY con APIs reales + Loader2; admin panels, stories, reservas, feed banner.
@@ -78,7 +80,27 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27883333029-b5)
+## Empalme realizado (última ejecución — gap-empalme-27901296255-b1)
+
+- **StepAgenda:** empty CalendarDays h-14 ring-primary/20; timeline intacta.
+- **MyServicesView:** warning tokens borrador; empty reseñas/wizard h-14 ring-primary/20.
+- **GuestStatsView:** error AlertCircle ring-destructive/20; empty Users ring intacto.
+- **SeatingCategoryDialog:** Armchair header ring-primary/20; Dialog rounded-2xl.
+- **EventLocationMap:** error h-14 ring-destructive/20; Loader2 carga.
+- **GuestManagementView:** empty/login Users h-14 ring-primary/20; Loader2 carga.
+- **HostPickerModal:** search/no-results h-14 ring; error destructive container + retry.
+- **MyEventsView:** warning tokens borrador/reagendado; empty CalendarDays/MessageSquare ring.
+- **SuccessModal:** CheckCircle2 h-14 ring-primary/20.
+- **PrivateChatView / ChatRoomView:** empty MessageSquare h-14 ring-primary/20.
+- **InvitationEventDetailView:** hero ring; play overlay bg-card/90.
+- **StepUnified / StepEventLocation:** prerequisite/venue empty ring-primary/20.
+- **EventPreviewModal:** hero ring; play bg-card/90.
+- **MyVenuesView:** warning tokens; catalog/reviews empty ring-primary/20.
+- **MapView:** empty MapPin ring; error h-14 ring-destructive/20.
+- **BankingForm:** Wallet header ring; banner BACKEND_REQUIRED SWIFT/PayPal — sin simular persistencia.
+- **SideMenu / PostCard:** verificados alineados (ring perfil / ring-border card).
+
+## Empalme realizado (ejecución anterior — gap-empalme-27901296255-b6)
 
 - **StoriesContext:** re-export documentado con `loadErrorMessage`, `isEmpty`, `authorCount`, `refreshStories`; API `fetchNearbyStories`/`fetchUserStories`.
 - **VenueReservationDetail:** badge status header gradiente; AlertCircle retry; empty Building2 ring-primary/20.

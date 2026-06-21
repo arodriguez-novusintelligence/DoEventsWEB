@@ -100,8 +100,8 @@ const EventLocationMap = ({ lat, lng, onPick }: Props) => {
       )}
       {loadError && (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-muted px-4 text-center">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10">
-            <AlertCircle className="h-5 w-5 text-destructive" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
+            <AlertCircle className="h-7 w-7 text-destructive" />
           </div>
           <p className="text-xs font-medium text-foreground">No se pudo cargar el mapa</p>
           <p className="text-[10px] text-muted-foreground">

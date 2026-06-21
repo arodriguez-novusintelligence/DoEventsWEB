@@ -1,38 +1,44 @@
-# Gap empalme — resumen ejecutivo (batch 6)
+# Gap empalme — resumen ejecutivo (batch 1)
 
-**Run:** `gap-empalme-27901296255-b6`  
+**Run:** `gap-empalme-27901296255-b1`  
 **Fecha:** 2026-06-21  
 **Rama:** `feature/cicd/dev-automation`
 
 ## Resultado
 
-Batch 6 del manifiesto (20 gaps, similitud baseline manifiesto **56.95%**, post-b5 **95.0%**). Tras empalme estimado **~98.0%** (objetivo 98%; re-comparación CI pendiente). **17 gaps DONE** frontend; **3 BACKEND_REQUIRED** documentados (sin mocks).
+Batch 1 del manifiesto (20 gaps, similitud baseline **56.92%**). Tras empalme estimado **~72.5%** (objetivo 98%; re-comparación CI pendiente). **19 gaps DONE** frontend; **1 BACKEND_REQUIRED** documentado (sin mocks).
 
 ## Empalme realizado
 
 | Área | Cambios principales |
 |------|---------------------|
-| **SalesStatsView** | Empty Ticket h-14 ring-primary/20 + shadow-sm |
-| **FeedVenuesCarousel** | Empty Building2 h-14 ring-primary/20 |
-| **StepFaqs** | Empty HelpCircle h-14 ring-primary/20 |
-| **AdminRefundsPanel** | Header gradiente Lovable + icono ring |
-| **AdminReportsPanel** | Header gradiente + Loader2 carga |
-| **RefundsView** | Empty RefreshCw ring; pending token secondary |
-| **AccessControlView** | Loader2; ShieldCheck header; empty sin tickets |
-| **PublishFlowModal** | Megaphone ring-primary/20 |
-| **FeedServicesCarousel** | Empty Briefcase ring-primary/20 |
-| **GuestStatsView** | Empty Users ring-primary/20 |
-| **StepRefundPolicy** | ShieldCheck en título política |
-| **PaymentGatewaySheet** | AlertCircle banner BACKEND_REQUIRED |
-| **EventsPage (Index)** | pb-24 shell + Loader2 descubrir |
+| **StepAgenda** | Empty CalendarDays h-14 ring-primary/20 |
+| **MyServicesView** | Warning tokens borrador; empty h-14 ring; wizard Briefcase/Smile |
+| **GuestStatsView** | Error ring-destructive/20 en AlertCircle |
+| **SeatingCategoryDialog** | Armchair header ring-primary/20 |
+| **EventLocationMap** | Error h-14 ring-destructive/20 |
+| **GuestManagementView** | Empty Users h-14 ring-primary/20 |
+| **HostPickerModal** | Search/no-results h-14 ring; error destructive container |
+| **MyEventsView** | Warning tokens borrador/reagendado; empty h-14 ring |
+| **SuccessModal** | CheckCircle2 h-14 ring-primary/20 |
+| **PrivateChatView / ChatRoomView** | Empty MessageSquare h-14 ring-primary/20 |
+| **InvitationEventDetailView** | Hero ring; play overlay bg-card/90 |
+| **StepUnified / StepEventLocation** | Prerequisite/venue empty ring-primary/20 |
+| **EventPreviewModal** | Hero ring; play bg-card/90 |
+| **MyVenuesView** | Warning tokens; empty/reviews ring-primary/20 |
+| **MapView** | Empty pins ring; error h-14 ring-destructive/20 |
+| **BankingForm** | Wallet header ring; banner BACKEND_REQUIRED intacto |
+| **SideMenu / PostCard** | Verificados alineados (sin diff) |
 
-## Backend pendiente (batch 6)
+## Backend pendiente (batch 1)
 
 | Gap | Motivo |
 |-----|--------|
-| `PaymentGatewaySheet` | PSP real — confirmación orderId only |
-| `StoryViewersSheet` | `GET /stories/{id}/viewers` |
-| `KycCertificationView` | `POST /users/{id}/kyc` |
+| `BankingForm` | Persistencia cuentas SWIFT/PayPal — `POST /bank-accounts` |
+
+## Gaps restantes
+
+100 gaps pendientes en manifiesto (batches 2–6 del ciclo `27901296255`).
 
 ## Validación
 

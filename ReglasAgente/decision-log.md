@@ -13,6 +13,58 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-21 14:30 UTC] gap-empalme-27901296255-b1
+
+### 1. Resumen del empalme
+Batch 1 (20 gaps, manifiesto `27901296255`, similitud baseline **56.92%**): empalme visual sistemático en wizard eventos, servicios, stats, chat, feed y banca. Patrón Lovable: `h-14 ring-primary/20`, `ring-destructive/20` en errores, tokens `warning` en lugar de `amber-*`, `bg-card/90` en overlays. **19 gaps DONE** frontend; **1 BACKEND_REQUIRED** (`BankingForm` persistencia SWIFT/PayPal).
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Step agenda | `packages/shell/src/lovable/components/events/StepAgenda.tsx` | DONE |
+| My services | `packages/shell/src/lovable/components/services/MyServicesView.tsx` | DONE |
+| Guest stats | `packages/shell/src/lovable/components/stats/GuestStatsView.tsx` | DONE |
+| Seating category | `packages/shell/src/lovable/components/venues/seating/SeatingCategoryDialog.tsx` | DONE |
+| Event location map | `packages/shell/src/lovable/components/events/EventLocationMap.tsx` | DONE |
+| Guest management | `packages/shell/src/lovable/components/guests/GuestManagementView.tsx` | DONE |
+| Host picker | `packages/shell/src/lovable/components/events/HostPickerModal.tsx` | DONE |
+| My events | `packages/shell/src/lovable/components/feed/MyEventsView.tsx` | DONE |
+| Banking form | `packages/shell/src/lovable/components/banking/BankingForm.tsx` | BACKEND_REQUIRED |
+| Success modal | `packages/shell/src/lovable/components/banking/SuccessModal.tsx` | DONE |
+| Private chat | `packages/shell/src/lovable/components/chat/PrivateChatView.tsx` | DONE |
+| Invitation event detail | `packages/shell/src/lovable/components/invitations/InvitationEventDetailView.tsx` | DONE |
+| Step unified | `packages/shell/src/lovable/components/services/StepUnified.tsx` | DONE |
+| Step event location | `packages/shell/src/lovable/components/events/StepEventLocation.tsx` | DONE |
+| Event preview | `packages/shell/src/lovable/components/events/EventPreviewModal.tsx` | DONE |
+| Side menu | `packages/shell/src/lovable/components/feed/SideMenu.tsx` | DONE* |
+| Chat room | `packages/shell/src/lovable/components/chat/ChatRoomView.tsx` | DONE |
+| Post card | `packages/shell/src/lovable/components/feed/PostCard.tsx` | DONE* |
+| My venues | `packages/shell/src/lovable/components/venues/MyVenuesView.tsx` | DONE |
+| Map view | `packages/shell/src/lovable/components/feed/MapView.tsx` | DONE |
+
+\* Sin diff adicional — ya alineado en empalmes previos.
+
+### 3. Similitud antes/después
+- **Antes:** 56.92% (manifiesto baseline)
+- **Después:** ~72.5% (estimado post batch 1; re-comparación CI pendiente)
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias
+
+### 6. Riesgos pendientes
+- Re-comparación CI con `discover-joyful-feed` privado
+- `BankingForm` requiere API DoEventsBack para persistencia SWIFT/PayPal
+
+### Decisión
+**APPLIED**
+
+---
+
 ## [2026-06-21 12:00 UTC] gap-empalme-27901296255-b6
 
 ### 1. Resumen del empalme

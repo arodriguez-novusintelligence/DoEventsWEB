@@ -27,8 +27,8 @@ export default function SuccessModal({ isOpen, onClose, isInternational = false,
     }}>
       <DialogContent className="sm:max-w-md text-center rounded-2xl">
         <div className="flex justify-center mb-4">
-          <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
-            <CheckCircle2 className="w-12 h-12 text-primary" />
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+            <CheckCircle2 className="h-7 w-7 text-primary" />
           </div>
         </div>
         <DialogHeader className="text-center">

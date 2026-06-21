@@ -532,7 +532,7 @@ export default function BankingForm({ onComplete, editingMethod }: BankingFormPr
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <Wallet className="h-5 w-5 text-primary" />
               </div>
               <div>

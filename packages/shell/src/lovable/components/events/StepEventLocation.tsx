@@ -492,7 +492,7 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
             )}
             {!venuesLoading && !(venueTab === 'nearby' && nearbyLoading) && filteredVenues.length === 0 && (
               <div className="w-full rounded-2xl border border-dashed border-primary/25 bg-card py-8 text-center">
-                <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                   <HomeIcon className="h-7 w-7 text-primary" />
                 </div>
                 <p className="px-4 text-sm font-semibold text-foreground">

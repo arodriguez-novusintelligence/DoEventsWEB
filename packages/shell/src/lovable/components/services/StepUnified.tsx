@@ -475,7 +475,7 @@ const StepUnified = ({
         <CollapsibleContent className="mt-2 space-y-3 px-1">
           {!hasSectors ? (
             <div className="rounded-2xl border border-dashed border-primary/25 bg-card p-6 text-center shadow-sm">
-              <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+              <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <Briefcase className="h-7 w-7 text-primary" />
               </div>
               <p className="text-sm font-semibold text-foreground">

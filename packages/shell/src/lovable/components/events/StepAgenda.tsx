@@ -205,7 +205,7 @@ const StepAgenda = ({ formData, updateForm }: Props) => {
 
       {selectedDay.activities.length === 0 && (
         <div className="rounded-2xl border border-dashed border-primary/30 bg-primary/5 px-4 py-8 text-center">
-          <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+          <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
             <CalendarDays className="h-7 w-7 text-primary" />
           </div>
           <p className="text-sm font-semibold text-foreground">Sin actividades en este día</p>
