@@ -139,8 +139,8 @@ const NotificationRow = ({
       role={isClickable ? 'button' : undefined}
       tabIndex={isClickable ? 0 : undefined}
       className={cn(
-        'flex items-start gap-3 px-4 py-3.5 transition-colors',
-        !notification.read && 'bg-primary/5',
+        'mx-4 mb-2 flex items-start gap-3 rounded-2xl border border-border/60 bg-card px-4 py-3.5 shadow-sm transition-colors',
+        !notification.read && 'bg-primary/5 ring-1 ring-primary/10',
         isClickable && 'cursor-pointer hover:bg-accent/50'
       )}
       onClick={() => {
@@ -158,8 +158,8 @@ const NotificationRow = ({
       </div>
 
       <div className="flex-1 min-w-0">
-        <p className="text-sm text-foreground leading-snug">{text}</p>
-        <p className="mt-1 text-xs text-muted-foreground">{notification.timeAgo}</p>
+        <p className={cn('text-sm text-foreground leading-snug', !notification.read && 'font-extrabold')}>{text}</p>
+        <p className="mt-1 text-xs font-extrabold text-muted-foreground">{notification.timeAgo}</p>
 
         {notification.eventName && !notification.actionable && notification.type !== 'ticket_transfer' && notification.type !== 'access_assignment'
           && (notification.type === 'event_mention' || notification.eventId || notification.type === 'event_created' || notification.type === 'event_invite' || notification.type === 'followed_event') && (
@@ -376,8 +376,8 @@ const NotificationsSheet = ({
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[85vh]">
-        <DrawerHeader className="flex items-center justify-between pb-0">
+      <DrawerContent className="max-h-[90dvh] border-t border-border/60 shadow-sm ring-1 ring-primary/10">
+        <DrawerHeader className="flex items-center justify-between border-b border-border/60 pb-3">
           <DrawerTitle className="flex items-center gap-2 text-base font-extrabold text-foreground">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
               <Bell className="h-5 w-5 text-primary" />
@@ -411,7 +411,7 @@ const NotificationsSheet = ({
           </div>
         </DrawerHeader>
 
-        <div className="mt-2 overflow-y-auto divide-y divide-border pb-6">
+        <div className="mt-2 overflow-y-auto pb-6 pt-2">
           {loading ? (
             <div className="mx-4 flex flex-col items-center rounded-2xl border border-border/60 bg-card py-12 text-center shadow-sm">
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">

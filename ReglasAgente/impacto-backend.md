@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27910611218-b4`: batch 1 cuarta pasada (20 gaps manifiesto b4) — 20 DONE frontend; 0 BACKEND_REQUIRED en batch. MessagesListView + NotificationsSheet empalme DSF nuevo; 18 gaps verificados intactos b1/b2/b3; similitud ~99.54%; build:devaws OK; 97 gaps batches 2–6 pendientes.
+
 Run `gap-empalme-27910611218-b3`: batch 1 tercera pasada (20 gaps manifiesto b3) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). ContactImportModal empalme DSF (search border-border/60, selected ring-primary/20, empty dashed, footer border-t); BankingHub ring-primary/10 banners + dashboard wrapper; 18 gaps verificados intactos b1/b2; similitud ~99.48%; build:devaws OK; 97 gaps batches 2–6 pendientes.
 
 Run `gap-empalme-27910611218-b2`: batch 1 segunda pasada (20 gaps manifiesto b2) — 20 DONE frontend; 0 BACKEND_REQUIRED en batch. MyInvitationsView + EventLocationMap empalme DSF nuevo; 18 gaps verificados intactos desde b1; similitud ~99.42%; build:devaws OK; 97 gaps batches 2–6 pendientes.
@@ -158,7 +160,13 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27910611218-b3)
+## Empalme realizado (última ejecución — gap-empalme-27910611218-b4)
+
+- **MessagesListView:** header action buttons ring-2 ring-primary/20 shadow-sm; event room cards ring-1 ring-primary/10; status badges + unread badges font-extrabold shadow-sm; private chat unread ring-1 ring-primary/10; contact story labels font-extrabold; empty dashed border-primary/25 border-border/60; `searchUsers` API real intacta.
+- **NotificationsSheet:** DrawerContent max-h-[90dvh] border-border/60 shadow-sm ring-1 ring-primary/10; header border-b border-border/60; notification rows card mx-4 border-border/60 shadow-sm; unread ring-1 ring-primary/10 + font-extrabold; action CTAs rounded-full shadow-sm; `fetchUserNotifications`/`respondFollowRequest` intactos.
+- **Verificados intactos (b1/b2/b3):** SeatingMapEditor, NotificationsContext, MyReservedServicesView, ReportPostDialog, MainInfoSection, AccessControlListView, MyPostsView, EventsView, ServiceDetailView, CreatePostSheet, HostPickerModal, FAQSection, StepUnified, EventPublished, AddGuestModal, TicketDetailView, FeedHero, SeatLocationModal.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27910611218-b3)
 
 - **ContactImportModal:** search Input border-border/60 shadow-sm font-extrabold focus ring-primary/20; filas seleccionadas ring-2 ring-primary/20; empty dashed border-primary/25 border-border/60; banner navegador no soportado dashed extrabold; footer border-t border-border/60; device pick API real intacta.
 - **BankingHub:** banners BACKEND_REQUIRED/PayPal ring-1 ring-primary/10; copy extrabold; dashboard wrapper ring-primary/10; back CTA outline rounded-full shadow-sm; loading/error h-14 rings; `fetchBankAccountsByUser`/`createBankAccount` intactos; delete/PayPal **BACKEND_REQUIRED**.

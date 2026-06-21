@@ -236,7 +236,7 @@ const MessagesListView = ({
       <button
         key={room.id}
         onClick={() => onOpenChat(room.id)}
-        className="flex w-full items-center gap-3 rounded-2xl bg-card p-3 shadow-sm transition-colors hover:bg-accent/40 border border-border/60"
+        className="flex w-full items-center gap-3 rounded-2xl bg-card p-3 shadow-sm transition-colors hover:bg-accent/40 border border-border/60 ring-1 ring-primary/10"
       >
         {imageSrc ? (
           <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl">
@@ -248,22 +248,22 @@ const MessagesListView = ({
             />
           </div>
         ) : (
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-accent/30">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-accent/30 ring-1 ring-primary/10">
             <CalendarDays className="h-6 w-6 text-primary" />
           </div>
         )}
         <div className="flex-1 text-left min-w-0">
           <div className="flex items-center justify-between gap-2">
             <span className="text-sm font-extrabold text-foreground line-clamp-1">{room.eventName}</span>
-            <span className="text-[10px] text-muted-foreground shrink-0">{room.eventDate}</span>
+            <span className="text-[10px] font-extrabold text-muted-foreground shrink-0">{room.eventDate}</span>
           </div>
-          <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">{room.lastMessage}</p>
+          <p className="mt-0.5 text-xs font-extrabold text-muted-foreground line-clamp-1">{room.lastMessage}</p>
           <div className="mt-1 flex items-center gap-2">
-            <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-medium ${status.className}`}>
+            <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-extrabold shadow-sm ${status.className}`}>
               {status.label}
             </span>
             {room.unreadCount > 0 && (
-              <Badge className="h-4 min-w-[16px] rounded-full bg-primary px-1.5 text-[10px] text-primary-foreground">
+              <Badge className="h-4 min-w-[16px] rounded-full bg-primary px-1.5 text-[10px] font-extrabold text-primary-foreground shadow-sm ring-1 ring-primary/20">
                 {room.unreadCount > 99 ? '99+' : room.unreadCount}
               </Badge>
             )}
@@ -298,18 +298,18 @@ const MessagesListView = ({
               />
             </div>
           ) : (
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-accent/30">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-accent/30 ring-1 ring-primary/10">
               <CalendarDays className="h-6 w-6 text-primary" />
             </div>
           )}
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between gap-2">
               <span className="text-sm font-extrabold text-foreground line-clamp-1">{room.eventName}</span>
-              <span className="text-[10px] text-muted-foreground shrink-0">{room.eventDate}</span>
+              <span className="text-[10px] font-extrabold text-muted-foreground shrink-0">{room.eventDate}</span>
             </div>
-            <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">{room.lastMessage}</p>
+            <p className="mt-0.5 text-xs font-extrabold text-muted-foreground line-clamp-1">{room.lastMessage}</p>
             <div className="mt-1 flex items-center gap-2">
-              <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-medium ${status.className}`}>
+              <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-extrabold shadow-sm ${status.className}`}>
                 {status.label}
               </span>
               {room.unreadCount > 0 && (
@@ -335,7 +335,10 @@ const MessagesListView = ({
   const renderPrivateChat = (chat: PrivateChat) => (
     <div
       key={chat.id}
-      className="flex w-full items-center gap-3 rounded-2xl border border-border/60 bg-card p-3 shadow-sm transition-colors hover:bg-accent/40"
+      className={cn(
+        'flex w-full items-center gap-3 rounded-2xl border border-border/60 bg-card p-3 shadow-sm transition-colors hover:bg-accent/40',
+        chat.unreadCount > 0 && 'ring-1 ring-primary/10',
+      )}
     >
       <button
         type="button"
@@ -369,7 +372,7 @@ const MessagesListView = ({
           <div className="flex items-center justify-between gap-2">
             <span className="text-sm font-extrabold text-foreground truncate">{chat.user.name}</span>
             {chat.unreadCount > 0 && (
-              <Badge className="h-5 min-w-[20px] shrink-0 rounded-full bg-primary px-1.5 text-[10px] text-primary-foreground">
+              <Badge className="h-5 min-w-[20px] shrink-0 rounded-full bg-primary px-1.5 text-[10px] font-extrabold text-primary-foreground shadow-sm ring-1 ring-primary/20">
                 {chat.unreadCount}
               </Badge>
             )}
@@ -464,7 +467,7 @@ const MessagesListView = ({
               <button
                 type="button"
                 onClick={() => (onBlockedClick ? onBlockedClick() : toast('Lista de bloqueados'))}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground hover:bg-accent"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground shadow-sm ring-2 ring-primary/20 hover:bg-accent"
                 aria-label="Bloqueados"
               >
                 <Ban className="h-4 w-4" />
@@ -472,14 +475,14 @@ const MessagesListView = ({
               <button
                 type="button"
                 onClick={() => (onCreateConversation ? onCreateConversation() : toast('Nueva conversación'))}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary/20"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary shadow-sm ring-2 ring-primary/20 hover:bg-primary/20"
                 aria-label="Nueva conversación"
               >
                 <PencilLine className="h-4 w-4" />
               </button>
               <button
                 onClick={() => setSettingsOpen(true)}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground hover:bg-accent"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground shadow-sm ring-2 ring-primary/20 hover:bg-accent"
                 aria-label="Configuración"
               >
                 <Settings className="h-4 w-4" />
@@ -535,7 +538,7 @@ const MessagesListView = ({
                   }
                 }}
               />
-              <span className="text-[10px] font-medium text-foreground truncate w-full text-center">Tu historia</span>
+              <span className="text-[10px] font-extrabold text-foreground truncate w-full text-center">Tu historia</span>
             </div>
             {(contacts
               ? contacts.map((contact) => ({ contact, chatId: contact.id }))
@@ -554,7 +557,7 @@ const MessagesListView = ({
                   showOnlineStatus
                   onClick={() => handleContactStoryClick(contact.id, chatId)}
                 />
-                <span className="text-[10px] font-medium text-foreground truncate w-full text-center">
+                <span className="text-[10px] font-extrabold text-foreground truncate w-full text-center">
                   {contact.name.split(' ')[0]}
                 </span>
               </div>
@@ -714,7 +717,7 @@ const MessagesListView = ({
 };
 
 const EmptyState = ({ text }: { text: string }) => (
-  <div className="mx-4 flex flex-col items-center justify-center rounded-2xl border border-dashed border-primary/25 bg-card py-16 text-center shadow-sm">
+  <div className="mx-4 flex flex-col items-center justify-center rounded-2xl border border-dashed border-primary/25 border-border/60 bg-card py-16 text-center shadow-sm">
     <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
       <MessageSquare className="h-7 w-7 text-primary" strokeWidth={2} />
     </div>

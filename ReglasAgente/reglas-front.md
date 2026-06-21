@@ -119,6 +119,21 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 1 (run 27910611218-b4)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| MessagesListView DSF | VISUAL | Sí | `chat/MessagesListView.tsx` | header rings shadow-sm; unread ring-primary/10; badges font-extrabold; empty dashed border-border/60; searchUsers API |
+| NotificationsSheet cards | VISUAL | Sí | `feed/NotificationsSheet.tsx` | max-h-[90dvh] ring-primary/10; rows card border-border/60; unread font-extrabold; fetchUserNotifications intacto |
+| SeatingMapEditor / NotificationsContext | Empalme | Sí | ver batch b1/b2/b3 | Verificados intactos |
+| MyReservedServices / ReportPostDialog | Empalme | Sí | ver batch b1/b2/b3 | Verificados intactos |
+| MainInfoSection / AccessControlListView | Empalme | Sí | ver batch b1/b2/b3 | Verificados intactos |
+| MyPostsView / EventsView / ServiceDetailView | Empalme | Sí | ver batch b1/b2/b3 | Verificados intactos |
+| CreatePostSheet / HostPickerModal / FAQSection | Empalme | Sí | ver batch b1/b2/b3 | Verificados intactos |
+| StepUnified / EventPublished / AddGuestModal | Empalme | Sí | ver batch b1/b2/b3 | Verificados intactos |
+| TicketDetailView / FeedHero / SeatLocationModal | Empalme | Sí | ver batch b1/b2/b3 | Verificados intactos |
+| Batch 1 gaps b4 (20) | Empalme | Sí | ver `decision-log.md` | 20 DONE + 0 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 1 (run 27910611218-b3)
 
 | Regla | Tipo | Implementada | Archivo | Observación |
