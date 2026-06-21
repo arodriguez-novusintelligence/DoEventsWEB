@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, Mail, MessageCircle, Bell, Smartphone, Heart, Plus, Edit, Trash2, MoreHorizontal, Check, X, AlertCircle, AlertTriangle, AtSign, UserCheck, CalendarDays, Loader2, Users } from "lucide-react";
+import { ArrowLeft, Mail, MessageCircle, Bell, Smartphone, Heart, Plus, Edit, Trash2, MoreHorizontal, Check, X, AlertCircle, AlertTriangle, AtSign, UserCheck, CalendarDays, Loader2, Users, RefreshCw } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@lovable/components/ui/dialog";
 import { Button } from "@lovable/components/ui/button";
 import { Badge } from "@lovable/components/ui/badge";
@@ -877,8 +877,13 @@ export const EventInvitationModal = ({
           {step === 'events' && (
             <>
               <DialogHeader className="shrink-0 space-y-1 p-6 pb-4 text-left">
-                <DialogTitle className="text-xl font-semibold">Seleccionar Evento</DialogTitle>
-                <p className="text-sm text-muted-foreground">Elige un evento para enviar invitaciones</p>
+                <DialogTitle className="flex items-center gap-2 text-xl font-semibold">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                    <CalendarDays className="h-5 w-5 text-primary" />
+                  </span>
+                  Seleccionar Evento
+                </DialogTitle>
+                <p className="text-sm text-muted-foreground pl-12">Elige un evento para enviar invitaciones</p>
               </DialogHeader>
               <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-6 pb-6 touch-pan-y">
                 {loadingEvents && (
@@ -893,7 +898,8 @@ export const EventInvitationModal = ({
                       <AlertCircle className="h-7 w-7 text-destructive" />
                     </div>
                     <p className="text-sm font-semibold text-foreground">{eventsLoadError}</p>
-                    <Button type="button" variant="outline" size="sm" className="rounded-xl" onClick={() => void loadEvents()}>
+                    <Button type="button" variant="outline" size="sm" className="rounded-xl gap-1.5" onClick={() => void loadEvents()}>
+                      <RefreshCw className="h-3.5 w-3.5" />
                       Reintentar
                     </Button>
                   </div>
@@ -1116,7 +1122,9 @@ export const EventInvitationModal = ({
 
                   {!loadingEventGuests && displayGuests.length === 0 ? (
                     <div className="flex flex-col items-center gap-2 py-6 text-center">
-                      <Users className="h-8 w-8 text-muted-foreground/60" />
+                      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                        <Users className="h-7 w-7 text-primary" />
+                      </div>
                       <p className="text-sm font-semibold text-foreground">Sin invitados en este filtro</p>
                       <p className="text-xs text-muted-foreground max-w-[220px]">
                         Usa &quot;Nuevo&quot; para agregar contactos o cambia el filtro de grupo.

@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { Loader2 } from 'lucide-react';
 import {
   EVENTS_CACHE_INVALIDATED_EVENT,
   SERVICES_CACHE_INVALIDATED_EVENT,
@@ -16,7 +17,6 @@ import {
   getCachedMapData,
   isMapCacheFresh,
   getStoredUserLocation,
-  Loader,
   RootState,
   USER_LOCATION_CHANGED_EVENT,
   type StoredUserLocation,
@@ -119,8 +119,16 @@ export const MapPage: React.FC = () => {
 
   if (loading && !mapItems.length) {
     return (
-      <div className="flex min-h-[70vh] items-center justify-center bg-secondary">
-        <Loader />
+      <div className="flex min-h-[70vh] flex-col items-center justify-center gap-3 bg-secondary pb-24">
+        <div className="flex flex-col items-center gap-3 rounded-2xl bg-card px-10 py-12 shadow-sm">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+            <Loader2 className="h-7 w-7 animate-spin text-primary" />
+          </div>
+          <p className="text-sm font-semibold text-foreground">Cargando mapa…</p>
+          <p className="text-xs text-muted-foreground max-w-[220px] text-center">
+            Buscando eventos, lugares y servicios cerca de ti.
+          </p>
+        </div>
       </div>
     );
   }

@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27902063419-b3`: batch 3 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`KycCertificationView` submit, `PublishFlowModal` banking, `GlobalSearchView` posts). Discover/map/admin/search polish; similitud ~92%; build:devaws OK.
+
 Run `gap-empalme-27902063419-b2`: batch 2 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`StoryViewersSheet` viewers API). Patrón Lovable: ring h-10/h-14, MapPin sin emoji, RefreshCw retry, badge unread notificaciones; similitud ~87.5%; build:devaws OK.
 
 Run `gap-empalme-27902063419-b1`: batch 1 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). Auth routing Lovable, `index.css` port-map, EventsView tokens semánticos; similitud ~83.6%; build:devaws OK.
@@ -94,7 +96,22 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27902063419-b2)
+## Empalme realizado (última ejecución — gap-empalme-27902063419-b3)
+
+- **EventInvitationModal:** header CalendarDays h-10 ring; empty/error rings; RefreshCw Reintentar carga eventos; empty filtro Users h-14 ring.
+- **VenueDetail:** sticky header Building2 gradiente + shadow-sm; shell pb-24 sobre PlaceDetailPage.
+- **ScanQRSheet:** DialogContent shadow-sm; feedback success/error h-10 rings; scanTicketFromQr API real.
+- **EventsPage (Index):** loading card shadow-sm h-14 ring Loader2; bg-secondary pb-24 discover shell.
+- **MapPage / MapView:** loading card Loader2 h-14 ring; empty MapPin ring; error AlertCircle + RefreshCw intactos.
+- **AIAssistantView:** header Sparkles h-10 ring-primary/20; CreatedEntityCard CheckCircle2 ring-success/20.
+- **GlobalSearchView / SearchEventsPage:** header Search h-10 ring; tabs shadow-sm; posts tab banner BACKEND_REQUIRED; APIs searchEvents/searchUsers reales.
+- **KycContext:** alias `refreshKyc`, flag `canSubmitDocuments: false` (BACKEND_REQUIRED documentado).
+- **KycCertificationView:** pasos upload rings h-10; error RefreshCw; botón envío deshabilitado sin simulación.
+- **TicketPurchaseFlow:** ShieldCheck copy checkout; Ticket ring; redirect `/events/:id/checkout` real (RISKY verificado).
+- **AdminPanelView / AdminRefundsPanel / AdminReportsPanel:** headers gradiente shadow-sm; Loader2 reportes; tabs reales.
+- **NotFound / AuthLogo / TermsDialog / ChangeLocationSheet / ProfileCommentsView / EventDetailView / PublishFlowModal:** verificados alineados empalmes previos; PublishFlow banking BACKEND_REQUIRED banner intacto.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27902063419-b2)
 
 - **ContactImportModal:** empty state `UserPlus` h-14 ring-primary/20 (paridad título modal).
 - **TicketDetailView:** orden única con `shadow-sm`; fallback media Ticket ring intacto.

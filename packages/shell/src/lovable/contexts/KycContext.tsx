@@ -20,8 +20,8 @@ interface KycContextValue {
   isInReview: boolean;
   isRejected: boolean;
   needsCertification: boolean;
-  statusLabel: string;
-  refresh: () => void;
+  canSubmitDocuments: boolean;
+  refreshKyc: () => void;
 }
 
 const KycContext = createContext<KycContextValue>({
@@ -36,6 +36,8 @@ const KycContext = createContext<KycContextValue>({
   needsCertification: true,
   statusLabel: KYC_STATUS_LABELS.pending,
   refresh: () => undefined,
+  canSubmitDocuments: false,
+  refreshKyc: () => undefined,
 });
 
 export const useKyc = () => useContext(KycContext);
@@ -111,7 +113,9 @@ export const KycProvider = ({ userId, children }: KycProviderProps) => {
       isRejected: status === 'rejected',
       needsCertification: !loading && !loadError && status !== 'verified',
       statusLabel: KYC_STATUS_LABELS[status],
+      canSubmitDocuments: false,
       refresh,
+      refreshKyc: refresh,
     }),
     [status, loading, loadError, loadErrorMessage],
   );

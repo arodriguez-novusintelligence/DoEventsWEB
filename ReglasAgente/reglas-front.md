@@ -105,6 +105,32 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 3 (run 27902063419-b3)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| EventInvitationModal header | VISUAL | Sí | `guests/EventInvitationModal.tsx` | CalendarDays h-10 ring; RefreshCw retry; Users empty h-14 |
+| VenueDetail shell | Navegación | Sí | `pages/VenueDetail.tsx` | Sticky Building2 gradiente shadow-sm + PlaceDetailPage |
+| ScanQR feedback | Integración | Sí | `access/ScanQRSheet.tsx` | shadow-sm; rings success/error; scanTicketFromQr |
+| NotFound 404 | VISUAL | Sí | `pages/NotFound.tsx` | MapPinOff h-14 ring verificado intacto |
+| AuthLogo gradient | VISUAL | Sí | `auth/AuthLogo.tsx` | Sparkles ring-primary/20 verificado |
+| TermsDialog header | VISUAL | Sí | `auth/TermsDialog.tsx` | ScrollText h-10 ring verificado |
+| KycContext flags | Integración | Sí | `contexts/KycContext.tsx` | refreshKyc; canSubmitDocuments false |
+| EventsPage discover | Navegación | Sí | `pages/EventsPage.tsx` | Loading card shadow-sm; bg-secondary pb-24 |
+| AIAssistantView header | VISUAL | Sí | `ai/AIAssistantView.tsx` | Sparkles h-10 ring header |
+| ChangeLocation header | VISUAL | Sí | `feed/ChangeLocationSheet.tsx` | MapPin h-10 ring verificado |
+| PublishFlow banking | Bloqueo | Parcial | `events/PublishFlowModal.tsx` | BACKEND_REQUIRED onSubmitBank banner |
+| KYC certification submit | Bloqueo | Parcial | `feed/KycCertificationView.tsx` | BACKEND_REQUIRED envío; pasos rings RefreshCw |
+| ProfileComments error | VISUAL | Sí | `feed/ProfileCommentsView.tsx` | h-14 rings + RefreshCw verificado |
+| EventDetailView retry | Integración | Sí | `events/EventDetailView.tsx` | fetchEventDetail + RefreshCw verificado |
+| MapPage loading | Integración | Sí | `pages/MapPage.tsx`, `feed/MapView.tsx` | Loader2 h-14 ring card; empty/error rings |
+| AdminRefundsPanel shell | Navegación | Sí | `admin/AdminRefundsPanel.tsx` | Header gradiente shadow-sm |
+| TicketPurchaseFlow checkout | FRONTEND_LOGIC | Sí | `invitations/TicketPurchaseFlow.tsx` | ShieldCheck; redirect checkout RISKY |
+| AdminReportsPanel shell | Navegación | Sí | `admin/AdminReportsPanel.tsx` | Loader2 + gradiente shadow-sm |
+| AdminPanelView shell | Navegación | Sí | `admin/AdminPanelView.tsx` | Shield header pb-24 shadow-sm |
+| GlobalSearch posts | Bloqueo | Parcial | `feed/GlobalSearchView.tsx`, `SearchEventsPage.tsx` | BACKEND_REQUIRED tab posts; Search header ring |
+| Batch 3 gaps (20) | Empalme | Sí | ver `decision-log.md` | 17 DONE + 3 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 2 (run 27902063419-b2)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

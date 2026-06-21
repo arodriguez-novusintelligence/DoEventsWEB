@@ -159,7 +159,7 @@ export const GlobalSearchView = ({
 
   return (
     <div className="mx-auto min-h-screen max-w-lg bg-background pb-24">
-      <div className="sticky top-0 z-20 border-b border-border bg-background px-4 py-3">
+      <div className="sticky top-0 z-20 border-b border-border bg-background px-4 py-3 shadow-sm">
         <button
           type="button"
           onClick={handleBack}
@@ -168,6 +168,15 @@ export const GlobalSearchView = ({
           <ChevronLeft className="h-5 w-5" />
           Atrás
         </button>
+        <div className="mb-3 flex items-center gap-2">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+            <Search className="h-5 w-5 text-primary" />
+          </span>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-primary">Búsqueda global</p>
+            <p className="text-sm font-bold text-foreground">Eventos, usuarios y publicaciones</p>
+          </div>
+        </div>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input

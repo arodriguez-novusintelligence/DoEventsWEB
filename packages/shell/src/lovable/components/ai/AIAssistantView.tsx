@@ -247,13 +247,16 @@ export const AIAssistantView: React.FC<AIAssistantViewProps> = ({ userId, onBack
 
   return (
     <div className="de-ai-assistant fixed inset-0 z-[110] mx-auto flex max-w-lg flex-col bg-background">
-      <header className="flex shrink-0 items-center gap-3 border-b border-border bg-card px-4 py-3 safe-area-top">
+      <header className="flex shrink-0 items-center gap-3 border-b border-border bg-card px-4 py-3 safe-area-top shadow-sm">
         {onBack && (
           <button type="button" onClick={onBack} className="flex h-9 w-9 items-center justify-center rounded-full text-primary" aria-label="Volver">
             <ChevronLeft className="h-5 w-5" />
           </button>
         )}
-        <div className="flex flex-1 flex-col">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
+          <Sparkles className="h-5 w-5 text-primary" />
+        </span>
+        <div className="flex flex-1 flex-col min-w-0">
           <span className="text-[10px] font-bold uppercase tracking-widest text-primary">PRO · IA</span>
           <h1 className="text-base font-extrabold">Asistente Do.Events</h1>
         </div>

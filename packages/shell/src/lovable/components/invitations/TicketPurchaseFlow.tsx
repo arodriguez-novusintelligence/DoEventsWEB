@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, CreditCard, Loader2, Ticket } from 'lucide-react';
+import { ChevronLeft, CreditCard, Loader2, ShieldCheck, Ticket } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
 import { InvitationEvent } from '@lovable/data/invitationsData';
 
@@ -90,7 +90,8 @@ const TicketPurchaseFlow = ({ event, onBack }: Props) => {
             )}
           </div>
 
-          <p className="mt-4 text-xs text-muted-foreground">
+          <p className="mt-4 flex items-start gap-2 text-xs text-muted-foreground">
+            <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
             Serás redirigido a la pasarela de pago segura de Do.Events para elegir categorías
             y completar tu compra.
           </p>

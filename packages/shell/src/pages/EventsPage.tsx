@@ -379,15 +379,22 @@ export const EventsPage: React.FC = () => {
 
   if (loading && !nearby.length && !recommendedAll.length && !serviceProviders.length) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-2 bg-background pb-24">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-sm text-muted-foreground">Descubriendo eventos cerca de ti…</p>
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3 bg-background pb-24">
+        <div className="flex flex-col items-center gap-3 rounded-2xl bg-card px-10 py-12 shadow-sm">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+            <Loader2 className="h-7 w-7 animate-spin text-primary" />
+          </div>
+          <p className="text-sm font-semibold text-foreground">Descubriendo eventos cerca de ti…</p>
+          <p className="text-xs text-muted-foreground max-w-[240px] text-center">
+            Cargando eventos, lugares y servicios según tu ubicación.
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen pb-24" aria-label="Descubre eventos">
+    <div className="min-h-screen bg-secondary pb-24" aria-label="Descubre eventos">
     <EventsView
       publishedEvents={myEvents}
       nearbyEvents={nearby}

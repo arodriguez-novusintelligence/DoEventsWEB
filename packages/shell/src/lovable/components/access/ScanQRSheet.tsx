@@ -110,7 +110,7 @@ const ScanQRSheet = ({ open, onOpenChange, eventTitle, eventId }: ScanQRSheetPro
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md p-0 overflow-hidden gap-0 bg-card rounded-2xl">
+      <DialogContent className="max-w-md p-0 overflow-hidden gap-0 bg-card rounded-2xl shadow-sm">
         <DialogHeader className="px-5 pt-5 pb-3">
           <DialogTitle className="flex items-center gap-2 text-xl font-extrabold text-foreground">
             <ScanLine className="h-5 w-5 text-primary" />

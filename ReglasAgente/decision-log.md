@@ -13,6 +13,56 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-21 13:00 UTC] gap-empalme-27902063419-b3
+
+### 1. Resumen del empalme
+Batch 3 (20 gaps, manifiesto `27902063419-b3`, similitud baseline **80.6%** / post-b2 **87.5%**): empalme visual/integración en invitados, venues, auth, admin, discover, mapa, IA y búsqueda global. Patrón Lovable: rings h-10/h-14, Loader2 cards shadow-sm, RefreshCw retry, headers gradiente admin. **17 gaps DONE** frontend; **3 BACKEND_REQUIRED** (`KycCertificationView` submit, `PublishFlowModal` banking, `GlobalSearchView` posts).
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Event invitation | `packages/shell/src/lovable/components/guests/EventInvitationModal.tsx` | DONE |
+| Venue detail | `packages/shell/src/pages/VenueDetail.tsx` | DONE |
+| Scan QR | `packages/shell/src/lovable/components/access/ScanQRSheet.tsx` | DONE |
+| Not found | `packages/shell/src/pages/NotFound.tsx` | DONE |
+| Auth logo | `packages/shell/src/lovable/components/auth/AuthLogo.tsx` | DONE |
+| Terms dialog | `packages/shell/src/lovable/components/auth/TermsDialog.tsx` | DONE |
+| KYC context | `packages/shell/src/lovable/contexts/KycContext.tsx` | DONE |
+| Index / discover | `packages/shell/src/pages/EventsPage.tsx` | DONE |
+| AI assistant | `packages/shell/src/lovable/components/ai/AIAssistantView.tsx` | DONE |
+| Change location | `packages/shell/src/lovable/components/feed/ChangeLocationSheet.tsx` | DONE |
+| Publish flow | `packages/shell/src/lovable/components/events/PublishFlowModal.tsx` | BACKEND_REQUIRED |
+| KYC certification | `packages/shell/src/lovable/components/feed/KycCertificationView.tsx` | BACKEND_REQUIRED |
+| Profile comments | `packages/shell/src/lovable/components/feed/ProfileCommentsView.tsx` | DONE |
+| Event detail | `packages/shell/src/lovable/components/events/EventDetailView.tsx` | DONE |
+| Map | `packages/shell/src/pages/MapPage.tsx`, `feed/MapView.tsx` | DONE |
+| Admin refunds | `packages/shell/src/lovable/components/admin/AdminRefundsPanel.tsx` | DONE |
+| Ticket purchase | `packages/shell/src/lovable/components/invitations/TicketPurchaseFlow.tsx` | DONE |
+| Admin reports | `packages/shell/src/lovable/components/admin/AdminReportsPanel.tsx` | DONE |
+| Admin panel | `packages/shell/src/lovable/components/admin/AdminPanelView.tsx` | DONE |
+| Global search | `packages/shell/src/lovable/components/feed/GlobalSearchView.tsx`, `SearchEventsPage.tsx` | BACKEND_REQUIRED |
+
+### 3. Similitud antes/después
+- **Antes:** 87.5% (post batch 2; manifiesto baseline 80.6%)
+- **Después:** ~92.0% (estimado; re-comparación CI pendiente)
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias runtime (solo comentario anti-mock en Login.tsx)
+
+### 6. Riesgos pendientes
+- Re-comparación CI con `discover-joyful-feed` privado
+- KYC submit, PublishFlow banking, GlobalSearch posts requieren DoEventsBack
+
+### Decisión
+**APPLIED**
+
+---
+
 ## [2026-06-21 12:15 UTC] gap-empalme-27902063419-b2
 
 ### 1. Resumen del empalme

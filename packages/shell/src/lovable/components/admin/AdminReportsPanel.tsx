@@ -24,7 +24,7 @@ export const AdminReportsPanel = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      <div className="sticky top-0 z-10 border-b border-border/40 bg-gradient-to-r from-primary/5 via-background to-accent/5 px-4 py-4">
+      <div className="sticky top-0 z-10 border-b border-border/40 bg-gradient-to-r from-primary/5 via-background to-accent/5 px-4 py-4 shadow-sm">
         <button
           type="button"
           onClick={() => navigate('/admin?tab=home')}

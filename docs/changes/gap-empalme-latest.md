@@ -1,42 +1,43 @@
-# Gap empalme — resumen ejecutivo (batch 2)
+# Gap empalme — resumen ejecutivo (batch 3)
 
-**Run:** `gap-empalme-27902063419-b2`  
+**Run:** `gap-empalme-27902063419-b3`  
 **Fecha:** 2026-06-21  
 **Rama:** `feature/cicd/dev-automation`
 
 ## Resultado
 
-Batch 2 del manifiesto (20 gaps, similitud baseline **80.63%**). Tras empalme **~87.5%** (estimado). **19 gaps DONE** frontend; **1 BACKEND_REQUIRED** documentado.
+Batch 3 del manifiesto (20 gaps, similitud baseline **80.6%** / post-b2 **87.5%**). Tras empalme **~92.0%** (estimado). **17 gaps DONE** frontend; **3 BACKEND_REQUIRED** documentados.
 
 ## Empalme realizado
 
 | Área | Cambios principales |
 |------|---------------------|
-| **CreatePostSheet** | Ubicación con icono `MapPin` Lucide (sin emoji); focus ring primary |
-| **NotificationsSheet** | Header Bell h-10 ring-primary/20; badge contador no leídas |
-| **NotificationsContext** | Alias `hasUnread` derivado de `unreadCount` |
-| **MyTicketsView** | Fallback media Ticket h-14 ring; Reintentar con `RefreshCw` |
-| **MyInvitationsView / CommentsSheet** | Botón Reintentar con `RefreshCw` |
-| **ContactImportModal** | Empty state `UserPlus` h-14 ring (paridad título) |
-| **FollowersSheet / LocationSection** | Headers h-10 ring-primary/20 |
-| **EventLocationMap** | Loading MapPin ring + Loader2 |
-| **MessagesListView** | Cards conversación `shadow-sm` |
-| **TicketDetailView / ReportPostDialog** | `shadow-sm` en cards/dialog |
-| **Reservas / Access control / EventPublished / MediaUpload** | Verificados alineados — APIs reales intactas |
+| **EventInvitationModal** | Header CalendarDays h-10 ring; RefreshCw Reintentar; empty filtro Users h-14 ring |
+| **VenueDetail / EventsPage** | Shell discover Lovable: gradiente sticky, loading card shadow-sm, pb-24 |
+| **ScanQRSheet** | shadow-sm dialog; feedback success/error rings; API `scanTicketFromQr` |
+| **MapPage** | Loading Loader2 h-14 ring card; delega MapView con empty/error rings |
+| **AIAssistantView** | Header Sparkles h-10 ring; entity cards CheckCircle2 success |
+| **GlobalSearchView** | Header Search ring; tabs shadow-sm; eventos/usuarios API real |
+| **Admin panels** | Gradientes shadow-sm; AdminReportsPanel Loader2 + KPIs reales |
+| **TicketPurchaseFlow** | ShieldCheck checkout copy; redirect pasarela real (RISKY) |
+| **KycContext** | `refreshKyc`, `canSubmitDocuments: false` sin simular envío |
+| **Auth / NotFound / Terms / ProfileComments / EventDetail** | Verificados alineados batch previo |
 
-## Backend pendiente (batch 2)
+## Backend pendiente (batch 3)
 
 | Gap | Motivo |
 |-----|--------|
-| `StoryViewersSheet` | Endpoint `GET /stories/{id}/viewers` no expuesto — UI con skeleton y badge BACKEND_REQUIRED |
+| `KycCertificationView` | Endpoint `POST /users/{id}/kyc` — botón envío deshabilitado |
+| `PublishFlowModal` | Persistencia banco post-publicación — banner BACKEND_REQUIRED |
+| `GlobalSearchView` (tab posts) | Búsqueda full-text publicaciones — filtra feed reciente |
 
 ## Backend pendiente (acumulado)
 
-Ver `ReglasAgente/impacto-backend.md` — KYC, PSP, banking delete, GlobalSearch posts, EditProfile, Booking add-ons, PublishFlow banking.
+Ver `ReglasAgente/impacto-backend.md` — StoryViewersSheet, banking delete, PaymentGateway PSP, EditProfile, Booking add-ons, PULEP.
 
 ## Gaps restantes
 
-**80** (de 118 totales pendientes; batches 3–6 del manifiesto `27902063419` por ejecutar en CI).
+**58** (de 118 totales pendientes; batches 4–6 del manifiesto `27902063419` por ejecutar en CI).
 
 ## Validación
 

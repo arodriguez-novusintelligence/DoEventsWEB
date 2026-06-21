@@ -1,4 +1,4 @@
-import { ShieldCheck, Mail, AlertCircle, CheckCircle2, Clock, XCircle, Loader2, Camera, IdCard, Upload } from 'lucide-react';
+import { ShieldCheck, Mail, AlertCircle, CheckCircle2, Clock, XCircle, Loader2, Camera, IdCard, Upload, RefreshCw } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
 import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBanner';
 import { useKyc, type KycStatus } from '@lovable/contexts/KycContext';
@@ -76,7 +76,8 @@ export const KycCertificationView = ({ onBack }: KycCertificationViewProps) => {
             <p className="mt-3 text-sm font-medium text-destructive">
               {loadErrorMessage || 'No se pudo cargar el estado KYC'}
             </p>
-            <Button type="button" variant="outline" className="mt-4 rounded-full" onClick={() => refresh()}>
+            <Button type="button" variant="outline" className="mt-4 rounded-full gap-1.5" onClick={() => refresh()}>
+              <RefreshCw className="h-4 w-4" />
               Reintentar
             </Button>
           </div>
@@ -115,7 +116,7 @@ export const KycCertificationView = ({ onBack }: KycCertificationViewProps) => {
                         key={step.title}
                         className="flex items-start gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-sm"
                       >
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
                           <StepIcon className="h-5 w-5 text-primary" />
                         </div>
                         <div className="min-w-0 flex-1">
