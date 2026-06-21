@@ -18,7 +18,9 @@ export const AdminPanelView = () => (
         </div>
       </div>
     </div>
+    <div className="rounded-t-2xl border-t border-border/40 bg-card shadow-sm">
     <AdminPanelPage />
+    </div>
   </div>
 );
 

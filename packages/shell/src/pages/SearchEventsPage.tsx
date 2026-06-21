@@ -13,7 +13,7 @@ export const SearchEventsPage: React.FC = () => {
   const location = useLocation();
   const state = (location.state as SearchLocationState | null) ?? {};
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-secondary pb-24">
       <GlobalSearchView
         onBack={() => navigate(-1)}
         initialQuery={state.q}

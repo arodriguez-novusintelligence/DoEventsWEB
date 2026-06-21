@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27903532486-b3`: batch 3 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`KycCertificationView` submit, `PublishFlowModal` banking, `GlobalSearchView` posts). Auth/discover/admin/map/search polish; similitud ~90.5%; build:devaws OK.
+
 Run `gap-empalme-27903532486-b2`: batch 2 (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED nuevos. Feed/reservas/chat/wizard polish rings+shadow-sm; similitud ~87%; build:devaws OK.
 
 Run `gap-empalme-27903532486-b1`: batch 1 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). FeedHero tokens DSF; SeatingMapEditor/StepUnified/ServiceDetail rings; AddGuestModal search empty/error; similitud ~83.8%; build:devaws OK.
@@ -108,7 +110,27 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27903532486-b2)
+## Empalme realizado (última ejecución — gap-empalme-27903532486-b3)
+
+- **ScanQRSheet:** ScanLine pill ring en título; feedback success/error h-10 rings; retry rounded-full; `scanTicketFromQr` API intacta.
+- **LocationSection:** Loader2 overlay al geolocalizar; mapa shadow-sm; empty dashed border-primary/30.
+- **NotFound:** card shadow-sm centrada; MapPinOff h-14 ring; CTAs rounded-full.
+- **AuthLogo / TermsDialog:** shadow-sm gradient ring; ScrollText pill; título font-extrabold.
+- **KycContext:** export `KycContextValue` con `statusLabel`/`refresh`; `fetchUserById` sin mocks.
+- **EventsPage:** sticky header Compass gradiente shadow-sm «Descubre»; APIs discover intactas.
+- **AIAssistantView:** sugerencias shadow-sm border-border/60; header Sparkles ring verificado.
+- **ChangeLocationSheet:** max-h-[90dvh] overflow-y-auto; ubicación actual card shadow-sm.
+- **PublishFlowModal:** Megaphone pill bankForm; shadow-sm modal; BACKEND_REQUIRED banner banking intacto.
+- **StoryViewer:** media failed Sparkles h-14 ring; progress animate-story-progress; tap zones prev/next.
+- **KycCertificationView:** pasos upload rings; BACKEND_REQUIRED envío documentos; botón disabled.
+- **MapPage / MapView:** bg-secondary shell; loading card ring; empty/error rings verificados.
+- **ProfileCommentsView:** loading/error/empty rings h-14; cards border-border/60 shadow-sm.
+- **EventDetailView:** retry Button rounded-full; fetchEventDetail + RefreshCw API intacta.
+- **AdminRefundsPanel / AdminReportsPanel / AdminPanelView:** card shadow-sm wrappers; gradiente headers.
+- **TicketPurchaseFlow:** hero imagen evento; step indicator 1→2; CalendarDays/MapPin resumen; redirect checkout RISKY.
+- **GlobalSearchView / SearchEventsPage:** pb-24 bg-secondary; events empty h-14 ring; BACKEND_REQUIRED posts banner.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27903532486-b2)
 
 - **CreatePostSheet:** Drawer max-h; media preview ring shadow-sm; PenLine header pill intacto.
 - **EventPublished:** card shadow-sm PartyPopper h-14 ring; fetchEventById + share API intactos.

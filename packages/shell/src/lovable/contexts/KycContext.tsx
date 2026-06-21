@@ -10,7 +10,7 @@ export const KYC_STATUS_LABELS: Record<KycStatus, string> = {
   rejected: 'Rechazado',
 };
 
-interface KycContextValue {
+export interface KycContextValue {
   status: KycStatus;
   loading: boolean;
   loadError: boolean;
@@ -20,7 +20,9 @@ interface KycContextValue {
   isInReview: boolean;
   isRejected: boolean;
   needsCertification: boolean;
+  statusLabel: string;
   canSubmitDocuments: boolean;
+  refresh: () => void;
   refreshKyc: () => void;
 }
 
@@ -35,10 +37,12 @@ const KycContext = createContext<KycContextValue>({
   isRejected: false,
   needsCertification: true,
   statusLabel: KYC_STATUS_LABELS.pending,
-  refresh: () => undefined,
   canSubmitDocuments: false,
+  refresh: () => undefined,
   refreshKyc: () => undefined,
 });
+
+export { KycContext };
 
 export const useKyc = () => useContext(KycContext);
 

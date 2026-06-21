@@ -111,6 +111,32 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 3 (run 27903532486-b3)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| ScanQRSheet title pill | VISUAL | Sí | `access/ScanQRSheet.tsx` | ScanLine h-10 ring; success/error h-10 rings |
+| LocationSection map overlay | VISUAL | Sí | `venues/sections/LocationSection.tsx` | Loader2 geolocalizando; map shadow-sm |
+| NotFound card shell | VISUAL | Sí | `pages/NotFound.tsx` | Card shadow-sm MapPinOff h-14 ring |
+| AuthLogo shadow | VISUAL | Sí | `auth/AuthLogo.tsx` | shadow-sm gradient ring-primary/20 |
+| TermsDialog title | VISUAL | Sí | `auth/TermsDialog.tsx` | ScrollText pill; font-extrabold title |
+| KycContext export | Integración | Sí | `contexts/KycContext.tsx` | KycContextValue statusLabel/refresh API real |
+| EventsPage discover header | Navegación | Sí | `pages/EventsPage.tsx` | Sticky Compass gradiente shadow-sm |
+| AIAssistantView suggestions | VISUAL | Sí | `ai/AIAssistantView.tsx` | Chips shadow-sm border-border/60 |
+| ChangeLocationSheet scroll | VISUAL | Sí | `feed/ChangeLocationSheet.tsx` | max-h-[90dvh]; ubicación card shadow-sm |
+| PublishFlowModal banking | Bloqueo | Parcial | `events/PublishFlowModal.tsx` | BACKEND_REQUIRED; Megaphone bankForm pill |
+| StoryViewer media failed | VISUAL | Sí | `feed/StoryViewer.tsx` | Sparkles h-14 ring empty/failed |
+| KYC certification submit | Bloqueo | Parcial | `feed/KycCertificationView.tsx` | BACKEND_REQUIRED envío; pasos rings |
+| MapPage shell | Navegación | Sí | `pages/MapPage.tsx` | bg-secondary; loading card ring |
+| ProfileComments states | VISUAL | Sí | `feed/ProfileCommentsView.tsx` | h-14 rings loading/error/empty |
+| EventDetailView retry | Integración | Sí | `events/EventDetailView.tsx` | Button rounded-full RefreshCw API |
+| AdminRefundsPanel card | Navegación | Sí | `admin/AdminRefundsPanel.tsx` | Card shadow-sm AdminPaymentsTab |
+| TicketPurchaseFlow hero | FRONTEND_LOGIC | Sí | `invitations/TicketPurchaseFlow.tsx` | Hero imagen; step 1→2; checkout RISKY |
+| AdminReportsPanel card | Navegación | Sí | `admin/AdminReportsPanel.tsx` | Loading card shadow-sm; KPI wrapper |
+| AdminPanelView shell | Navegación | Sí | `admin/AdminPanelView.tsx` | Card shadow-sm sobre AdminPanelPage |
+| GlobalSearch posts | Bloqueo | Parcial | `feed/GlobalSearchView.tsx`, `SearchEventsPage.tsx` | BACKEND_REQUIRED tab posts; events empty ring |
+| Batch 3 gaps (20) | Empalme | Sí | ver `decision-log.md` | 17 DONE + 3 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 2 (run 27903532486-b2)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

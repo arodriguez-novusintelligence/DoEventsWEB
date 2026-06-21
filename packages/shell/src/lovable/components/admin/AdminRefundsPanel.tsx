@@ -29,7 +29,9 @@ export const AdminRefundsPanel = () => {
         </div>
       </div>
       <div className="p-4">
+        <div className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
         <AdminPaymentsTab />
+        </div>
       </div>
     </div>
   );

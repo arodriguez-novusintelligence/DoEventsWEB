@@ -96,7 +96,7 @@ export const ChangeLocationSheet = ({
         onOpenChange(next);
       }}
     >
-      <SheetContent side="bottom" className="max-w-lg mx-auto rounded-t-2xl">
+      <SheetContent side="bottom" className="max-h-[90dvh] overflow-y-auto max-w-lg mx-auto rounded-t-2xl">
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">

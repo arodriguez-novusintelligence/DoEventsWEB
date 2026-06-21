@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Compass } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import {
   EVENTS_CACHE_INVALIDATED_EVENT,
@@ -395,6 +395,17 @@ export const EventsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-secondary pb-24" aria-label="Descubre eventos">
+    <div className="sticky top-0 z-10 border-b border-border/40 bg-gradient-to-r from-primary/5 via-background to-accent/5 px-4 py-3 shadow-sm">
+      <div className="mx-auto flex max-w-lg items-center gap-3">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
+          <Compass className="h-5 w-5 text-primary" />
+        </span>
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-primary">Descubre</p>
+          <h1 className="text-lg font-extrabold text-foreground">Eventos cerca de ti</h1>
+        </div>
+      </div>
+    </div>
     <EventsView
       publishedEvents={myEvents}
       nearbyEvents={nearby}

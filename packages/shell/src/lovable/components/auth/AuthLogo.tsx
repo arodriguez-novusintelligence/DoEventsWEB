@@ -3,7 +3,7 @@ import { Sparkles } from 'lucide-react';
 
 export const AuthLogo = () => (
   <div className="flex flex-col items-center justify-center gap-4 py-10">
-    <div className="relative rounded-3xl bg-gradient-to-br from-primary/10 via-card to-accent/10 px-8 py-6 shadow-lg border border-border/60 ring-2 ring-primary/20">
+    <div className="relative rounded-3xl border border-border/60 bg-gradient-to-br from-primary/10 via-card to-accent/10 px-8 py-6 shadow-sm ring-2 ring-primary/20">
       <Sparkles className="absolute -top-2 -right-2 h-5 w-5 text-primary/60" aria-hidden />
       <DoEventsLogo width={200} height={58} />
     </div>

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, CreditCard, Loader2, ShieldCheck, Ticket } from 'lucide-react';
+import { ChevronLeft, CreditCard, Loader2, ShieldCheck, Ticket, CalendarDays, MapPin } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
+import { resolveImageUrl } from '@doevents/shared';
 import { InvitationEvent } from '@lovable/data/invitationsData';
 
 interface Props {
@@ -68,7 +69,32 @@ const TicketPurchaseFlow = ({ event, onBack }: Props) => {
         </button>
       </div>
 
-      <div className="mx-auto flex w-full max-w-lg flex-1 flex-col px-4 pb-16 pt-6">
+      <div className="mx-auto flex w-full max-w-lg flex-1 flex-col px-4 pb-16 pt-4">
+        {event.image && (
+          <div className="relative mb-4 overflow-hidden rounded-2xl border border-border/60 shadow-sm aspect-[16/9]">
+            <img
+              src={resolveImageUrl(event.image) || event.image}
+              alt=""
+              className="h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+            <p className="absolute bottom-3 left-3 right-3 truncate text-sm font-bold text-white drop-shadow">
+              {event.title || 'Evento'}
+            </p>
+          </div>
+        )}
+
+        <div className="mb-4 flex items-center justify-center gap-2">
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground shadow-sm">
+            1
+          </span>
+          <span className="h-0.5 w-8 rounded-full bg-primary" />
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-xs font-bold text-muted-foreground ring-2 ring-border">
+            2
+          </span>
+          <p className="ml-2 text-xs text-muted-foreground">Resumen → Checkout</p>
+        </div>
+
         <div className="rounded-2xl bg-card p-6 shadow-sm border border-border/60">
           <div className="flex items-center gap-3">
             <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
@@ -82,11 +108,18 @@ const TicketPurchaseFlow = ({ event, onBack }: Props) => {
 
           <div className="mt-6 space-y-3 rounded-xl bg-secondary/80 p-4">
             <p className="text-sm font-bold text-foreground">{event.title || 'Evento'}</p>
-            {event.date && (
-              <p className="text-xs text-muted-foreground">{event.date}</p>
+            {event.startDate && (
+              <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <CalendarDays className="h-3.5 w-3.5 shrink-0 text-primary" />
+                {event.startDate}
+                {event.startTime ? ` · ${event.startTime}` : ''}
+              </p>
             )}
-            {event.location && (
-              <p className="text-xs text-muted-foreground">{event.location}</p>
+            {(event.venue?.address || event.venue?.name) && (
+              <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <MapPin className="h-3.5 w-3.5 shrink-0 text-primary" />
+                {event.venue.address || event.venue.name}
+              </p>
             )}
           </div>
 

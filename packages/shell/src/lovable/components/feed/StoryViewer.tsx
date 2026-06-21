@@ -312,6 +312,9 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
               )
             ) : (
               <div className="px-8 text-center">
+                <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-white/10 ring-4 ring-white/20">
+                  <Sparkles className="h-7 w-7 text-white/80" />
+                </div>
                 <p className="text-lg font-medium">
                   {current.description || (mediaFailed ? 'No se pudo cargar el contenido.' : 'Estado')}
                 </p>

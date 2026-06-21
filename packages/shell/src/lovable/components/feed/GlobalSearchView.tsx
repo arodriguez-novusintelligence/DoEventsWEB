@@ -242,6 +242,13 @@ export const GlobalSearchView = ({
                 <p className="py-8 text-center text-sm text-muted-foreground">
                   Escribe para buscar eventos por nombre, ciudad o categoría.
                 </p>
+              ) : eventResults.length === 0 ? (
+                <div className="rounded-2xl bg-card py-10 text-center shadow-sm">
+                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                    <Search className="h-7 w-7 text-primary" />
+                  </div>
+                  <p className="mt-3 text-sm text-muted-foreground">Sin eventos para «{query.trim()}»</p>
+                </div>
               ) : (
                 <EventSection
                   title={`Resultados (${eventResults.length})`}

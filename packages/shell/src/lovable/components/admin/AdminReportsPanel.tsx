@@ -46,12 +46,14 @@ export const AdminReportsPanel = () => {
       </div>
       <div className="p-4">
         {loading ? (
-          <div className="flex flex-col items-center justify-center gap-2 py-16">
+          <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-border/60 bg-card py-16 shadow-sm">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
             <p className="text-sm text-muted-foreground">Cargando reportes…</p>
           </div>
         ) : (
-          <AdminHomeTab stats={stats} />
+          <div className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
+            <AdminHomeTab stats={stats} />
+          </div>
         )}
       </div>
     </div>

@@ -113,7 +113,9 @@ const ScanQRSheet = ({ open, onOpenChange, eventTitle, eventId }: ScanQRSheetPro
       <DialogContent className="max-w-md p-0 overflow-hidden gap-0 bg-card rounded-2xl shadow-sm">
         <DialogHeader className="px-5 pt-5 pb-3">
           <DialogTitle className="flex items-center gap-2 text-xl font-extrabold text-foreground">
-            <ScanLine className="h-5 w-5 text-primary" />
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+              <ScanLine className="h-5 w-5 text-primary" />
+            </span>
             Escanear código
           </DialogTitle>
           <p className="text-xs text-muted-foreground mt-1 truncate">{eventTitle}</p>

@@ -393,7 +393,7 @@ export const AIAssistantView: React.FC<AIAssistantViewProps> = ({ userId, onBack
                 key={s}
                 type="button"
                 onClick={() => void send(s)}
-                className="flex w-full items-start gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-left text-sm transition-colors hover:border-primary/40 hover:bg-primary/5 active:scale-[0.99]"
+                className="flex w-full items-start gap-2 rounded-xl border border-border/60 bg-card px-3 py-2.5 text-left text-sm shadow-sm transition-colors hover:border-primary/40 hover:bg-primary/5 active:scale-[0.99]"
               >
                 <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                 <span className="leading-snug">{s}</span>

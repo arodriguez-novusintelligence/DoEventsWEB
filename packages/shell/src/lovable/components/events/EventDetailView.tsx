@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AlertCircle, Loader2, RefreshCw, CalendarDays } from 'lucide-react';
+import { Button } from '@lovable/components/ui/button';
 import {
   extractVenueImageUrls,
   fetchEventDetail,
@@ -138,21 +139,13 @@ const EventDetailView = ({
           <p className="text-xs text-muted-foreground max-w-[260px]">
             {error || 'Intenta de nuevo más tarde.'}
           </p>
-          <button
-            type="button"
-            onClick={() => setReloadKey((k) => k + 1)}
-            className="mt-1 flex items-center gap-1.5 rounded-full border border-primary/30 px-4 py-2 text-sm font-semibold text-primary"
-          >
+          <Button type="button" variant="outline" className="mt-1 rounded-full gap-1.5" onClick={() => setReloadKey((k) => k + 1)}>
             <RefreshCw className="h-3.5 w-3.5" />
             Reintentar
-          </button>
-          <button
-            type="button"
-            onClick={onBack}
-            className="mt-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground"
-          >
+          </Button>
+          <Button type="button" className="mt-2 rounded-full" onClick={onBack}>
             Volver
-          </button>
+          </Button>
         </div>
       </div>
     );

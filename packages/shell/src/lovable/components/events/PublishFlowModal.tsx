@@ -85,7 +85,7 @@ const PublishFlowModal = ({ open, eventId, onClose, onFinalize, onSubmitBank }: 
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4">
-      <div className="relative w-full max-w-sm rounded-3xl bg-card p-6 shadow-2xl">
+      <div className="relative w-full max-w-sm rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
         <button onClick={handleClose} className="absolute right-3 top-3 rounded-full p-1 text-muted-foreground hover:bg-secondary">
           <X className="h-5 w-5" />
         </button>
@@ -115,10 +115,17 @@ const PublishFlowModal = ({ open, eventId, onClose, onFinalize, onSubmitBank }: 
 
         {stage === 'bankForm' && (
           <div>
-            <h3 className="text-lg font-bold text-primary">Datos bancarios</h3>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Registra la cuenta donde recibirás los pagos de tu evento.
-            </p>
+            <div className="flex items-center gap-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
+                <Megaphone className="h-5 w-5 text-primary" />
+              </span>
+              <div>
+                <h3 className="text-lg font-extrabold text-primary">Datos bancarios</h3>
+                <p className="text-xs text-muted-foreground">
+                  Registra la cuenta donde recibirás los pagos de tu evento.
+                </p>
+              </div>
+            </div>
             <div className="mt-4 space-y-3">
               <div>
                 <label className="text-xs font-semibold text-foreground">Titular de la cuenta</label>

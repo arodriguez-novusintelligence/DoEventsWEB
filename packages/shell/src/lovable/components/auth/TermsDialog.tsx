@@ -50,7 +50,7 @@ export const TermsDialog = ({ open, onClose, onAccept }: TermsDialogProps) => (
   <Dialog open={open} onOpenChange={(next) => !next && onClose()}>
     <DialogContent className="max-w-lg rounded-2xl shadow-sm">
       <DialogHeader>
-        <DialogTitle className="flex items-center gap-2">
+        <DialogTitle className="flex items-center gap-2 text-lg font-extrabold">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
             <ScrollText className="h-5 w-5 text-primary" />
           </div>

@@ -134,6 +134,7 @@ export const MapPage: React.FC = () => {
   }
 
   return (
+    <div className="min-h-screen bg-secondary">
     <MapView
       mapItems={mapItems}
       userLocation={userLocation ? { lat: userLocation.lat, lng: userLocation.lng } : undefined}
@@ -151,6 +152,7 @@ export const MapPage: React.FC = () => {
       }}
       onOpenProfile={(profileId) => navigate(`/users/${profileId}`)}
     />
+    </div>
   );
 };
 

@@ -62,8 +62,13 @@ const LocationSection = () => {
         </div>
 
         {showMap && mapSrc && (
-          <div className="space-y-2 animate-fade-in">
-            <div className="rounded-xl overflow-hidden border border-border aspect-video">
+          <div className="space-y-2 animate-fade-in relative">
+            {locating && (
+              <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-background/60 backdrop-blur-sm">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            )}
+            <div className="rounded-xl overflow-hidden border border-border aspect-video shadow-sm">
               <iframe src={mapSrc} width="100%" height="100%" style={{ border: 0 }} loading="lazy" title="Ubicación del lugar" className="w-full h-full" />
             </div>
             {form.locationLabel && (
