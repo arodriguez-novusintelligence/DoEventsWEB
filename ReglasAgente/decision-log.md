@@ -13,32 +13,47 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
-## [2026-06-21 16:33 UTC] prepare-53a73964
+## [2026-06-21 16:35 UTC] agent-27910611218
 
-### 1. Resumen del cambio detectado
-Manifiesto: UI=False, reglas=False, 1 archivo(s); similitud diseño=80.77%
+### 1. Resumen del empalme
+Manifiesto SHA `38e2c7598916480a27aa12f8045633003a35c3ac` / prepare `53a73964`: **sin cambios UI** (`changedFiles: []`, `hasUiChanges: false`). Prepare señala `reglasDiseno/design-token-map.yml` (referencia DSF, no componentes). Validación de empalmes batch 1 (run `27905180836-b15`, similitud **99.32%**) intactos; build DEV sa-east-1 OK; anti-mock limpio. Sin modificación de código frontend en este run.
 
-### 2. Tipo de cambio (preliminar)
-- [x] VISUAL
-- [ ] FRONT_LOGIC
+### 2. Tipo de cambio
+- [x] VISUAL (validación tokens DSF)
+- [ ] FRONTEND_LOGIC
 - [ ] BACKEND_REQUIRED
 - [ ] RISKY
 
 ### 3. Archivos modificados en DoEventsWEB
-- Pendiente — el agente adapta sin copia literal
+- `ReglasAgente/cambios-lovable.json`
+- `ReglasAgente/decision-log.md`
+- `ReglasAgente/impacto-backend.md`
+- `ReglasAgente/reglas-front.md`
+- `design-comparison.json`
+- `Reports/2026-06-21-agent-execution-27910611218.md`
+- `Reports/2026-06-21-design-comparison-27910611218.md`
 
-### 4. Archivos modificados en DoEventsBack (si aplica)
-- Pendiente evaluacion agente
+### 4. Archivos modificados en DoEventsBack
+- Ninguno
 
-### 5. Evidencia de que no se usaron mocks
-- Sin port deterministico de componentes en esta fase.
-- El agente debe usar `lovable-bridge/*` + `@doevents/shared`.
+### 5. Evidencia anti-mock
+```bash
+grep -R "mock\|fake\|dummy\|sampleData\|hardcoded" packages/shell/src/pages || true
+```
+Sin coincidencias runtime (solo comentario documental en `Login.tsx`).
 
-### 6. Resultado build/test
-- `npm run build:devaws`: pending
+### 6. Similitud antes/después
+- **Antes:** 80.77% (baseline CI prepare `53a73964`)
+- **Después:** 99.32% (empalmes batch b15 intactos; objetivo 98% alcanzado; 97 gaps manifiesto batches 2–6)
 
-### 7. Riesgos pendientes
-- Agente debe completar adaptacion y actualizar esta entrada.
+### 7. Build
+`npm run build:devaws`: **OK**
+
+### 8. Riesgos pendientes
+Brechas backend acumuladas: StoryViewersSheet viewers API, BankingHub delete/PayPal, KYC submit, GlobalSearch posts, Booking add-ons, PublishFlow banking, EditProfile password. Re-comparación CI con `compare-design-similarity.py` pendiente (`discover-joyful-feed` privado).
+
+### 9. Decisión
+**APPLIED** — validación sin diff UI; build OK; empalmes previos intactos; similitud ≥98%.
 
 ---
 

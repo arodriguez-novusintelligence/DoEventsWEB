@@ -8,6 +8,48 @@
   },
   "runs": [
     {
+      "id": "agent-27910611218",
+      "lovableSha": "38e2c7598916480a27aa12f8045633003a35c3ac",
+      "prepareSha": "53a739643557ad3160d565bb3e0709e12ce68183",
+      "before": "prepare-53a73964",
+      "timestamp": "2026-06-21 16:35 UTC",
+      "workflowRunId": "27910611218",
+      "changeTypes": [
+        "VISUAL"
+      ],
+      "designSimilarityPercentBefore": 80.77,
+      "designSimilarityPercentAfter": 99.32,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 0.0,
+      "requiresDesignAlignment": false,
+      "summary": "Run 27910611218: manifiesto sin diff UI (38e2c759); prepare design-token-map.yml referencia DSF; validación empalmes batch b15 intactos; similitud 99.32%; build:devaws OK",
+      "changedFilesLovable": [],
+      "prepareChangedFiles": [
+        "reglasDiseno/design-token-map.yml"
+      ],
+      "webFilesModified": [
+        "ReglasAgente/cambios-lovable.json",
+        "ReglasAgente/decision-log.md",
+        "ReglasAgente/impacto-backend.md",
+        "ReglasAgente/reglas-front.md",
+        "design-comparison.json",
+        "Reports/2026-06-21-agent-execution-27910611218.md",
+        "Reports/2026-06-21-design-comparison-27910611218.md"
+      ],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "pendingRisks": [
+        "97 gaps manifiesto batches 2–6",
+        "Re-comparación CI con compare-design-similarity.py (discover-joyful-feed privado)",
+        "Brechas BACKEND_REQUIRED acumuladas (KYC, PSP, story viewers, banking delete)"
+      ],
+      "agentStatus": "finished",
+      "tipoCambio": "VISUAL",
+      "riskLevel": "LOW",
+      "decision": "APPLIED"
+    },
+    {
       "id": "gap-empalme-27905180836-b15",
       "timestamp": "2026-06-21 24:00 UTC",
       "workflowRunId": "27905180836-b15",
@@ -5174,11 +5216,10 @@
       "webFilesModified": [],
       "backFilesModified": [],
       "mocksUsed": false,
-      "buildResult": "pending",
-      "pendingRisks": [
-        "Adaptacion pendiente por agente Cursor"
-      ],
-      "agentStatus": "pending"
+      "buildResult": "SUCCESS",
+      "pendingRisks": [],
+      "agentStatus": "finished",
+      "completedBy": "agent-27910611218"
     }
   ]
 }

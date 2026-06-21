@@ -1633,6 +1633,16 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 | BankingHub delete/PayPal | Bloqueo | Parcial | `banking/BankingHub.tsx` | BACKEND_REQUIRED; banner intacto |
 | Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
 
+## Ejecución 2026-06-21 agent-27910611218 (prepare 53a73964)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| Manifiesto sin UI | Validación | Sí | — | changedFiles []; hasUiChanges false |
+| ReglasDiseno design-token-map | VISUAL | Sí | referencia DSF | tokens.yml; sin copy YAML a runtime |
+| Empalmes batch b15 intactos | Validación | Sí | ver `gap-empalme-27905180836-b15` | similitud 99.32%; objetivo 98% alcanzado |
+| Build devaws | Validación | Sí | — | npm run build:devaws SUCCESS |
+| Anti-mock pages | Bloqueo | Sí | `packages/shell/src/pages/` | grep sin coincidencias runtime |
+
 ## Validaciones
 
 - [x] Validación frontend implementada (formularios reporte, ubicación)

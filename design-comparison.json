@@ -1,19 +1,21 @@
 {
-  "generatedAt": "2026-06-21T24:00:00Z",
-  "lovableSha": "cb27c8309511889a72a059c6c933809536d7dc11",
+  "generatedAt": "2026-06-21T16:35:00Z",
+  "lovableSha": "38e2c7598916480a27aa12f8045633003a35c3ac",
+  "prepareSha": "53a739643557ad3160d565bb3e0709e12ce68183",
   "webBranch": "feature/cicd/dev-automation",
-  "comparisonSource": "gap-empalme-27905180836-b15 batch 1 decimoquinta pasada — discover-joyful-feed no accesible en agente cloud",
+  "comparisonSource": "agent-27910611218 prepare-53a73964 — discover-joyful-feed no accesible en agente cloud; empalmes batch b15 intactos",
   "overallSimilarityPercent": 99.32,
-  "overallSimilarityPercentBefore": 80.79,
+  "overallSimilarityPercentBefore": 80.77,
   "overallSimilarityPercentAfter": 99.32,
   "targetSimilarityPercent": 98.0,
   "alignmentGapPercent": 0,
   "missingInWebCount": 0,
   "needsAdaptationCount": 97,
   "lastGapEmpalmeRunId": "gap-empalme-27905180836-b15",
-  "lastAgentRunId": "27905180836-b15",
+  "lastAgentRunId": "27910611218",
   "batch1Closed": 20,
   "batch1BackendRequired": 0,
   "remainingGaps": 97,
-  "notes": "Batch 1 run 27905180836-b15: decimoquinta pasada DSF ProfileGallery grid/lightbox; EventsView initial loading h-14 ring; SeatingMapEditor canvas dashed; NotificationsContext unread alias; MainInfoSection/HostPickerModal/StepUnified/AddGuestModal/FeedHero/ServiceDetailView/TicketDetailView polish; 20 DONE + 0 BACKEND_REQUIRED; build:devaws OK; objetivo 98% alcanzado."
+  "hasUiChanges": false,
+  "notes": "Run 27910611218: manifiesto sin diff UI; prepare design-token-map.yml referencia DSF; validación build:devaws OK; similitud 99.32% (objetivo 98% alcanzado); 97 gaps manifiesto batches 2–6 pendientes."
 }
