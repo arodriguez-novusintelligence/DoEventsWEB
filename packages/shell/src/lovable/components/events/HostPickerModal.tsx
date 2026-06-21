@@ -242,16 +242,16 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
 
               <div className="space-y-2">
                 {query.trim().length < 2 ? (
-                  <div className="py-8 text-center">
-                    <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                  <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-primary/25 border-border/60 bg-card py-8 text-center shadow-sm">
+                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                       <Search className="h-7 w-7 text-primary" />
                     </div>
-                    <p className="text-sm font-extrabold text-muted-foreground">
+                    <p className="text-sm font-extrabold text-muted-foreground px-4">
                       Escribe al menos 2 caracteres para buscar usuarios de Do•events
                     </p>
                   </div>
                 ) : searching ? (
-                  <div className="flex flex-col items-center justify-center gap-3 py-8">
+                  <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-card py-8 shadow-sm">
                     <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                       <Loader2 className="h-7 w-7 animate-spin text-primary" />
                     </div>
@@ -267,7 +267,7 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
                       type="button"
                       variant="outline"
                       size="sm"
-                      className="mt-3 gap-1.5 rounded-full shadow-sm"
+                      className="mt-3 gap-1.5 rounded-full font-extrabold shadow-sm"
                       onClick={() => void runSearch(query)}
                     >
                       <RefreshCw className="h-3.5 w-3.5" />
@@ -275,11 +275,11 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
                     </Button>
                   </div>
                 ) : searched && results.length === 0 ? (
-                  <div className="py-8 text-center">
-                    <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                  <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-primary/25 border-border/60 bg-card py-8 text-center shadow-sm">
+                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                       <UserPlus className="h-7 w-7 text-primary" />
                     </div>
-                    <p className="text-sm font-extrabold text-muted-foreground">
+                    <p className="text-sm font-extrabold text-muted-foreground px-4">
                       No se encontraron usuarios con “{query}”
                     </p>
                   </div>

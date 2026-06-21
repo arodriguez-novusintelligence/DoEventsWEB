@@ -4,7 +4,7 @@
  * API expuesta (paridad Lovable):
  * - `notifications`, `unreadCount`, `hasUnread`, `loading`, `loadError`, `loadErrorMessage`, `isEmpty`, `hasError`, `error`
  * - `count`, `notificationCount`, `totalCount` (alias de `notifications.length`)
- * - `reload` / `refreshNotifications` / `refresh` / `reloadNotifications` / `fetchNotifications`, `markAllRead`, `markRead` / `markAsRead`, `dismissNotification` / `removeNotification`, `clearAll`
+ * - `reload` / `refreshNotifications` / `refresh` / `reloadNotifications` / `fetchNotifications`, `markAllRead`, `markRead` / `markAsRead`, `dismissNotification` / `removeNotification`, `clearAll` / `clearNotifications`
  *
  * Datos vía `fetchUserNotifications` — sin mocks.
  */
@@ -112,6 +112,8 @@ export interface NotificationsContextValue {
   removeNotification: (id: string) => void;
   updateNotification: (id: string, patch: Partial<Notification>) => void;
   clearAll: () => void;
+  /** Alias Lovable — mismo handler que `clearAll`. */
+  clearNotifications: () => void;
 }
 
 const fallbackContext: NotificationsContextValue = {
@@ -141,6 +143,7 @@ const fallbackContext: NotificationsContextValue = {
   removeNotification: () => undefined,
   updateNotification: () => undefined,
   clearAll: () => undefined,
+  clearNotifications: () => undefined,
 };
 
 const NotificationsContext = createContext<NotificationsContextValue>(fallbackContext);
@@ -312,6 +315,7 @@ export const NotificationsProvider = ({
         removeNotification: dismissNotification,
         updateNotification,
         clearAll,
+        clearNotifications: clearAll,
       }}
     >
       {children}

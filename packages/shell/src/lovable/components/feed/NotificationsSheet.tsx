@@ -153,7 +153,7 @@ const NotificationRow = ({
         }
       }}
     >
-      <div className={cn('flex h-10 w-10 shrink-0 items-center justify-center rounded-full', bg, !notification.read && 'ring-2 ring-primary/40')}>
+      <div className={cn('flex h-10 w-10 shrink-0 items-center justify-center rounded-full', bg, !notification.read && 'ring-2 ring-primary/20')}>
         <Icon className={cn('h-5 w-5', color)} fill={notification.type === 'like' ? 'currentColor' : 'none'} />
       </div>
 
@@ -164,7 +164,7 @@ const NotificationRow = ({
         {notification.eventName && !notification.actionable && notification.type !== 'ticket_transfer' && notification.type !== 'access_assignment'
           && (notification.type === 'event_mention' || notification.eventId || notification.type === 'event_created' || notification.type === 'event_invite' || notification.type === 'followed_event') && (
           <button
-            className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-primary hover:underline w-fit"
+            className="mt-1.5 flex items-center gap-1 text-xs font-extrabold text-primary hover:underline w-fit"
             onClick={(e) => { e.stopPropagation(); onGoToEvent?.(); }}
           >
             <CalendarPlus className="h-3.5 w-3.5" />
@@ -174,7 +174,7 @@ const NotificationRow = ({
 
         {(notification.type === 'venue_reservation' || notification.type === 'venue_reserved') && (
           <button
-            className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-primary hover:underline w-fit"
+            className="mt-1.5 flex items-center gap-1 text-xs font-extrabold text-primary hover:underline w-fit"
             onClick={(e) => { e.stopPropagation(); onGoToPlace?.(); }}
           >
             <Building2 className="h-3.5 w-3.5" />
@@ -184,7 +184,7 @@ const NotificationRow = ({
 
         {(notification.type === 'service_booking' || notification.type === 'service_booked') && (
           <button
-            className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-primary hover:underline w-fit"
+            className="mt-1.5 flex items-center gap-1 text-xs font-extrabold text-primary hover:underline w-fit"
             onClick={(e) => { e.stopPropagation(); onGoToService?.(); }}
           >
             <Briefcase className="h-3.5 w-3.5" />
@@ -194,7 +194,7 @@ const NotificationRow = ({
 
         {notification.type === 'access_assignment' && (
           <button
-            className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-primary hover:underline w-fit"
+            className="mt-1.5 flex items-center gap-1 text-xs font-extrabold text-primary hover:underline w-fit"
             onClick={(e) => { e.stopPropagation(); onGoToEvent?.(); }}
           >
             <ShieldCheck className="h-3.5 w-3.5" />
@@ -204,7 +204,7 @@ const NotificationRow = ({
 
         {(notification.type === 'followed_post' || notification.type === 'repost') && notification.postTitle && (
           <button
-            className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-primary hover:underline w-fit"
+            className="mt-1.5 flex items-center gap-1 text-xs font-extrabold text-primary hover:underline w-fit"
             onClick={(e) => { e.stopPropagation(); onGoToEvent?.(); }}
           >
             <FileText className="h-3.5 w-3.5" />
@@ -214,7 +214,7 @@ const NotificationRow = ({
 
         {notification.type === 'ticket_transfer' && (
           <button
-            className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-primary hover:underline w-fit"
+            className="mt-1.5 flex items-center gap-1 text-xs font-extrabold text-primary hover:underline w-fit"
             onClick={(e) => { e.stopPropagation(); onGoToTickets?.(); }}
           >
             <Ticket className="h-3.5 w-3.5" />
@@ -227,13 +227,14 @@ const NotificationRow = ({
             <Button
               variant="outline"
               size="sm"
-              className="text-destructive border-destructive/30 hover:bg-destructive/10"
+              className="rounded-full font-extrabold shadow-sm text-destructive border-destructive/30 hover:bg-destructive/10"
               onClick={(e) => { e.stopPropagation(); onReject?.(); }}
             >
               Rechazar
             </Button>
             <Button
               size="sm"
+              className="rounded-full font-extrabold shadow-sm"
               onClick={(e) => { e.stopPropagation(); onAccept?.(); }}
             >
               Aceptar
@@ -243,7 +244,7 @@ const NotificationRow = ({
 
         {notification.type === 'event_invite' && notification.eventName && (
           <button
-            className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-primary hover:underline w-fit"
+            className="mt-1.5 flex items-center gap-1 text-xs font-extrabold text-primary hover:underline w-fit"
             onClick={(e) => { e.stopPropagation(); onGoToEvent?.(); }}
           >
             <CalendarPlus className="h-3.5 w-3.5" />
@@ -256,6 +257,7 @@ const NotificationRow = ({
             <Button
               size="sm"
               variant="outline"
+              className="rounded-full font-extrabold shadow-sm"
               onClick={(e) => { e.stopPropagation(); onAccept?.(); }}
             >
               ⭐ Calificar evento
@@ -376,13 +378,13 @@ const NotificationsSheet = ({
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="max-h-[85vh]">
         <DrawerHeader className="flex items-center justify-between pb-0">
-          <DrawerTitle className="flex items-center gap-2 text-base font-bold text-foreground">
+          <DrawerTitle className="flex items-center gap-2 text-base font-extrabold text-foreground">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
               <Bell className="h-5 w-5 text-primary" />
             </div>
             Notificaciones
             {hasUnread && (
-              <span className="inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">
+              <span className="inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-extrabold text-primary-foreground">
                 {unreadCount > 99 ? '99+' : unreadCount}
               </span>
             )}
@@ -391,7 +393,7 @@ const NotificationsSheet = ({
             {hasUnread && (
               <button
                 onClick={() => { void markAllRead(); }}
-                className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline transition-colors"
+                className="flex items-center gap-1 text-xs font-extrabold text-primary hover:underline transition-colors"
               >
                 <CheckCheck className="h-3.5 w-3.5" />
                 Marcar leídas
@@ -400,7 +402,7 @@ const NotificationsSheet = ({
             {notifications.length > 0 && (
               <button
                 onClick={() => { void clearAll(); }}
-                className="flex items-center gap-1 text-xs font-semibold text-destructive hover:underline transition-colors"
+                className="flex items-center gap-1 text-xs font-extrabold text-destructive hover:underline transition-colors"
               >
                 <Trash2 className="h-3.5 w-3.5" />
                 Eliminar todas
@@ -412,8 +414,10 @@ const NotificationsSheet = ({
         <div className="mt-2 overflow-y-auto divide-y divide-border pb-6">
           {loading ? (
             <div className="mx-4 flex flex-col items-center rounded-2xl border border-border/60 bg-card py-12 text-center shadow-sm">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <p className="mt-3 text-sm text-muted-foreground">Cargando notificaciones…</p>
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                <Loader2 className="h-7 w-7 animate-spin text-primary" />
+              </div>
+              <p className="mt-3 text-sm font-extrabold text-muted-foreground">Cargando notificaciones…</p>
             </div>
           ) : loadError ? (
             <div className="mx-4 flex flex-col items-center rounded-2xl border border-destructive/30 bg-card py-12 text-center shadow-sm px-4">
@@ -425,14 +429,14 @@ const NotificationsSheet = ({
               <button
                 type="button"
                 onClick={() => { void refreshNotifications(); }}
-                className="mt-4 flex items-center gap-1.5 rounded-full border border-border bg-card px-4 py-2 text-xs font-semibold text-primary hover:bg-accent/40 shadow-sm transition-colors"
+                className="mt-4 flex items-center gap-1.5 rounded-full border border-border/60 bg-card px-4 py-2 text-xs font-extrabold text-primary hover:bg-accent/40 shadow-sm transition-colors"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
                 Reintentar
               </button>
             </div>
           ) : isEmpty ? (
-            <div className="mx-4 flex flex-col items-center rounded-2xl border border-border/60 bg-card py-12 text-center shadow-sm">
+            <div className="mx-4 flex flex-col items-center rounded-2xl border border-dashed border-primary/25 border-border/60 bg-card py-12 text-center shadow-sm">
               <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <Bell className="h-7 w-7 text-primary" strokeWidth={2} />
               </div>

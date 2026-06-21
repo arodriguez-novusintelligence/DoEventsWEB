@@ -46,7 +46,7 @@ export const EventPublished = () => {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center bg-secondary px-6 text-center pb-24">
-      <div className="w-full max-w-sm rounded-2xl border border-border/60 bg-card p-8 shadow-sm ring-1 ring-primary/10">
+      <div className="w-full max-w-sm rounded-2xl border border-border/60 bg-card p-8 shadow-sm ring-2 ring-primary/20">
       <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
         <PartyPopper className="h-7 w-7 text-primary" />
       </div>

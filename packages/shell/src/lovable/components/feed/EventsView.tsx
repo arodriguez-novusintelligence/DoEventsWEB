@@ -509,7 +509,7 @@ const ProviderProfileCard = ({
           <FavoriteHeartButton
             active={isLiked}
             onToggle={onToggleLike}
-            className="absolute top-3 left-3 flex h-8 w-8 items-center justify-center rounded-full bg-background/90 text-primary shadow-sm"
+            className="absolute top-3 left-3 flex h-8 w-8 items-center justify-center rounded-full bg-background/90 text-primary shadow-sm ring-2 ring-primary/20"
           />
         ) : null}
         <h3 className="mt-3 text-sm font-extrabold text-foreground text-center line-clamp-2">{provider.name}</h3>

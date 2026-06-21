@@ -643,9 +643,10 @@ export function AddGuestModal({
                   value={searchUsername}
                   onChange={(e) => setSearchUsername(e.target.value)}
                   placeholder="@nombreusuario"
+                  className="border-border/60 focus-visible:ring-2 focus-visible:ring-primary/20"
                   onKeyDown={(e) => e.key === "Enter" && void search()}
                 />
-                <Button onClick={() => void search()} disabled={isSearching} variant="outline">
+                <Button onClick={() => void search()} disabled={isSearching} variant="outline" className="rounded-full font-extrabold shadow-sm">
                   {isSearching ? (
                     <Loader2 className="h-4 w-4 animate-spin text-primary" aria-hidden />
                   ) : (

@@ -236,7 +236,7 @@ const MessagesListView = ({
       <button
         key={room.id}
         onClick={() => onOpenChat(room.id)}
-        className="flex w-full items-center gap-3 rounded-2xl bg-card p-3 shadow-sm transition-colors hover:bg-accent/40 border border-border/40"
+        className="flex w-full items-center gap-3 rounded-2xl bg-card p-3 shadow-sm transition-colors hover:bg-accent/40 border border-border/60"
       >
         {imageSrc ? (
           <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl">
@@ -254,7 +254,7 @@ const MessagesListView = ({
         )}
         <div className="flex-1 text-left min-w-0">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-sm font-bold text-foreground line-clamp-1">{room.eventName}</span>
+            <span className="text-sm font-extrabold text-foreground line-clamp-1">{room.eventName}</span>
             <span className="text-[10px] text-muted-foreground shrink-0">{room.eventDate}</span>
           </div>
           <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">{room.lastMessage}</p>
@@ -281,7 +281,7 @@ const MessagesListView = ({
     return (
       <div
         key={room.id}
-        className="flex w-full items-center gap-3 rounded-2xl bg-card p-3 border border-border/40 opacity-90"
+        className="flex w-full items-center gap-3 rounded-2xl bg-card p-3 border border-border/60 opacity-90"
       >
         <button
           type="button"
@@ -304,7 +304,7 @@ const MessagesListView = ({
           )}
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between gap-2">
-              <span className="text-sm font-bold text-foreground line-clamp-1">{room.eventName}</span>
+              <span className="text-sm font-extrabold text-foreground line-clamp-1">{room.eventName}</span>
               <span className="text-[10px] text-muted-foreground shrink-0">{room.eventDate}</span>
             </div>
             <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">{room.lastMessage}</p>
@@ -335,7 +335,7 @@ const MessagesListView = ({
   const renderPrivateChat = (chat: PrivateChat) => (
     <div
       key={chat.id}
-      className="flex w-full items-center gap-3 rounded-2xl border border-border/40 bg-card p-3 shadow-sm transition-colors hover:bg-accent/40"
+      className="flex w-full items-center gap-3 rounded-2xl border border-border/60 bg-card p-3 shadow-sm transition-colors hover:bg-accent/40"
     >
       <button
         type="button"
@@ -367,7 +367,7 @@ const MessagesListView = ({
       >
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-sm font-bold text-foreground truncate">{chat.user.name}</span>
+            <span className="text-sm font-extrabold text-foreground truncate">{chat.user.name}</span>
             {chat.unreadCount > 0 && (
               <Badge className="h-5 min-w-[20px] shrink-0 rounded-full bg-primary px-1.5 text-[10px] text-primary-foreground">
                 {chat.unreadCount}
@@ -397,11 +397,11 @@ const MessagesListView = ({
         >
           <Avatar className="h-12 w-12">
             {avatar ? <AvatarImage src={avatar} alt={displayName} className="object-cover" /> : null}
-            <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">{initials}</AvatarFallback>
+            <AvatarFallback className="bg-primary/10 text-primary text-sm font-extrabold">{initials}</AvatarFallback>
           </Avatar>
         </button>
         <div className="flex-1 min-w-0 text-left">
-          <p className="text-sm font-bold text-foreground truncate">{displayName}</p>
+          <p className="text-sm font-extrabold text-foreground truncate">{displayName}</p>
           {user.username && (
             <p className="text-xs text-muted-foreground truncate">@{user.username}</p>
           )}
@@ -409,7 +409,7 @@ const MessagesListView = ({
         <button
           type="button"
           onClick={() => user.id && onStartDirectChat?.(user.id)}
-          className="shrink-0 rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground"
+          className="shrink-0 rounded-full bg-primary px-3 py-1.5 text-xs font-extrabold text-primary-foreground"
         >
           Chatear
         </button>
@@ -422,7 +422,7 @@ const MessagesListView = ({
       {node}
       <button
         onClick={(e) => { e.stopPropagation(); toggleArchive(id); }}
-        className="absolute right-3 top-1/2 -translate-y-1/2 h-7 w-7 grid place-items-center rounded-full bg-card/90 border border-border text-muted-foreground opacity-0 group-hover:opacity-100 hover:bg-primary hover:text-primary-foreground transition-all"
+        className="absolute right-3 top-1/2 -translate-y-1/2 h-7 w-7 grid place-items-center rounded-full bg-card/90 border border-border/60 text-muted-foreground opacity-0 group-hover:opacity-100 hover:bg-primary hover:text-primary-foreground transition-all shadow-sm ring-2 ring-primary/20"
         aria-label="Archivar"
       >
         <Archive className="h-3.5 w-3.5" />
@@ -436,10 +436,10 @@ const MessagesListView = ({
     <button
       onClick={() => setFilter(value)}
       className={cn(
-        'shrink-0 rounded-full border px-4 py-2 text-xs font-semibold transition-all',
+        'shrink-0 rounded-full border px-4 py-2 text-xs font-extrabold transition-all',
         filter === value
-          ? 'bg-primary/10 text-primary border-primary/30'
-          : 'bg-card text-muted-foreground border-border hover:bg-accent/40'
+          ? 'bg-primary/10 text-primary border-primary/30 shadow-sm'
+          : 'bg-card text-muted-foreground border-border/60 hover:bg-accent/40'
       )}
     >
       {label}{count !== undefined ? ` (${count})` : ''}
@@ -450,7 +450,7 @@ const MessagesListView = ({
     <div className="min-h-screen bg-secondary pb-24">
       <div className="mx-auto max-w-lg">
         {/* Brand header row */}
-        <div className="bg-card px-4 py-3 border-b border-border">
+        <div className="bg-card px-4 py-3 border-b border-border/60 shadow-sm">
           <div className="flex items-center justify-between gap-3">
             <button type="button" onClick={onBack} className="flex items-center text-primary">
               <ChevronLeft className="h-5 w-5" />
@@ -511,7 +511,7 @@ const MessagesListView = ({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar conversaciones o usuarios..."
-              className="w-full rounded-full border border-border bg-card pl-10 pr-4 py-3 text-sm outline-none shadow-sm focus:ring-2 focus:ring-primary/20"
+              className="w-full rounded-full border border-border/60 bg-card pl-10 pr-4 py-3 text-sm outline-none shadow-sm focus:ring-2 focus:ring-primary/20"
             />
           </div>
         </div>
@@ -576,30 +576,32 @@ const MessagesListView = ({
         {/* User search results */}
         {search.trim().length >= 2 && (
           <div className="px-4 pt-3 space-y-2">
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <h2 className="text-xs font-extrabold uppercase tracking-wide text-muted-foreground">
               Usuarios en Do.Events
             </h2>
             {searchingUsers && (
-              <div className="flex flex-col items-center gap-3 rounded-2xl bg-card py-6 text-center shadow-sm">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <p className="text-sm text-muted-foreground">Buscando usuarios…</p>
+              <div className="flex flex-col items-center gap-3 rounded-2xl border border-border/60 bg-card py-6 text-center shadow-sm">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                  <Loader2 className="h-7 w-7 animate-spin text-primary" />
+                </div>
+                <p className="text-sm font-extrabold text-muted-foreground">Buscando usuarios…</p>
               </div>
             )}
             {userSearchError && (
-              <div className="flex flex-col items-center gap-3 rounded-2xl bg-card py-6 text-center shadow-sm">
+              <div className="flex flex-col items-center gap-3 rounded-2xl border border-destructive/30 bg-card py-6 text-center shadow-sm">
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
                   <AlertCircle className="h-7 w-7 text-destructive" />
                 </div>
-                <p className="text-sm font-semibold text-foreground">Error en la búsqueda</p>
+                <p className="text-sm font-extrabold text-foreground">Error en la búsqueda</p>
                 <p className="text-xs text-muted-foreground max-w-[240px]">{userSearchError}</p>
               </div>
             )}
             {!searchingUsers && !userSearchError && userSearchResults.length === 0 && (
-              <div className="flex flex-col items-center gap-3 rounded-2xl bg-card py-6 text-center shadow-sm">
+              <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-primary/25 border-border/60 bg-card py-6 text-center shadow-sm">
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                   <Search className="h-7 w-7 text-primary" />
                 </div>
-                <p className="text-sm font-semibold text-foreground">Sin resultados</p>
+                <p className="text-sm font-extrabold text-foreground">Sin resultados</p>
                 <p className="text-xs text-muted-foreground max-w-[240px]">
                   No encontramos usuarios con ese nombre. Verifica que estén registrados en la app.
                 </p>
@@ -612,9 +614,11 @@ const MessagesListView = ({
         {/* List */}
         <div className="px-4 pt-2 space-y-2">
           {loading && (
-            <div className="flex flex-col items-center gap-3 rounded-2xl bg-card py-10 text-center shadow-sm">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <p className="text-sm text-muted-foreground">Cargando conversaciones…</p>
+            <div className="flex flex-col items-center gap-3 rounded-2xl border border-border/60 bg-card py-10 text-center shadow-sm">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                <Loader2 className="h-7 w-7 animate-spin text-primary" />
+              </div>
+              <p className="text-sm font-extrabold text-muted-foreground">Cargando conversaciones…</p>
             </div>
           )}
           {!loading && filter === 'archivados' && (
@@ -625,7 +629,7 @@ const MessagesListView = ({
                     {renderPrivateChat(c)}
                     <button
                       onClick={() => toggleArchive(c.id)}
-                      className="absolute right-3 top-3 rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-semibold text-primary"
+                      className="absolute right-3 top-3 rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-extrabold text-primary"
                     >
                       Restaurar
                     </button>
@@ -636,7 +640,7 @@ const MessagesListView = ({
                     {renderRoom(r)}
                     <button
                       onClick={() => toggleArchive(r.id)}
-                      className="absolute right-3 top-3 rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-semibold text-primary"
+                      className="absolute right-3 top-3 rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-extrabold text-primary"
                     >
                       Restaurar
                     </button>
@@ -686,7 +690,7 @@ const MessagesListView = ({
                     onClick={() => setShowPast(p => !p)}
                     className="flex w-full items-center justify-between mb-3"
                   >
-                    <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                    <h2 className="text-xs font-extrabold text-muted-foreground uppercase tracking-wide">
                       Finalizados / Cancelados ({pastRooms.length})
                     </h2>
                     {showPast ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
@@ -714,7 +718,7 @@ const EmptyState = ({ text }: { text: string }) => (
     <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
       <MessageSquare className="h-7 w-7 text-primary" strokeWidth={2} />
     </div>
-    <p className="text-sm font-semibold text-foreground">{text}</p>
+    <p className="text-sm font-extrabold text-foreground">{text}</p>
   </div>
 );
 
