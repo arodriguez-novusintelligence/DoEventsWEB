@@ -320,4 +320,7 @@
   .validation-error {
     @apply text-destructive flex items-center gap-2 text-sm;
   }
+  .floating-action-button {
+    @apply fixed bottom-24 right-4 z-40 h-14 w-14 rounded-full shadow-lg ring-4 ring-primary/20;
+  }
 }

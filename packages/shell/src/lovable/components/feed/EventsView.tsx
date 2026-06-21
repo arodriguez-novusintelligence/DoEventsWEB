@@ -51,51 +51,35 @@ type Category = {
   color: string;
 };
 
+/** Paleta semántica DSF — evita colores hardcoded pink/violet/emerald en chips. */
+const DISCOVER_CHIP_STYLES: Pick<Category, 'bg' | 'color'>[] = [
+  { bg: 'bg-primary/10', color: 'text-primary' },
+  { bg: 'bg-accent', color: 'text-accent-foreground' },
+  { bg: 'bg-secondary', color: 'text-secondary-foreground' },
+  { bg: 'bg-primary/15', color: 'text-primary' },
+  { bg: 'bg-muted', color: 'text-muted-foreground' },
+  { bg: 'bg-accent/80', color: 'text-accent-foreground' },
+  { bg: 'bg-primary/10', color: 'text-primary' },
+  { bg: 'bg-secondary', color: 'text-secondary-foreground' },
+];
+
 const categories = DISCOVER_EVENT_CATEGORIES.map((chip, index) => {
   const icons = [Music, Mic, MonitorPlay, Store, Smile, Trophy, MapPin, PartyPopper];
-  const styles = [
-    { bg: 'bg-pink-100', color: 'text-pink-500' },
-    { bg: 'bg-violet-100', color: 'text-violet-500' },
-    { bg: 'bg-blue-100', color: 'text-blue-500' },
-    { bg: 'bg-emerald-100', color: 'text-emerald-500' },
-    { bg: 'bg-amber-100', color: 'text-amber-500' },
-    { bg: 'bg-orange-100', color: 'text-orange-500' },
-    { bg: 'bg-teal-100', color: 'text-teal-500' },
-    { bg: 'bg-fuchsia-100', color: 'text-fuchsia-500' },
-  ];
-  const style = styles[index] || styles[0];
+  const style = DISCOVER_CHIP_STYLES[index] || DISCOVER_CHIP_STYLES[0];
   const icon = icons[index] || Music;
   return { label: chip.label, icon, bg: style.bg, color: style.color };
 });
 
 const venueCategories = DISCOVER_VENUE_CATEGORIES.map((chip, index) => {
   const icons = [Trees, Building2, Home, Hotel, Warehouse, UtensilsCrossed];
-  const styles = [
-    { bg: 'bg-emerald-100', color: 'text-emerald-600' },
-    { bg: 'bg-blue-100', color: 'text-blue-600' },
-    { bg: 'bg-amber-100', color: 'text-amber-600' },
-    { bg: 'bg-pink-100', color: 'text-pink-600' },
-    { bg: 'bg-violet-100', color: 'text-violet-600' },
-    { bg: 'bg-orange-100', color: 'text-orange-600' },
-  ];
-  const style = styles[index] || styles[0];
+  const style = DISCOVER_CHIP_STYLES[index] || DISCOVER_CHIP_STYLES[0];
   const icon = icons[index] || Trees;
   return { label: chip.label, icon, bg: style.bg, color: style.color };
 });
 
 const serviceCategories = DISCOVER_SERVICE_CATEGORIES.map((chip, index) => {
   const icons = [UtensilsCrossed, Music, Camera, Truck, ShieldCheck, Megaphone, Mic2, Truck];
-  const styles = [
-    { bg: 'bg-orange-100', color: 'text-orange-600' },
-    { bg: 'bg-pink-100', color: 'text-pink-600' },
-    { bg: 'bg-blue-100', color: 'text-blue-600' },
-    { bg: 'bg-amber-100', color: 'text-amber-600' },
-    { bg: 'bg-emerald-100', color: 'text-emerald-600' },
-    { bg: 'bg-violet-100', color: 'text-violet-600' },
-    { bg: 'bg-teal-100', color: 'text-teal-600' },
-    { bg: 'bg-fuchsia-100', color: 'text-fuchsia-600' },
-  ];
-  const style = styles[index] || styles[0];
+  const style = DISCOVER_CHIP_STYLES[index] || DISCOVER_CHIP_STYLES[0];
   const icon = icons[index] || UtensilsCrossed;
   return { label: chip.label, icon, bg: style.bg, color: style.color };
 });

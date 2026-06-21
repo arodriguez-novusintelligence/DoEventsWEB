@@ -641,7 +641,7 @@ export function AddGuestModal({
                 />
                 <Button onClick={() => void search()} disabled={isSearching} variant="outline">
                   {isSearching ? (
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-icon-primary border-r-transparent" />
+                    <Loader2 className="h-4 w-4 animate-spin text-primary" aria-hidden />
                   ) : (
                     <Search className="h-4 w-4 text-icon-primary" />
                   )}

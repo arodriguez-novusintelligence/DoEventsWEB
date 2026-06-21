@@ -7,6 +7,7 @@ import { isAuthenticated } from '@doevents/shared';
 import { AuthMicrofrontend } from './remotes/AuthMicrofrontend';
 import { ForgotPasswordView } from '@lovable/components/auth/ForgotPasswordView';
 import { LoginView } from '@lovable/components/auth/LoginView';
+import { ResetPasswordView } from '@lovable/components/auth/ResetPasswordView';
 import { SignUpView } from '@lovable/components/auth/SignUpView';
 
 import { LovableLayout } from './lovable-bridge/LovableLayout';
@@ -195,6 +196,7 @@ export const AppRouter: React.FC = () => (
     <Route path="/auth/forgot-password" element={<ForgotPasswordView />} />
     <Route path="/auth/login" element={<LoginView />} />
     <Route path="/auth/register" element={<SignUpView />} />
+    <Route path="/auth/reset-password" element={<ResetPasswordView />} />
     <Route path="/auth/*" element={<AuthMicrofrontend />} />
 
     <Route path="*" element={<NotFound />} />

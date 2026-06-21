@@ -30,7 +30,12 @@ const COUNTRIES = [
   { code: '+51', name: 'Peru', flag: '🇵🇪' },
 ];
 
-export const CreateAccountPage: React.FC = () => {
+export type CreateAccountPageProps = {
+  /** Oculta chrome legacy cuando el formulario va embebido en SignUpView Lovable. */
+  embedded?: boolean;
+};
+
+export const CreateAccountPage: React.FC<CreateAccountPageProps> = ({ embedded = false }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { showToast } = useToast();
@@ -177,26 +182,30 @@ export const CreateAccountPage: React.FC = () => {
   const busy = loading || googleLoading || facebookLoading || appleLoading;
 
   return (
-    <div className="de-page de-page--signup">
-      <div className="de-signup-header">
-        <button type="button" className="de-signup-back" onClick={() => navigate('/auth/login')}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-            <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          <span>Atras</span>
-        </button>
-        <div className="de-signup-progress">
-          <div className="de-signup-progress__track">
-            <div className="de-signup-progress__fill" style={{ width: '40%' }} />
+    <div className={embedded ? 'de-signup-embedded' : 'de-page de-page--signup'}>
+      {!embedded && (
+        <div className="de-signup-header">
+          <button type="button" className="de-signup-back" onClick={() => navigate('/auth/login')}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <span>Atras</span>
+          </button>
+          <div className="de-signup-progress">
+            <div className="de-signup-progress__track">
+              <div className="de-signup-progress__fill" style={{ width: '40%' }} />
+            </div>
+            <span className="de-signup-progress__label">40%</span>
           </div>
-          <span className="de-signup-progress__label">40%</span>
         </div>
-      </div>
+      )}
 
-      <div className="de-signup-intro">
-        <h1>Crear cuenta</h1>
-        <p>Crear la cuenta con tus redes o ingresar tu correo electrónico</p>
-      </div>
+      {!embedded && (
+        <div className="de-signup-intro">
+          <h1>Crear cuenta</h1>
+          <p>Crear la cuenta con tus redes o ingresar tu correo electrónico</p>
+        </div>
+      )}
 
       <div className="de-signup-body">
         <div className="de-signup-social">

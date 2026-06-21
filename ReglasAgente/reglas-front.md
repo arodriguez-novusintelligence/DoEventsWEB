@@ -103,6 +103,34 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+---
+
+## Ejecución 2026-06-21 gap-empalme batch 1 (run 27902063419-b1)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| ResetPassword routing | RISKY | Sí | `App.tsx`, `pages/ResetPassword.tsx`, `ResetPasswordView.tsx` | `/auth/reset-password` → Lovable; Cognito/shared |
+| SignUp embedded | RISKY | Sí | `SignUpView.tsx`, `CreateAccountPage.tsx`, `SignUpPage.tsx` | embedded sin chrome duplicado mfe-auth |
+| index.css port-map | VISUAL | Sí | `packages/shell/src/index.css`, `lovable/index.css` | Re-export DSF + floating-action-button |
+| SeatingMapEditor shapes | VISUAL | Sí | `events/SeatingMapEditor.tsx` | ImageIcon Lucide en picker |
+| FeedBanner | VISUAL | Sí | `feed/FeedBanner.tsx` | Megaphone ring verificado intacto |
+| BankingHub delete | Bloqueo | Parcial | `banking/BankingHub.tsx` | BACKEND_REQUIRED delete/PayPal |
+| VenueCreator FAB | VISUAL | Sí | `venues/VenueCreator.tsx` | floating-action-button CSS definido |
+| ServiceDetailView | VISUAL | Sí | `services/ServiceDetailView.tsx` | Briefcase ring verificado |
+| RefundTicketFlow | VISUAL | Sí | `tickets/RefundTicketFlow.tsx` | h-14 rings verificado |
+| HostPickerModal header | VISUAL | Sí | `events/HostPickerModal.tsx` | UserPlus ring-primary/20 |
+| StepUnified | VISUAL | Sí | `services/StepUnified.tsx` | Briefcase empty ring verificado |
+| FeedServicesCarousel | VISUAL | Sí | `feed/FeedServicesCarousel.tsx` | Loader2 + empty ring verificado |
+| EventsView chips | VISUAL | Sí | `feed/EventsView.tsx` | Tokens semánticos DSF |
+| AddGuestModal search | VISUAL | Sí | `guests/AddGuestModal.tsx` | Loader2 búsqueda |
+| EventPreviewModal | VISUAL | Sí | `events/EventPreviewModal.tsx` | Eye ring verificado |
+| StepAccessControl MapPin | VISUAL | Sí | `events/StepAccessControl.tsx` | MapPin Lucide sin emoji |
+| CompanyContext | Integración | Sí | `contexts/CompanyContext.tsx` | accountTypeLabel verificado |
+| SeatLocationModal | VISUAL | Sí | `tickets/SeatLocationModal.tsx` | Loader2 + rings verificado |
+| MyPurchasesView | Integración | Sí | `purchases/MyPurchasesView.tsx` | Retry + empty ring verificado |
+| MainInfoSection | VISUAL | Sí | `venues/sections/MainInfoSection.tsx` | FileText ring verificado |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 6 (run 27902063419-b6)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

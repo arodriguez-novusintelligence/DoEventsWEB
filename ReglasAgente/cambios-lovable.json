@@ -8,6 +8,58 @@
   },
   "runs": [
     {
+      "id": "gap-empalme-27902063419-b1",
+      "timestamp": "2026-06-21 11:30 UTC",
+      "workflowRunId": "27902063419-b1",
+      "gapBatch": 20,
+      "designSimilarityPercentBefore": 79.44,
+      "designSimilarityPercentAfter": 83.6,
+      "designSimilarityTarget": 98.0,
+      "summary": "Batch 1 gap empalme run 27902063419-b1: auth routing ResetPassword/SignUp, index.css port-map, discover tokens EventsView, 19 gaps DONE; 1 BACKEND_REQUIRED BankingHub delete/PayPal; build:devaws OK",
+      "gapsClosed": [
+        "src/pages/ResetPassword.tsx",
+        "src/pages/SignUp.tsx",
+        "src/index.css",
+        "src/components/events/SeatingMapEditor.tsx",
+        "src/components/feed/FeedBanner.tsx",
+        "src/components/venues/VenueCreator.tsx",
+        "src/components/services/ServiceDetailView.tsx",
+        "src/components/tickets/RefundTicketFlow.tsx",
+        "src/components/events/HostPickerModal.tsx",
+        "src/components/services/StepUnified.tsx",
+        "src/components/feed/FeedServicesCarousel.tsx",
+        "src/components/feed/EventsView.tsx",
+        "src/components/guests/AddGuestModal.tsx",
+        "src/components/events/EventPreviewModal.tsx",
+        "src/components/events/StepAccessControl.tsx",
+        "src/contexts/CompanyContext.tsx",
+        "src/components/tickets/SeatLocationModal.tsx",
+        "src/components/purchases/MyPurchasesView.tsx",
+        "src/components/venues/sections/MainInfoSection.tsx"
+      ],
+      "gapsBackendRequired": [
+        "src/components/banking/BankingHub.tsx"
+      ],
+      "webFilesModified": [
+        "packages/shell/src/App.tsx",
+        "packages/shell/src/index.css",
+        "packages/shell/src/lovable/index.css",
+        "packages/shell/src/lovable/components/auth/SignUpView.tsx",
+        "packages/shell/src/lovable/components/events/SeatingMapEditor.tsx",
+        "packages/shell/src/lovable/components/events/StepAccessControl.tsx",
+        "packages/shell/src/lovable/components/events/HostPickerModal.tsx",
+        "packages/shell/src/lovable/components/feed/EventsView.tsx",
+        "packages/shell/src/lovable/components/guests/AddGuestModal.tsx",
+        "packages/mfe-auth/src/pages/CreateAccountPage.tsx",
+        "packages/mfe-auth/src/pages/SignUpPage.tsx",
+        "packages/mfe-auth/src/pages/ResetPasswordPage.tsx"
+      ],
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "agentStatus": "finished",
+      "remainingGapsAfterBatch": 100
+    },
+    {
       "id": "gap-empalme-27902063419-b6",
       "timestamp": "2026-06-21 23:30 UTC",
       "workflowRunId": "27902063419-b6",

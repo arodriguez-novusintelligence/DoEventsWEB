@@ -23,7 +23,7 @@ export const SignUpView = () => (
         Descubre eventos, lugares y servicios cerca de ti.
       </p>
       <div className="mt-4 rounded-xl border border-border/40 bg-secondary/50 p-1">
-        <CreateAccountPage />
+        <CreateAccountPage embedded />
       </div>
       <p className="mt-4 text-center text-xs text-muted-foreground">
         ¿Ya tienes cuenta?{' '}

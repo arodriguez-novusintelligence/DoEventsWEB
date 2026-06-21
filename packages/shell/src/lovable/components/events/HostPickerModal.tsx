@@ -173,7 +173,7 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
       <div className="flex max-h-[90vh] w-full max-w-md flex-col rounded-t-3xl bg-card shadow-2xl sm:rounded-3xl">
         <div className="flex items-center justify-between p-5 pb-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
               <UserPlus className="h-5 w-5 text-primary" />
             </div>
             <div>

@@ -1,0 +1,5 @@
+/**
+ * Punto de entrada CSS según `.lovable-port-map.json` (Lovable src/index.css).
+ * Re-exporta tokens DSF de lovable/index.css.
+ */
+@import './lovable/index.css';

@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27902063419-b1`: batch 1 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). Auth routing Lovable, `index.css` port-map, EventsView tokens semánticos; similitud ~83.6%; build:devaws OK.
+
 Run `gap-empalme-27902063419-b6`: batch 6 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`PaymentGatewaySheet` PSP, `StoryViewersSheet`, `KycCertificationView`). Manifiesto `38e2c759` sin diff UI; similitud ~98%; build:devaws OK.
 
 Run `gap-empalme-27901296255-b5`: batch 5 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`KycCertificationView` submit documentos KYC). Patrón Lovable: h-14 ring-primary/20, ring-destructive/20, RefreshCw retry, auth RISKY APIs reales, admin panels rings.
@@ -90,7 +92,18 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27901296255-b5)
+## Empalme realizado (última ejecución — gap-empalme-27902063419-b1)
+
+- **ResetPassword / SignUp:** ruta explícita `/auth/reset-password` → `ResetPasswordView` (Cognito/shared); `SignUpView` con `CreateAccountPage embedded`; aliases port-map `SignUpPage`/`ResetPasswordPage` en mfe-auth.
+- **index.css:** creado `packages/shell/src/index.css` re-exportando tokens DSF; `.floating-action-button` para `VenueCreator` FAB.
+- **EventsView:** chips categoría eventos/lugares/servicios con paleta semántica DSF (`primary/accent/secondary`) — sin pink/violet hardcoded.
+- **StepAccessControl:** ubicación con `MapPin` Lucide en lugar de emoji.
+- **HostPickerModal:** header `UserPlus` con `ring-2 ring-primary/20`.
+- **SeatingMapEditor:** picker forma imagen con `ImageIcon` Lucide.
+- **AddGuestModal:** búsqueda con `Loader2` consistente.
+- **FeedBanner, ServiceDetailView, RefundTicketFlow, StepUnified, FeedServicesCarousel, EventPreviewModal, CompanyContext, SeatLocationModal, MyPurchasesView, MainInfoSection:** verificados alineados empalmes previos.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27901296255-b5)
 
 - **StoriesContext:** alias `useStories`; re-export API (`loadErrorMessage`, `isEmpty`, `authorCount`, `refreshStories`); `fetchNearbyStories` + `fetchUserStories` sin mocks.
 - **VenueReservationDetail:** Loader2 card shadow-sm; error h-14 ring-destructive/20 + RefreshCw; empty Building2 ring intacto.

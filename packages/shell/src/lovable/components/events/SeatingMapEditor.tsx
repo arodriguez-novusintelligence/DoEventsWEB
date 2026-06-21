@@ -27,6 +27,7 @@ import {
   Bold,
   Italic,
   Underline,
+  Image as ImageIcon,
   Undo2,
   Redo2,
   Eraser,
@@ -1202,7 +1203,11 @@ const SeatingMapEditor = ({
             }}
             className="flex min-w-[72px] flex-shrink-0 flex-col items-center justify-center gap-1 rounded-2xl border border-border bg-card px-3 py-2 text-foreground transition-colors hover:border-primary hover:bg-primary/5"
           >
-            <span className="text-xl leading-none">{s.icon}</span>
+            {s.id === 'image' ? (
+              <ImageIcon className="h-5 w-5 text-primary" aria-hidden />
+            ) : (
+              <span className="text-xl leading-none">{s.icon}</span>
+            )}
             <span className="text-[11px] font-semibold">{s.label}</span>
           </button>
         ))}

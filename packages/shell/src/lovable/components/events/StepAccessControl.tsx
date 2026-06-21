@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { CheckCircle2, DoorOpen, Trash2, UserPlus, Users, HelpCircle } from 'lucide-react';
+import { CheckCircle2, DoorOpen, MapPin, Trash2, UserPlus, Users, HelpCircle } from 'lucide-react';
 import { EventFormData, EventGate, EventHost, EventFormUpdater } from '@lovable/data/eventFormData';
 import UserSearchPickerModal, { type UserSearchResult } from '../../../components/UserSearchPickerModal';
 
@@ -116,7 +116,10 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
       <div className="rounded-2xl bg-card p-4 shadow-sm">
         <h3 className="text-sm font-bold text-foreground">{formData.name || 'Evento sin nombre'}</h3>
         {formData.location.detectedCity && (
-          <p className="mt-0.5 text-xs font-semibold text-primary">📍 {formData.location.detectedCity}</p>
+          <p className="mt-0.5 flex items-center gap-1 text-xs font-semibold text-primary">
+            <MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            {formData.location.detectedCity}
+          </p>
         )}
         <p className="mt-3 text-sm font-bold text-foreground">Personal asignado</p>
         <div className="mt-2 grid grid-cols-2 gap-3">
