@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27903532486-b2`: batch 2 (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED nuevos. Feed/reservas/chat/wizard polish rings+shadow-sm; similitud ~87%; build:devaws OK.
+
 Run `gap-empalme-27903532486-b1`: batch 1 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). FeedHero tokens DSF; SeatingMapEditor/StepUnified/ServiceDetail rings; AddGuestModal search empty/error; similitud ~83.8%; build:devaws OK.
 
 Run `agent-27903532486`: validación prepare `cb27c830` — sin diff UI; reglasDiseno tokens/breakpoints referencia DSF; batch 6 reconciliado; similitud ~98%; build:devaws OK; 3 BACKEND_REQUIRED acumulados (PSP, story viewers, KYC).
@@ -106,7 +108,29 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27903532486-b1)
+## Empalme realizado (última ejecución — gap-empalme-27903532486-b2)
+
+- **CreatePostSheet:** Drawer max-h; media preview ring shadow-sm; PenLine header pill intacto.
+- **EventPublished:** card shadow-sm PartyPopper h-14 ring; fetchEventById + share API intactos.
+- **MyReservedServicesView / MyReservedVenuesView:** loading card shadow-sm; retry rounded-full; row border+ring icon tiles.
+- **ProfileGallery:** CTA shadow-sm; overlay/save shadow-sm; error ImagePlus pill.
+- **FeedHero:** Cambiar ring; stories loading/empty border-primary/25 dashed.
+- **NotificationsSheet:** error/empty card shells; retry outline rounded-full shadow-sm.
+- **ReportPostDialog:** title font-bold; error rounded-xl shadow-sm; CTAs rounded-full.
+- **MessagesListView:** header h-10; private chat shadow-sm border; search shadow-sm; EmptyState card dashed.
+- **EventLocationMap:** shadow-sm shell; Loader2 h-8; error overlay destructive ring card.
+- **MyInvitationsView:** retry rounded-full; image fallback ring; heart ring-primary/20.
+- **AccessControlListView:** loading card; stat tiles shadow-sm; scan CTA shadow-sm; empty dashed border.
+- **FeedServicesCarousel:** loading skeleton row; empty border-primary/25; retry shadow-sm.
+- **FollowersSheet:** max-w-lg mx-auto; TabsList p-1 active shadow-sm; divide-y lists.
+- **CommentsSheet:** max-h drawer; avatar primary/10; title text-base; retry rounded-full.
+- **BookingReviewSheet:** title font-bold; summary bg-secondary/40; terms shadow-sm.
+- **MyTicketsView:** max-w-lg shell; tabs shadow-sm; explore Button; cards shadow-sm.
+- **MediaUpload:** remove chip destructive token; add tiles border-primary/30.
+- **LocationSection:** header extrabold+subtitle; empty border-primary/30; CTAs rounded-full.
+- **EventInvitationModal:** event fallback CalendarDays ring; step2 Mail pill; send rounded-full; push token primary.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27903532486-b1)
 
 - **FeedHero:** categorías con tokens DSF semánticos (sin amber/pink hardcoded); ubicación h-10 ring; stories loading Loader2 card.
 - **EventsView:** fallback media sin imagen CalendarDays h-14 ring-primary/20.

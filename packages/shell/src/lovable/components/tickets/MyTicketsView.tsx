@@ -112,7 +112,7 @@ const MyTicketsView = ({
   );
 
   return (
-    <div className="min-h-screen bg-secondary pb-24">
+    <div className="mx-auto min-h-screen max-w-lg bg-secondary pb-24">
       <ProfileSectionBanner
         title="Mis boletas"
         subtitle={`${ticketsProp.length} boleta${ticketsProp.length === 1 ? '' : 's'} en total`}
@@ -132,7 +132,7 @@ const MyTicketsView = ({
       />
 
       <div className="mx-auto max-w-lg px-4 -mt-6">
-        <div className="rounded-2xl bg-card p-2 shadow-md grid grid-cols-4 gap-1">
+        <div className="rounded-2xl bg-card p-2 shadow-sm grid grid-cols-4 gap-1">
           {TABS.map((tab) => {
             const active = tab.key === activeTab;
             return (
@@ -168,7 +168,7 @@ const MyTicketsView = ({
               <p className="text-sm font-semibold text-foreground">No se pudieron cargar tus boletas</p>
               <p className="text-xs text-muted-foreground max-w-[240px]">{loadError}</p>
               {onRetry && (
-                <Button type="button" variant="outline" size="sm" className="rounded-xl gap-1.5" onClick={onRetry}>
+                <Button type="button" variant="outline" size="sm" className="rounded-full gap-1.5" onClick={onRetry}>
                   <RefreshCw className="h-3.5 w-3.5" />
                   Reintentar
                 </Button>
@@ -190,13 +190,9 @@ const MyTicketsView = ({
                   : 'Compra entradas en un evento para verlas aquí.'}
               </p>
               {ticketsProp.length === 0 && onExploreEvents && (
-                <button
-                  type="button"
-                  onClick={onExploreEvents}
-                  className="mt-4 rounded-full bg-primary px-5 py-2 text-xs font-bold text-primary-foreground"
-                >
+                <Button type="button" className="mt-4 rounded-full px-5" onClick={onExploreEvents}>
                   Explorar eventos
-                </button>
+                </Button>
               )}
             </div>
           )}
@@ -204,7 +200,7 @@ const MyTicketsView = ({
           {tickets.map((ticket) => (
             <article
               key={`${ticket.eventId || ticket.eventTitle}-${ticket.status}`}
-              className={`overflow-hidden rounded-2xl bg-card shadow-md border border-border/40 ${ticket.status === 'pendiente' ? 'opacity-75 grayscale-[0.35]' : ''}`}
+              className={`overflow-hidden rounded-2xl bg-card shadow-sm border border-border/40 ${ticket.status === 'pendiente' ? 'opacity-75 grayscale-[0.35]' : ''}`}
             >
               <button
                 type="button"

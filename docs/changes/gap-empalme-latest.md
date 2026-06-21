@@ -1,32 +1,33 @@
-# Gap empalme — resumen ejecutivo (batch 1)
+# Gap empalme — resumen ejecutivo (batch 2)
 
-**Run:** `27903532486-b1` / `gap-empalme-27903532486-b1`  
+**Run:** `27903532486-b2` / `gap-empalme-27903532486-b2`  
 **Fecha:** 2026-06-21  
 **Rama:** `feature/cicd/dev-automation`
 
 ## Resultado
 
-Manifiesto batch 1 (20 gaps, similitud baseline **80.86%**). Tras empalme focalizado, similitud estimada **83.8%**. **19 gaps DONE** frontend; **1 BACKEND_REQUIRED** documentado (`BankingHub` delete/PayPal).
+Manifiesto batch 2 (20 gaps, similitud baseline **83.8%**). Tras empalme focalizado, similitud estimada **87.0%**. **20 gaps DONE** frontend; **0 BACKEND_REQUIRED** nuevos en este batch.
 
-## Empalme batch 1
+## Empalme batch 2
 
 | Área | Estado |
 |------|--------|
-| **Feed / Discover** | FeedHero tokens DSF; EventsView media fallback; FeedServicesCarousel error/retry |
-| **Wizard** | SeatingMapEditor, StepUnified, StepAccessControl, EventPreviewModal — rings + empty states |
-| **Servicios** | ServiceDetailView section icons ring |
-| **Invitados** | AddGuestModal búsqueda empty/error UI |
-| **Perfil / Compras** | MyPostsView, ProfileGallery, MyPurchasesView — rings error/empty |
-| **Banca** | BankingHub banner BACKEND_REQUIRED delete/PayPal |
-| **Contexto** | CompanyContext export type |
+| **Feed** | CreatePostSheet, FeedHero, NotificationsSheet, ReportPostDialog, FeedServicesCarousel, FollowersSheet, CommentsSheet |
+| **Reservas / Compras** | MyReservedServicesView, MyReservedVenuesView, MyTicketsView |
+| **Perfil** | ProfileGallery |
+| **Chat** | MessagesListView |
+| **Eventos / Invitados** | EventPublished, EventLocationMap, MyInvitationsView, EventInvitationModal, AccessControlListView |
+| **Servicios / Venues** | BookingReviewSheet, MediaUpload, LocationSection |
+
+Patrón aplicado: `shadow-sm` cards, rings h-10/h-14 `ring-primary/20`, empty dashed `border-primary/25`, retry `rounded-full` + `RefreshCw`, APIs `@doevents/shared` intactas.
 
 ## Backend pendiente (acumulado)
 
-Ver `ReglasAgente/impacto-backend.md` — BankingHub delete/PayPal, BankingForm SWIFT, KYC submit, GlobalSearch posts, PaymentGateway PSP, EditProfile password, Booking add-ons, StoryViewersSheet viewers, etc.
+Sin cambios respecto a batches anteriores. Ver `ReglasAgente/impacto-backend.md` — BankingHub delete/PayPal, KYC submit, PaymentGateway PSP, StoryViewersSheet viewers, GlobalSearch posts, etc.
 
 ## Gaps restantes
 
-**97** — batches 2–6 pendientes (objetivo similitud 98%).
+**77** — batches 3–6 pendientes (objetivo similitud 98%).
 
 ## Validación
 

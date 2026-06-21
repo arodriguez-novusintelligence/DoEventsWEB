@@ -91,18 +91,18 @@ const EventLocationMap = ({ lat, lng, onPick }: Props) => {
   }, [lat, lng, ready]);
 
   return (
-    <div className="relative h-48 w-full overflow-hidden rounded-2xl border border-border bg-muted">
+    <div className="relative h-48 w-full overflow-hidden rounded-2xl border border-border bg-muted shadow-sm">
       {!ready && !loadError && (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 animate-pulse bg-muted/80">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
             <MapPin className="h-5 w-5 text-primary" />
           </div>
-          <Loader2 className="h-5 w-5 animate-spin text-primary" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
           <span className="text-xs text-muted-foreground">Cargando mapa…</span>
         </div>
       )}
       {loadError && (
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-muted px-4 text-center">
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 rounded-2xl border border-destructive/30 bg-card/95 shadow-sm mx-2 px-4 text-center">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
             <AlertCircle className="h-7 w-7 text-destructive" />
           </div>

@@ -109,6 +109,34 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+---
+
+## Ejecución 2026-06-21 gap-empalme batch 2 (run 27903532486-b2)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| CreatePostSheet media | VISUAL | Sí | `feed/CreatePostSheet.tsx` | Drawer max-h; preview ring shadow-sm |
+| EventPublished card | VISUAL | Sí | `pages/EventPublished.tsx` | Card shadow-sm PartyPopper h-14 ring |
+| MyReservedServices loading | VISUAL | Sí | `purchases/MyReservedServicesView.tsx` | Card loading; retry rounded-full; row ring |
+| ProfileGallery CTA | VISUAL | Sí | `feed/ProfileGallery.tsx` | shadow-sm overlays/save; ImagePlus pill |
+| FeedHero stories dashed | VISUAL | Sí | `feed/FeedHero.tsx` | border-primary/25 loading/empty; Cambiar ring |
+| NotificationsSheet cards | VISUAL | Sí | `feed/NotificationsSheet.tsx` | Error/empty card shells; outline retry |
+| ReportPostDialog CTAs | VISUAL | Sí | `feed/ReportPostDialog.tsx` | font-bold title; rounded-full buttons |
+| MessagesListView polish | VISUAL | Sí | `chat/MessagesListView.tsx` | h-10 header; private chat shadow-sm |
+| EventLocationMap overlay | VISUAL | Sí | `events/EventLocationMap.tsx` | shadow-sm; Loader2 h-8; error card |
+| MyInvitationsView fallback | VISUAL | Sí | `invitations/MyInvitationsView.tsx` | Image ring; heart ring; retry rounded-full |
+| AccessControlListView stats | VISUAL | Sí | `access/AccessControlListView.tsx` | Loading card; stat tiles shadow-sm |
+| FeedServicesCarousel skeleton | VISUAL | Sí | `feed/FeedServicesCarousel.tsx` | Skeleton row; empty border-primary/25 |
+| FollowersSheet tabs | VISUAL | Sí | `feed/FollowersSheet.tsx` | max-w-lg; TabsList p-1 active shadow-sm |
+| MyReservedVenues rows | VISUAL | Sí | `purchases/MyReservedVenuesView.tsx` | Loading card; border rows; icon ring |
+| CommentsSheet drawer | VISUAL | Sí | `feed/CommentsSheet.tsx` | max-h; avatar primary/10; retry rounded-full |
+| BookingReviewSheet terms | VISUAL | Sí | `services/BookingReviewSheet.tsx` | bg-secondary/40; terms shadow-sm |
+| MyTicketsView tabs | VISUAL | Sí | `tickets/MyTicketsView.tsx` | max-w-lg; shadow-sm tabs/cards; Button explore |
+| MediaUpload add tiles | VISUAL | Sí | `venues/MediaUpload.tsx` | border-primary/30; destructive remove chip |
+| LocationSection header | VISUAL | Sí | `venues/sections/LocationSection.tsx` | extrabold+subtitle; empty border-primary/30 |
+| EventInvitationModal send | VISUAL | Sí | `guests/EventInvitationModal.tsx` | CalendarDays fallback; Mail pill; rounded-full CTA |
+| Batch 2 gaps (20) | Empalme | Sí | ver `decision-log.md` | 20 DONE + 0 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 1 (run 27903532486-b1)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

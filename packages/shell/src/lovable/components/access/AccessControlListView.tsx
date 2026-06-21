@@ -63,12 +63,12 @@ const EventCard = ({
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-3">
-        <div className="rounded-xl border border-border/60 bg-card p-3 text-center">
+        <div className="rounded-xl border border-border/60 bg-card p-3 text-center shadow-sm">
           <DoorOpen className="h-4 w-4 text-primary mx-auto mb-1" />
           <div className="text-2xl font-extrabold text-primary leading-none">{ev.doors}</div>
           <div className="text-[11px] text-muted-foreground mt-1">Puertas</div>
         </div>
-        <div className="rounded-xl border border-border/60 bg-card p-3 text-center">
+        <div className="rounded-xl border border-border/60 bg-card p-3 text-center shadow-sm">
           <Users className="h-4 w-4 text-primary mx-auto mb-1" />
           <div className="text-2xl font-extrabold text-primary leading-none">{ev.staff}</div>
           <div className="text-[11px] text-muted-foreground mt-1">Staff</div>
@@ -79,7 +79,7 @@ const EventCard = ({
         <>
           <button
             onClick={() => onScan(ev)}
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3 text-sm font-bold text-primary-foreground shadow hover:bg-primary/90 transition-colors"
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3 text-sm font-bold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors"
           >
             <ScanLine className="h-4 w-4" /> Escanear código
           </button>
@@ -143,7 +143,7 @@ const AccessControlListView = ({
           </p>
 
           {loading && (
-            <div className="flex flex-col items-center justify-center gap-3 py-16">
+            <div className="flex flex-col items-center justify-center gap-3 rounded-2xl bg-card p-10 text-center shadow-sm">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
               <p className="text-sm text-muted-foreground">Cargando eventos…</p>
             </div>
@@ -156,8 +156,8 @@ const AccessControlListView = ({
               </div>
               <p className="mt-3 text-sm font-medium text-destructive">{loadError}</p>
               {onRetry && (
-                <Button type="button" variant="outline" className="mt-4 rounded-full" onClick={onRetry}>
-                  <RefreshCw className="mr-2 h-4 w-4" />
+                <Button type="button" variant="outline" size="sm" className="mt-4 gap-1.5 rounded-full" onClick={onRetry}>
+                  <RefreshCw className="h-3.5 w-3.5" />
                   Reintentar
                 </Button>
               )}
@@ -184,7 +184,7 @@ const AccessControlListView = ({
           </div>
 
           {tabItems.length === 0 && (
-            <div className="rounded-2xl bg-card p-10 text-center shadow-sm">
+            <div className="rounded-2xl border border-dashed border-primary/25 bg-card p-10 text-center shadow-sm">
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <Shield className="h-7 w-7 text-primary" />
               </div>

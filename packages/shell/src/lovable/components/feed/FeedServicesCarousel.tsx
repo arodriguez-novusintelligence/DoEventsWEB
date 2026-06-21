@@ -68,7 +68,7 @@ const FeedServicesCarousel = ({
             <button
               type="button"
               onClick={onRetry}
-              className="inline-flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-xs font-semibold text-primary hover:bg-secondary/60"
+              className="inline-flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-xs font-semibold text-primary hover:bg-accent/40 shadow-sm transition-colors"
             >
               <RefreshCw className="h-3.5 w-3.5" />
               Reintentar
@@ -83,7 +83,12 @@ const FeedServicesCarousel = ({
     return (
       <section className="my-5 px-4">
         <div className="mb-3 h-5 w-48 animate-pulse rounded bg-muted" />
-        <div className="flex flex-col items-center gap-3 rounded-2xl bg-card py-10 text-center shadow-sm">
+        <div className="flex gap-3 overflow-x-auto px-4 pb-2">
+          {Array.from({ length: 2 }).map((_, i) => (
+            <div key={i} className="h-[200px] w-[72%] shrink-0 animate-pulse rounded-2xl border border-border/50 bg-muted sm:w-[280px]" />
+          ))}
+        </div>
+        <div className="flex flex-col items-center gap-3 rounded-2xl bg-card py-6 text-center shadow-sm mx-4">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
           <p className="text-sm text-muted-foreground">Cargando servicios cercanos…</p>
         </div>
@@ -102,7 +107,7 @@ const FeedServicesCarousel = ({
             DJs, catering, fotografía y más cerca de ti
           </p>
         </div>
-        <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border bg-card py-10 text-center">
+        <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-primary/25 bg-card py-10 text-center shadow-sm">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
             <Briefcase className="h-7 w-7 text-primary" />
           </div>

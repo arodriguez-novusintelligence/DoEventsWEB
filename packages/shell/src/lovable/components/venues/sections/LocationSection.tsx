@@ -31,18 +31,21 @@ const LocationSection = () => {
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-2 mb-1">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
           <MapPin className="h-5 w-5 text-primary" />
         </div>
-        <h3 className="text-base font-semibold text-foreground">Ubicación del lugar</h3>
+        <div>
+          <h3 className="text-base font-extrabold text-foreground">Ubicación del lugar</h3>
+          <p className="text-xs text-muted-foreground">Dirección, mapa y referencias para visitantes</p>
+        </div>
       </div>
       <div className="rounded-2xl bg-card border border-border shadow-sm p-4 space-y-5">
         <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
-          <Button type="button" variant="outline" size="sm" disabled={locating} onClick={() => void useDeviceLocation()}>
+          <Button type="button" variant="outline" size="sm" className="rounded-full" disabled={locating} onClick={() => void useDeviceLocation()}>
             {locating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Crosshair className="mr-2 h-4 w-4" />}
             {locating ? 'Obteniendo ubicación…' : 'Usar mi ubicación'}
           </Button>
-          <Button type="button" variant="outline" size="sm" disabled={locating} onClick={() => void searchLocation()}>
+          <Button type="button" variant="outline" size="sm" className="rounded-full" disabled={locating} onClick={() => void searchLocation()}>
             <MapPin className="mr-2 h-4 w-4" />
             Buscar en mapa
           </Button>
@@ -70,7 +73,7 @@ const LocationSection = () => {
         )}
 
         {!hasCoords && !locating && (
-          <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-border bg-card shadow-sm py-8 text-center">
+          <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-primary/30 bg-secondary/40 shadow-sm py-8 text-center">
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
               <MapPin className="h-7 w-7 text-primary" />
             </div>

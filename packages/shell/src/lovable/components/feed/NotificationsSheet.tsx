@@ -391,7 +391,7 @@ const NotificationsSheet = ({
             {unreadCount > 0 && (
               <button
                 onClick={() => { void markAllRead(); }}
-                className="flex items-center gap-1 text-xs font-semibold text-primary"
+                className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline transition-colors"
               >
                 <CheckCheck className="h-3.5 w-3.5" />
                 Marcar leídas
@@ -400,7 +400,7 @@ const NotificationsSheet = ({
             {notifications.length > 0 && (
               <button
                 onClick={() => { void clearAll(); }}
-                className="flex items-center gap-1 text-xs font-semibold text-destructive"
+                className="flex items-center gap-1 text-xs font-semibold text-destructive hover:underline transition-colors"
               >
                 <Trash2 className="h-3.5 w-3.5" />
                 Eliminar todas
@@ -416,7 +416,7 @@ const NotificationsSheet = ({
               <p className="mt-3 text-sm text-muted-foreground">Cargando notificaciones…</p>
             </div>
           ) : loadError ? (
-            <div className="flex flex-col items-center py-12 text-center px-4">
+            <div className="mx-4 flex flex-col items-center rounded-2xl border border-destructive/30 bg-card py-12 text-center shadow-sm px-4">
               <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
                 <AlertCircle className="h-7 w-7 text-destructive" strokeWidth={2} />
               </div>
@@ -425,14 +425,14 @@ const NotificationsSheet = ({
               <button
                 type="button"
                 onClick={() => { void reload(); }}
-                className="mt-4 flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground"
+                className="mt-4 flex items-center gap-1.5 rounded-full border border-border bg-card px-4 py-2 text-xs font-semibold text-primary hover:bg-accent/40 shadow-sm transition-colors"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
                 Reintentar
               </button>
             </div>
           ) : notifications.length === 0 ? (
-            <div className="flex flex-col items-center py-12 text-center">
+            <div className="mx-4 flex flex-col items-center rounded-2xl bg-card py-12 text-center shadow-sm">
               <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <Bell className="h-7 w-7 text-primary" strokeWidth={2} />
               </div>

@@ -335,7 +335,7 @@ const MessagesListView = ({
   const renderPrivateChat = (chat: PrivateChat) => (
     <div
       key={chat.id}
-      className="flex w-full items-center gap-3 rounded-2xl bg-card p-3 transition-colors hover:bg-accent/40"
+      className="flex w-full items-center gap-3 rounded-2xl border border-border/40 bg-card p-3 shadow-sm transition-colors hover:bg-accent/40"
     >
       <button
         type="button"
@@ -464,7 +464,7 @@ const MessagesListView = ({
               <button
                 type="button"
                 onClick={() => (onBlockedClick ? onBlockedClick() : toast('Lista de bloqueados'))}
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground hover:bg-accent"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground hover:bg-accent"
                 aria-label="Bloqueados"
               >
                 <Ban className="h-4 w-4" />
@@ -472,14 +472,14 @@ const MessagesListView = ({
               <button
                 type="button"
                 onClick={() => (onCreateConversation ? onCreateConversation() : toast('Nueva conversación'))}
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary/20"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary/20"
                 aria-label="Nueva conversación"
               >
                 <PencilLine className="h-4 w-4" />
               </button>
               <button
                 onClick={() => setSettingsOpen(true)}
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground hover:bg-accent"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground hover:bg-accent"
                 aria-label="Configuración"
               >
                 <Settings className="h-4 w-4" />
@@ -511,7 +511,7 @@ const MessagesListView = ({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar conversaciones o usuarios..."
-              className="w-full rounded-full border border-border bg-card pl-10 pr-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full rounded-full border border-border bg-card pl-10 pr-4 py-3 text-sm outline-none shadow-sm focus:ring-2 focus:ring-primary/20"
             />
           </div>
         </div>
@@ -710,7 +710,7 @@ const MessagesListView = ({
 };
 
 const EmptyState = ({ text }: { text: string }) => (
-  <div className="flex flex-col items-center justify-center py-16 text-center">
+  <div className="mx-4 flex flex-col items-center justify-center rounded-2xl border border-dashed border-primary/25 bg-card py-16 text-center shadow-sm">
     <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
       <MessageSquare className="h-7 w-7 text-primary" strokeWidth={2} />
     </div>

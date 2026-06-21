@@ -252,7 +252,7 @@ export const EventInvitationModal = ({
     { id: 'mail', name: 'Mail', icon: Mail, color: 'text-primary' },
     { id: 'whatsapp', name: 'WhatsApp', icon: MessageCircle, color: 'text-success' },
     { id: 'campana', name: 'Campaña', icon: Bell, color: 'text-primary' },
-    { id: 'push', name: 'Push', icon: Smartphone, color: 'text-purple-500' },
+    { id: 'push', name: 'Push', icon: Smartphone, color: 'text-primary' },
   ];
 
   const listGuests = useMemo(
@@ -898,7 +898,7 @@ export const EventInvitationModal = ({
                       <AlertCircle className="h-7 w-7 text-destructive" />
                     </div>
                     <p className="text-sm font-semibold text-foreground">{eventsLoadError}</p>
-                    <Button type="button" variant="outline" size="sm" className="rounded-xl gap-1.5" onClick={() => void loadEvents()}>
+                    <Button type="button" variant="outline" size="sm" className="rounded-full gap-1.5" onClick={() => void loadEvents()}>
                       <RefreshCw className="h-3.5 w-3.5" />
                       Reintentar
                     </Button>
@@ -925,7 +925,9 @@ export const EventInvitationModal = ({
                       {ev.image ? (
                         <img src={ev.image} alt={ev.title} className="w-full h-32 object-cover rounded-t-2xl" />
                       ) : (
-                        <div className="w-full h-32 rounded-t-2xl bg-muted" />
+                        <div className="w-full h-32 rounded-t-2xl bg-primary/5 flex items-center justify-center ring-2 ring-primary/20">
+                          <CalendarDays className="h-7 w-7 text-primary" />
+                        </div>
                       )}
                       <div className="p-4">
                         <h3 className="font-semibold text-base text-card-foreground mb-1">{ev.title}</h3>
@@ -962,7 +964,12 @@ export const EventInvitationModal = ({
                   <Button variant="ghost" size="sm" onClick={() => setStep('events')} className="h-8 w-8 p-0">
                     <ArrowLeft className="h-4 w-4" />
                   </Button>
-                  <DialogTitle className="text-base sm:text-lg font-semibold">Enviar Invitación</DialogTitle>
+                  <DialogTitle className="flex items-center gap-2 text-base font-bold">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                      <Mail className="h-5 w-5 text-primary" />
+                    </span>
+                    Enviar Invitación
+                  </DialogTitle>
                 </div>
                 <p className="text-[11px] sm:text-xs text-muted-foreground pl-10 truncate">
                   Selecciona usuarios para invitar a &quot;{event.title}&quot;
@@ -1263,7 +1270,7 @@ export const EventInvitationModal = ({
                 )}
                 <Button
                   onClick={() => setConfirmOpen(true)}
-                  className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90"
+                  className="w-full h-12 rounded-full bg-primary hover:bg-primary/90"
                   disabled={sending || !guestIds.length || !channels.length || hasErrors}
                 >
                   {sending ? 'Enviando…' : `Enviar Invitación${guestIds.length ? ` (${guestIds.length})` : ''}`}
@@ -1296,7 +1303,12 @@ export const EventInvitationModal = ({
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <DialogContent stacked className="max-w-md mx-auto rounded-2xl">
           <DialogHeader>
-            <DialogTitle>Confirmar envío de invitaciones</DialogTitle>
+            <DialogTitle className="flex items-center gap-2 font-bold">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                <Mail className="h-5 w-5 text-primary" />
+              </span>
+              Confirmar envío de invitaciones
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <div className="grid grid-cols-3 gap-2 text-center">

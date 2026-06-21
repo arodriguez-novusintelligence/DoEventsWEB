@@ -65,7 +65,7 @@ export const ReportPostDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg rounded-2xl shadow-sm">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2 font-bold">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
               <Flag className="h-5 w-5 text-destructive" />
             </div>
@@ -111,17 +111,17 @@ export const ReportPostDialog = ({
         </div>
 
         {submitError && (
-          <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+          <div className="flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive shadow-sm">
             <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
             <span>{submitError}</span>
           </div>
         )}
 
         <DialogFooter className="gap-2 sm:gap-0">
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+          <Button type="button" variant="outline" className="rounded-full" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
-          <Button type="button" variant="destructive" onClick={handleSubmit} disabled={submitting}>
+          <Button type="button" variant="destructive" className="rounded-full gap-1.5" onClick={handleSubmit} disabled={submitting}>
             {submitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

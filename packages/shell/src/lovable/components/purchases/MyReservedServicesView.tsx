@@ -70,7 +70,7 @@ export const MyReservedServicesView = ({ onBack }: MyReservedServicesViewProps) 
 
       <div className="px-4 pt-4">
         {loading ? (
-          <div className="flex flex-col items-center justify-center gap-3 py-12">
+          <div className="flex flex-col items-center gap-3 rounded-2xl bg-card p-10 text-center shadow-sm">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
             <p className="text-sm text-muted-foreground">Cargando reservas…</p>
           </div>
@@ -83,10 +83,11 @@ export const MyReservedServicesView = ({ onBack }: MyReservedServicesViewProps) 
             <Button
               type="button"
               variant="outline"
-              className="mt-4 rounded-full"
+              size="sm"
+              className="mt-4 gap-1.5 rounded-full"
               onClick={() => setReloadKey((k) => k + 1)}
             >
-              <RefreshCw className="mr-2 h-4 w-4" />
+              <RefreshCw className="h-3.5 w-3.5" />
               Reintentar
             </Button>
           </div>
@@ -115,9 +116,9 @@ export const MyReservedServicesView = ({ onBack }: MyReservedServicesViewProps) 
                 key={booking.bookingId}
                 type="button"
                 onClick={() => navigate(`/purchases/services/${booking.bookingId}`)}
-                className="flex w-full items-center gap-3 rounded-2xl bg-card p-4 shadow-sm text-left hover:bg-accent/40 transition-colors"
+                className="flex w-full items-center gap-3 rounded-2xl border border-border/40 bg-card p-4 shadow-sm text-left hover:bg-accent/40 transition-colors"
               >
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
                   <Briefcase className="h-5 w-5 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">

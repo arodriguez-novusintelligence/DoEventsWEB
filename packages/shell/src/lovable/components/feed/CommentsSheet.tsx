@@ -62,7 +62,7 @@ const CommentItem = ({
           {comment.user.avatarUrl ? (
             <AvatarImage src={comment.user.avatarUrl} alt={comment.user.name} className="object-cover" />
           ) : null}
-          <AvatarFallback className="bg-accent text-xs font-semibold text-accent-foreground">
+          <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">
             {comment.user.initials}
           </AvatarFallback>
         </Avatar>
@@ -225,13 +225,13 @@ const CommentsSheet = ({
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent>
+      <DrawerContent className="max-h-[85vh]">
         <div className="mx-auto w-full max-w-lg">
           <DrawerHeader className="flex items-center gap-2 text-left">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
               <MessageSquare className="h-5 w-5 text-primary" />
             </div>
-            <DrawerTitle className="text-xl font-bold">
+            <DrawerTitle className="text-base font-bold">
               ¡Comentarios!{totalComments > 0 ? ` (${totalComments})` : ''}
             </DrawerTitle>
           </DrawerHeader>
@@ -249,7 +249,7 @@ const CommentsSheet = ({
                 <p className="text-sm font-semibold text-foreground">No se pudieron cargar los comentarios</p>
                 <p className="text-xs text-muted-foreground max-w-[220px]">{loadError}</p>
                 {onRetry && (
-                  <Button type="button" variant="outline" size="sm" className="rounded-xl gap-1.5" onClick={onRetry}>
+                  <Button type="button" variant="outline" size="sm" className="rounded-full gap-1.5" onClick={onRetry}>
                     <RefreshCw className="h-3.5 w-3.5" />
                     Reintentar
                   </Button>

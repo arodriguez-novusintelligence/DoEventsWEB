@@ -46,7 +46,8 @@ export const EventPublished = () => {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center bg-secondary px-6 text-center pb-24">
-      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-4 ring-primary/20">
+      <div className="w-full max-w-sm rounded-2xl bg-card p-8 shadow-sm">
+      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-4 ring-primary/20 mx-auto">
         <PartyPopper className="h-7 w-7 text-primary" />
       </div>
       <p className="mt-4 inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
@@ -118,6 +119,7 @@ export const EventPublished = () => {
         >
           Mis eventos
         </Button>
+      </div>
       </div>
     </div>
   );

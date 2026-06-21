@@ -58,7 +58,7 @@ const MyInvitationsView = ({
             <p className="text-sm font-semibold text-foreground">No se pudieron cargar las invitaciones</p>
             <p className="text-xs text-muted-foreground max-w-[240px]">{loadError}</p>
             {onRetry && (
-              <Button type="button" variant="outline" size="sm" className="rounded-xl gap-1.5" onClick={onRetry}>
+              <Button type="button" variant="outline" size="sm" className="rounded-full gap-1.5" onClick={onRetry}>
                 <RefreshCw className="h-3.5 w-3.5" />
                 Reintentar
               </Button>
@@ -86,7 +86,7 @@ const MyInvitationsView = ({
               {inv.image ? (
                 <img src={inv.image} alt={inv.title} className="h-36 w-28 flex-shrink-0 object-cover" />
               ) : (
-                <div className="flex h-36 w-28 flex-shrink-0 flex-col items-center justify-center gap-1 bg-primary/5 text-primary">
+                <div className="flex h-36 w-28 flex-shrink-0 flex-col items-center justify-center gap-1 bg-primary/5 text-primary ring-2 ring-primary/20 rounded-xl">
                   <Ticket className="h-6 w-6" />
                   <span className="text-[10px] font-medium">Evento</span>
                 </div>
@@ -102,7 +102,7 @@ const MyInvitationsView = ({
                       setLiked((p) => ({ ...p, [inv.id]: !p[inv.id] }));
                     }}
                     onKeyDown={(e) => e.stopPropagation()}
-                    className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary/10"
+                    className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20"
                   >
                     <Heart
                       className={`h-4 w-4 ${liked[inv.id] ? 'fill-primary text-primary' : 'text-primary'}`}

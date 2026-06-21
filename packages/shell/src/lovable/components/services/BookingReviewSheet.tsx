@@ -54,7 +54,7 @@ export const BookingReviewSheet = ({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="max-w-lg mx-auto rounded-t-2xl">
         <SheetHeader>
-          <SheetTitle className="flex items-center gap-2">
+          <SheetTitle className="flex items-center gap-2 text-base font-bold text-foreground">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
               <Calendar className="h-5 w-5 text-primary" />
             </div>
@@ -63,7 +63,7 @@ export const BookingReviewSheet = ({
         </SheetHeader>
 
         <div className="mt-4 space-y-4">
-          <div className="rounded-2xl border border-border bg-muted/40 p-4 shadow-sm">
+          <div className="rounded-2xl border border-border bg-secondary/40 p-4 shadow-sm">
             <p className="text-base font-bold text-foreground">{summary.title}</p>
             {summary.subtitle && (
               <p className="mt-1 text-sm text-muted-foreground">{summary.subtitle}</p>
@@ -71,7 +71,7 @@ export const BookingReviewSheet = ({
           </div>
 
           {dateLabel && (
-            <div className="flex items-center gap-3 text-sm">
+            <div className="flex items-center gap-3 text-sm text-muted-foreground">
               <Calendar className="h-4 w-4 text-primary shrink-0" />
               <span>{dateLabel}</span>
             </div>
@@ -98,7 +98,7 @@ export const BookingReviewSheet = ({
             </div>
           )}
 
-          <div className="flex items-start gap-2 rounded-xl border border-border bg-secondary/40 p-3">
+          <div className="flex items-start gap-2 rounded-xl border border-border bg-secondary/40 p-3 shadow-sm">
             <ShieldCheck className="h-4 w-4 shrink-0 text-primary mt-0.5" />
             <p className="text-[11px] text-muted-foreground leading-relaxed">
               Al confirmar, aceptas los términos de reserva del proveedor y la política de cancelación aplicable.

@@ -65,7 +65,7 @@ const MediaUpload = () => {
                 <button
                   type="button"
                   onClick={() => removeMedia(item.id)}
-                  className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1"
+                  className="absolute top-1 right-1 rounded-full bg-destructive p-1 text-destructive-foreground"
                 >
                   <X className="w-3 h-3" />
                 </button>
@@ -73,12 +73,12 @@ const MediaUpload = () => {
             ))}
             {form.media.length < MAX_MEDIA && (
               <>
-                <label className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-border hover:border-primary">
+                <label className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-primary/30 hover:border-primary hover:bg-primary/5 transition-colors">
                   <ImageIcon className="w-5 h-5 text-muted-foreground" />
                   <span className="text-[10px] font-semibold">Foto</span>
                   <input type="file" accept="image/*" multiple className="sr-only" onChange={(e) => { handleAddMedia(e.target.files, 'image'); e.target.value = ''; }} />
                 </label>
-                <label className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-border hover:border-primary">
+                <label className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-primary/30 hover:border-primary hover:bg-primary/5 transition-colors">
                   <Video className="w-5 h-5 text-muted-foreground" />
                   <span className="text-[10px] font-semibold">Video</span>
                   <input type="file" accept="video/*" multiple className="sr-only" onChange={(e) => { handleAddMedia(e.target.files, 'video'); e.target.value = ''; }} />

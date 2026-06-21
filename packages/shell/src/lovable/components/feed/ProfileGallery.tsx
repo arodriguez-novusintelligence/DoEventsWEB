@@ -137,7 +137,7 @@ const ProfileGallery = ({
                 type="button"
                 disabled={loading || saving}
                 onClick={() => fileInputRef.current?.click()}
-                className="flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-md hover:bg-primary/90 transition-colors disabled:opacity-60"
+                className="flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors disabled:opacity-60"
               >
                 <ImagePlus className="h-4 w-4" />
                 Agregar
@@ -193,14 +193,14 @@ const ProfileGallery = ({
                     <button
                       type="button"
                       onClick={() => setViewingIndex(i)}
-                      className="flex h-9 w-9 items-center justify-center rounded-full bg-card/90 text-foreground shadow"
+                      className="flex h-9 w-9 items-center justify-center rounded-full bg-card/90 text-foreground shadow-sm"
                     >
                       <Expand className="h-4 w-4" />
                     </button>
                     <button
                       type="button"
                       onClick={() => handleRemove(photo.id)}
-                      className="flex h-9 w-9 items-center justify-center rounded-full bg-destructive/90 text-destructive-foreground shadow"
+                      className="flex h-9 w-9 items-center justify-center rounded-full bg-destructive/90 text-destructive-foreground shadow-sm"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -226,7 +226,7 @@ const ProfileGallery = ({
                 type="button"
                 disabled={saving}
                 onClick={onSave}
-                className="w-full rounded-full gap-2"
+                className="w-full rounded-full gap-2 shadow-sm"
               >
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 {saving ? 'Guardando…' : 'Guardar galería'}

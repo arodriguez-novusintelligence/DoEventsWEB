@@ -122,7 +122,7 @@ const CreatePostSheet = ({
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent>
+      <DrawerContent className="max-h-[85vh]">
         <div className="mx-auto w-full max-w-lg">
           <DrawerHeader className="flex items-center justify-between text-left">
             <div className="flex items-center gap-2">
@@ -241,7 +241,7 @@ const CreatePostSheet = ({
               {media.length > 0 && (
                 <div className="grid grid-cols-3 gap-2">
                   {media.map((src, i) => (
-                    <div key={i} className="group relative aspect-square overflow-hidden rounded-lg">
+                    <div key={i} className="group relative aspect-square overflow-hidden rounded-lg shadow-sm ring-1 ring-border/40">
                       {isVideo(src) ? (
                         <video src={src} className="h-full w-full object-cover" muted preload="metadata" />
                       ) : (

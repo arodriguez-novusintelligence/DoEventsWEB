@@ -229,7 +229,7 @@ const FollowersSheet = ({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl p-0">
+      <SheetContent side="bottom" className="mx-auto h-[85vh] max-w-lg rounded-t-2xl p-0">
         <SheetHeader className="px-5 pt-5 pb-3">
           <SheetTitle className="flex items-center gap-2 text-left text-base font-bold">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
@@ -240,14 +240,14 @@ const FollowersSheet = ({
         </SheetHeader>
 
         <Tabs defaultValue={defaultTab === 'requests' ? 'requests' : defaultTab} className="flex h-full flex-col">
-          <TabsList className="mx-5 grid grid-cols-3 rounded-xl bg-muted">
-            <TabsTrigger value="followers" className="text-xs font-semibold">
+          <TabsList className="mx-5 grid grid-cols-3 rounded-xl bg-muted p-1">
+            <TabsTrigger value="followers" className="text-xs font-semibold data-[state=active]:bg-background data-[state=active]:shadow-sm">
               Seguidores ({followers.length})
             </TabsTrigger>
-            <TabsTrigger value="following" className="text-xs font-semibold">
+            <TabsTrigger value="following" className="text-xs font-semibold data-[state=active]:bg-background data-[state=active]:shadow-sm">
               Seguidos ({following.length})
             </TabsTrigger>
-            <TabsTrigger value="requests" className="text-xs font-semibold">
+            <TabsTrigger value="requests" className="text-xs font-semibold data-[state=active]:bg-background data-[state=active]:shadow-sm">
               Solicitudes ({requests.length})
             </TabsTrigger>
           </TabsList>
@@ -264,7 +264,7 @@ const FollowersSheet = ({
             </div>
           </div>
 
-          <TabsContent value="followers" className="mt-0 flex-1 overflow-y-auto px-5 pb-8">
+          <TabsContent value="followers" className="mt-0 flex-1 overflow-y-auto divide-y divide-border/40 px-5 pb-8">
             {filter(followers).length === 0 ? (
               <div className="flex flex-col items-center py-12 text-center">
                 <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
@@ -289,7 +289,7 @@ const FollowersSheet = ({
             )}
           </TabsContent>
 
-          <TabsContent value="following" className="mt-0 flex-1 overflow-y-auto px-5 pb-8">
+          <TabsContent value="following" className="mt-0 flex-1 overflow-y-auto divide-y divide-border/40 px-5 pb-8">
             {filter(following).length === 0 ? (
               <div className="flex flex-col items-center py-12 text-center">
                 <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">

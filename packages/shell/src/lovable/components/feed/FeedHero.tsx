@@ -107,7 +107,7 @@ const FeedHero = ({
             </div>
             <button
               onClick={onChangeLocation}
-              className="shrink-0 rounded-full bg-primary-foreground/15 px-3 py-1.5 text-xs font-semibold text-primary-foreground backdrop-blur hover:bg-primary-foreground/25"
+              className="shrink-0 rounded-full bg-primary-foreground/15 px-3 py-1.5 text-xs font-semibold text-primary-foreground backdrop-blur ring-1 ring-primary-foreground/20 hover:bg-primary-foreground/25 transition-colors"
             >
               Cambiar
             </button>
@@ -185,13 +185,13 @@ const FeedHero = ({
             </div>
             <div className="flex items-start gap-3 overflow-x-auto no-scrollbar pb-1">
               {storiesLoading && (
-                <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border bg-card py-6 px-4 w-full shadow-sm">
+                <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-primary/25 bg-card py-6 px-4 w-full shadow-sm">
                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
                   <p className="text-xs font-medium text-muted-foreground">Cargando historias…</p>
                 </div>
               )}
               {!storiesLoading && useApiStories && apiStories!.length === 0 && (
-                <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-border bg-card py-6 px-4 w-full shadow-sm">
+                <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-primary/25 bg-card py-6 px-4 w-full shadow-sm">
                   <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                     <Sparkles className="h-7 w-7 text-primary" />
                   </div>
