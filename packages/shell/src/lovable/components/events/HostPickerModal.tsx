@@ -57,7 +57,7 @@ const UserRow = ({
       type="button"
       onClick={onAdd}
       disabled={added}
-      className="shrink-0 rounded-full bg-primary px-4 py-1.5 text-xs font-extrabold text-primary-foreground transition-opacity disabled:opacity-50"
+      className="shrink-0 rounded-full bg-primary px-4 py-1.5 text-xs font-extrabold text-primary-foreground shadow-sm transition-opacity disabled:opacity-50"
     >
       {added ? 'Agregado' : 'Agregar'}
     </button>
@@ -184,7 +184,7 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
           <button
             type="button"
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground ring-2 ring-primary/20 hover:bg-secondary"
             aria-label="Cerrar"
           >
             <X className="h-5 w-5" />
@@ -200,7 +200,7 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
                 type="button"
                 onClick={() => setTab(t.key)}
                 className={`relative flex-1 px-3 py-3 text-sm transition-colors ${
-                  active ? 'font-extrabold text-primary' : 'font-medium text-muted-foreground hover:text-foreground'
+                  active ? 'font-extrabold text-primary' : 'font-extrabold text-muted-foreground hover:text-foreground'
                 }`}
               >
                 {t.label}

@@ -216,7 +216,7 @@ const EventCard = ({
   >
     <div className="relative h-36">
       <EventMedia event={event} />
-      <span className={`absolute top-2.5 left-2.5 px-3 py-1 rounded-full text-[11px] font-semibold backdrop-blur-sm ${statusBadgeClass(event.status)}`}>
+      <span className={`absolute top-2.5 left-2.5 px-3 py-1 rounded-full text-[11px] font-extrabold backdrop-blur-sm ${statusBadgeClass(event.status)}`}>
         {statusBadgeLabel(event.status)}
       </span>
       {onToggleFavorite ? (
@@ -258,7 +258,7 @@ const UpcomingEventRow = ({
   >
     <div className="relative h-20 w-20 flex-shrink-0 rounded-xl overflow-hidden bg-muted">
       <EventMedia event={event} />
-      <span className={`absolute top-1 left-1 px-2 py-0.5 rounded-full text-[9px] font-semibold ${statusBadgeClass(event.status)}`}>
+      <span className={`absolute top-1 left-1 px-2 py-0.5 rounded-full text-[9px] font-extrabold ${statusBadgeClass(event.status)}`}>
         {statusBadgeLabel(event.status)}
       </span>
     </div>
@@ -297,7 +297,7 @@ const OtherEventRow = ({
   >
     <div className="relative h-24 w-24 flex-shrink-0 rounded-xl overflow-hidden bg-muted">
       <EventMedia event={event} />
-      <span className={`absolute top-1 left-1 px-2 py-0.5 rounded-full text-[9px] font-semibold ${statusBadgeClass(event.status)}`}>
+      <span className={`absolute top-1 left-1 px-2 py-0.5 rounded-full text-[9px] font-extrabold ${statusBadgeClass(event.status)}`}>
         {statusBadgeLabel(event.status)}
       </span>
     </div>
@@ -441,7 +441,7 @@ const VenueCard = ({
         className="h-full w-full object-cover"
         fallbackSrc={resolveEventImageUrl()}
       />
-      <span className="absolute top-2.5 left-2.5 px-3 py-1 rounded-full bg-primary/90 text-[11px] font-semibold text-primary-foreground backdrop-blur-sm">
+      <span className="absolute top-2.5 left-2.5 px-3 py-1 rounded-full bg-primary/90 text-[11px] font-extrabold text-primary-foreground backdrop-blur-sm">
         Lugar
       </span>
       {onToggleLike ? (
@@ -527,7 +527,7 @@ const ProviderProfileCard = ({
         <button
           type="button"
           onClick={onReserve}
-          className="w-full rounded-full bg-primary px-3 py-2 text-[11px] font-bold text-primary-foreground"
+          className="w-full rounded-full bg-primary px-3 py-2 text-[11px] font-extrabold text-primary-foreground shadow-sm"
         >
           Reservar servicio
         </button>
@@ -752,7 +752,7 @@ const EventsView = ({
             Aún no has publicado eventos. Crea uno para que aparezca aquí.
           </EmptyHint>
           {onCreateEvent && (
-            <Button className="mt-4 w-full rounded-full" size="lg" type="button" onClick={onCreateEvent}>
+            <Button className="mt-4 w-full rounded-full font-extrabold shadow-sm" size="lg" type="button" onClick={onCreateEvent}>
               Crear evento
             </Button>
           )}
@@ -955,7 +955,7 @@ const EventsView = ({
             <p className="mt-3 text-sm text-muted-foreground">
               Crea tu primer evento y hazte conocer<br />en nuestra red de <strong className="text-foreground">eventers</strong>
             </p>
-            <Button className="mt-4 w-full rounded-full" size="lg" type="button" onClick={onCreateEvent}>
+            <Button className="mt-4 w-full rounded-full font-extrabold shadow-sm" size="lg" type="button" onClick={onCreateEvent}>
               Crear evento
             </Button>
           </div>

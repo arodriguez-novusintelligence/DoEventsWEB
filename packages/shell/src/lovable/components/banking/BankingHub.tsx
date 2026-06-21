@@ -109,9 +109,11 @@ const BankingHub = ({ onBack }: BankingHubProps) => {
       {view === 'dashboard' && !loading && !loadError && (
         <div className="mx-auto max-w-4xl px-4 pt-2">
           <div className="flex gap-3 rounded-xl border border-border/60 border-warning/30 bg-warning/5 p-4 shadow-sm">
-            <AlertCircle className="h-5 w-5 shrink-0 text-warning" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-warning/10 ring-2 ring-primary/20">
+              <AlertCircle className="h-5 w-5 text-warning" />
+            </div>
             <div className="text-xs text-muted-foreground leading-relaxed">
-              <p className="font-semibold text-foreground">BACKEND_REQUIRED</p>
+              <p className="font-extrabold text-foreground">BACKEND_REQUIRED</p>
               <p className="mt-1">Eliminar cuenta bancaria y PayPal payout requieren endpoints backend pendientes. Los cobros vía cuenta bancaria siguen operativos.</p>
             </div>
           </div>

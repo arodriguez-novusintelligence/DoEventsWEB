@@ -575,19 +575,19 @@ export function AddGuestModal({
                   <p className="text-xs text-muted-foreground">Verificando correo…</p>
                 )}
                 {(matchedExisting || matchedPlatformUser) && (
-                  <div className="flex items-start gap-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-xs text-foreground">
+                  <div className="flex items-start gap-2 rounded-lg border border-border/60 border-primary/30 bg-primary/5 px-3 py-2 text-xs text-foreground shadow-sm">
                     <UserCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                     <div>
                       {matchedExisting ? (
                         <>
-                          <p className="font-medium text-primary">Invitado ya registrado</p>
+                          <p className="font-extrabold text-primary">Invitado ya registrado</p>
                           <p className="text-muted-foreground">
                             Se actualizará el contacto existente para evitar duplicados.
                           </p>
                         </>
                       ) : (
                         <>
-                          <p className="font-medium text-primary">Usuario de DoEvents encontrado</p>
+                          <p className="font-extrabold text-primary">Usuario de DoEvents encontrado</p>
                           <p className="text-muted-foreground">
                             Este correo ya está en la plataforma. Se vinculará a tu lista.
                           </p>
@@ -661,7 +661,7 @@ export function AddGuestModal({
                   <AlertCircle className="h-7 w-7 text-destructive" />
                 </div>
                 <p className="px-4 text-sm font-extrabold text-destructive">{searchError}</p>
-                <Button type="button" variant="outline" size="sm" className="rounded-full gap-1.5" onClick={() => void search()}>
+                <Button type="button" variant="outline" size="sm" className="rounded-full gap-1.5 shadow-sm" onClick={() => void search()}>
                   <RefreshCw className="h-4 w-4" />
                   Reintentar
                 </Button>

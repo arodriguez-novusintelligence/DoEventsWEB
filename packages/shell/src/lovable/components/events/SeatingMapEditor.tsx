@@ -1339,20 +1339,20 @@ const SeatingMapEditor = ({
                   <span className="mt-3 text-2xl font-black leading-none">!</span>
                 </div>
               </div>
-              <h3 className="mb-2 text-lg font-bold text-primary">{title}</h3>
+              <h3 className="mb-2 text-lg font-extrabold text-primary">{title}</h3>
               <p className="mb-5 text-sm text-muted-foreground">
                 ¡Ten en cuenta que al eliminar {word}, se perderá toda la
                 configuración asociada al mismo!
               </p>
               <button
                 onClick={confirmDeleteFigure}
-                className="mb-3 w-full rounded-full bg-destructive py-3 text-sm font-bold text-destructive-foreground shadow"
+                className="mb-3 w-full rounded-full bg-destructive py-3 text-sm font-extrabold text-destructive-foreground shadow-sm"
               >
                 ELIMINAR
               </button>
               <button
                 onClick={() => setPendingDeleteId(null)}
-                className="w-full rounded-full border-2 border-primary py-3 text-sm font-bold text-primary"
+                className="w-full rounded-full border-2 border-primary py-3 text-sm font-extrabold text-primary shadow-sm"
               >
                 VOLVER
               </button>
@@ -1708,7 +1708,7 @@ const CategoryFormSheet = ({
           {/* Seat grid preview */}
           {rows > 0 && spr > 0 && (
             <div
-              className="mt-4 rounded-2xl border border-border p-3"
+              className="mt-4 rounded-2xl border border-border/60 p-3 shadow-sm"
               style={{ background: '#FFFDF7' }}
             >
               <div
@@ -2811,10 +2811,10 @@ const TextStyleModal = ({
         </div>
 
         <div className="mt-5 flex justify-end gap-2">
-          <Button variant="outline" onClick={onClose} className="rounded-full px-5">
+          <Button variant="outline" onClick={onClose} className="rounded-full px-5 font-extrabold shadow-sm">
             Cancelar
           </Button>
-          <Button onClick={apply} className="rounded-full px-5 font-bold">
+          <Button onClick={apply} className="rounded-full px-5 font-extrabold shadow-sm">
             Aplicar
           </Button>
         </div>

@@ -435,14 +435,14 @@ const StepUnified = ({
       <Collapsible open={openSections.sectors}>
         <SectionHeader icon={Briefcase} title="¿Qué tipo de servicio(s) prestas?" sectionKey="sectors" />
         <CollapsibleContent className="mt-2 px-1">
-          <div className="rounded-2xl bg-card p-4 shadow-sm">
+          <div className="rounded-2xl bg-card p-4 shadow-sm border border-border/60">
             <div className="flex flex-wrap gap-2">
               {SERVICE_SECTORS.map((sector) => (
                 <button
                   key={sector}
                   onClick={() => toggleSector(sector)}
                   className={cn(
-                    'rounded-full px-4 py-2 text-sm font-medium transition-colors',
+                    'rounded-full px-4 py-2 text-sm font-extrabold transition-colors',
                     formData.sectors.includes(sector)
                       ? 'bg-primary text-primary-foreground'
                       : 'bg-accent text-accent-foreground'
@@ -493,7 +493,7 @@ const StepUnified = ({
               const selectedActivities = formData.activities[sector] || [];
               const otherText = formData.activityOthers[sector] || '';
               return (
-                <div key={sector} className="rounded-2xl bg-card p-4 shadow-sm">
+                <div key={sector} className="rounded-2xl bg-card p-4 shadow-sm border border-border/60">
                   <h4 className="mb-3 text-base font-extrabold text-foreground">{sector}</h4>
                   <div className="flex flex-wrap gap-2">
                     {activities.map((act) => (
@@ -501,7 +501,7 @@ const StepUnified = ({
                         key={act}
                         onClick={() => toggleActivity(sector, act)}
                         className={cn(
-                          'rounded-full px-4 py-2 text-sm font-medium transition-colors',
+                          'rounded-full px-4 py-2 text-sm font-extrabold transition-colors',
                           selectedActivities.includes(act)
                             ? 'bg-primary text-primary-foreground font-extrabold'
                             : 'bg-accent text-accent-foreground'
@@ -613,7 +613,7 @@ const StepUnified = ({
       <Collapsible open={openSections.location}>
         <SectionHeader icon={MapPin} title="Ubicación de tu servicio" sectionKey="location" />
         <CollapsibleContent className="mt-2 space-y-3 px-1">
-          <div className="rounded-2xl bg-card p-4 shadow-sm space-y-3">
+          <div className="rounded-2xl bg-card p-4 shadow-sm border border-border/60 space-y-3">
             <Input
               placeholder="Ciudad o dirección para aparecer en el mapa"
               value={formData.locationLabel || ''}
@@ -671,7 +671,7 @@ const StepUnified = ({
       <Collapsible open={openSections.preferences}>
         <SectionHeader icon={FileText} title="Preferencia y reembolso del servicio" sectionKey="preferences" />
         <CollapsibleContent className="mt-2 px-1">
-          <div className="rounded-2xl bg-card p-4 shadow-sm space-y-6">
+          <div className="rounded-2xl bg-card p-4 shadow-sm border border-border/60 space-y-6">
             <div>
               <h4 className="text-sm font-extrabold text-foreground">Preferencias en las reservas</h4>
               <p className="text-xs text-muted-foreground">Configura cómo quieres recibir y aprobar las reservas</p>
@@ -734,7 +734,7 @@ const StepUnified = ({
       <Collapsible open={openSections.faq}>
         <SectionHeader icon={HelpCircle} title="Preguntas frecuentes (FAQ)" sectionKey="faq" />
         <CollapsibleContent className="mt-2 px-1">
-          <div className="rounded-2xl bg-card p-4 shadow-sm">
+          <div className="rounded-2xl bg-card p-4 shadow-sm border border-border/60">
             <p className="text-xs text-muted-foreground">Agrega preguntas y respuestas que los clientes suelen hacer</p>
             <div className="mt-4 space-y-4">
               {formData.faqs.map((faq, i) => (
@@ -758,7 +758,7 @@ const StepUnified = ({
                 </div>
               ))}
             </div>
-            <Button variant="outline" className="mt-4 w-full rounded-full gap-1.5" onClick={() => updateForm({ faqs: [...formData.faqs, { question: '', answer: '' }] })}>
+            <Button variant="outline" className="mt-4 w-full rounded-full gap-1.5 font-extrabold shadow-sm" onClick={() => updateForm({ faqs: [...formData.faqs, { question: '', answer: '' }] })}>
               <Plus className="h-4 w-4" />
               Agregar pregunta
             </Button>

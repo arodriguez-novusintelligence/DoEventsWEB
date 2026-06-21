@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27905180836-b6`: batch 1 sexta pasada (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). font-extrabold residual; border-border/60 cards; shadow-sm CTAs transversal; similitud ~96.8%; 97 gaps restantes; build:devaws OK.
+
 Run `gap-empalme-27905180836-b5`: batch 1 quinta pasada (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). EventPublished card border-border/60 CTAs extrabold; font-extrabold transversal RefundTicketFlow/StepAccessControl/HostPickerModal/StepUnified/TicketDetailView; CompanyContext `companyName` alias; similitud ~95.2%; 97 gaps restantes; build:devaws OK.
 
 Run `gap-empalme-27905180836-b4`: batch 1 cuarta pasada (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). DSF font-extrabold, border-border/60, shadow-sm, rounded-full CTAs en SeatLocationModal, HostPickerModal, TicketDetailView, StepUnified, FAQSection, etc.; similitud ~93.5%; 97 gaps restantes; build:devaws OK.
@@ -130,7 +132,22 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27905180836-b5)
+## Empalme realizado (última ejecución — gap-empalme-27905180836-b6)
+
+- **SeatingMapEditor:** delete modal font-extrabold + shadow-sm; seat preview `border-border/60`; footer CTAs shadow-sm extrabold.
+- **RefundTicketFlow:** back nav font-extrabold; ticket cards unselected `border-border/60`; cancel buttons shadow-sm.
+- **EventPreviewModal:** agenda activity rows `border-border/60 shadow-sm`; time badge + refund label extrabold.
+- **HostPickerModal:** Agregar CTA shadow-sm; inactive tabs extrabold; close button ring-primary/20.
+- **EventsView:** status badges font-extrabold; Reservar servicio + Crear evento shadow-sm extrabold.
+- **StepUnified:** section cards `border-border/60`; sector/activity chips extrabold; FAQ add button shadow-sm.
+- **CreatePostSheet / ReportPostDialog:** avatar, visibility, media picker extrabold; reason rows extrabold unselected.
+- **TicketDetailView:** overflow menu, boleta pill, overlay status labels extrabold.
+- **AddGuestModal:** match banners border-border/60 extrabold; retry shadow-sm.
+- **EventPublished:** Mis eventos CTA shadow-sm.
+- **BankingHub:** BACKEND_REQUIRED banner icon ring-primary/20; delete/PayPal sin simular.
+- **Verificados intactos:** StepAccessControl, FAQSection, MyPostsView, MyReservedServicesView, NotificationsContext, CompanyContext, MainInfoSection.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27905180836-b5)
 
 - **EventPublished:** card `border-border/60`; badge/CTAs `font-extrabold rounded-full shadow-sm`; PartyPopper ring intacto; `fetchEventById` + share API real.
 - **RefundTicketFlow / StepAccessControl / HostPickerModal:** labels y CTAs `font-extrabold` transversal (paridad Lovable tipografía wizard/tickets).

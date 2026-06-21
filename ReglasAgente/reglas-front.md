@@ -113,6 +113,28 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+---
+
+## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b6)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| SeatingMapEditor delete modal | VISUAL | Sí | `events/SeatingMapEditor.tsx` | font-extrabold; preview border-border/60; footer shadow-sm |
+| RefundTicketFlow cards/nav | VISUAL | Sí | `tickets/RefundTicketFlow.tsx` | back extrabold; cards border-border/60; cancel shadow-sm |
+| EventPreviewModal agenda | VISUAL | Sí | `events/EventPreviewModal.tsx` | rows border-border/60; time/refund extrabold |
+| HostPickerModal tabs/CTA | VISUAL | Sí | `events/HostPickerModal.tsx` | Agregar shadow-sm; close ring-primary/20 |
+| ServiceDetailView back | VISUAL | Sí | `services/ServiceDetailView.tsx` | back link font-extrabold |
+| EventsView badges/CTAs | VISUAL | Sí | `feed/EventsView.tsx` | badges extrabold; Reservar/Crear shadow-sm |
+| StepUnified section cards | VISUAL | Sí | `services/StepUnified.tsx` | border-border/60; chips extrabold; FAQ CTA shadow-sm |
+| CreatePostSheet typography | VISUAL | Sí | `feed/CreatePostSheet.tsx` | avatar/visibility/media font-extrabold |
+| ReportPostDialog reasons | VISUAL | Sí | `feed/ReportPostDialog.tsx` | unselected rows font-extrabold |
+| TicketDetailView labels | VISUAL | Sí | `tickets/TicketDetailView.tsx` | menu/boleta/overlay extrabold |
+| AddGuestModal match banners | VISUAL | Sí | `guests/AddGuestModal.tsx` | border-border/60; labels extrabold; retry shadow-sm |
+| EventPublished Mis eventos | VISUAL | Sí | `pages/EventPublished.tsx` | CTA shadow-sm |
+| BankingHub delete/PayPal | Bloqueo | Parcial | `banking/BankingHub.tsx` | BACKEND_REQUIRED; banner icon ring |
+| StepAccessControl / FAQ / contexts | Empalme | Sí | ver batch previo | Verificados intactos |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b5)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

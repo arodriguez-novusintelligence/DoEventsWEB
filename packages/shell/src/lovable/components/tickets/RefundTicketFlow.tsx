@@ -106,7 +106,7 @@ const RefundTicketFlow = ({
     return (
       <div className="fixed inset-0 z-50 bg-secondary overflow-y-auto">
         <div className="min-h-screen px-4 pt-4 pb-8">
-          <button type="button" onClick={onClose} className="flex items-center gap-1 text-primary font-medium">
+          <button type="button" onClick={onClose} className="flex items-center gap-1 text-primary font-extrabold">
             <ChevronLeft className="h-5 w-5" /> Atrás
           </button>
           <div className="mt-8 rounded-2xl bg-destructive/10 border border-destructive/30 p-5">
@@ -140,7 +140,7 @@ const RefundTicketFlow = ({
       {step === 'select' && (
         <div className="min-h-screen flex flex-col pb-44">
           <div className="px-4 pt-4">
-            <button type="button" onClick={onClose} className="flex items-center gap-1 text-primary font-medium">
+            <button type="button" onClick={onClose} className="flex items-center gap-1 text-primary font-extrabold">
               <ChevronLeft className="h-5 w-5" /> Atrás
             </button>
             <h1 className="mt-3 text-3xl font-extrabold text-primary leading-tight">{ticket.eventTitle}</h1>
@@ -193,7 +193,7 @@ const RefundTicketFlow = ({
                   type="button"
                   onClick={() => toggle(e.id)}
                   className={`w-full text-left rounded-3xl bg-card overflow-hidden border-2 transition-all ${
-                    isSel ? 'border-primary shadow-md' : 'border-transparent shadow-sm'
+                    isSel ? 'border-primary shadow-md' : 'border-border/60 shadow-sm'
                   }`}
                 >
                   <div className="relative h-40">
@@ -236,7 +236,7 @@ const RefundTicketFlow = ({
                 <span className="text-2xl font-extrabold text-primary">{formatCOP(refundTotal)}</span>
               </div>
               <div className="flex gap-3">
-                <button type="button" onClick={onClose} className="flex-1 rounded-full border-2 border-primary py-3 text-sm font-extrabold text-primary">
+                <button type="button" onClick={onClose} className="flex-1 rounded-full border-2 border-primary py-3 text-sm font-extrabold text-primary shadow-sm">
                   Cancelar
                 </button>
                 <button
@@ -335,7 +335,7 @@ const RefundTicketFlow = ({
             )}
 
             <div className="flex gap-3 pt-2">
-              <button type="button" onClick={onClose} className="flex-1 rounded-full border-2 border-primary py-3 text-sm font-extrabold text-primary">
+              <button type="button" onClick={onClose} className="flex-1 rounded-full border-2 border-primary py-3 text-sm font-extrabold text-primary shadow-sm">
                 Cancelar
               </button>
               <button
@@ -356,7 +356,7 @@ const RefundTicketFlow = ({
       {step === 'policy' && (
         <div className="min-h-screen pb-8">
           <div className="px-4 pt-4 flex items-center justify-between">
-            <button type="button" onClick={() => setStep('confirm')} className="flex items-center gap-1 text-primary font-medium">
+            <button type="button" onClick={() => setStep('confirm')} className="flex items-center gap-1 text-primary font-extrabold">
               <ChevronLeft className="h-5 w-5" /> Volver
             </button>
             <button type="button" onClick={() => setStep('confirm')} className="h-9 w-9 rounded-full bg-card border border-border/60 grid place-items-center">

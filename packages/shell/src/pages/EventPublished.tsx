@@ -114,7 +114,7 @@ export const EventPublished = () => {
         <Button
           type="button"
           variant="ghost"
-          className="w-full rounded-full font-extrabold"
+          className="w-full rounded-full font-extrabold shadow-sm"
           onClick={() => navigate('/my-events')}
         >
           Mis eventos

@@ -191,7 +191,7 @@ const TicketDetailView = ({
                     <button
                       type="button"
                       onClick={() => { setMenuOpen(false); setTransferOpen(true); }}
-                      className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium hover:bg-accent"
+                      className="flex w-full items-center gap-3 px-4 py-3 text-sm font-extrabold hover:bg-accent"
                     >
                       <ArrowLeftRight className="h-5 w-5 text-primary" />
                       Compartir boleta
@@ -201,7 +201,7 @@ const TicketDetailView = ({
                     <button
                       type="button"
                       onClick={() => { setMenuOpen(false); setRefundOpen(true); }}
-                      className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium hover:bg-accent border-t border-border/60"
+                      className="flex w-full items-center gap-3 px-4 py-3 text-sm font-extrabold hover:bg-accent border-t border-border/60"
                     >
                       <Banknote className="h-5 w-5 text-primary" />
                       Solicitar reembolso
@@ -272,7 +272,7 @@ const TicketDetailView = ({
           }`}
         >
           {boletaPosition && (
-            <div className="absolute left-4 top-4 z-10 inline-flex items-center gap-1 rounded-full bg-background/90 px-2.5 py-1 text-[10px] font-bold text-foreground shadow-sm backdrop-blur">
+            <div className="absolute left-4 top-4 z-10 inline-flex items-center gap-1 rounded-full bg-background/90 px-2.5 py-1 text-[10px] font-extrabold text-foreground shadow-sm backdrop-blur">
               <TicketIcon className="h-3 w-3 text-primary" />
               Boleta {boletaPosition}
             </div>
@@ -373,7 +373,7 @@ const TicketDetailView = ({
                   <div className="h-5 w-5 rounded-full bg-primary grid place-items-center">
                     <Check className="h-3 w-3 text-primary-foreground" strokeWidth={4} />
                   </div>
-                  <span className="text-sm font-bold text-background">Transferida</span>
+                  <span className="text-sm font-extrabold text-background">Transferida</span>
                 </div>
                 <span className="text-[11px] font-medium text-background/80">
                   {transferMap.get(activeEntry.id)?.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric' })}
@@ -387,7 +387,7 @@ const TicketDetailView = ({
               <div className="flex flex-col items-center gap-1.5 rounded-2xl bg-destructive px-5 py-3 shadow-xl">
                 <div className="flex items-center gap-2">
                   <Banknote className="h-4 w-4 text-destructive-foreground" />
-                  <span className="text-sm font-bold text-destructive-foreground">Reembolsada</span>
+                  <span className="text-sm font-extrabold text-destructive-foreground">Reembolsada</span>
                 </div>
               </div>
             </div>

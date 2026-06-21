@@ -129,8 +129,8 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
                       </div>
                       <div className="mt-4 space-y-3 border-l-2 border-primary/30 pl-4">
                         {day.activities.map((a) => (
-                          <div key={a.id} className="rounded-xl bg-secondary p-3">
-                            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 px-3 py-1 text-xs font-bold text-primary">
+                          <div key={a.id} className="rounded-xl border border-border/60 bg-secondary p-3 shadow-sm">
+                            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 px-3 py-1 text-xs font-extrabold text-primary">
                               <Clock className="h-3 w-3" /> {a.startTime} - {a.endTime}
                             </span>
                             <div className="mt-2 text-sm text-foreground">{a.description}</div>
@@ -245,7 +245,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
               <div className="mt-4 rounded-2xl border border-border/60 bg-primary/10 p-4 shadow-sm">
                 <div className="flex items-center gap-2 text-primary">
                   <ShieldCheck className="h-5 w-5" />
-                  <span className="font-bold">Solicita tu reembolso</span>
+                  <span className="font-extrabold">Solicita tu reembolso</span>
                 </div>
                 <p className="mt-2 text-sm text-foreground">{refundLabel}</p>
                 <button className="mt-3 w-full rounded-full bg-card py-2.5 text-sm font-extrabold text-primary shadow-sm">

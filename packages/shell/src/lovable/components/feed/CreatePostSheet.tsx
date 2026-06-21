@@ -138,7 +138,7 @@ const CreatePostSheet = ({
               {/* Author preview */}
               <div className="flex items-center gap-3">
                 <Avatar className="h-10 w-10 ring-2 ring-primary/20">
-                  <AvatarFallback className="bg-accent text-sm font-semibold text-accent-foreground">
+                  <AvatarFallback className="bg-accent text-sm font-extrabold text-accent-foreground">
                     {authorInitials}
                   </AvatarFallback>
                 </Avatar>
@@ -207,7 +207,7 @@ const CreatePostSheet = ({
                     type="button"
                     onClick={() => setVisibility('public')}
                     className={cn(
-                      'flex flex-1 items-center justify-center gap-2 rounded-full border-2 py-2.5 text-sm font-semibold transition-all',
+                      'flex flex-1 items-center justify-center gap-2 rounded-full border-2 py-2.5 text-sm font-extrabold transition-all',
                       visibility === 'public'
                         ? 'border-primary bg-primary/10 text-primary'
                         : 'border-border/60 text-muted-foreground hover:border-primary/30'
@@ -220,7 +220,7 @@ const CreatePostSheet = ({
                     type="button"
                     onClick={() => setVisibility('private')}
                     className={cn(
-                      'flex flex-1 items-center justify-center gap-2 rounded-full border-2 py-2.5 text-sm font-semibold transition-all',
+                      'flex flex-1 items-center justify-center gap-2 rounded-full border-2 py-2.5 text-sm font-extrabold transition-all',
                       visibility === 'private'
                         ? 'border-primary bg-primary/10 text-primary'
                         : 'border-border/60 text-muted-foreground hover:border-primary/30'
@@ -269,14 +269,14 @@ const CreatePostSheet = ({
               <div className="flex gap-2">
                 <button
                   onClick={() => imageInputRef.current?.click()}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-full border-2 border-dashed border-primary/25 py-3 text-sm font-semibold text-primary shadow-sm transition-colors hover:border-primary/60"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-full border-2 border-dashed border-primary/25 py-3 text-sm font-extrabold text-primary shadow-sm transition-colors hover:border-primary/60"
                 >
                   <ImagePlus className="h-5 w-5" />
                   Fotos
                 </button>
                 <button
                   onClick={() => videoInputRef.current?.click()}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-full border-2 border-dashed border-primary/25 py-3 text-sm font-semibold text-primary shadow-sm transition-colors hover:border-primary/60"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-full border-2 border-dashed border-primary/25 py-3 text-sm font-extrabold text-primary shadow-sm transition-colors hover:border-primary/60"
                 >
                   <Video className="h-5 w-5" />
                   Videos
