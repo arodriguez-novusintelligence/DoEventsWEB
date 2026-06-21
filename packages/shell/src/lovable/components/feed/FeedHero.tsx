@@ -101,13 +101,13 @@ const FeedHero = ({
                 <MapPin className="h-4 w-4 text-primary-foreground" />
               </div>
               <div className="min-w-0">
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-primary-foreground/70">Tu ubicación</p>
-                <p className="text-sm font-bold text-primary-foreground truncate">{location}</p>
+                <p className="text-[10px] font-extrabold uppercase tracking-wider text-primary-foreground/70">Tu ubicación</p>
+                <p className="text-sm font-extrabold text-primary-foreground truncate">{location}</p>
               </div>
             </div>
             <button
               onClick={onChangeLocation}
-              className="shrink-0 rounded-full bg-primary-foreground/15 px-3 py-1.5 text-xs font-semibold text-primary-foreground backdrop-blur ring-1 ring-primary-foreground/20 hover:bg-primary-foreground/25 transition-colors"
+              className="shrink-0 rounded-full bg-primary-foreground/15 px-3 py-1.5 text-xs font-extrabold text-primary-foreground backdrop-blur ring-1 ring-primary-foreground/20 shadow-sm hover:bg-primary-foreground/25 transition-colors"
             >
               Cambiar
             </button>
@@ -124,13 +124,13 @@ const FeedHero = ({
 
       {/* Categorías card overlapping */}
       <div className="-mt-12 px-4">
-        <div className="mx-auto max-w-lg rounded-2xl bg-card p-4 shadow-sm">
+        <div className="mx-auto max-w-lg rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-base font-extrabold text-foreground">Categorías</h2>
             <button
               type="button"
               onClick={onViewAllCategories}
-              className="text-xs font-semibold text-primary hover:underline"
+              className="text-xs font-extrabold text-primary hover:underline"
             >
               Ver todas
             </button>
@@ -152,7 +152,7 @@ const FeedHero = ({
                   )}>
                     <Icon className={cn('h-6 w-6', c.color)} />
                   </div>
-                  <span className="text-[10px] font-medium text-foreground leading-tight line-clamp-2">
+                  <span className="text-[10px] font-extrabold text-foreground leading-tight line-clamp-2">
                     {c.label}
                   </span>
                 </button>
@@ -168,7 +168,7 @@ const FeedHero = ({
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-base font-extrabold text-foreground">En vivo & Historias</h2>
               <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary">
+                <span className="inline-flex items-center gap-1 text-[11px] font-extrabold text-primary">
                   <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
                   Cerca de ti
                 </span>
@@ -176,7 +176,7 @@ const FeedHero = ({
                   <button
                     type="button"
                     onClick={onViewAllCategories}
-                    className="text-xs font-semibold text-primary hover:underline"
+                    className="text-xs font-extrabold text-primary hover:underline"
                   >
                     Ver todas
                   </button>
@@ -187,7 +187,7 @@ const FeedHero = ({
               {storiesLoading && (
                 <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-primary/25 bg-card py-6 px-4 w-full shadow-sm">
                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                  <p className="text-xs font-medium text-muted-foreground">Cargando historias…</p>
+                  <p className="text-xs font-extrabold text-muted-foreground">Cargando historias…</p>
                 </div>
               )}
               {!storiesLoading && useApiStories && apiStories!.length === 0 && (
@@ -195,7 +195,7 @@ const FeedHero = ({
                   <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                     <Sparkles className="h-7 w-7 text-primary" />
                   </div>
-                  <p className="text-xs font-medium text-foreground">No hay historias cerca de ti aún</p>
+                  <p className="text-xs font-extrabold text-foreground">No hay historias cerca de ti aún</p>
                   <p className="text-[10px] text-muted-foreground text-center">Sé el primero en compartir lo que está pasando</p>
                 </div>
               )}
@@ -248,10 +248,10 @@ const FeedHero = ({
                       </span>
                     )}
                     {s.live && (
-                      <span className="absolute -top-0.5 left-1/2 -translate-x-1/2 rounded-full bg-rose-500 px-1.5 py-0.5 text-[8px] font-bold text-white">LIVE</span>
+                      <span className="absolute -top-0.5 left-1/2 -translate-x-1/2 rounded-full bg-rose-500 px-1.5 py-0.5 text-[8px] font-extrabold text-white shadow-sm">LIVE</span>
                     )}
                   </div>
-                  <span className="text-[10px] font-medium text-foreground truncate w-full text-center">{s.name}</span>
+                  <span className="text-[10px] font-extrabold text-foreground truncate w-full text-center">{s.name}</span>
                 </button>
               ))}
               {!storiesLoading && showDevStories && defaultStories.map((s) => (
@@ -269,7 +269,7 @@ const FeedHero = ({
                       </span>
                     )}
                   </div>
-                  <span className="text-[10px] font-medium text-foreground truncate w-full text-center">{s.name}</span>
+                  <span className="text-[10px] font-extrabold text-foreground truncate w-full text-center">{s.name}</span>
                 </button>
               ))}
             </div>

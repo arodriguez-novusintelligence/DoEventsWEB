@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27905180836-b10`: batch 1 décima pasada (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`StoryViewersSheet` viewers API). FeedHero font-extrabold transversal + category card border-border/60; StoryViewersSheet SheetContent shadow-sm; CompanyContext organizationName/displayName/isCompany aliases; NotificationsContext refresh alias; EventPublished body copy weight; similitud ~98.7%; 97 gaps restantes; build:devaws OK.
+
 Run `gap-empalme-27905180836-b9`: batch 1 novena pasada (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). ContactImportModal DSF completo (Dialog shadow-sm, font-extrabold, rounded-full CTAs); SeatingMapEditor border-border/60 transversal + shadow-sm modales; RefundTicketFlow/TicketDetailView/EventsView/HostPickerModal/StepUnified/AddGuestModal/CreatePostSheet/ReportPostDialog polish; BankingHub retry/back extrabold + PayPal banner icon ring; similitud ~98.6%; 97 gaps restantes; build:devaws OK.
 
 Run `gap-empalme-27905180836-b8`: batch 1 octava pasada (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED en batch. ProfileGallery font-extrabold + loading h-14 ring; SeatingMapEditor font-bold→extrabold transversal; NotificationsContext `error` alias; SeatLocationModal badge borders; EventPublished loading ring; DSF polish transversal en 16 componentes más; similitud ~98.3% (objetivo 98% alcanzado); 97 gaps restantes; build:devaws OK.
@@ -138,7 +140,16 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27905180836-b9)
+## Empalme realizado (última ejecución — gap-empalme-27905180836-b10)
+
+- **FeedHero:** font-extrabold transversal (ubicación, Cambiar, Ver todas, Cerca de ti, categorías, historias, LIVE badge); category card `border-border/60`; Cambiar CTA shadow-sm; empty/loading states extrabold; `showBuiltInStories` solo DEV sin mocks prod.
+- **StoryViewersSheet:** SheetContent `border-border/60 shadow-sm`; badge BACKEND_REQUIRED font-extrabold shadow-sm; skeleton rows border-border/60; sin endpoint viewers inventado.
+- **CompanyContext:** aliases `organizationName`, `displayName`, `isCompany` + JSDoc API parity; `fetchUserById` sin mocks.
+- **NotificationsContext:** alias `refresh` (= `reload`/`refreshNotifications`); API `fetchUserNotifications` sin mocks.
+- **EventPublished:** body copy subtitle sin font-extrabold (paridad Lovable peso body); `fetchEventById` + share intactos.
+- **Verificados intactos:** EventPreviewModal, StepAccessControl, SeatingMapEditor, FAQSection, HostPickerModal, ServiceDetailView, MyPostsView, EventsView, MyReservedServicesView, StepUnified, MainInfoSection, ReportPostDialog, AddGuestModal, CreatePostSheet, TicketDetailView.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27905180836-b9)
 
 - **ContactImportModal:** DialogContent `border-border/60 shadow-sm`; device-pick CTA rounded-full font-extrabold; select-all/contact names extrabold; import CTA shadow-sm; empty h-14 ring intacto; `pickDeviceContacts` API real.
 - **SeatingMapEditor:** `border-border`→`border-border/60` transversal (~30 ocurrencias); modales `shadow-2xl`→`shadow-sm`; ring chips `ring-primary/20`; dashed add CTAs rounded-full shadow-sm.

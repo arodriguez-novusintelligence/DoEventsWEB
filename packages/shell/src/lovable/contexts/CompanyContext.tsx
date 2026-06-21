@@ -1,6 +1,18 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { fetchUserById, type UserProfile } from '@doevents/shared';
 
+/**
+ * Company context — empalme Lovable sobre API real `@doevents/shared`.
+ *
+ * API expuesta (paridad Lovable):
+ * - `company`, `companyName`, `organizationName`, `displayName`, `accountTypeLabel`
+ * - `loading` / `isLoading`, `loadError`, `loadErrorMessage`, `hasError`, `error`
+ * - `hasCompany`, `isEmpty`, `isCompany`
+ * - `refresh` / `refreshCompany`
+ *
+ * Datos vía `fetchUserById` — sin mocks.
+ */
+
 interface CompanyInfo {
   accountType?: UserProfile['accountType'];
   companyName?: string;
@@ -14,6 +26,10 @@ interface CompanyContextValue {
   company: CompanyInfo | null;
   /** Alias Lovable — nombre comercial derivado de `company`. */
   companyName: string | null;
+  /** Alias Lovable — nombre organización (companyName o organizerName). */
+  organizationName: string | null;
+  /** Alias Lovable — nombre visible del perfil/organizador. */
+  displayName: string | null;
   loading: boolean;
   /** Alias Lovable — mismo valor que `loading`. */
   isLoading: boolean;
@@ -24,6 +40,8 @@ interface CompanyContextValue {
   /** Alias Lovable — mensaje de error (mismo que `loadErrorMessage`). */
   error: string | null;
   hasCompany: boolean;
+  /** Alias Lovable — cuenta tipo empresa. */
+  isCompany: boolean;
   isEmpty: boolean;
   accountTypeLabel: string;
   refresh: () => void;
@@ -36,6 +54,8 @@ export type { CompanyContextValue };
 const CompanyContext = createContext<CompanyContextValue>({
   company: null,
   companyName: null,
+  organizationName: null,
+  displayName: null,
   loading: false,
   isLoading: false,
   loadError: false,
@@ -43,6 +63,7 @@ const CompanyContext = createContext<CompanyContextValue>({
   hasError: false,
   error: null,
   hasCompany: false,
+  isCompany: false,
   isEmpty: true,
   accountTypeLabel: 'Personal',
   refresh: () => undefined,
@@ -111,6 +132,8 @@ export const CompanyProvider = ({ userId, children }: CompanyProviderProps) => {
     () => ({
       company,
       companyName: company?.companyName ?? null,
+      organizationName: company?.companyName ?? company?.organizerName ?? null,
+      displayName: company?.organizerName ?? company?.companyName ?? null,
       loading,
       isLoading: loading,
       loadError,
@@ -118,6 +141,7 @@ export const CompanyProvider = ({ userId, children }: CompanyProviderProps) => {
       hasError: loadError,
       error: loadErrorMessage,
       hasCompany: Boolean(company?.companyName || company?.accountType === 'company'),
+      isCompany: company?.accountType === 'company',
       isEmpty: !loading && !loadError && !company?.companyName && company?.accountType !== 'company',
       accountTypeLabel: company?.accountType === 'company' ? 'Empresa' : 'Personal',
       refresh,

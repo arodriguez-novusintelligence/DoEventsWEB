@@ -8,6 +8,58 @@
   },
   "runs": [
     {
+      "id": "gap-empalme-27905180836-b10",
+      "timestamp": "2026-06-21 19:00 UTC",
+      "workflowRunId": "27905180836-b10",
+      "gapBatch": 20,
+      "designSimilarityPercentBefore": 80.8,
+      "designSimilarityPercentAfter": 98.7,
+      "designSimilarityTarget": 98.0,
+      "summary": "Batch 1 gap empalme run 27905180836-b10 (décima pasada DSF): FeedHero font-extrabold transversal + category card border-border/60; StoryViewersSheet SheetContent shadow-sm BACKEND_REQUIRED viewers API; CompanyContext organizationName/displayName/isCompany aliases; NotificationsContext refresh alias; EventPublished body copy weight; 19 DONE + 1 BACKEND_REQUIRED; objetivo 98% alcanzado; build:devaws OK",
+      "gapsClosed": [
+        "src/components/events/EventPreviewModal.tsx",
+        "src/components/events/StepAccessControl.tsx",
+        "src/components/events/SeatingMapEditor.tsx",
+        "src/components/venues/sections/FAQSection.tsx",
+        "src/components/events/HostPickerModal.tsx",
+        "src/components/services/ServiceDetailView.tsx",
+        "src/components/feed/MyPostsView.tsx",
+        "src/components/feed/EventsView.tsx",
+        "src/components/purchases/MyReservedServicesView.tsx",
+        "src/contexts/NotificationsContext.tsx",
+        "src/components/services/StepUnified.tsx",
+        "src/components/venues/sections/MainInfoSection.tsx",
+        "src/components/feed/ReportPostDialog.tsx",
+        "src/components/guests/AddGuestModal.tsx",
+        "src/components/feed/CreatePostSheet.tsx",
+        "src/components/tickets/TicketDetailView.tsx",
+        "src/pages/EventPublished.tsx",
+        "src/contexts/CompanyContext.tsx",
+        "src/components/feed/FeedHero.tsx"
+      ],
+      "gapsBackendRequired": [
+        "src/components/feed/StoryViewersSheet.tsx"
+      ],
+      "webFilesModified": [
+        "packages/shell/src/lovable/components/feed/FeedHero.tsx",
+        "packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx",
+        "packages/shell/src/lovable/contexts/CompanyContext.tsx",
+        "packages/shell/src/lovable/contexts/NotificationsContext.tsx",
+        "packages/shell/src/pages/EventPublished.tsx",
+        "ReglasAgente/decision-log.md",
+        "ReglasAgente/cambios-lovable.json",
+        "ReglasAgente/impacto-backend.md",
+        "ReglasAgente/reglas-front.md",
+        "docs/changes/gap-empalme-latest.md",
+        "design-comparison.json"
+      ],
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "agentStatus": "finished",
+      "tipoCambio": "VISUAL",
+      "decision": "APPLIED"
+    },
+    {
       "id": "gap-empalme-27905180836-b9",
       "timestamp": "2026-06-21 18:00 UTC",
       "workflowRunId": "27905180836-b9",

@@ -89,6 +89,8 @@ export interface NotificationsContextValue {
   isLoading: boolean;
   reload: () => Promise<void>;
   refreshNotifications: () => Promise<void>;
+  /** Alias Lovable — mismo handler que `reload`. */
+  refresh: () => Promise<void>;
   addNotification: (n: Omit<Notification, 'id' | 'timeAgo' | 'read'>) => void;
   markAllRead: () => void;
   markRead: (id: string) => void;
@@ -110,6 +112,7 @@ const fallbackContext: NotificationsContextValue = {
   isLoading: false,
   reload: async () => undefined,
   refreshNotifications: async () => undefined,
+  refresh: async () => undefined,
   addNotification: () => undefined,
   markAllRead: () => undefined,
   markRead: () => undefined,
@@ -273,6 +276,7 @@ export const NotificationsProvider = ({
         isLoading: loading,
         reload: reloadFromApi,
         refreshNotifications: reloadFromApi,
+        refresh: reloadFromApi,
         addNotification,
         markAllRead,
         markRead,

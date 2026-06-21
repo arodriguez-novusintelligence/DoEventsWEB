@@ -17,7 +17,7 @@ export const StoryViewersSheet = ({
   loading = false,
 }: StoryViewersSheetProps) => (
   <Sheet open={open} onOpenChange={onOpenChange}>
-    <SheetContent side="bottom" className="max-w-lg mx-auto max-h-[90dvh] rounded-t-2xl">
+    <SheetContent side="bottom" className="max-w-lg mx-auto max-h-[90dvh] rounded-t-2xl border border-border/60 shadow-sm">
       <SheetHeader>
         <SheetTitle className="flex items-center gap-2 font-extrabold">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
@@ -53,7 +53,7 @@ export const StoryViewersSheet = ({
               ? 'El endpoint GET /stories/{id}/viewers aún no está expuesto en DoEventsBack. Cuando esté disponible, verás aquí la lista de personas que vieron tu historia.'
               : 'Selecciona una historia para consultar sus visualizaciones cuando el backend lo soporte.'}
           </p>
-          <span className="mt-4 inline-block rounded-full bg-warning/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-warning">
+          <span className="mt-4 inline-block rounded-full bg-warning/10 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wide text-warning shadow-sm">
             Backend requerido
           </span>
         </div>

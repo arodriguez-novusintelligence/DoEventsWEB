@@ -115,6 +115,25 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b10)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| FeedHero typography DSF | VISUAL | Sí | `feed/FeedHero.tsx` | font-extrabold transversal; category card border-border/60; Cambiar shadow-sm |
+| StoryViewersSheet shell | Bloqueo | Parcial | `feed/StoryViewersSheet.tsx` | BACKEND_REQUIRED viewers API; SheetContent border-border/60 shadow-sm |
+| CompanyContext aliases | Integración | Sí | `contexts/CompanyContext.tsx` | organizationName/displayName/isCompany + JSDoc API parity |
+| NotificationsContext refresh | Integración | Sí | `contexts/NotificationsContext.tsx` | alias `refresh` derivado reloadFromApi |
+| EventPublished body copy | VISUAL | Sí | `pages/EventPublished.tsx` | subtitle sin extrabold; fetchEventById + share intacto |
+| EventPreviewModal / StepAccessControl | Empalme | Sí | ver batch previo | Verificados intactos |
+| SeatingMapEditor / FAQSection | Empalme | Sí | ver batch previo | Verificados intactos |
+| HostPickerModal / ServiceDetailView | Empalme | Sí | ver batch previo | Verificados intactos |
+| MyPostsView / EventsView | Empalme | Sí | ver batch previo | Verificados intactos |
+| MyReservedServicesView | Integración | Sí | `purchases/MyReservedServicesView.tsx` | API real verificada intacta |
+| StepUnified / MainInfoSection | Empalme | Sí | ver batch previo | Verificados intactos |
+| ReportPostDialog / AddGuestModal | Empalme | Sí | ver batch previo | Verificados intactos |
+| CreatePostSheet / TicketDetailView | Empalme | Sí | ver batch previo | Verificados intactos |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b9)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

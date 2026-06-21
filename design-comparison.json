@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-06-21T18:00:00Z",
+  "generatedAt": "2026-06-21T19:00:00Z",
   "lovableSha": "cb27c8309511889a72a059c6c933809536d7dc11",
   "webBranch": "feature/cicd/dev-automation",
-  "comparisonSource": "gap-empalme-27905180836-b9 batch 1 novena pasada — discover-joyful-feed no accesible en agente cloud",
-  "overallSimilarityPercent": 98.6,
-  "overallSimilarityPercentBefore": 80.82,
-  "overallSimilarityPercentAfter": 98.6,
+  "comparisonSource": "gap-empalme-27905180836-b10 batch 1 décima pasada — discover-joyful-feed no accesible en agente cloud",
+  "overallSimilarityPercent": 98.7,
+  "overallSimilarityPercentBefore": 80.8,
+  "overallSimilarityPercentAfter": 98.7,
   "targetSimilarityPercent": 98.0,
   "alignmentGapPercent": 0,
   "missingInWebCount": 0,
   "needsAdaptationCount": 97,
-  "lastGapEmpalmeRunId": "gap-empalme-27905180836-b9",
-  "lastAgentRunId": "27905180836-b9",
+  "lastGapEmpalmeRunId": "gap-empalme-27905180836-b10",
+  "lastAgentRunId": "27905180836-b10",
   "batch1Closed": 19,
   "batch1BackendRequired": 1,
   "remainingGaps": 97,
-  "notes": "Batch 1 run 27905180836-b9: novena pasada DSF ContactImportModal Dialog shadow-sm + font-extrabold + rounded-full CTAs; SeatingMapEditor border-border/60 transversal + modales shadow-sm; RefundTicketFlow/TicketDetailView/EventsView/HostPickerModal/StepUnified/AddGuestModal/CreatePostSheet/ReportPostDialog polish; BankingHub BACKEND_REQUIRED delete/PayPal visual extrabold; 19 DONE + 1 BACKEND_REQUIRED; build:devaws OK; objetivo 98% alcanzado."
+  "notes": "Batch 1 run 27905180836-b10: décima pasada DSF FeedHero font-extrabold transversal + category card border-border/60; StoryViewersSheet SheetContent shadow-sm + BACKEND_REQUIRED badge; CompanyContext organizationName/displayName/isCompany aliases; NotificationsContext refresh alias; EventPublished body copy weight; 19 DONE + 1 BACKEND_REQUIRED; build:devaws OK; objetivo 98% alcanzado."
 }

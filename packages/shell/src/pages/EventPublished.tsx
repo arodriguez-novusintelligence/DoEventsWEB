@@ -63,7 +63,7 @@ export const EventPublished = () => {
       ) : eventName ? (
         <p className="mt-3 text-base font-extrabold text-primary">{eventName}</p>
       ) : null}
-      <p className="mt-3 text-sm font-extrabold text-muted-foreground max-w-sm">
+      <p className="mt-3 text-sm text-muted-foreground max-w-sm">
         Tu evento ya está visible en Do.Events. Compártelo con tu audiencia y empieza a vender boletas.
       </p>
 
