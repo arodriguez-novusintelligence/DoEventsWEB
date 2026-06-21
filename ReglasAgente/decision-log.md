@@ -13,6 +13,56 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-21 21:30 UTC] gap-empalme-27903532486-b5
+
+### 1. Resumen del empalme
+Batch 5 (20 gaps, manifiesto `27903532486-b5`, similitud baseline **80.9%** / post-b4 **93.5%**): empalme focalizado feed/wizard/perfil/servicios/stats/chat. Patrón DSF v2.1: `ring-2 ring-primary/20`, `border-border/60`, `shadow-sm`, títulos `font-extrabold`, empty states h-14, retry `RefreshCw rounded-full`. **20 gaps DONE** frontend; **0 BACKEND_REQUIRED** nuevos (brechas acumuladas documentadas: PaymentMethods delete, PaymentGateway PSP, EditProfile password/gustos, Booking add-ons).
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Post card | `packages/shell/src/lovable/components/feed/PostCard.tsx` | DONE |
+| My venues | `packages/shell/src/lovable/components/venues/MyVenuesView.tsx` | DONE |
+| Create event | `packages/shell/src/lovable/components/events/CreateEventView.tsx` | DONE |
+| Booking sheet | `packages/shell/src/lovable/components/services/BookingSheet.tsx` | DONE |
+| Step agenda | `packages/shell/src/lovable/components/events/StepAgenda.tsx` | DONE |
+| Payment methods dashboard | `packages/shell/src/lovable/components/banking/PaymentMethodsDashboard.tsx` | DONE |
+| Step event summary | `packages/shell/src/lovable/components/events/StepEventSummary.tsx` | DONE |
+| Step event details | `packages/shell/src/lovable/components/events/StepEventDetails.tsx` | DONE |
+| Category buyer list | `packages/shell/src/lovable/components/stats/CategoryBuyerList.tsx` | DONE |
+| Payment gateway | `packages/shell/src/lovable/components/services/PaymentGatewaySheet.tsx` | DONE |
+| Seating category dialog | `packages/shell/src/lovable/components/venues/seating/SeatingCategoryDialog.tsx` | DONE |
+| Chat room | `packages/shell/src/lovable/components/chat/ChatRoomView.tsx` | DONE |
+| Guest stats | `packages/shell/src/lovable/components/stats/GuestStatsView.tsx` | DONE |
+| Edit profile | `packages/shell/src/lovable/components/feed/EditProfileView.tsx` | DONE |
+| My services | `packages/shell/src/lovable/components/services/MyServicesView.tsx` | DONE |
+| Profile view | `packages/shell/src/lovable/components/feed/ProfileView.tsx` | DONE |
+| Step FAQs | `packages/shell/src/lovable/components/events/StepFaqs.tsx` | DONE |
+| Image carousel | `packages/shell/src/lovable/components/feed/ImageCarousel.tsx` | DONE |
+| Favorites | `packages/shell/src/lovable/components/feed/FavoritesView.tsx` | DONE |
+| My events | `packages/shell/src/lovable/components/feed/MyEventsView.tsx` | DONE |
+
+### 3. Similitud antes/después
+- **Antes:** 80.9% (manifiesto) / 93.5% (post batch 4)
+- **Después:** 96.2% (estimado post batch 5; 17 gaps restantes)
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias runtime (solo comentario anti-mock en Login.tsx)
+
+### 6. Riesgos pendientes
+- 17 gaps pendientes en manifiesto (batch 6)
+- Brechas BACKEND_REQUIRED acumuladas: PaymentMethods delete, PaymentGateway PSP, EditProfile password/gustos, Booking add-ons, KYC submit, PublishFlow banking, GlobalSearch posts, StoryViewersSheet, BankingForm SWIFT/PayPal
+
+### Decisión
+**APPLIED**
+
+---
+
 ## [2026-06-21 20:15 UTC] gap-empalme-27903532486-b4
 
 ### 1. Resumen del empalme

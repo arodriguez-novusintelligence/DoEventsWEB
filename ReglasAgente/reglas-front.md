@@ -111,6 +111,32 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 5 (run 27903532486-b5)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| PostCard ring | VISUAL | Sí | `feed/PostCard.tsx` | ring-2 ring-primary/20; repost border-border/60 |
+| MyVenuesView CTA | VISUAL | Sí | `venues/MyVenuesView.tsx` | CTA dashed shadow-sm; grid border-border/60 |
+| CreateEventView header | VISUAL | Sí | `events/CreateEventView.tsx` | border-b border-border/60; stepper border; CTA shadow-sm |
+| BookingSheet cards | VISUAL | Sí | `services/BookingSheet.tsx` | SheetTitle extrabold; cards border-border/60 |
+| StepAgenda timeline | VISUAL | Sí | `events/StepAgenda.tsx` | Título extrabold; days card border-border/60 |
+| PaymentMethodsDashboard | VISUAL | Parcial | `banking/PaymentMethodsDashboard.tsx` | extrabold title; delete BACKEND_REQUIRED intacto |
+| StepEventSummary cards | VISUAL | Sí | `events/StepEventSummary.tsx` | Accordion/cards border-border/60 |
+| StepEventDetails form | VISUAL | Sí | `events/StepEventDetails.tsx` | Título extrabold; host cards border-border/60 |
+| CategoryBuyerList rows | VISUAL | Sí | `stats/CategoryBuyerList.tsx` | Row cards shadow-sm border-border/60 |
+| PaymentGatewaySheet | VISUAL | Parcial | `services/PaymentGatewaySheet.tsx` | extrabold title; PSP BACKEND_REQUIRED intacto |
+| SeatingCategoryDialog | VISUAL | Sí | `venues/seating/SeatingCategoryDialog.tsx` | Dialog shadow-sm; preview border-border/60 |
+| ChatRoomView shell | VISUAL | Sí | `chat/ChatRoomView.tsx` | Event card border-border/60; empty shadow-sm |
+| GuestStatsView cards | VISUAL | Sí | `stats/GuestStatsView.tsx` | Header extrabold; funnel cards border-border/60 |
+| EditProfileView header | VISUAL | Parcial | `feed/EditProfileView.tsx` | extrabold title; password/gustos BACKEND_REQUIRED |
+| MyServicesView grid | VISUAL | Sí | `services/MyServicesView.tsx` | Grid border-border/60; wizard sticky shadow-sm |
+| ProfileView hero | VISUAL | Sí | `feed/ProfileView.tsx` | Hero border-border/60; name extrabold |
+| StepFaqs cards | VISUAL | Sí | `events/StepFaqs.tsx` | Título extrabold; FAQ cards border-border/60 |
+| ImageCarousel frame | VISUAL | Sí | `feed/ImageCarousel.tsx` | ring-primary/20 border-border/60; dots primary/30 |
+| FavoritesView retry | VISUAL | Sí | `feed/FavoritesView.tsx` | Cards border-border/60; RefreshCw retry |
+| MyEventsView grid | VISUAL | Sí | `feed/MyEventsView.tsx` | Grid border-border/60; empty border-primary/25 |
+| Batch 5 gaps (20) | Empalme | Sí | ver `decision-log.md` | 20 DONE + 0 BACKEND_REQUIRED nuevos |
+
 ## Ejecución 2026-06-21 gap-empalme batch 4 (run 27903532486-b4)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

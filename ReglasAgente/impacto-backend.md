@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27903532486-b5`: batch 5 (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED nuevos (brechas acumuladas documentadas). Feed/wizard/perfil/servicios/stats/chat polish DSF; similitud ~96.2%; build:devaws OK.
+
 Run `gap-empalme-27903532486-b4`: batch 4 (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED nuevos (BankingForm persistencia acumulada). Admin/historias/CSS/hooks empalme; similitud ~93.5%; build:devaws OK.
 
 Run `gap-empalme-27903532486-b3`: batch 3 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`KycCertificationView` submit, `PublishFlowModal` banking, `GlobalSearchView` posts). Auth/discover/admin/map/search polish; similitud ~90.5%; build:devaws OK.
@@ -112,7 +114,25 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27903532486-b4)
+## Empalme realizado (última ejecución — gap-empalme-27903532486-b5)
+
+- **PostCard:** card `ring-2 ring-primary/20`; repost embed `border-border/60 shadow-sm`.
+- **MyVenuesView / MyEventsView:** grid cards `border-border/60`; CTA dashed `shadow-sm`; empty `border-primary/25`.
+- **CreateEventView:** sticky header `border-b border-border/60`; stepper pill border; footer CTA `shadow-sm`.
+- **BookingSheet:** SheetTitle extrabold; inner cards `border-border/60`; preview AlertCircle intacto.
+- **StepAgenda / StepFaqs / StepEventDetails / StepEventSummary:** títulos extrabold; cards FAQ/agenda/resumen `border-border/60`.
+- **PaymentMethodsDashboard:** título extrabold; methods list `border-border/60`; icon ring-primary/20; delete BACKEND_REQUIRED intacto.
+- **CategoryBuyerList / GuestStatsView:** row cards shadow-sm border-border/60; summary tiles shadow-sm; header extrabold.
+- **PaymentGatewaySheet:** SheetTitle extrabold; tabs/cards border-border/60; PSP BACKEND_REQUIRED banner intacto.
+- **SeatingCategoryDialog:** DialogContent shadow-sm; preview border-border/60; DialogTitle extrabold.
+- **ChatRoomView:** event info card border-border/60; empty messages shadow-sm; ban BACKEND_REQUIRED intacto.
+- **EditProfileView:** título extrabold; banners password/gustos BACKEND_REQUIRED intactos.
+- **MyServicesView:** grid cards border-border/60; wizard sticky shadow-sm.
+- **ProfileView:** hero card border-border/60; display name extrabold.
+- **ImageCarousel:** media frame ring-primary/20 border-border/60; dots inactive `bg-primary/30`.
+- **FavoritesView:** cards border-border/60; error retry RefreshCw rounded-full; EmptyTab font-semibold.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27903532486-b4)
 
 - **AdminUsersPanel / PaymentsPanel / NewUsersPanel / SupportSearchPanel:** AdminPanelSection + card `overflow-hidden shadow-sm`; info bar secondary sin mocks; tabs admin API real intactos.
 - **StoriesContext:** re-export tipado + alias `useStoriesContext`; API `loadErrorMessage`/`isEmpty`/`authorCount` documentada.
