@@ -497,12 +497,12 @@ const ProviderProfileCard = ({
               onError={() => setAvatarFailed(true)}
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center text-lg font-bold text-primary">
+            <div className="flex h-full w-full items-center justify-center text-lg font-extrabold text-primary">
               {initials}
             </div>
           )}
         </div>
-        <span className="absolute top-3 right-3 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground">
+        <span className="absolute top-3 right-3 rounded-full bg-primary px-2 py-0.5 text-[10px] font-extrabold text-primary-foreground shadow-sm">
           {provider.servicesCount} {provider.servicesCount === 1 ? 'servicio' : 'servicios'}
         </span>
         {onToggleLike && provider.primaryServiceId ? (
@@ -516,7 +516,7 @@ const ProviderProfileCard = ({
         <p className="mt-1 text-xs text-muted-foreground text-center line-clamp-1">
           {provider.username ? `@${provider.username}` : provider.primaryRole}
         </p>
-        <div className="mt-2 flex items-center gap-1 text-xs text-primary font-semibold">
+        <div className="mt-2 flex items-center gap-1 text-xs text-primary font-extrabold">
           <Star className="h-3.5 w-3.5 fill-primary text-primary" />
           {provider.rating > 0 ? provider.rating.toFixed(1) : 'Nuevo'}
         </div>
@@ -735,7 +735,7 @@ const EventsView = ({
                   <div className={`h-14 w-14 rounded-full flex items-center justify-center transition-all ${isActive ? 'bg-primary ring-2 ring-primary/40' : c.bg}`}>
                     <Icon className={`h-6 w-6 ${isActive ? 'text-primary-foreground' : c.color}`} strokeWidth={2} />
                   </div>
-                  <span className={`text-[11px] font-medium text-center leading-tight line-clamp-2 ${isActive ? 'text-primary font-extrabold' : 'text-foreground'}`}>
+                  <span className={`text-[11px] font-extrabold text-center leading-tight line-clamp-2 ${isActive ? 'text-primary' : 'text-foreground'}`}>
                     {c.label}
                   </span>
                 </button>

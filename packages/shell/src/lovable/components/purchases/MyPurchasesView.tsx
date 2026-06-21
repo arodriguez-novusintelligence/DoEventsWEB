@@ -94,7 +94,7 @@ export const MyPurchasesView = ({ onBack }: MyPurchasesViewProps) => {
             <Button
               type="button"
               variant="outline"
-              className="mt-4 rounded-full"
+              className="mt-4 rounded-full font-extrabold shadow-sm"
               onClick={retryLoad}
             >
               <RefreshCw className="mr-2 h-4 w-4" />
@@ -113,7 +113,7 @@ export const MyPurchasesView = ({ onBack }: MyPurchasesViewProps) => {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-extrabold text-foreground">Boletas</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs font-extrabold text-muted-foreground">
                   {ticketCount} boleta{ticketCount === 1 ? '' : 's'} activa{ticketCount === 1 ? '' : 's'}
                 </p>
               </div>
@@ -130,7 +130,7 @@ export const MyPurchasesView = ({ onBack }: MyPurchasesViewProps) => {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-extrabold text-foreground">Reservas de lugares</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs font-extrabold text-muted-foreground">
                   {venueBookings.length} reserva{venueBookings.length === 1 ? '' : 's'}
                 </p>
               </div>
@@ -147,7 +147,7 @@ export const MyPurchasesView = ({ onBack }: MyPurchasesViewProps) => {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-extrabold text-foreground">Reservas de servicios</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs font-extrabold text-muted-foreground">
                   {serviceBookings.length} reserva{serviceBookings.length === 1 ? '' : 's'}
                 </p>
               </div>

@@ -700,7 +700,7 @@ export function AddGuestModal({
                         <p className="truncate text-sm font-extrabold">{u.name} {u.lastName}</p>
                         {u.username && <p className="truncate text-xs text-muted-foreground">@{u.username.replace(/^@/, '')}</p>}
                       </div>
-                      {selected && <span className="text-xs font-bold text-primary">✓</span>}
+                      {selected && <span className="text-xs font-extrabold text-primary">✓</span>}
                     </button>
                   );
                 })}

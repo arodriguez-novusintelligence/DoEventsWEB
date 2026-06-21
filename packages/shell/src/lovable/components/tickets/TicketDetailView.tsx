@@ -347,7 +347,7 @@ const TicketDetailView = ({
                   <p className="mt-3 text-center text-sm font-extrabold text-foreground leading-snug px-2">
                     {qrDescription}
                   </p>
-                  <p className="mt-2 text-center text-xs font-medium text-muted-foreground tracking-wide break-all">
+                  <p className="mt-2 text-center text-xs font-extrabold text-muted-foreground tracking-wide break-all">
                     {qrData}
                   </p>
                 </div>
@@ -375,7 +375,7 @@ const TicketDetailView = ({
                   </div>
                   <span className="text-sm font-extrabold text-background">Transferida</span>
                 </div>
-                <span className="text-[11px] font-medium text-background/80">
+                <span className="text-[11px] font-extrabold text-background/80">
                   {transferMap.get(activeEntry.id)?.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                 </span>
               </div>

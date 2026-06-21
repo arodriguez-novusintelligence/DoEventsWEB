@@ -19,6 +19,10 @@ interface CompanyContextValue {
   isLoading: boolean;
   loadError: boolean;
   loadErrorMessage: string | null;
+  /** Alias Lovable — flag derivado de error de carga. */
+  hasError: boolean;
+  /** Alias Lovable — mensaje de error (mismo que `loadErrorMessage`). */
+  error: string | null;
   hasCompany: boolean;
   isEmpty: boolean;
   accountTypeLabel: string;
@@ -36,6 +40,8 @@ const CompanyContext = createContext<CompanyContextValue>({
   isLoading: false,
   loadError: false,
   loadErrorMessage: null,
+  hasError: false,
+  error: null,
   hasCompany: false,
   isEmpty: true,
   accountTypeLabel: 'Personal',
@@ -109,6 +115,8 @@ export const CompanyProvider = ({ userId, children }: CompanyProviderProps) => {
       isLoading: loading,
       loadError,
       loadErrorMessage,
+      hasError: loadError,
+      error: loadErrorMessage,
       hasCompany: Boolean(company?.companyName || company?.accountType === 'company'),
       isEmpty: !loading && !loadError && !company?.companyName && company?.accountType !== 'company',
       accountTypeLabel: company?.accountType === 'company' ? 'Empresa' : 'Personal',

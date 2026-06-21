@@ -774,7 +774,7 @@ const SeatingMapEditor = ({
           <ArrowLeft className="h-5 w-5" />
         </button>
         <div className="text-center">
-          <p className="text-[11px] font-bold uppercase tracking-widest text-primary">
+          <p className="text-[11px] font-extrabold uppercase tracking-widest text-primary">
             Editando
           </p>
           <h2 className="text-base font-extrabold text-foreground">Piso {currentFloor}</h2>
@@ -1184,7 +1184,7 @@ const SeatingMapEditor = ({
         <Button
           size="sm"
           onClick={handleSave}
-          className="rounded-full px-4 text-xs font-bold"
+          className="rounded-full px-4 text-xs font-extrabold shadow-sm"
         >
           Guardar mapa
         </Button>
@@ -2085,19 +2085,19 @@ const FooterActions = ({
   onSave: () => void;
   secondary?: React.ReactNode;
 }) => (
-  <div className="border-t border-border bg-card px-5 py-4">
+  <div className="border-t border-border/60 bg-card px-5 py-4 shadow-sm">
     {secondary && <div className="mb-3 flex justify-end">{secondary}</div>}
     <div className="grid grid-cols-2 gap-3">
       <Button
         variant="outline"
         onClick={onCancel}
-        className="h-12 rounded-xl border-primary text-base font-bold text-primary"
+        className="h-12 rounded-xl border-primary text-base font-extrabold text-primary shadow-sm"
       >
         Cancelar
       </Button>
       <Button
         onClick={onSave}
-        className="h-12 rounded-xl bg-primary text-base font-bold text-primary-foreground"
+        className="h-12 rounded-xl bg-primary text-base font-extrabold text-primary-foreground shadow-sm"
       >
         Guardar cambios
       </Button>

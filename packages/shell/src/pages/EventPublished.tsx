@@ -47,7 +47,7 @@ export const EventPublished = () => {
   return (
     <div className="mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center bg-secondary px-6 text-center pb-24">
       <div className="w-full max-w-sm rounded-2xl border border-border/60 bg-card p-8 shadow-sm">
-      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-4 ring-primary/20">
+      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
         <PartyPopper className="h-7 w-7 text-primary" />
       </div>
       <p className="mt-4 inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-extrabold text-primary shadow-sm">
@@ -61,7 +61,7 @@ export const EventPublished = () => {
       ) : eventName ? (
         <p className="mt-3 text-base font-extrabold text-primary">{eventName}</p>
       ) : null}
-      <p className="mt-3 text-sm text-muted-foreground max-w-sm">
+      <p className="mt-3 text-sm font-extrabold text-muted-foreground max-w-sm">
         Tu evento ya está visible en Do.Events. Compártelo con tu audiencia y empieza a vender boletas.
       </p>
 

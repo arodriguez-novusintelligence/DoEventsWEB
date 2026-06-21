@@ -57,7 +57,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
 
         <div className="px-4 pb-12">
           {/* Hero */}
-          <div className="overflow-hidden rounded-2xl bg-card shadow-sm">
+          <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
             {heroImg ? (
               <img src={heroImg} alt={data.name} className="h-44 w-full object-cover" />
             ) : (
@@ -84,7 +84,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
 
           {/* Preview-only notice */}
           <div className="mt-3 flex items-center justify-between rounded-xl border border-border/60 bg-primary/5 px-3 py-2 shadow-sm">
-            <p className="text-xs font-medium text-muted-foreground">Vista previa — las interacciones estarán disponibles al publicar</p>
+            <p className="text-xs font-extrabold text-muted-foreground">Vista previa — las interacciones estarán disponibles al publicar</p>
           </div>
 
           {/* Date / details card */}
@@ -190,7 +190,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
                         <Play className="h-5 w-5" />
                       </div>
                     </div>
-                    <a href={data.videoUrl} target="_blank" rel="noreferrer" className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-card px-3 py-1 text-xs font-semibold text-foreground shadow-sm">
+                    <a href={data.videoUrl} target="_blank" rel="noreferrer" className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-card px-3 py-1 text-xs font-extrabold text-foreground shadow-sm ring-2 ring-primary/20">
                       Ver video en YouTube ↗
                     </a>
                   </div>
