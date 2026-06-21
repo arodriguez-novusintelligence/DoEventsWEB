@@ -122,7 +122,7 @@ const CreatePostSheet = ({
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[90dvh]">
+      <DrawerContent className="max-h-[90dvh] border-t border-border/60">
         <div className="mx-auto w-full max-w-lg">
           <DrawerHeader className="flex items-center justify-between text-left">
             <div className="flex items-center gap-2">
@@ -157,7 +157,7 @@ const CreatePostSheet = ({
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 maxLength={120}
-                className="w-full border-b border-border bg-transparent pb-2 text-base font-semibold outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
+                className="w-full border-b border-border/60 bg-transparent pb-2 text-base font-extrabold outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
               />
 
               {/* Description with mention autocomplete */}

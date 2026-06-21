@@ -113,6 +113,32 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b5)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| EventPublished card | VISUAL | Sí | `pages/EventPublished.tsx` | border-border/60; CTAs extrabold rounded-full shadow-sm |
+| RefundTicketFlow typography | VISUAL | Sí | `tickets/RefundTicketFlow.tsx` | font-extrabold transversal CTAs/summary |
+| StepAccessControl typography | VISUAL | Sí | `events/StepAccessControl.tsx` | gate/user labels font-extrabold |
+| HostPickerModal typography | VISUAL | Sí | `events/HostPickerModal.tsx` | avatar/CTA font-extrabold |
+| StepUnified headings | VISUAL | Sí | `services/StepUnified.tsx` | section headings font-extrabold |
+| TicketDetailView chips | VISUAL | Sí | `tickets/TicketDetailView.tsx` | status/order font-extrabold; CTA shadow-sm |
+| ServiceDetailView CTA | VISUAL | Sí | `services/ServiceDetailView.tsx` | hire CTA font-extrabold shadow-sm |
+| CreatePostSheet drawer | VISUAL | Sí | `feed/CreatePostSheet.tsx` | border-t border-border/60; title extrabold |
+| ReportPostDialog textarea | VISUAL | Sí | `feed/ReportPostDialog.tsx` | border-border/60 shadow-sm |
+| SeatingMapEditor footer | VISUAL | Sí | `events/SeatingMapEditor.tsx` | footer borders border-border/60 |
+| EventsView filters | VISUAL | Sí | `feed/EventsView.tsx` | filter chips font-extrabold |
+| CompanyContext companyName | Integración | Sí | `contexts/CompanyContext.tsx` | alias `companyName` derivado |
+| AddGuestModal search | VISUAL | Sí | `guests/AddGuestModal.tsx` | avatar initials font-extrabold |
+| BankingHub delete/PayPal | Bloqueo | Parcial | `banking/BankingHub.tsx` | BACKEND_REQUIRED banner intacto |
+| EventPreviewModal sections | VISUAL | Sí | `events/EventPreviewModal.tsx` | verificado intacto batch previo |
+| FAQSection empty | VISUAL | Sí | `venues/sections/FAQSection.tsx` | verificado intacto batch previo |
+| MyPostsView loading | VISUAL | Sí | `feed/MyPostsView.tsx` | verificado intacto batch previo |
+| MyReservedServicesView | Integración | Sí | `purchases/MyReservedServicesView.tsx` | verificado intacto batch previo |
+| MainInfoSection cards | VISUAL | Sí | `venues/sections/MainInfoSection.tsx` | verificado intacto batch previo |
+| NotificationsContext API | Integración | Sí | `contexts/NotificationsContext.tsx` | API parity verificada |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b4)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

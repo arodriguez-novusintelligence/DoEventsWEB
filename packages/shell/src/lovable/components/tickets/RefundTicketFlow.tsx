@@ -125,7 +125,7 @@ const RefundTicketFlow = ({
           <button
             type="button"
             onClick={onClose}
-            className="mt-6 w-full rounded-full bg-primary py-3.5 text-sm font-bold text-primary-foreground shadow-sm"
+            className="mt-6 w-full rounded-full bg-primary py-3.5 text-sm font-extrabold text-primary-foreground shadow-sm"
           >
             Entendido
           </button>
@@ -177,7 +177,7 @@ const RefundTicketFlow = ({
               }`}>
                 {selected.size === entries.length && <Check className="h-4 w-4 text-primary-foreground" />}
               </div>
-              <span className="font-bold text-foreground">Seleccionar todas las boletas</span>
+              <span className="font-extrabold text-foreground">Seleccionar todas las boletas</span>
             </button>
             <p className="text-sm text-primary mt-3">
               {selected.size} de {entries.length} boletas seleccionadas
@@ -211,7 +211,7 @@ const RefundTicketFlow = ({
                   <div className="p-4 grid grid-cols-2 gap-3">
                     <div>
                       <p className="text-xs text-muted-foreground">Categoría</p>
-                      <span className="inline-block mt-1 rounded-full bg-primary/10 px-3 py-1 text-[10px] font-bold text-primary uppercase">
+                      <span className="inline-block mt-1 rounded-full bg-primary/10 px-3 py-1 text-[10px] font-extrabold text-primary uppercase">
                         {ticket.category}
                       </span>
                       <p className="mt-2 text-sm font-extrabold text-foreground">Silla - {e.code}</p>
@@ -220,7 +220,7 @@ const RefundTicketFlow = ({
                       <p className="text-xs text-muted-foreground">Puerta de ingreso</p>
                       <p className="mt-1 text-sm font-extrabold text-foreground">{ticket.entrance || 'Entrada principal'}</p>
                       {e.value > 0 && (
-                        <p className="mt-2 text-sm font-bold text-primary">{formatCOP(e.value)}</p>
+                        <p className="mt-2 text-sm font-extrabold text-primary">{formatCOP(e.value)}</p>
                       )}
                     </div>
                   </div>
@@ -232,18 +232,18 @@ const RefundTicketFlow = ({
           <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border/60 px-4 py-4">
             <div className="mx-auto max-w-lg">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-base font-bold text-foreground">Monto a reembolsar</span>
+                <span className="text-base font-extrabold text-foreground">Monto a reembolsar</span>
                 <span className="text-2xl font-extrabold text-primary">{formatCOP(refundTotal)}</span>
               </div>
               <div className="flex gap-3">
-                <button type="button" onClick={onClose} className="flex-1 rounded-full border-2 border-primary py-3 text-sm font-bold text-primary">
+                <button type="button" onClick={onClose} className="flex-1 rounded-full border-2 border-primary py-3 text-sm font-extrabold text-primary">
                   Cancelar
                 </button>
                 <button
                   type="button"
                   disabled={selected.size === 0}
                   onClick={() => setStep('confirm')}
-                  className="flex-1 rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground shadow-sm disabled:opacity-50"
+                  className="flex-1 rounded-full bg-primary py-3 text-sm font-extrabold text-primary-foreground shadow-sm disabled:opacity-50"
                 >
                   Continuar
                 </button>
@@ -271,7 +271,7 @@ const RefundTicketFlow = ({
 
           <div className="px-4 pt-6 space-y-5">
             <div className="rounded-2xl bg-primary/10 p-4">
-              <p className="text-xs uppercase font-bold text-muted-foreground">Evento</p>
+              <p className="text-xs uppercase font-extrabold text-muted-foreground">Evento</p>
               <p className="mt-1 font-extrabold text-foreground">{ticket.eventTitle}</p>
               <div className="mt-2 flex items-center gap-4 text-sm text-foreground">
                 <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4" />{ticket.eventDate}</span>
@@ -287,14 +287,14 @@ const RefundTicketFlow = ({
               <div className="space-y-2">
                 {selectedEntries.map((e, idx) => (
                   <div key={e.id} className="rounded-2xl border border-border/60 p-3 flex items-center gap-3 shadow-sm">
-                    <div className="h-9 w-9 rounded-full bg-primary text-primary-foreground grid place-items-center font-bold text-sm">
+                    <div className="h-9 w-9 rounded-full bg-primary text-primary-foreground grid place-items-center font-extrabold text-sm">
                       {idx + 1}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-extrabold text-foreground uppercase">{ticket.category}</p>
                       <p className="text-xs text-muted-foreground">Silla {e.code}</p>
                     </div>
-                    {e.value > 0 && <p className="font-bold text-foreground">{formatCOP(e.value)}</p>}
+                    {e.value > 0 && <p className="font-extrabold text-foreground">{formatCOP(e.value)}</p>}
                   </div>
                 ))}
               </div>
@@ -306,9 +306,9 @@ const RefundTicketFlow = ({
                 <span className="font-extrabold text-foreground">Comisiones no reembolsables</span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Las comisiones de la plataforma <span className="font-bold">no son reembolsables</span>.
+                Las comisiones de la plataforma <span className="font-extrabold">no son reembolsables</span>.
               </p>
-              <button type="button" onClick={() => setStep('policy')} className="text-sm font-bold text-primary underline underline-offset-2">
+              <button type="button" onClick={() => setStep('policy')} className="text-sm font-extrabold text-primary underline underline-offset-2">
                 Ver política de recaudos y reembolsos
               </button>
             </div>
@@ -324,7 +324,7 @@ const RefundTicketFlow = ({
                   <span className="font-extrabold text-foreground">- {formatCOP(platformFee)}</span>
                 </div>
                 <div className="border-t border-border/60 pt-2 flex justify-between">
-                  <span className="font-bold text-foreground">Monto a reembolsar</span>
+                  <span className="font-extrabold text-foreground">Monto a reembolsar</span>
                   <span className="text-xl font-extrabold text-primary">{formatCOP(refundTotal)}</span>
                 </div>
               </div>
@@ -335,14 +335,14 @@ const RefundTicketFlow = ({
             )}
 
             <div className="flex gap-3 pt-2">
-              <button type="button" onClick={onClose} className="flex-1 rounded-full border-2 border-primary py-3 text-sm font-bold text-primary">
+              <button type="button" onClick={onClose} className="flex-1 rounded-full border-2 border-primary py-3 text-sm font-extrabold text-primary">
                 Cancelar
               </button>
               <button
                 type="button"
                 disabled={submitting}
                 onClick={() => void confirmRefund()}
-                className="flex-1 rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground shadow-sm disabled:opacity-50"
+                className="flex-1 rounded-full bg-primary py-3 text-sm font-extrabold text-primary-foreground shadow-sm disabled:opacity-50"
               >
                 {submitting ? (
                   <span className="inline-flex items-center justify-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Radicando…</span>
@@ -374,13 +374,13 @@ const RefundTicketFlow = ({
           <div className="px-4 pt-6 space-y-4 text-sm text-foreground/90 leading-relaxed">
             <section className="rounded-2xl bg-card p-4 shadow-sm">
               <h2 className="font-extrabold text-foreground mb-2">Comisiones de la plataforma</h2>
-              <p>Las comisiones cobradas por la plataforma <span className="font-bold">no son reembolsables</span>.</p>
+              <p>Las comisiones cobradas por la plataforma <span className="font-extrabold">no son reembolsables</span>.</p>
             </section>
             <section className="rounded-2xl bg-card p-4 shadow-sm">
               <h2 className="font-extrabold text-foreground mb-2">Tiempos de procesamiento</h2>
-              <p>Los reembolsos aprobados se procesan en <span className="font-bold">3 a 5 días hábiles</span>.</p>
+              <p>Los reembolsos aprobados se procesan en <span className="font-extrabold">3 a 5 días hábiles</span>.</p>
             </section>
-            <button type="button" onClick={() => setStep('confirm')} className="w-full rounded-full bg-primary py-3.5 text-sm font-bold text-primary-foreground shadow-sm">
+            <button type="button" onClick={() => setStep('confirm')} className="w-full rounded-full bg-primary py-3.5 text-sm font-extrabold text-primary-foreground shadow-sm">
               Entendido
             </button>
           </div>
@@ -401,7 +401,7 @@ const RefundTicketFlow = ({
 
           <div className="fixed bottom-0 left-0 right-0 bg-secondary px-4 py-4">
             <div className="mx-auto max-w-lg">
-              <button type="button" onClick={onClose} className="w-full rounded-full bg-primary py-4 text-base font-bold text-primary-foreground shadow-sm">
+              <button type="button" onClick={onClose} className="w-full rounded-full bg-primary py-4 text-base font-extrabold text-primary-foreground shadow-sm">
                 Finalizar
               </button>
             </div>

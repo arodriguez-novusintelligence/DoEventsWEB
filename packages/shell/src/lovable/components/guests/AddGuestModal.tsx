@@ -692,7 +692,7 @@ export function AddGuestModal({
                       {u.avatar ? (
                         <img src={u.avatar} alt="" className="h-10 w-10 rounded-full object-cover" />
                       ) : (
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20 text-sm font-semibold text-primary">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20 text-sm font-extrabold text-primary">
                           {u.name.charAt(0)}{u.lastName.charAt(0)}
                         </div>
                       )}

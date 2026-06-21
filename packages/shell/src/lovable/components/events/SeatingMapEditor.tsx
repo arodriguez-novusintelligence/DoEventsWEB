@@ -1096,7 +1096,7 @@ const SeatingMapEditor = ({
         const bumpInner = (d: number) => updateFigure(selected.id, { arcInner: Math.max(20, Math.min(85, arcInner + d)) });
         const bumpSpan = (d: number) => updateFigure(selected.id, { arcSpan: Math.max(60, Math.min(180, arcSpan + d)) });
         return (
-        <div className="border-t border-border bg-card">
+        <div className="border-t border-border/60 bg-card">
         {isArc && !selected.locked && (
           <div className="flex flex-wrap items-center gap-3 px-4 pt-2 text-xs">
             <div className="flex items-center gap-1.5">
@@ -1113,7 +1113,7 @@ const SeatingMapEditor = ({
             </div>
           </div>
         )}
-        <div className="flex items-center justify-between gap-2 border-t border-border bg-card px-4 py-2">
+        <div className="flex items-center justify-between gap-2 border-t border-border/60 bg-card px-4 py-2">
           <div className="flex min-w-0 items-center gap-2">
             <span
               className="h-7 w-7 flex-shrink-0 rounded-md"
@@ -1176,7 +1176,7 @@ const SeatingMapEditor = ({
       })()}
 
       {/* Save bar */}
-      <div className="flex items-center justify-between border-t border-border bg-card px-4 py-2 text-xs text-muted-foreground">
+      <div className="flex items-center justify-between border-t border-border/60 bg-card px-4 py-2 text-xs text-muted-foreground">
         <span>
           {figures.filter((f) => f.role === 'category').length} categorías ·{' '}
           {totalSeats} asientos
@@ -1191,7 +1191,7 @@ const SeatingMapEditor = ({
       </div>
 
       {/* Shape picker */}
-      <div className="flex gap-2 overflow-x-auto border-t border-border bg-card px-3 py-3">
+      <div className="flex gap-2 overflow-x-auto border-t border-border/60 bg-card px-3 py-3">
         {SHAPES.map((s) => (
           <button
             key={s.id}

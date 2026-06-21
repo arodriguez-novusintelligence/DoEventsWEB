@@ -703,7 +703,7 @@ const EventsView = ({
                 key={p.id}
                 type="button"
                 onClick={() => handleFilterChange(p.id)}
-                className={`flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold whitespace-nowrap shadow-sm transition-all border border-border/60 ${
+                className={`flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-extrabold whitespace-nowrap shadow-sm transition-all border border-border/60 ${
                   active
                     ? 'bg-primary text-primary-foreground border-primary'
                     : 'bg-card text-foreground hover:bg-accent/50'

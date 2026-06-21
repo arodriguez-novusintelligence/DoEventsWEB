@@ -107,6 +107,7 @@ export const ReportPostDialog = ({
             value={details}
             onChange={(e) => setDetails(e.target.value)}
             rows={3}
+            className="border-border/60 shadow-sm"
           />
         </div>
 

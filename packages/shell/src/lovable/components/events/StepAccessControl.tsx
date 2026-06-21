@@ -21,7 +21,7 @@ const Avatar = ({ user, size = 40 }: { user: { name: string; avatar?: string; in
   }
   return (
     <div
-      className="flex items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground"
+      className="flex items-center justify-center rounded-full bg-primary text-sm font-extrabold text-primary-foreground"
       style={{ width: size, height: size }}
     >
       {user.initials || user.name.charAt(0)}
@@ -172,7 +172,7 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
                   <DoorOpen className="h-5 w-5" />
                 </div>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-bold text-foreground">{gate.name}</p>
+                  <p className="truncate text-sm font-extrabold text-foreground">{gate.name}</p>
                   <p className="text-xs text-muted-foreground">Personal asignado ({assigned.length})</p>
                 </div>
               </div>
@@ -195,7 +195,7 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
                       <div className="flex min-w-0 items-center gap-3">
                         <Avatar user={u} />
                         <div className="min-w-0">
-                          <p className="truncate text-sm font-bold text-foreground">{u.name}</p>
+                          <p className="truncate text-sm font-extrabold text-foreground">{u.name}</p>
                           <p className="truncate text-xs text-muted-foreground">
                             {u.username ? `@${u.username.replace(/^@/, '')}` : u.email || ''}
                           </p>

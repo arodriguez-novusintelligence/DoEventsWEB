@@ -12,6 +12,8 @@ interface CompanyInfo {
 
 interface CompanyContextValue {
   company: CompanyInfo | null;
+  /** Alias Lovable — nombre comercial derivado de `company`. */
+  companyName: string | null;
   loading: boolean;
   /** Alias Lovable — mismo valor que `loading`. */
   isLoading: boolean;
@@ -29,6 +31,7 @@ export type { CompanyContextValue };
 
 const CompanyContext = createContext<CompanyContextValue>({
   company: null,
+  companyName: null,
   loading: false,
   isLoading: false,
   loadError: false,
@@ -101,6 +104,7 @@ export const CompanyProvider = ({ userId, children }: CompanyProviderProps) => {
   const value = useMemo(
     () => ({
       company,
+      companyName: company?.companyName ?? null,
       loading,
       isLoading: loading,
       loadError,

@@ -173,7 +173,7 @@ const TicketDetailView = ({
     <div className="min-h-screen bg-secondary pb-28">
       <div className="mx-auto max-w-lg px-4 pt-4">
         <div className="flex items-center justify-between mb-3">
-          <button type="button" onClick={onBack} className="flex items-center gap-1 text-primary font-medium">
+          <button type="button" onClick={onBack} className="flex items-center gap-1 text-primary font-extrabold">
             <ChevronLeft className="h-5 w-5" /> Atrás
           </button>
           {(canTransfer || canRefund) && (
@@ -226,7 +226,7 @@ const TicketDetailView = ({
               )}
             </div>
             <span
-              className={`inline-flex shrink-0 items-center rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide ${
+              className={`inline-flex shrink-0 items-center rounded-full border px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wide ${
                 STATUS_CHIP[ticket.status]
               }`}
             >
@@ -250,7 +250,7 @@ const TicketDetailView = ({
                     active ? 'bg-primary border-primary shadow-md' : 'bg-card border-border/60'
                   }`}
                 >
-                  <p className={`text-sm font-bold ${active ? 'text-primary-foreground' : 'text-foreground'}`}>
+                  <p className={`text-sm font-extrabold ${active ? 'text-primary-foreground' : 'text-foreground'}`}>
                     {orderCode}
                   </p>
                   <p className={`text-xs mt-0.5 ${active ? 'text-primary-foreground/85' : 'text-muted-foreground'}`}>
@@ -262,7 +262,7 @@ const TicketDetailView = ({
           </div>
         ) : (
           <div className="rounded-2xl border border-border/60 bg-primary px-4 py-3 text-center shadow-sm">
-            <p className="text-sm font-bold text-primary-foreground">{orderCode}</p>
+            <p className="text-sm font-extrabold text-primary-foreground">{orderCode}</p>
           </div>
         )}
 
@@ -306,7 +306,7 @@ const TicketDetailView = ({
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">Categoría</p>
-                  <span className="inline-block rounded-full bg-primary/10 px-4 py-2 text-xs font-bold text-primary uppercase max-w-full">
+                  <span className="inline-block rounded-full bg-primary/10 px-4 py-2 text-xs font-extrabold text-primary uppercase max-w-full">
                     {ticket.category}
                   </span>
                   <p className="mt-3 text-base font-extrabold text-foreground">Silla - {seatLabel}</p>
@@ -401,7 +401,7 @@ const TicketDetailView = ({
             <button
               type="button"
               onClick={onViewEventDetail}
-              className="flex w-full items-center justify-center gap-2 rounded-full bg-primary py-4 text-sm font-bold text-primary-foreground shadow-lg hover:bg-primary/90"
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-primary py-4 text-sm font-extrabold text-primary-foreground shadow-sm hover:bg-primary/90"
             >
               <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-foreground/20">
                 <Info className="h-4 w-4" />

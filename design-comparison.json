@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-06-21T14:00:00Z",
+  "generatedAt": "2026-06-21T14:30:00Z",
   "lovableSha": "cb27c8309511889a72a059c6c933809536d7dc11",
   "webBranch": "feature/cicd/dev-automation",
-  "comparisonSource": "gap-empalme-27905180836-b4 batch 1 cuarta pasada — discover-joyful-feed no accesible en agente cloud",
-  "overallSimilarityPercent": 93.5,
-  "overallSimilarityPercentBefore": 91.8,
-  "overallSimilarityPercentAfter": 93.5,
+  "comparisonSource": "gap-empalme-27905180836-b5 batch 1 quinta pasada — discover-joyful-feed no accesible en agente cloud",
+  "overallSimilarityPercent": 95.2,
+  "overallSimilarityPercentBefore": 93.5,
+  "overallSimilarityPercentAfter": 95.2,
   "targetSimilarityPercent": 98.0,
-  "alignmentGapPercent": 4.5,
+  "alignmentGapPercent": 2.8,
   "missingInWebCount": 0,
   "needsAdaptationCount": 97,
-  "lastGapEmpalmeRunId": "gap-empalme-27905180836-b4",
-  "lastAgentRunId": "27905180836-b4",
+  "lastGapEmpalmeRunId": "gap-empalme-27905180836-b5",
+  "lastAgentRunId": "27905180836-b5",
   "batch1Closed": 19,
   "batch1BackendRequired": 1,
   "remainingGaps": 97,
-  "notes": "Batch 1 run 27905180836-b4: cuarta pasada DSF font-extrabold, border-border/60, shadow-sm, rounded-full CTAs; SeatLocationModal empalme completo; 19 DONE + 1 BACKEND_REQUIRED (BankingHub); build:devaws OK."
+  "notes": "Batch 1 run 27905180836-b5: quinta pasada DSF EventPublished border-border/60 CTAs extrabold; font-extrabold transversal wizard/tickets/events; CompanyContext companyName alias; CreatePostSheet drawer border; SeatingMapEditor footer borders; 19 DONE + 1 BACKEND_REQUIRED (BankingHub); build:devaws OK."
 }

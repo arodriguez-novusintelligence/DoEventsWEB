@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27905180836-b5`: batch 1 quinta pasada (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). EventPublished card border-border/60 CTAs extrabold; font-extrabold transversal RefundTicketFlow/StepAccessControl/HostPickerModal/StepUnified/TicketDetailView; CompanyContext `companyName` alias; similitud ~95.2%; 97 gaps restantes; build:devaws OK.
+
 Run `gap-empalme-27905180836-b4`: batch 1 cuarta pasada (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). DSF font-extrabold, border-border/60, shadow-sm, rounded-full CTAs en SeatLocationModal, HostPickerModal, TicketDetailView, StepUnified, FAQSection, etc.; similitud ~93.5%; 97 gaps restantes; build:devaws OK.
 
 Run `gap-empalme-27905180836-b3`: batch 1 tercera pasada (20 gaps) — 18 DONE frontend; 2 BACKEND_REQUIRED (`BankingHub` delete/PayPal, `StoryViewersSheet` viewers API). CreatePostSheet/ReportPostDialog/TicketDetailView DSF; StoryViewersSheet skeleton; similitud ~91.8%; 97 gaps restantes; build:devaws OK.
@@ -128,7 +130,23 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27905180836-b4)
+## Empalme realizado (última ejecución — gap-empalme-27905180836-b5)
+
+- **EventPublished:** card `border-border/60`; badge/CTAs `font-extrabold rounded-full shadow-sm`; PartyPopper ring intacto; `fetchEventById` + share API real.
+- **RefundTicketFlow / StepAccessControl / HostPickerModal:** labels y CTAs `font-extrabold` transversal (paridad Lovable tipografía wizard/tickets).
+- **StepUnified:** section headings `font-extrabold` (galería, sectores, preferencias, reembolsos, FAQ).
+- **TicketDetailView:** status chip/order tabs `font-extrabold`; bottom CTA `shadow-sm`; back link extrabold.
+- **ServiceDetailView:** hire CTA `font-extrabold shadow-sm`.
+- **CreatePostSheet:** DrawerContent `border-t border-border/60`; title input extrabold + border-border/60.
+- **ReportPostDialog:** Textarea `border-border/60 shadow-sm`.
+- **SeatingMapEditor:** footer/toolbar borders `border-border/60` unificados.
+- **EventsView:** filter chips `font-extrabold`.
+- **CompanyContext:** alias `companyName` derivado de `company.companyName`.
+- **AddGuestModal:** search result avatar initials `font-extrabold`.
+- **BankingHub:** BACKEND_REQUIRED banner delete/PayPal intacto; warning cards `border-border/60`.
+- **Verificados intactos batch previo:** EventPreviewModal, FAQSection, MyPostsView, MyReservedServicesView, MainInfoSection, NotificationsContext API.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27905180836-b4)
 
 - **SeatLocationModal:** DialogContent border-border/60 shadow-sm; badges font-extrabold; error font-extrabold; retry rounded-full shadow-sm; API `fetchAvailableSeats`/`getVenueById` intacta.
 - **HostPickerModal:** tabs font-extrabold active; search heading extrabold; loading h-14 ring; error retry shadow-sm; manual submit shadow-sm.

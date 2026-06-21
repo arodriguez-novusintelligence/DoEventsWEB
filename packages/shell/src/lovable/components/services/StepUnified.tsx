@@ -387,7 +387,7 @@ const StepUnified = ({
           )}
         </div>
         <div className="mt-4">
-          <p className="mb-2 text-xs font-semibold text-foreground">Galería multimedia (fotos y videos)</p>
+          <p className="mb-2 text-xs font-extrabold text-foreground">Galería multimedia (fotos y videos)</p>
           <div className="grid grid-cols-4 gap-2">
             {formData.gallery.map((item) => (
               <div key={item.id} className="relative aspect-square overflow-hidden rounded-lg bg-muted">
@@ -482,7 +482,7 @@ const StepUnified = ({
               <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <Briefcase className="h-7 w-7 text-primary" />
               </div>
-              <p className="text-sm font-semibold text-foreground">
+              <p className="text-sm font-extrabold text-foreground">
                 Selecciona al menos un servicio primero
               </p>
             </div>
@@ -494,7 +494,7 @@ const StepUnified = ({
               const otherText = formData.activityOthers[sector] || '';
               return (
                 <div key={sector} className="rounded-2xl bg-card p-4 shadow-sm">
-                  <h4 className="mb-3 text-base font-semibold text-foreground">{sector}</h4>
+                  <h4 className="mb-3 text-base font-extrabold text-foreground">{sector}</h4>
                   <div className="flex flex-wrap gap-2">
                     {activities.map((act) => (
                       <button
@@ -503,7 +503,7 @@ const StepUnified = ({
                         className={cn(
                           'rounded-full px-4 py-2 text-sm font-medium transition-colors',
                           selectedActivities.includes(act)
-                            ? 'bg-primary text-primary-foreground font-semibold'
+                            ? 'bg-primary text-primary-foreground font-extrabold'
                             : 'bg-accent text-accent-foreground'
                         )}
                       >
@@ -568,7 +568,7 @@ const StepUnified = ({
                       };
                       return (
                         <div key={act} className="rounded-xl border border-border/60 p-3 space-y-3 shadow-sm">
-                          <h5 className="text-sm font-semibold text-foreground">{act}</h5>
+                          <h5 className="text-sm font-extrabold text-foreground">{act}</h5>
                           <div className="grid grid-cols-2 gap-3">
                             <div>
                               <label className="text-xs text-muted-foreground">Tipo de cobro</label>
@@ -673,7 +673,7 @@ const StepUnified = ({
         <CollapsibleContent className="mt-2 px-1">
           <div className="rounded-2xl bg-card p-4 shadow-sm space-y-6">
             <div>
-              <h4 className="text-sm font-semibold text-foreground">Preferencias en las reservas</h4>
+              <h4 className="text-sm font-extrabold text-foreground">Preferencias en las reservas</h4>
               <p className="text-xs text-muted-foreground">Configura cómo quieres recibir y aprobar las reservas</p>
               <div className="mt-3 space-y-3">
                 <button
@@ -687,8 +687,8 @@ const StepUnified = ({
                   <Zap className="h-5 w-5 text-primary mt-0.5 shrink-0" />
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-semibold text-foreground">Activa la Reserva inmediata</span>
-                      <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">Recomendada</span>
+                      <span className="text-sm font-extrabold text-foreground">Activa la Reserva inmediata</span>
+                      <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-extrabold text-primary">Recomendada</span>
                     </div>
                     <p className="mt-1 text-xs text-muted-foreground">Permite que tus clientes reserven automáticamente.</p>
                   </div>
@@ -703,14 +703,14 @@ const StepUnified = ({
                 >
                   <ClipboardCheck className="h-5 w-5 text-primary mt-0.5 shrink-0" />
                   <div>
-                    <span className="text-sm font-semibold text-foreground">Aprueba todas las reservas</span>
+                    <span className="text-sm font-extrabold text-foreground">Aprueba todas las reservas</span>
                     <p className="mt-1 text-xs text-muted-foreground">Revisa siempre las solicitudes antes de aprobar.</p>
                   </div>
                 </button>
               </div>
             </div>
             <div>
-              <h4 className="text-sm font-semibold text-foreground">¿Cuándo pueden solicitar reembolsos?</h4>
+              <h4 className="text-sm font-extrabold text-foreground">¿Cuándo pueden solicitar reembolsos?</h4>
               <p className="text-xs text-muted-foreground">Define hasta qué momento pueden cancelar y recibir reembolso.</p>
               <RadioGroup value={formData.refundPolicy} onValueChange={(v) => updateForm({ refundPolicy: v })} className="mt-3 space-y-2">
                 {REFUND_POLICIES.map((policy) => (
@@ -742,7 +742,7 @@ const StepUnified = ({
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <GripVertical className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-xs font-semibold text-foreground">Pregunta {i + 1}</span>
+                      <span className="text-xs font-extrabold text-foreground">Pregunta {i + 1}</span>
                     </div>
                     {formData.faqs.length > 1 && (
                       <button type="button" onClick={() => updateForm({ faqs: formData.faqs.filter((_, idx) => idx !== i) })} className="text-muted-foreground hover:text-destructive">

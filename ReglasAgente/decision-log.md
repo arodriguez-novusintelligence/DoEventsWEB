@@ -13,6 +13,53 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-21 14:30 UTC] gap-empalme-27905180836-b5
+
+### 1. Resumen del empalme
+Batch 1 quinta pasada (20 gaps, manifiesto `27905180836-b5`, similitud baseline **93.5%**): empalme DSF focalizado en **EventPublished**, unificación tipográfica `font-extrabold` transversal (RefundTicketFlow, StepAccessControl, HostPickerModal, StepUnified, TicketDetailView), **CompanyContext** alias `companyName`, **CreatePostSheet** drawer border, **SeatingMapEditor** footer borders. **19 gaps DONE** frontend; **1 gap BACKEND_REQUIRED** (`BankingHub` delete/PayPal). **97 gaps** restantes.
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Seating map editor | `packages/shell/src/lovable/components/events/SeatingMapEditor.tsx` | DONE |
+| Event preview modal | `packages/shell/src/lovable/components/events/EventPreviewModal.tsx` | DONE |
+| Step access control | `packages/shell/src/lovable/components/events/StepAccessControl.tsx` | DONE |
+| Refund ticket flow | `packages/shell/src/lovable/components/tickets/RefundTicketFlow.tsx` | DONE |
+| FAQ section | `packages/shell/src/lovable/components/venues/sections/FAQSection.tsx` | DONE |
+| Host picker modal | `packages/shell/src/lovable/components/events/HostPickerModal.tsx` | DONE |
+| Service detail | `packages/shell/src/lovable/components/services/ServiceDetailView.tsx` | DONE |
+| Events view | `packages/shell/src/lovable/components/feed/EventsView.tsx` | DONE |
+| Step unified | `packages/shell/src/lovable/components/services/StepUnified.tsx` | DONE |
+| My posts view | `packages/shell/src/lovable/components/feed/MyPostsView.tsx` | DONE |
+| My reserved services | `packages/shell/src/lovable/components/purchases/MyReservedServicesView.tsx` | DONE |
+| Notifications context | `packages/shell/src/lovable/contexts/NotificationsContext.tsx` | DONE |
+| Add guest modal | `packages/shell/src/lovable/components/guests/AddGuestModal.tsx` | DONE |
+| Company context | `packages/shell/src/lovable/contexts/CompanyContext.tsx` | DONE |
+| Main info section | `packages/shell/src/lovable/components/venues/sections/MainInfoSection.tsx` | DONE |
+| Banking hub | `packages/shell/src/lovable/components/banking/BankingHub.tsx` | BACKEND_REQUIRED |
+| Ticket detail | `packages/shell/src/lovable/components/tickets/TicketDetailView.tsx` | DONE |
+| Create post sheet | `packages/shell/src/lovable/components/feed/CreatePostSheet.tsx` | DONE |
+| Report post dialog | `packages/shell/src/lovable/components/feed/ReportPostDialog.tsx` | DONE |
+| Event published | `packages/shell/src/pages/EventPublished.tsx` | DONE |
+
+### 3. Similitud antes/después
+- **Antes:** 93.5% (post batch `27905180836-b4`)
+- **Después:** 95.2% (estimado post batch b5; 97 gaps restantes)
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias runtime (solo comentario anti-mock en Login.tsx)
+
+### 6. Riesgos pendientes
+- `BankingHub`: delete/PayPal BACKEND_REQUIRED — banner explícito conservado
+- Brechas BACKEND_REQUIRED acumuladas sin cambios (StoryViewersSheet, KYC, GlobalSearch posts, etc.)
+
+---
+
 ## [2026-06-21 14:00 UTC] gap-empalme-27905180836-b4
 
 ### 1. Resumen del empalme

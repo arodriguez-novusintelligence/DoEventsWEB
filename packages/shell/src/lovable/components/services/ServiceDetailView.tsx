@@ -289,7 +289,7 @@ const ServiceDetailView = ({
               }
               setOpenBooking(true);
             }}
-            className="ml-auto rounded-full bg-primary-foreground px-5 py-2.5 text-sm font-bold text-primary"
+            className="ml-auto rounded-full bg-primary-foreground px-5 py-2.5 text-sm font-extrabold text-primary shadow-sm"
           >
             {liveBooking ? 'Reservar servicio' : 'Inicia sesión para reservar'}
           </button>

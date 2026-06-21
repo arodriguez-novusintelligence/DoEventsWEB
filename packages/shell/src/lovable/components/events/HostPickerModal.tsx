@@ -28,7 +28,7 @@ type SearchUserRow = {
 };
 
 const Avatar = ({ user }: { user: SearchUserRow }) => (
-  <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/15 ring-2 ring-primary/20 text-sm font-bold text-primary">
+  <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/15 ring-2 ring-primary/20 text-sm font-extrabold text-primary">
     {user.avatar ? (
       <img src={user.avatar} alt={user.name} className="h-full w-full object-cover" />
     ) : (
@@ -49,7 +49,7 @@ const UserRow = ({
   <div className="flex items-center gap-3 rounded-2xl border border-border/60 bg-secondary px-3 py-2.5 shadow-sm">
     <Avatar user={user} />
     <div className="min-w-0 flex-1">
-      <p className="truncate text-sm font-bold text-foreground">{user.name}</p>
+      <p className="truncate text-sm font-extrabold text-foreground">{user.name}</p>
       {user.username && <p className="truncate text-xs text-primary">@{user.username.replace(/^@/, '')}</p>}
       {user.email && <p className="truncate text-xs text-muted-foreground">{user.email}</p>}
     </div>
@@ -57,7 +57,7 @@ const UserRow = ({
       type="button"
       onClick={onAdd}
       disabled={added}
-      className="shrink-0 rounded-full bg-primary px-4 py-1.5 text-xs font-bold text-primary-foreground transition-opacity disabled:opacity-50"
+      className="shrink-0 rounded-full bg-primary px-4 py-1.5 text-xs font-extrabold text-primary-foreground transition-opacity disabled:opacity-50"
     >
       {added ? 'Agregado' : 'Agregar'}
     </button>
