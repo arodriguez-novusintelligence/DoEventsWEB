@@ -710,7 +710,12 @@ const MyServicesView = ({
         >
           <ChevronLeft className="h-4 w-4" /> Volver
         </button>
-        <h1 className="mt-2 text-2xl font-bold text-primary">{title}</h1>
+        <h1 className="mt-2 flex items-center gap-2 text-2xl font-bold text-primary">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+            <Briefcase className="h-5 w-5" />
+          </span>
+          {title}
+        </h1>
 
         {/* Step indicator - only show during wizard, not summary */}
         {!isSummaryStep && (

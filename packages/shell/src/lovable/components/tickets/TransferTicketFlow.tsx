@@ -203,7 +203,12 @@ const TransferTicketFlow = ({ ticket, entries, currentUserId, onClose, onComplet
           </div>
 
           <div className="px-4 pt-3">
-            <h1 className="text-2xl font-extrabold text-foreground">Selecciona las boletas a compartir</h1>
+            <h1 className="flex items-center gap-2 text-2xl font-extrabold text-foreground">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                <Ticket className="h-5 w-5 text-primary" />
+              </span>
+              Selecciona las boletas a compartir
+            </h1>
             <p className="text-sm text-muted-foreground mt-1">Toca cada boleta que quieras compartir con otro usuario.</p>
           </div>
 
@@ -269,7 +274,7 @@ const TransferTicketFlow = ({ ticket, entries, currentUserId, onClose, onComplet
             })}
           </div>
 
-          <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border px-4 py-4">
+          <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border px-4 py-4 shadow-sm">
             <div className="mx-auto max-w-lg">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-sm font-semibold text-foreground">Boletas a compartir</span>
@@ -372,7 +377,7 @@ const TransferTicketFlow = ({ ticket, entries, currentUserId, onClose, onComplet
             </div>
           </div>
 
-          <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border px-4 py-4 space-y-3">
+          <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border px-4 py-4 space-y-3 shadow-sm">
             <div className="mx-auto max-w-lg space-y-3">
               <button
                 type="button"
@@ -586,7 +591,7 @@ const TransferTicketFlow = ({ ticket, entries, currentUserId, onClose, onComplet
             )}
           </div>
 
-          <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border px-4 py-4">
+          <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border px-4 py-4 shadow-sm">
             <div className="mx-auto max-w-lg">
               <button
                 type="button"
@@ -608,8 +613,8 @@ const TransferTicketFlow = ({ ticket, entries, currentUserId, onClose, onComplet
 
       {step === 'success' && recipient && (
         <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
-          <div className="h-28 w-28 rounded-full bg-primary grid place-items-center shadow-xl">
-            <Check className="h-16 w-16 text-primary-foreground" strokeWidth={3} />
+          <div className="flex h-28 w-28 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20 shadow-sm">
+            <Check className="h-14 w-14 text-primary" strokeWidth={3} />
           </div>
           <h1 className="mt-6 text-3xl font-extrabold text-foreground">¡Boleta compartida!</h1>
           <p className="mt-3 text-foreground">

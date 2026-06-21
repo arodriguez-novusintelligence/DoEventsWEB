@@ -110,7 +110,12 @@ const StepAgenda = ({ formData, updateForm }: Props) => {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-xl font-bold text-primary">Agenda del evento</h2>
+        <h2 className="flex items-center gap-2 text-xl font-bold text-primary">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+            <CalendarDays className="h-5 w-5" />
+          </span>
+          Agenda del evento
+        </h2>
         <p className="mt-1 text-sm text-foreground">
           Itinerario de actividades.{' '}
           <span className="text-muted-foreground">(Opcional)</span>
@@ -204,7 +209,7 @@ const StepAgenda = ({ formData, updateForm }: Props) => {
       </div>
 
       {selectedDay.activities.length === 0 && (
-        <div className="rounded-2xl border border-dashed border-primary/30 bg-primary/5 px-4 py-8 text-center">
+        <div className="rounded-2xl border border-dashed border-primary/25 bg-primary/5 px-4 py-8 text-center shadow-sm">
           <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
             <CalendarDays className="h-7 w-7 text-primary" />
           </div>
@@ -217,7 +222,7 @@ const StepAgenda = ({ formData, updateForm }: Props) => {
         {selectedDay.activities.map((act, idx) => {
           const timeInvalid = !isTimeRangeValid(act.startTime, act.endTime);
           return (
-          <div key={act.id} className="relative rounded-2xl bg-card p-4 shadow-sm">
+          <div key={act.id} className="relative rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
             <div className="mb-2 flex items-center justify-between">
               <span className="absolute -left-4 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground ring-4 ring-secondary">
                 {idx + 1}

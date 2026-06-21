@@ -34,17 +34,20 @@ const StepFaqs = ({ formData, updateForm }: Props) => {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-xl font-bold text-primary">Preguntas frecuentes</h2>
+        <h2 className="flex items-center gap-2 text-xl font-bold text-primary">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+            <HelpCircle className="h-5 w-5" />
+          </span>
+          Preguntas frecuentes
+        </h2>
         <p className="mt-1 text-sm text-foreground">
           Agrega preguntas frecuentes que los asistentes puedan tener sobre tu evento.{' '}
           <span className="text-muted-foreground">(Opcional)</span>
         </p>
       </div>
 
-      <p className="text-sm font-bold text-primary">Preguntas frecuentes</p>
-
       {faqs.length === 0 && (
-        <div className="flex flex-col items-center rounded-2xl border border-dashed border-border bg-card px-4 py-8 text-center shadow-sm">
+        <div className="flex flex-col items-center rounded-2xl border border-dashed border-primary/25 bg-card px-4 py-8 text-center shadow-sm">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
             <HelpCircle className="h-7 w-7 text-primary" />
           </div>

@@ -118,7 +118,9 @@ const PaymentGatewaySheet = ({ open, onOpenChange, booking, onSuccess, sellerNam
               </button>
             )}
             <SheetTitle className="flex items-center gap-2 text-base font-bold text-foreground">
-              <CreditCard className="h-5 w-5 text-primary" />
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                <CreditCard className="h-5 w-5 text-primary" />
+              </span>
               {step === 'success' ? '¡Reserva confirmada!' : booking.orderId ? 'Confirmar orden' : 'Pago seguro'}
             </SheetTitle>
             {step !== 'success' && booking.orderId && (

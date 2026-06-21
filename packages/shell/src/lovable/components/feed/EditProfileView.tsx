@@ -185,7 +185,7 @@ const EditProfileView = ({
           <Button
             onClick={handleSendRecovery}
             disabled={!recoveryEmail}
-            className="w-full rounded-full bg-primary/40 hover:bg-primary disabled:opacity-100"
+            className="w-full rounded-full bg-primary hover:bg-primary/90 disabled:opacity-100"
           >
             Enviar
           </Button>
@@ -362,7 +362,7 @@ const EditProfileView = ({
         <ChevronLeft className="h-5 w-5" /> <span className="text-sm">Atrás</span>
       </button>
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
           <Settings2 className="h-5 w-5 text-primary" />
         </div>
         <h1 className="text-3xl font-bold text-primary">Editar mis datos</h1>
@@ -453,7 +453,9 @@ const EditProfileView = ({
             <span className="font-bold text-foreground">Datos de empresa</span>
           </div>
           {companyLoading ? (
-            <p className="text-sm text-muted-foreground">Cargando información…</p>
+            <p className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin text-primary" /> Cargando información…
+            </p>
           ) : (
             <>
               {company?.companyName && (

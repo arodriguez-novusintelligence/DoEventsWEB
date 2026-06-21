@@ -93,13 +93,18 @@ export default function PaymentMethodsDashboard({
 
         {/* Payment Methods Section */}
         <div className="space-y-4">
-          <div className="space-y-2">
+          <div className="flex items-start gap-3">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+              <Wallet className="h-6 w-6 text-primary" />
+            </div>
+            <div className="space-y-2">
             <h2 className="text-2xl font-semibold text-foreground">
               Cómo recibes los cobros
             </h2>
             <p className="text-muted-foreground">
               Agrega tu método de cobro, para que puedas recibir el pago de tus boletos vendidos. Puede ser una cuenta en Colombia, una cuenta internacional en dólares o PayPal, es tu elección.
             </p>
+            </div>
           </div>
 
           {/* Verification Alert */}
@@ -140,7 +145,7 @@ export default function PaymentMethodsDashboard({
             {methods.map((method) => (
               <div key={method.id} className="flex items-center justify-between py-5 px-4 hover:bg-muted/30 transition-colors">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-muted/50 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-lg bg-muted/50 flex items-center justify-center ring-1 ring-primary/10">
                     {getMethodIcon(method.type)}
                   </div>
                   <div>
@@ -191,7 +196,7 @@ export default function PaymentMethodsDashboard({
           {/* Add Method Button */}
           <Button
             onClick={onAddMethod}
-            className="h-12 px-6 bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
+            className="h-12 px-6 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
           >
             <Plus className="w-4 h-4 mr-2" />
             Añadir método de cobro

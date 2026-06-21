@@ -209,7 +209,7 @@ const MyVenuesView = ({
               return (
                 <article
                   key={v.id}
-                  className="group relative flex flex-col overflow-hidden rounded-2xl bg-card shadow-sm text-left transition-transform active:scale-[0.98] cursor-pointer"
+                  className="group relative flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm text-left transition-transform active:scale-[0.98] cursor-pointer"
                   onClick={() => openVenue(v)}
                 >
                   <div className="relative h-28 w-full overflow-hidden bg-muted">

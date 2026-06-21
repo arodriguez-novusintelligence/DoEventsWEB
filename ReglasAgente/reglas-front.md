@@ -107,6 +107,32 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 5 (run 27902063419-b5)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| BankingForm cards | VISUAL | Sí | `banking/BankingForm.tsx` | Banner ring; method cards shadow-sm |
+| PostCard ring | VISUAL | Sí | `feed/PostCard.tsx` | ring-primary/10; repost shadow-sm |
+| SideMenu elevation | VISUAL | Sí | `feed/SideMenu.tsx` | shadow-xl drawer; perfil shadow-sm |
+| CreateEventView header | VISUAL | Sí | `events/CreateEventView.tsx` | CalendarDays pill ring; sticky shadow-sm |
+| MyVenuesView cards | VISUAL | Sí | `venues/MyVenuesView.tsx` | border-border/60 venue grid |
+| BookingSheet header | VISUAL | Sí | `services/BookingSheet.tsx` | CalendarDays pill; AlertCircle preview |
+| PaymentMethodsDashboard | VISUAL | Sí | `banking/PaymentMethodsDashboard.tsx` | Wallet h-12 ring header; rounded-full CTA |
+| StepEventSummary accordion | VISUAL | Sí | `events/StepEventSummary.tsx` | FileText title; section icons ring |
+| StepEventDetails header | VISUAL | Sí | `events/StepEventDetails.tsx` | CalendarDays pill ring header |
+| StepAgenda timeline | VISUAL | Sí | `events/StepAgenda.tsx` | Header pill; dashed empty border-primary/25 |
+| StepFaqs duplicate fix | FRONTEND_LOGIC | Sí | `events/StepFaqs.tsx` | HelpCircle pill; removed duplicate subheading |
+| PaymentGatewaySheet title | VISUAL | Sí | `services/PaymentGatewaySheet.tsx` | CreditCard pill ring |
+| ChatRoomView read-only | VISUAL | Sí | `chat/ChatRoomView.tsx` | AlertCircle banner; Megaphone fallback ring |
+| GuestStatsView polish | VISUAL | Sí | `stats/GuestStatsView.tsx` | Header shadow-sm; channel rings |
+| SeatingCategoryDialog | VISUAL | Sí | `venues/seating/SeatingCategoryDialog.tsx` | Preview shadow-sm; swatch ring-primary/20 |
+| MyServicesView wizard | VISUAL | Sí | `services/MyServicesView.tsx` | Briefcase header pill |
+| EditProfileView header | VISUAL | Sí | `feed/EditProfileView.tsx` | Settings2 ring; Loader2 company; primary CTA |
+| GroupDropZone shell | VISUAL | Sí | `guests/GroupDropZone.tsx` | Card border shadow-sm; Users pill |
+| ProfileView uploading | FRONTEND_LOGIC | Sí | `feed/ProfileView.tsx` | Loader2 overlay uploadingMedia; grid pills |
+| TransferTicketFlow success | VISUAL | Sí | `tickets/TransferTicketFlow.tsx` | Ticket title pill; success ring-primary/20 |
+| Batch 5 gaps (20) | Empalme | Sí | ver `decision-log.md` | 20 DONE + 0 BACKEND_REQUIRED nuevos |
+
 ## Ejecución 2026-06-21 gap-empalme batch 4 (run 27902063419-b4)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

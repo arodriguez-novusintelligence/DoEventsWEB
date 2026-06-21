@@ -21,6 +21,7 @@ import {
   LogOut,
   Gift,
   Crown,
+  Loader2,
 } from 'lucide-react';
 import SubscriptionPlanSheet from '@lovable/components/feed/SubscriptionPlanSheet';
 import PlanDetailView, { type PlanId } from '@lovable/components/legal/PlanDetailView';
@@ -339,6 +340,11 @@ const ProfileView = ({
         <div className="relative px-5 pb-5">
           <div className="relative -mt-12 mb-3">
             <div className="relative inline-block rounded-full ring-4 ring-card shadow-lg">
+              {uploadingMedia && (
+                <div className="absolute inset-0 z-30 flex items-center justify-center rounded-full bg-background/60">
+                  <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                </div>
+              )}
               <StoryAvatar
                 userId={userId}
                 name={profileName}
@@ -611,7 +617,9 @@ const ProfileView = ({
       <button onClick={onOpenGuests} className="flex w-full flex-col rounded-2xl bg-card p-4 shadow-sm text-left transition-colors hover:bg-accent/50 active:scale-[0.99]">
         <h3 className="text-base font-bold text-foreground">Gestión de invitados</h3>
         <div className="mt-6 flex items-end justify-between">
-          <Users className="h-7 w-7 text-foreground" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+            <Users className="h-5 w-5 text-primary" />
+          </div>
           <span className="text-2xl font-bold text-muted-foreground">{myGuestsCount}</span>
         </div>
       </button>
@@ -633,7 +641,9 @@ const ProfileView = ({
           >
             <h4 className="text-sm font-bold text-foreground leading-tight">{item.title}</h4>
             <div className="flex items-end justify-between">
-              <item.icon className={`h-7 w-7 ${item.color}`} strokeWidth={2.2} />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
+                <item.icon className={`h-5 w-5 ${item.color}`} strokeWidth={2.2} />
+              </div>
               <span className="text-xl font-bold text-muted-foreground">{item.count}</span>
             </div>
           </button>

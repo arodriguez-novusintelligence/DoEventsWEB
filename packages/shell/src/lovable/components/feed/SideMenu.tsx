@@ -124,7 +124,7 @@ const SideMenu = ({
       )}
 
       <aside
-        className={`fixed left-0 top-0 z-[9999] flex h-full w-[84%] max-w-[320px] flex-col bg-[hsl(var(--primary-deep))] text-primary-foreground transition-transform duration-300 ease-in-out ${
+        className={`fixed left-0 top-0 z-[9999] flex h-full w-[84%] max-w-[320px] flex-col bg-[hsl(var(--primary-deep))] text-primary-foreground shadow-xl transition-transform duration-300 ease-in-out ${
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -132,7 +132,7 @@ const SideMenu = ({
         <div className="flex items-center gap-3 px-5 pt-12 pb-5">
           <button
             onClick={() => go('perfil')}
-            className="flex flex-1 items-center gap-3 rounded-lg p-1 -m-1 text-left transition-colors hover:bg-primary-foreground/10 active:bg-primary-foreground/15 ring-2 ring-primary-foreground/15"
+            className="flex flex-1 items-center gap-3 rounded-lg p-1 -m-1 text-left shadow-sm transition-colors hover:bg-primary-foreground/10 active:bg-primary-foreground/15 ring-2 ring-primary-foreground/15"
             aria-label="Ir a mi perfil"
           >
             <StoryAvatar

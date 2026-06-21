@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27902063419-b5`: batch 5 (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED nuevos (brechas acumuladas documentadas: BankingForm SWIFT/PayPal, PaymentMethods delete, EditProfile password, Booking add-ons, PaymentGateway PSP). Wizard/eventos/perfil/chat polish; similitud ~96%; build:devaws OK.
+
 Run `gap-empalme-27902063419-b4`: batch 4 (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED nuevos en batch (`StoryViewersSheet` viewers API acumulado). Historias/admin/CSS/hooks empalme; similitud ~94%; build:devaws OK.
 
 Run `gap-empalme-27902063419-b3`: batch 3 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`KycCertificationView` submit, `PublishFlowModal` banking, `GlobalSearchView` posts). Discover/map/admin/search polish; similitud ~92%; build:devaws OK.
@@ -98,7 +100,28 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27902063419-b3)
+## Empalme realizado (última ejecución — gap-empalme-27902063419-b5)
+
+- **BankingForm:** banner BACKEND ring-primary/20; cards método pago shadow-sm + ring iconos; PayPal banner intacto.
+- **PostCard:** card ring-primary/10; repost embed shadow-sm.
+- **SideMenu:** drawer shadow-xl; perfil shadow-sm ring.
+- **CreateEventView:** header CalendarDays pill ring; sticky shadow-sm.
+- **MyVenuesView:** venue cards border-border/60.
+- **BookingSheet:** header CalendarDays pill; preview AlertCircle; close shadow-sm.
+- **PaymentMethodsDashboard:** header Wallet h-12 ring; method rows ring-primary/10; CTA rounded-full.
+- **StepEventSummary:** FileText título; accordion icons ring-primary/20.
+- **StepEventDetails / StepAgenda / StepFaqs:** headers icon pill ring; empty dashed border-primary/25; activity cards border.
+- **PaymentGatewaySheet:** CreditCard title pill ring.
+- **ChatRoomView:** read-only AlertCircle banner; event fallback Megaphone ring.
+- **GuestStatsView:** header shadow-sm; channel/summary rings; cards shadow-sm.
+- **SeatingCategoryDialog:** preview shadow-sm; swatch ring-primary/20; +/- rounded-full.
+- **MyServicesView:** wizard Briefcase header pill.
+- **EditProfileView:** Settings2 ring; company Loader2; password CTA primary full.
+- **GroupDropZone:** card shell border shadow-sm; Users pill header; empty shadow-sm.
+- **ProfileView:** uploadingMedia Loader2 overlay; grid/guests icon pills ring.
+- **TransferTicketFlow:** Ticket title pill; success ring-primary/20; footers shadow-sm.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27902063419-b4)
 
 - **EventInvitationModal:** header CalendarDays h-10 ring; empty/error rings; RefreshCw Reintentar carga eventos; empty filtro Users h-14 ring.
 - **VenueDetail:** sticky header Building2 gradiente + shadow-sm; shell pb-24 sobre PlaceDetailPage.

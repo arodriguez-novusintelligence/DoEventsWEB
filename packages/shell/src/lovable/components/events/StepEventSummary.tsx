@@ -645,7 +645,9 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
 
   return (
     <div className="relative pb-24">
-      <h2 className="text-xl font-extrabold text-primary">Resumen del evento</h2>
+      <h2 className="flex items-center gap-2 text-xl font-extrabold text-primary">
+        <FileText className="h-5 w-5" /> Resumen del evento
+      </h2>
 
       <div className="mt-4 space-y-3">
         {SECTIONS.map(({ key, label, icon: Icon }) => {
@@ -656,7 +658,7 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
                 onClick={() => toggle(key)}
                 className="flex w-full items-center gap-3 px-4 py-4 text-left"
               >
-                <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary ring-2 ring-primary/20">
                   <Icon className="h-4 w-4" />
                 </div>
                 <span className="flex-1 text-sm font-semibold text-foreground">{label}</span>

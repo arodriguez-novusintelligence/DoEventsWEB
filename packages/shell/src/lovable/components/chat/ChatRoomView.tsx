@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { ChevronLeft, Send, Settings, UserPlus, Megaphone, Copy, Pencil, Trash2, X, Shield, Ban, Clock, CalendarDays, ChevronRight, Plus, CornerUpLeft, UserMinus, MessageSquare } from 'lucide-react';
+import { ChevronLeft, Send, Settings, UserPlus, Megaphone, Copy, Pencil, Trash2, X, Shield, Ban, Clock, CalendarDays, ChevronRight, Plus, CornerUpLeft, UserMinus, MessageSquare, AlertCircle } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@lovable/components/ui/avatar';
 import type { EventChatRoom, ChatMessage, ChatAttendee } from '@lovable/data/chatData';
 import { cn } from '@lovable/lib/utils';
@@ -287,8 +287,8 @@ const ChatRoomView = ({
                 </AvatarFallback>
               </Avatar>
             ) : (
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-muted">
-                <Megaphone className="h-6 w-6 text-muted-foreground" />
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
+                <Megaphone className="h-6 w-6 text-primary" />
               </div>
             )}
             <div className="flex-1 min-w-0">
@@ -312,8 +312,9 @@ const ChatRoomView = ({
         </button>
 
         {isReadOnly && (
-          <div className="mb-4 rounded-2xl border border-border bg-muted/60 px-4 py-3 text-center text-sm text-muted-foreground">
-            Este chat está cerrado. Solo puedes ver el historial de mensajes.
+          <div className="mb-4 flex gap-3 rounded-2xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-foreground">
+            <AlertCircle className="h-5 w-5 shrink-0 text-primary" />
+            <p>Este chat está cerrado. Solo puedes ver el historial de mensajes.</p>
           </div>
         )}
 

@@ -40,7 +40,7 @@ const ChannelFunnelCard = ({ channel }: { channel: ChannelData }) => {
         onClick={() => setExpanded(!expanded)}
         className="flex w-full items-center gap-3 p-4 transition-colors hover:bg-accent/30"
       >
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
           <Icon className="h-5 w-5 text-primary" />
         </div>
         <span className="text-sm font-semibold text-card-foreground whitespace-pre-line text-left">
@@ -101,7 +101,7 @@ const ChannelGuestsCard = ({ channel }: { channel: ChannelData }) => {
         onClick={() => setExpanded(!expanded)}
         className="flex w-full items-center gap-3 p-4 transition-colors hover:bg-accent/30"
       >
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
           <Icon className="h-5 w-5 text-primary" />
         </div>
         <span className="text-sm font-semibold text-card-foreground whitespace-pre-line text-left">
@@ -192,7 +192,7 @@ const GuestStatsView = ({ event, onBack }: GuestStatsViewProps) => {
   return (
     <div className="min-h-screen bg-background pt-16 pb-24">
       {/* Top bar */}
-      <div className="fixed top-0 left-0 right-0 z-20 flex items-center gap-3 border-b border-border bg-card px-4 py-3">
+      <div className="fixed top-0 left-0 right-0 z-20 flex items-center gap-3 border-b border-border bg-card px-4 py-3 shadow-sm">
         <button onClick={onBack} className="text-foreground">
           <ChevronLeft className="h-5 w-5" />
         </button>
@@ -336,7 +336,7 @@ const GuestStatsView = ({ event, onBack }: GuestStatsViewProps) => {
             {summaryCards.map(card => (
               <div
                 key={card.label}
-                className="flex items-center justify-between rounded-2xl border border-border bg-card p-5"
+                className="flex items-center justify-between rounded-2xl border border-border bg-card p-5 shadow-sm"
               >
                 <div>
                   <p className="text-xs text-muted-foreground">{card.label}</p>

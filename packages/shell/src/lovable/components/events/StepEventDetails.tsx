@@ -189,7 +189,9 @@ const StepEventDetails = ({
       {/* Header */}
       <div>
         <h2 className="flex items-center gap-2 text-xl font-bold text-primary">
-          <CalendarDays className="h-5 w-5" />
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+            <CalendarDays className="h-5 w-5" />
+          </span>
           Detalles del evento
           {loadingMeta && <Loader2 className="h-4 w-4 animate-spin" aria-label="Cargando catálogos" />}
         </h2>

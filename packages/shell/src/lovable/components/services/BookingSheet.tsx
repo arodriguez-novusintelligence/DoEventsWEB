@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, ShoppingCart, Minus, Plus, X, CalendarDays, Clock, CreditCard, Loader2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ShoppingCart, Minus, Plus, X, CalendarDays, Clock, CreditCard, Loader2, AlertCircle } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@lovable/components/ui/sheet';
 import { Button } from '@lovable/components/ui/button';
 import { Switch } from '@lovable/components/ui/switch';
@@ -285,11 +285,13 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
       <SheetContent side="bottom" className="h-[95vh] overflow-y-auto rounded-t-3xl px-0 pb-0">
         <SheetHeader className="border-b border-border px-5 pb-4">
           <div className="flex items-center gap-3">
-            <button onClick={() => onOpenChange(false)} className="flex h-8 w-8 items-center justify-center rounded-full bg-accent text-muted-foreground hover:text-foreground">
+            <button onClick={() => onOpenChange(false)} className="flex h-8 w-8 items-center justify-center rounded-full bg-accent text-muted-foreground shadow-sm hover:text-foreground">
               <X className="h-4 w-4" />
             </button>
             <SheetTitle className="flex items-center gap-2 text-base font-bold text-foreground">
-              <CalendarDays className="h-5 w-5 text-primary" />
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                <CalendarDays className="h-5 w-5 text-primary" />
+              </span>
               Reservar servicio
             </SheetTitle>
           </div>
@@ -297,11 +299,14 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
 
         <div className="px-5 py-4 space-y-5">
           {!isLive && (
-            <div className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
-              <p className="text-xs font-semibold text-primary">Vista previa</p>
-              <p className="mt-1 text-[11px] text-muted-foreground">
-                Inicia sesión para reservar fechas reales y generar una orden de pago.
-              </p>
+            <div className="flex gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+              <div>
+                <p className="text-xs font-semibold text-primary">Vista previa</p>
+                <p className="mt-1 text-[11px] text-muted-foreground">
+                  Inicia sesión para reservar fechas reales y generar una orden de pago.
+                </p>
+              </div>
             </div>
           )}
           {/* Service info */}

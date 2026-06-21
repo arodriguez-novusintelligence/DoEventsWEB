@@ -111,7 +111,7 @@ const SeatingCategoryDialog = ({
   const renderSeatPreview = () => {
     const rowLabels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
     return (
-      <div className="p-4 bg-card border border-border rounded-2xl">
+      <div className="p-4 bg-card border border-border rounded-2xl shadow-sm">
         <p className="text-xs text-muted-foreground mb-2">
           Vista previa ({totalSeats} sillas) - Arrastra A1 para reorganizar
         </p>
@@ -230,7 +230,7 @@ const SeatingCategoryDialog = ({
                   type="button"
                   className={`w-10 h-10 rounded-full transition-all ${
                     selectedColor === color
-                      ? "ring-2 ring-offset-2 ring-primary scale-110"
+                      ? "ring-2 ring-offset-2 ring-primary/20 scale-110"
                       : "hover:scale-105"
                   }`}
                   style={{ backgroundColor: color }}
@@ -247,6 +247,7 @@ const SeatingCategoryDialog = ({
               <Button
                 variant="outline"
                 size="icon"
+                className="rounded-full h-9 w-9"
                 onClick={() => setRows(Math.max(1, rows - 1))}
               >
                 <Minus className="w-4 h-4" />

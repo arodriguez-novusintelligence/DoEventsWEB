@@ -229,7 +229,7 @@ const CreateEventView = ({
   return (
     <div className="mx-auto min-h-screen max-w-lg bg-secondary pb-32">
       {/* Header — debajo del TopHeader global (menú hamburguesa) */}
-      <div className="sticky top-0 z-10 bg-secondary px-4 pb-3 pt-2">
+      <div className="sticky top-0 z-10 bg-secondary px-4 pb-3 pt-2 shadow-sm">
         <button
           onClick={handleHeaderBack}
           className="flex items-center gap-1 text-sm font-medium text-primary"
@@ -238,7 +238,9 @@ const CreateEventView = ({
         </button>
 
         <div className="mt-2 flex items-center gap-2">
-          <CalendarDays className="h-5 w-5 text-primary" />
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+            <CalendarDays className="h-5 w-5 text-primary" />
+          </span>
           <h1 className="text-lg font-extrabold text-foreground">
             {headerTitle || (mode === 'edit' ? 'Editar evento' : 'Crear evento')}
           </h1>
