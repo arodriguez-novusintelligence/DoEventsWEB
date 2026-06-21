@@ -98,7 +98,7 @@ export default function PaymentMethodsDashboard({
               <Wallet className="h-6 w-6 text-primary" />
             </div>
             <div className="space-y-2">
-            <h2 className="text-2xl font-semibold text-foreground">
+            <h2 className="text-2xl font-extrabold text-foreground">
               Cómo recibes los cobros
             </h2>
             <p className="text-muted-foreground">
@@ -130,7 +130,7 @@ export default function PaymentMethodsDashboard({
           )}
 
           {/* Methods List */}
-          <div className="rounded-2xl border border-border bg-card divide-y divide-border overflow-hidden shadow-sm">
+          <div className="rounded-2xl border border-border/60 bg-card divide-y divide-border overflow-hidden shadow-sm">
             {methods.length === 0 && (
               <div className="py-12 text-center px-4">
                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
@@ -145,7 +145,7 @@ export default function PaymentMethodsDashboard({
             {methods.map((method) => (
               <div key={method.id} className="flex items-center justify-between py-5 px-4 hover:bg-muted/30 transition-colors">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-muted/50 flex items-center justify-center ring-1 ring-primary/10">
+                  <div className="w-12 h-12 rounded-lg bg-muted/50 flex items-center justify-center ring-2 ring-primary/20">
                     {getMethodIcon(method.type)}
                   </div>
                   <div>

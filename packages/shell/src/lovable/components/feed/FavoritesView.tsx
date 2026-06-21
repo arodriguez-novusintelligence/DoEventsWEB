@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Heart, MapPin, User, CalendarDays, FileText, Building2, Loader2, AlertCircle } from 'lucide-react';
+import { Heart, MapPin, User, CalendarDays, FileText, Building2, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@lovable/components/ui/tabs';
 import { Button } from '@lovable/components/ui/button';
 import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBanner';
@@ -76,7 +76,7 @@ const EmptyTab = ({ message, icon: Icon }: { message: string; icon: typeof Heart
     <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
       <Icon className="h-7 w-7 text-primary" />
     </div>
-    <p className="text-sm text-muted-foreground max-w-[240px] text-center">{message}</p>
+    <p className="text-sm font-semibold text-foreground">{message}</p>
   </div>
 );
 
@@ -102,7 +102,7 @@ const EventsTab = ({
       {events
         .filter((e) => likes[e.id] !== false)
         .map((e) => (
-          <div key={e.id} className="rounded-2xl bg-card shadow-sm overflow-hidden">
+          <div key={e.id} className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
             <div className="flex">
               <button
                 type="button"
@@ -177,7 +177,7 @@ const PlacesTab = ({ places }: { places: FavPlaceItem[] }) => {
   return (
     <div className="space-y-3 pt-4">
       {places.map((place) => (
-        <div key={place.id} className="rounded-2xl bg-card border border-border p-4 shadow-sm">
+        <div key={place.id} className="rounded-2xl bg-card border border-border/60 p-4 shadow-sm">
           <div className="flex items-start gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
               <MapPin className="h-5 w-5" />
@@ -215,7 +215,7 @@ const ProfilesTab = ({
           key={profile.id}
           type="button"
           onClick={() => onViewProfile?.(profile)}
-          className="flex w-full items-center gap-3 rounded-2xl bg-card border border-border p-3 text-left shadow-sm hover:bg-accent/30"
+          className="flex w-full items-center gap-3 rounded-2xl bg-card border border-border/60 p-3 text-left shadow-sm hover:bg-accent/30"
         >
           <Avatar className="h-11 w-11">
             {profile.avatarUrl ? (
@@ -271,7 +271,8 @@ const FavoritesView = ({
           <p className="text-sm font-semibold text-foreground">No se pudieron cargar los favoritos</p>
           <p className="text-xs text-muted-foreground max-w-[240px]">{loadError}</p>
           {onRetry && (
-            <Button type="button" variant="outline" size="sm" className="rounded-xl" onClick={onRetry}>
+            <Button type="button" variant="outline" size="sm" className="rounded-full gap-1.5" onClick={onRetry}>
+              <RefreshCw className="h-3.5 w-3.5" />
               Reintentar
             </Button>
           )}

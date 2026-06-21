@@ -340,7 +340,7 @@ const ChatRoomView = ({
 
         {/* Admin settings panel */}
         {showSettings && currentUserIsAdmin && !isReadOnly && canModerate && (
-          <div className="mb-4 rounded-2xl border border-border bg-card p-4 shadow-sm">
+          <div className="mb-4 rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
             <h3 className="mb-3 text-sm font-bold text-foreground">Gestión de participantes</h3>
             <div className="space-y-2">
               {chatRoom.attendees.filter(a => !a.isAdmin).map(att => (
@@ -366,7 +366,7 @@ const ChatRoomView = ({
         {/* Messages */}
         <div className="space-y-3">
           {chatRoom.messages.length === 0 && (
-            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-primary/25 bg-card py-12 text-center">
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-primary/25 bg-card py-12 text-center shadow-sm">
               <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <MessageSquare className="h-7 w-7 text-primary" />
               </div>

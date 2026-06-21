@@ -229,7 +229,7 @@ const CreateEventView = ({
   return (
     <div className="mx-auto min-h-screen max-w-lg bg-secondary pb-32">
       {/* Header — debajo del TopHeader global (menú hamburguesa) */}
-      <div className="sticky top-0 z-10 bg-secondary px-4 pb-3 pt-2 shadow-sm">
+      <div className="sticky top-0 z-10 border-b border-border/60 bg-secondary px-4 pb-3 pt-2 shadow-sm">
         <button
           onClick={handleHeaderBack}
           className="flex items-center gap-1 text-sm font-medium text-primary"
@@ -248,7 +248,7 @@ const CreateEventView = ({
         </div>
 
         {/* Stepper */}
-        <div className="mt-3 flex items-center gap-1.5 overflow-x-auto rounded-full bg-card p-1.5 shadow-sm">
+        <div className="mt-3 flex items-center gap-1.5 overflow-x-auto rounded-full border border-border/60 bg-card p-1.5 shadow-sm">
           {STEPS.map((s) => {
             const active = currentStep === s.num;
             const completed = currentStep > s.num;
@@ -368,7 +368,7 @@ const CreateEventView = ({
           <div className="mt-6 pb-6">
             <Button
               onClick={handleContinue}
-              className="w-full rounded-full py-6 text-base font-bold shadow-lg"
+              className="w-full rounded-full py-6 text-base font-bold shadow-sm"
             >
               {continueLabel}
             </Button>

@@ -324,7 +324,7 @@ const ProfileView = ({
   return (
     <div className="mx-auto max-w-lg space-y-3 px-4 pt-4 pb-24">
       {/* Hero Profile Card */}
-      <div className="relative overflow-hidden rounded-2xl bg-card shadow-sm">
+      <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
         {/* Cover */}
         <button
           type="button"
@@ -369,7 +369,7 @@ const ProfileView = ({
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold text-foreground truncate">{profileName}</h2>
+                <h2 className="text-lg font-extrabold text-foreground truncate">{profileName}</h2>
                 {isCertified && <Shield className="h-4 w-4 text-primary shrink-0" aria-label="Certificado" />}
               </div>
               <p className="text-sm text-muted-foreground">{profileUsername}</p>

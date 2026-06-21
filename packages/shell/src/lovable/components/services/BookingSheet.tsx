@@ -288,7 +288,7 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
             <button onClick={() => onOpenChange(false)} className="flex h-8 w-8 items-center justify-center rounded-full bg-accent text-muted-foreground shadow-sm hover:text-foreground">
               <X className="h-4 w-4" />
             </button>
-            <SheetTitle className="flex items-center gap-2 text-base font-bold text-foreground">
+            <SheetTitle className="flex items-center gap-2 text-base font-extrabold text-foreground">
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <CalendarDays className="h-5 w-5 text-primary" />
               </span>
@@ -344,7 +344,7 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
               { label: 'Desde el..', value: startDate },
               { label: 'Hasta el..', value: singleDay ? startDate : endDate },
             ].map(({ label, value }) => (
-              <div key={label} className="rounded-xl border border-border bg-card px-3 py-2.5">
+              <div key={label} className="rounded-xl border border-border/60 bg-card px-3 py-2.5">
                 <p className="text-[11px] text-muted-foreground">{label}</p>
                 <div className="mt-1 flex items-center gap-2">
                   <CalendarDays className="h-4 w-4 text-primary" />
@@ -439,7 +439,7 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
             {additionalServices.length > 0 ? (
             <div className="space-y-2">
               {additionalServices.map((as, idx) => (
-                <div key={as.name} className="flex items-center justify-between rounded-xl border border-border bg-card px-4 py-3">
+                <div key={as.name} className="flex items-center justify-between rounded-xl border border-border/60 bg-card px-4 py-3">
                   <div>
                     <p className="text-sm font-medium text-foreground">{as.name}</p>
                     <p className="text-xs text-muted-foreground">{formatCurrency(as.pricePerDay, currency)} / día</p>
@@ -447,7 +447,7 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => updateQuantity(idx, -1)}
-                      className="flex h-7 w-7 items-center justify-center rounded-full border border-border bg-background text-muted-foreground hover:text-foreground transition-colors"
+                      className="flex h-7 w-7 items-center justify-center rounded-full border border-border/60 bg-background text-muted-foreground hover:text-foreground transition-colors"
                     >
                       <Minus className="h-3 w-3" />
                     </button>

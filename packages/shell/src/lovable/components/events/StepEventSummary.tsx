@@ -128,7 +128,7 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
               <div>
                 <p className="text-sm font-semibold text-primary">Video del evento</p>
                 {resolveVideoEmbedUrl(formData.videoUrl) ? (
-                  <div className="mt-2 overflow-hidden rounded-xl border border-border">
+                  <div className="mt-2 overflow-hidden rounded-xl border border-border/60">
                     <iframe
                       title="Video del evento"
                       src={resolveVideoEmbedUrl(formData.videoUrl) || ''}
@@ -287,7 +287,7 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
                 <p className="inline-flex items-center gap-1 text-sm font-bold text-foreground">
                   <MapPin className="h-4 w-4 text-primary" /> Ubicación en Google Maps
                 </p>
-                <div className="mt-2 overflow-hidden rounded-xl border border-border">
+                <div className="mt-2 overflow-hidden rounded-xl border border-border/60">
                   <iframe
                     title="Mapa"
                     src={mapsEmbed}
@@ -330,7 +330,7 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
                     return (
                       <div
                         key={cat.id}
-                        className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-3 py-2.5"
+                        className="flex items-center justify-between gap-3 rounded-xl border border-border/60 bg-card px-3 py-2.5"
                       >
                         <div className="flex min-w-0 items-center gap-2">
                           <span
@@ -405,7 +405,7 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
             {gates.map((g) => {
               const userIds = ac[g.id] ?? [];
               return (
-                <div key={g.id} className="rounded-2xl border border-border bg-card p-3">
+                <div key={g.id} className="rounded-2xl border border-border/60 bg-card p-3">
                   <div className="flex items-center gap-2">
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10">
                       <ShieldCheck className="h-5 w-5 text-primary" />
@@ -600,7 +600,7 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
         return (
           <div className="space-y-4">
             {formData.agenda.map((d, i) => (
-              <div key={d.id} className="rounded-2xl border border-border bg-card p-3">
+              <div key={d.id} className="rounded-2xl border border-border/60 bg-card p-3">
                 <div className="flex items-center gap-2">
                   <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10">
                     <Calendar className="h-5 w-5 text-primary" />
@@ -653,7 +653,7 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
         {SECTIONS.map(({ key, label, icon: Icon }) => {
           const isOpen = open[key];
           return (
-            <div key={key} className="rounded-2xl border border-border bg-card shadow-sm">
+            <div key={key} className="rounded-2xl border border-border/60 bg-card shadow-sm">
               <button
                 onClick={() => toggle(key)}
                 className="flex w-full items-center gap-3 px-4 py-4 text-left"

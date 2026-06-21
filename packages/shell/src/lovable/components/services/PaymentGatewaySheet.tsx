@@ -117,7 +117,7 @@ const PaymentGatewaySheet = ({ open, onOpenChange, booking, onSuccess, sellerNam
                 <X className="h-4 w-4" />
               </button>
             )}
-            <SheetTitle className="flex items-center gap-2 text-base font-bold text-foreground">
+            <SheetTitle className="flex items-center gap-2 text-base font-extrabold text-foreground">
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <CreditCard className="h-5 w-5 text-primary" />
               </span>
@@ -240,7 +240,7 @@ const PaymentGatewaySheet = ({ open, onOpenChange, booking, onSuccess, sellerNam
                 <p className="text-base font-bold text-foreground">Procesando pago...</p>
                 <p className="mt-1 text-sm text-muted-foreground">No cierres esta pantalla</p>
               </div>
-              <div className="w-full rounded-xl bg-card border border-border p-4 space-y-1 text-sm">
+              <div className="w-full rounded-xl bg-card border border-border/60 p-4 space-y-1 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Total a debitar</span>
                   <span className="font-bold text-foreground">{formatCurrency(booking.total, booking.currency)}</span>
@@ -382,7 +382,7 @@ const PaymentGatewaySheet = ({ open, onOpenChange, booking, onSuccess, sellerNam
                       />
                     </div>
                   </div>
-                  <div className="rounded-xl bg-card border border-border p-3">
+                  <div className="rounded-xl bg-card border border-border/60 p-3">
                     <p className="text-xs text-muted-foreground">
                       Serás redirigido al portal de tu banco para completar el pago de forma segura.
                     </p>

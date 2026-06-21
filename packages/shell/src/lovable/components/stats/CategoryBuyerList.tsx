@@ -50,7 +50,7 @@ const CategoryBuyerList = ({ category, allCategories, currency, onBack, onExport
         <button onClick={onBack} className="flex items-center gap-2">
           <ChevronLeft className="h-4 w-4 text-foreground" />
           {!consolidated && category && <span className={`h-3 w-3 rounded-full ${category.color}`} />}
-          <span className="text-sm font-bold text-foreground">{title}</span>
+          <span className="text-sm font-extrabold text-foreground">{title}</span>
         </button>
         <button
           onClick={onExport}
@@ -71,19 +71,19 @@ const CategoryBuyerList = ({ category, allCategories, currency, onBack, onExport
 
         return (
           <div className="grid grid-cols-2 gap-2 mb-4">
-            <div className="flex flex-col items-center rounded-xl bg-muted/50 p-2.5">
+            <div className="flex flex-col items-center rounded-xl bg-muted/50 p-2.5 shadow-sm">
               <span className="text-xs font-bold text-foreground">{formatCurrency(totalSale, currency)}</span>
               <span className="text-[10px] text-muted-foreground">Total venta ({buyers.length})</span>
             </div>
-            <div className="flex flex-col items-center rounded-xl bg-success/10 p-2.5">
+            <div className="flex flex-col items-center rounded-xl bg-success/10 p-2.5 shadow-sm">
               <span className="text-xs font-bold text-success">{formatCurrency(sumTotal(prePaid), currency)}</span>
               <span className="text-[10px] text-success">Pre-evento pagado ({prePaid.length})</span>
             </div>
-            <div className="flex flex-col items-center rounded-xl bg-warning/10 p-2.5">
+            <div className="flex flex-col items-center rounded-xl bg-warning/10 p-2.5 shadow-sm">
               <span className="text-xs font-bold text-warning">{formatCurrency(sumTotal(prePending), currency)}</span>
               <span className="text-[10px] text-warning">Pre-evento pendiente ({prePending.length})</span>
             </div>
-            <div className="flex flex-col items-center rounded-xl border border-border p-2.5">
+            <div className="flex flex-col items-center rounded-xl border border-border/60 p-2.5 shadow-sm">
               <span className="text-xs font-bold text-muted-foreground">{formatCurrency(sumTotal(postPending), currency)}</span>
               <span className="text-[10px] text-muted-foreground">Post-evento pendiente ({postPending.length})</span>
             </div>
@@ -103,7 +103,7 @@ const CategoryBuyerList = ({ category, allCategories, currency, onBack, onExport
           return (
             <div
               key={`${buyer.row}${buyer.number}-${idx}`}
-              className="rounded-xl border border-border overflow-hidden transition-all"
+              className="rounded-xl border border-border/60 shadow-sm overflow-hidden transition-all"
             >
               <button
                 onClick={() => setExpandedIdx(isExpanded ? null : idx)}

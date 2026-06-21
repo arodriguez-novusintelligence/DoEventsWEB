@@ -110,7 +110,7 @@ const StepAgenda = ({ formData, updateForm }: Props) => {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="flex items-center gap-2 text-xl font-bold text-primary">
+        <h2 className="flex items-center gap-2 text-xl font-extrabold text-primary">
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
             <CalendarDays className="h-5 w-5" />
           </span>
@@ -123,7 +123,7 @@ const StepAgenda = ({ formData, updateForm }: Props) => {
       </div>
 
       {/* Days picker */}
-      <div className="rounded-2xl bg-card p-4 shadow-sm">
+      <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
         <p className="text-sm font-bold text-foreground">Días del evento</p>
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {days.map((d) => {
@@ -178,7 +178,7 @@ const StepAgenda = ({ formData, updateForm }: Props) => {
           <button
             type="button"
             onClick={addDay}
-            className="ml-auto flex items-center gap-1 rounded-full border border-border bg-card px-4 py-1.5 text-sm font-semibold text-foreground"
+            className="ml-auto flex items-center gap-1 rounded-full border border-border/60 bg-card px-4 py-1.5 text-sm font-semibold text-foreground"
           >
             <Plus className="h-4 w-4" /> Agregar día
           </button>

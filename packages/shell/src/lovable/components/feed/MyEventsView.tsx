@@ -113,7 +113,7 @@ const Card = ({
   return (
     <article
       onClick={onClick}
-      className={`group relative flex flex-col overflow-hidden rounded-2xl bg-card shadow-sm text-left transition-transform active:scale-[0.98] ${onClick ? 'cursor-pointer' : ''}`}
+      className={`group relative flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm text-left transition-transform active:scale-[0.98] ${onClick ? 'cursor-pointer' : ''}`}
     >
       <div className="relative h-28 w-full overflow-hidden bg-muted">
         {ev.image ? (
@@ -270,12 +270,12 @@ const MyEventsView = ({
             value={searchQuery || ''}
             onChange={(e) => onSearchQueryChange(e.target.value)}
             placeholder="Buscar mis eventos..."
-            className="mb-3 w-full rounded-xl border border-border bg-card px-4 py-2.5 text-sm"
+            className="mb-3 w-full rounded-xl border border-border/60 bg-card px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
         )}
 
         {events.length === 0 ? (
-          <div className="flex flex-col items-center rounded-2xl border border-dashed border-primary/30 bg-card px-6 py-16 text-center">
+          <div className="flex flex-col items-center rounded-2xl border border-dashed border-primary/25 bg-card px-6 py-16 text-center shadow-sm">
             <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
               <CalendarDays className="h-7 w-7 text-primary" />
             </div>
@@ -304,7 +304,7 @@ const MyEventsView = ({
           <button
             type="button"
             onClick={onCreate}
-            className="mt-4 flex w-full items-center gap-4 rounded-2xl border-2 border-dashed border-primary/40 bg-card p-5 text-left transition-colors hover:border-primary hover:bg-primary/5"
+            className="mt-4 flex w-full items-center gap-4 rounded-2xl border-2 border-dashed border-primary/40 bg-card p-5 text-left shadow-sm transition-colors hover:border-primary hover:bg-primary/5"
           >
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
               <Plus className="h-6 w-6" />

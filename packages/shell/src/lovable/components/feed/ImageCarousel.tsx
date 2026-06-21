@@ -166,15 +166,17 @@ const ImageCarousel = ({ images, className }: ImageCarouselProps) => {
     <>
       {images.length === 1 ? (
         <div className="px-4">
+          <div className="overflow-hidden rounded-xl border border-border/60 ring-2 ring-primary/20">
           <MediaItem
             src={images[0]}
             className={cn('rounded-lg', className)}
             onClick={() => setLightboxIndex(0)}
           />
+          </div>
         </div>
       ) : (
         <div className="relative px-4">
-          <div className="overflow-hidden rounded-xl" ref={emblaRef}>
+          <div className="overflow-hidden rounded-xl border border-border/60 ring-2 ring-primary/20" ref={emblaRef}>
             <div className="flex">
               {images.map((src, i) => (
                 <div key={i} className="min-w-0 flex-[0_0_100%]">
@@ -195,7 +197,7 @@ const ImageCarousel = ({ images, className }: ImageCarouselProps) => {
                   'h-2 rounded-full transition-all duration-200',
                   i === selectedIndex
                     ? 'w-4 bg-primary'
-                    : 'w-2 bg-foreground/30'
+                    : 'w-2 bg-primary/30'
                 )}
                 onClick={() => emblaApi?.scrollTo(i)}
                 aria-label={`Ir a ${isVideo(src) ? 'video' : 'imagen'} ${i + 1}`}

@@ -365,7 +365,7 @@ const EditProfileView = ({
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
           <Settings2 className="h-5 w-5 text-primary" />
         </div>
-        <h1 className="text-3xl font-bold text-primary">Editar mis datos</h1>
+        <h1 className="text-3xl font-extrabold text-primary">Editar mis datos</h1>
       </div>
 
       {/* Datos de contacto accordion */}

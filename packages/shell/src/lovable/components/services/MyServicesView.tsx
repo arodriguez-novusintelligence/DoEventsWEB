@@ -277,7 +277,7 @@ const MyServicesView = ({
   if (mode === 'edit') {
     return (
       <div className="mx-auto min-h-screen max-w-lg bg-secondary pb-28">
-        <div className="sticky top-0 z-10 bg-secondary px-4 pt-4 pb-2">
+        <div className="sticky top-0 z-10 bg-secondary px-4 pt-4 pb-2 shadow-sm">
           <button type="button" onClick={() => onBack(formData)} className="flex items-center gap-1 text-sm font-medium text-primary">
             <ChevronLeft className="h-4 w-4" /> Volver al servicio
           </button>
@@ -353,7 +353,7 @@ const MyServicesView = ({
                       openServiceDetail(service, i);
                     }
                   }}
-                  className="flex flex-col overflow-hidden rounded-2xl bg-card shadow-sm text-left transition-transform active:scale-[0.98] cursor-pointer"
+                  className="flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm text-left transition-transform active:scale-[0.98] cursor-pointer"
                 >
                   <div className="relative h-28 w-full overflow-hidden bg-muted">
                     {img ? (
@@ -686,7 +686,7 @@ const MyServicesView = ({
   return (
     <div className="mx-auto min-h-screen max-w-lg bg-secondary pb-24">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-secondary px-4 pt-4 pb-2">
+      <div className="sticky top-0 z-10 bg-secondary px-4 pt-4 pb-2 shadow-sm">
         <button
           onClick={() => {
             if (isSummaryStep) {
@@ -710,7 +710,7 @@ const MyServicesView = ({
         >
           <ChevronLeft className="h-4 w-4" /> Volver
         </button>
-        <h1 className="mt-2 flex items-center gap-2 text-2xl font-bold text-primary">
+        <h1 className="mt-2 flex items-center gap-2 text-2xl font-extrabold text-primary">
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
             <Briefcase className="h-5 w-5" />
           </span>

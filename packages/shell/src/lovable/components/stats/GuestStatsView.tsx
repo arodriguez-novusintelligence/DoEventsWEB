@@ -35,7 +35,7 @@ const ChannelFunnelCard = ({ channel }: { channel: ChannelData }) => {
   const Icon = channelIcons[channel.icon];
 
   return (
-    <div className="rounded-2xl border border-border bg-card overflow-hidden">
+    <div className="rounded-2xl border border-border/60 bg-card overflow-hidden">
       <button
         onClick={() => setExpanded(!expanded)}
         className="flex w-full items-center gap-3 p-4 transition-colors hover:bg-accent/30"
@@ -96,7 +96,7 @@ const ChannelGuestsCard = ({ channel }: { channel: ChannelData }) => {
   const confirmed = channel.confirmedCount;
 
   return (
-    <div className="rounded-2xl border border-border bg-card overflow-hidden">
+    <div className="rounded-2xl border border-border/60 bg-card overflow-hidden">
       <button
         onClick={() => setExpanded(!expanded)}
         className="flex w-full items-center gap-3 p-4 transition-colors hover:bg-accent/30"
@@ -199,7 +199,7 @@ const GuestStatsView = ({ event, onBack }: GuestStatsViewProps) => {
         <div className="min-w-0 flex-1 flex items-center gap-2">
           <BarChart3 className="h-5 w-5 shrink-0 text-primary" />
           <div className="min-w-0">
-            <h1 className="text-base font-bold text-foreground truncate">Estadísticas de Invitados</h1>
+            <h1 className="text-base font-extrabold text-foreground truncate">Estadísticas de Invitados</h1>
             <p className="text-xs text-muted-foreground truncate">{event.eventName}</p>
           </div>
         </div>
@@ -220,7 +220,7 @@ const GuestStatsView = ({ event, onBack }: GuestStatsViewProps) => {
               Cargando estadísticas de invitados…
             </div>
             {[1, 2, 3].map((i) => (
-              <div key={i} className="animate-pulse rounded-2xl border border-border bg-card p-5">
+              <div key={i} className="animate-pulse rounded-2xl border border-border/60 bg-card p-5">
                 <div className="h-4 w-1/3 rounded bg-muted" />
                 <div className="mt-3 h-8 w-1/4 rounded bg-muted" />
               </div>
@@ -271,7 +271,7 @@ const GuestStatsView = ({ event, onBack }: GuestStatsViewProps) => {
         {/* Consolidated buyers button */}
         <button
           onClick={() => setShowBuyerList(true)}
-          className="w-full flex items-center justify-center gap-2 rounded-2xl bg-card border border-primary/30 p-3.5 shadow-sm hover:bg-accent/30 transition-colors"
+          className="w-full flex items-center justify-center gap-2 rounded-2xl bg-card border border-primary/25 p-3.5 shadow-sm hover:bg-accent/30 transition-colors"
         >
           <List className="h-4 w-4 text-primary" />
           <span className="text-sm font-semibold text-primary">Ver lista de compradores</span>
@@ -294,7 +294,7 @@ const GuestStatsView = ({ event, onBack }: GuestStatsViewProps) => {
           <p className="text-sm text-muted-foreground mb-4">
             Comparación de tasas de entrega, apertura y conversión por canal
           </p>
-          <div className="rounded-2xl border border-border bg-card p-4">
+          <div className="rounded-2xl border border-border/60 bg-card p-4">
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={chartData} barCategoryGap="20%">
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
@@ -336,7 +336,7 @@ const GuestStatsView = ({ event, onBack }: GuestStatsViewProps) => {
             {summaryCards.map(card => (
               <div
                 key={card.label}
-                className="flex items-center justify-between rounded-2xl border border-border bg-card p-5 shadow-sm"
+                className="flex items-center justify-between rounded-2xl border border-border/60 bg-card p-5 shadow-sm"
               >
                 <div>
                   <p className="text-xs text-muted-foreground">{card.label}</p>

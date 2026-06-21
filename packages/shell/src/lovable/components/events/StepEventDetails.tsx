@@ -120,7 +120,7 @@ const StepEventDetails = ({
     );
 
   const inputBase =
-    'w-full rounded-xl border border-border bg-background px-3.5 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors';
+    'w-full rounded-xl border border-border/60 bg-background px-3.5 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors';
 
   const errorBorder = 'border-destructive focus:border-destructive focus:ring-destructive/20';
 
@@ -188,7 +188,7 @@ const StepEventDetails = ({
     <div className="space-y-5">
       {/* Header */}
       <div>
-        <h2 className="flex items-center gap-2 text-xl font-bold text-primary">
+        <h2 className="flex items-center gap-2 text-xl font-extrabold text-primary">
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
             <CalendarDays className="h-5 w-5" />
           </span>
@@ -364,7 +364,7 @@ const StepEventDetails = ({
               </p>
             </div>
 
-            <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-background p-3">
+            <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border/60 bg-background p-3">
               <input
                 type="checkbox"
                 checked={!!formData.pulepAcknowledged}
@@ -678,7 +678,7 @@ const StepEventDetails = ({
                   {formData.hosts.map((h) => (
                     <div
                       key={h.id}
-                      className="rounded-2xl border border-border bg-background p-3"
+                      className="rounded-2xl border border-border/60 bg-background p-3"
                     >
                       <div className="flex items-start gap-3">
                         <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/15 text-sm font-bold text-primary">

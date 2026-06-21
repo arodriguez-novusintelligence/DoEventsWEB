@@ -291,7 +291,7 @@ const MyVenuesView = ({
 
         <button
           onClick={startCreate}
-          className="mt-4 flex w-full items-center gap-4 rounded-2xl border-2 border-dashed border-primary/40 bg-card p-5 text-left transition-colors hover:border-primary hover:bg-primary/5"
+          className="mt-4 flex w-full items-center gap-4 rounded-2xl border-2 border-dashed border-primary/40 bg-card p-5 text-left shadow-sm transition-colors hover:border-primary hover:bg-primary/5"
         >
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground">
             <Plus className="h-6 w-6" />

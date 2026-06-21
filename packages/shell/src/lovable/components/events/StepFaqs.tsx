@@ -34,7 +34,7 @@ const StepFaqs = ({ formData, updateForm }: Props) => {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="flex items-center gap-2 text-xl font-bold text-primary">
+        <h2 className="flex items-center gap-2 text-xl font-extrabold text-primary">
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
             <HelpCircle className="h-5 w-5" />
           </span>
@@ -59,7 +59,7 @@ const StepFaqs = ({ formData, updateForm }: Props) => {
       )}
 
       {/* Draft card */}
-      <div className="rounded-2xl bg-card p-4 shadow-sm">
+      <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
         <label className="text-xs font-semibold text-foreground">Pregunta</label>
         <input
           value={draftQ}
@@ -87,7 +87,7 @@ const StepFaqs = ({ formData, updateForm }: Props) => {
       </div>
 
       {faqs.map((faq) => (
-        <div key={faq.id} className="rounded-2xl bg-card p-4 shadow-sm">
+        <div key={faq.id} className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
           <label className="text-xs font-semibold text-foreground">Pregunta</label>
           <input
             value={faq.question}
