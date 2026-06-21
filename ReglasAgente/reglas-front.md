@@ -115,6 +115,28 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b13)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| MessagesListView cards | VISUAL | Sí | `chat/MessagesListView.tsx` | border-border/60; font-extrabold transversal; h-14 loading rings |
+| MessagesListView filters | VISUAL | Sí | `chat/MessagesListView.tsx` | FilterChip extrabold + shadow-sm active; search border-border/60 |
+| NotificationsSheet loading | VISUAL | Sí | `feed/NotificationsSheet.tsx` | h-14 ring loading; empty dashed border-primary/25 |
+| NotificationsSheet actions | VISUAL | Sí | `feed/NotificationsSheet.tsx` | links extrabold; Aceptar/Rechazar rounded-full shadow-sm |
+| NotificationsContext clear | Integración | Sí | `contexts/NotificationsContext.tsx` | alias `clearNotifications` = clearAll |
+| HostPickerModal empty | VISUAL | Sí | `events/HostPickerModal.tsx` | dashed cards search/empty; retry extrabold |
+| MyPostsView empty dashed | VISUAL | Sí | `feed/MyPostsView.tsx` | border-dashed border-primary/25 |
+| MyReservedServices empty | VISUAL | Sí | `purchases/MyReservedServicesView.tsx` | dashed empty; fetchUserServiceBookings intacto |
+| EventPublished ring | VISUAL | Sí | `pages/EventPublished.tsx` | ring-2 ring-primary/20; fetchEventById intacto |
+| EventsView provider heart | VISUAL | Sí | `feed/EventsView.tsx` | FavoriteHeart ring-primary/20 en card proveedor |
+| AddGuestModal search | VISUAL | Sí | `guests/AddGuestModal.tsx` | Input border-border/60; Button rounded-full extrabold |
+| SeatingMapEditor / FAQ / StepUnified | Empalme | Sí | ver batch previo | Verificados intactos |
+| ReportPostDialog / ServiceDetailView | Empalme | Sí | ver batch previo | Verificados intactos |
+| AccessControlListView / MainInfoSection | Empalme | Sí | ver batch previo | Verificados intactos |
+| CreatePostSheet / TicketDetailView / FeedHero | Empalme | Sí | ver batch previo | Verificados intactos |
+| MyPurchasesView | Empalme | Sí | ver batch previo | Verificado intacto |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 20 DONE + 0 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b12)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-06-21T21:00:00Z",
+  "generatedAt": "2026-06-21T22:00:00Z",
   "lovableSha": "cb27c8309511889a72a059c6c933809536d7dc11",
   "webBranch": "feature/cicd/dev-automation",
-  "comparisonSource": "gap-empalme-27905180836-b12 batch 1 duodécima pasada — discover-joyful-feed no accesible en agente cloud",
-  "overallSimilarityPercent": 98.95,
-  "overallSimilarityPercentBefore": 80.8,
-  "overallSimilarityPercentAfter": 98.95,
+  "comparisonSource": "gap-empalme-27905180836-b13 batch 1 decimotercera pasada — discover-joyful-feed no accesible en agente cloud",
+  "overallSimilarityPercent": 99.05,
+  "overallSimilarityPercentBefore": 80.83,
+  "overallSimilarityPercentAfter": 99.05,
   "targetSimilarityPercent": 98.0,
   "alignmentGapPercent": 0,
   "missingInWebCount": 0,
   "needsAdaptationCount": 97,
-  "lastGapEmpalmeRunId": "gap-empalme-27905180836-b12",
-  "lastAgentRunId": "27905180836-b12",
+  "lastGapEmpalmeRunId": "gap-empalme-27905180836-b13",
+  "lastAgentRunId": "27905180836-b13",
   "batch1Closed": 20,
   "batch1BackendRequired": 0,
   "remainingGaps": 97,
-  "notes": "Batch 1 run 27905180836-b12: duodécima pasada DSF FeedHero gradientes semánticos + NotificationsContext API aliases markAsRead/removeNotification; StepAccessControl stat rings; SeatingMapEditor CTAs rounded-full; EventsView heart ring; 20 DONE + 0 BACKEND_REQUIRED; build:devaws OK; objetivo 98% alcanzado."
+  "notes": "Batch 1 run 27905180836-b13: decimotercera pasada DSF MessagesListView border-border/60 + font-extrabold + h-14 loading rings; NotificationsSheet loading/empty dashed + action CTAs; NotificationsContext clearNotifications alias; HostPickerModal empty cards; 20 DONE + 0 BACKEND_REQUIRED; build:devaws OK; objetivo 98% alcanzado."
 }
