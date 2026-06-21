@@ -48,7 +48,7 @@ const TopHeader = ({
 }: TopHeaderProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
-  const { unreadCount } = useNotifications();
+  const { unreadCount, hasUnread } = useNotifications();
 
   const handleViewProfileFromNotif = (user: { name: string; initials: string; userId?: string }) => {
     setNotifOpen(false);
@@ -89,7 +89,7 @@ const TopHeader = ({
               className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-card text-primary shadow-sm ring-2 ring-primary/20 transition-colors hover:bg-accent"
             >
               <Bell className="h-5 w-5" strokeWidth={2} />
-              {unreadCount > 0 && (
+              {hasUnread && (
                 <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground">
                   {unreadCount > 999 ? '999+' : unreadCount}
                 </span>

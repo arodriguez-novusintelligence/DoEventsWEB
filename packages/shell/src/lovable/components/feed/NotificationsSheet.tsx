@@ -279,7 +279,7 @@ const NotificationsSheet = ({
   onGoToTickets,
   onGoToPost,
 }: NotificationsSheetProps) => {
-  const { notifications, unreadCount, loading, loadError, reload, markAllRead, markRead, dismissNotification, updateNotification, clearAll } = useNotifications();
+  const { notifications, unreadCount, hasUnread, loading, loadError, loadErrorMessage, isEmpty, reload, refreshNotifications, markAllRead, markRead, dismissNotification, updateNotification, clearAll } = useNotifications();
 
   const handleAccept = async (n: Notification) => {
     if (n.type === 'follow_request') {
@@ -381,14 +381,14 @@ const NotificationsSheet = ({
               <Bell className="h-5 w-5 text-primary" />
             </div>
             Notificaciones
-            {unreadCount > 0 && (
+            {hasUnread && (
               <span className="inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">
                 {unreadCount > 99 ? '99+' : unreadCount}
               </span>
             )}
           </DrawerTitle>
           <div className="flex items-center gap-3">
-            {unreadCount > 0 && (
+            {hasUnread && (
               <button
                 onClick={() => { void markAllRead(); }}
                 className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline transition-colors"
@@ -411,7 +411,7 @@ const NotificationsSheet = ({
 
         <div className="mt-2 overflow-y-auto divide-y divide-border pb-6">
           {loading ? (
-            <div className="flex flex-col items-center py-12 text-center">
+            <div className="mx-4 flex flex-col items-center rounded-2xl border border-border/60 bg-card py-12 text-center shadow-sm">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
               <p className="mt-3 text-sm text-muted-foreground">Cargando notificaciones…</p>
             </div>
@@ -420,23 +420,23 @@ const NotificationsSheet = ({
               <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
                 <AlertCircle className="h-7 w-7 text-destructive" strokeWidth={2} />
               </div>
-              <p className="text-sm font-semibold text-foreground">Error al cargar</p>
-              <p className="mt-1 max-w-[260px] text-xs text-muted-foreground">{loadError}</p>
+              <p className="text-sm font-extrabold text-foreground">Error al cargar</p>
+              <p className="mt-1 max-w-[260px] text-xs text-muted-foreground">{loadErrorMessage ?? loadError}</p>
               <button
                 type="button"
-                onClick={() => { void reload(); }}
+                onClick={() => { void refreshNotifications(); }}
                 className="mt-4 flex items-center gap-1.5 rounded-full border border-border bg-card px-4 py-2 text-xs font-semibold text-primary hover:bg-accent/40 shadow-sm transition-colors"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
                 Reintentar
               </button>
             </div>
-          ) : notifications.length === 0 ? (
-            <div className="mx-4 flex flex-col items-center rounded-2xl bg-card py-12 text-center shadow-sm">
+          ) : isEmpty ? (
+            <div className="mx-4 flex flex-col items-center rounded-2xl border border-border/60 bg-card py-12 text-center shadow-sm">
               <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <Bell className="h-7 w-7 text-primary" strokeWidth={2} />
               </div>
-              <p className="text-sm font-semibold text-foreground">Sin notificaciones</p>
+              <p className="text-sm font-extrabold text-foreground">Sin notificaciones</p>
               <p className="mt-1 max-w-[240px] text-xs text-muted-foreground">
                 Aquí verás actividad de tus eventos, reservas y mensajes.
               </p>

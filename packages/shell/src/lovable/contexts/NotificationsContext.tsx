@@ -1,3 +1,12 @@
+/**
+ * Notifications context — empalme Lovable sobre API real `@doevents/shared`.
+ *
+ * API expuesta (paridad Lovable):
+ * - `notifications`, `unreadCount`, `hasUnread`, `loading`, `loadError`, `loadErrorMessage`, `isEmpty`
+ * - `reload` / `refreshNotifications`, `markAllRead`, `markRead`, `dismissNotification`, `clearAll`
+ *
+ * Datos vía `fetchUserNotifications` — sin mocks.
+ */
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import {
   deleteAllNotifications,
@@ -64,7 +73,7 @@ export interface Notification {
   };
 }
 
-interface NotificationsContextType {
+export interface NotificationsContextValue {
   notifications: Notification[];
   unreadCount: number;
   hasUnread: boolean;
@@ -73,6 +82,7 @@ interface NotificationsContextType {
   loadErrorMessage: string | null;
   isEmpty: boolean;
   reload: () => Promise<void>;
+  refreshNotifications: () => Promise<void>;
   addNotification: (n: Omit<Notification, 'id' | 'timeAgo' | 'read'>) => void;
   markAllRead: () => void;
   markRead: (id: string) => void;
@@ -81,7 +91,7 @@ interface NotificationsContextType {
   clearAll: () => void;
 }
 
-const fallbackContext: NotificationsContextType = {
+const fallbackContext: NotificationsContextValue = {
   notifications: [],
   unreadCount: 0,
   hasUnread: false,
@@ -90,6 +100,7 @@ const fallbackContext: NotificationsContextType = {
   loadErrorMessage: null,
   isEmpty: true,
   reload: async () => undefined,
+  refreshNotifications: async () => undefined,
   addNotification: () => undefined,
   markAllRead: () => undefined,
   markRead: () => undefined,
@@ -98,7 +109,9 @@ const fallbackContext: NotificationsContextType = {
   clearAll: () => undefined,
 };
 
-const NotificationsContext = createContext<NotificationsContextType>(fallbackContext);
+const NotificationsContext = createContext<NotificationsContextValue>(fallbackContext);
+
+export { NotificationsContext };
 
 export const useNotifications = () => {
   const ctx = useContext(NotificationsContext);
@@ -109,6 +122,9 @@ export const useNotifications = () => {
 
   return ctx;
 };
+
+/** Alias Lovable — misma API que `useNotifications`. */
+export const useNotificationsContext = useNotifications;
 
 export const NotificationsProvider = ({
   children,
@@ -244,6 +260,7 @@ export const NotificationsProvider = ({
         loadErrorMessage: loadError,
         isEmpty: !loading && !loadError && notifications.length === 0,
         reload: reloadFromApi,
+        refreshNotifications: reloadFromApi,
         addNotification,
         markAllRead,
         markRead,
