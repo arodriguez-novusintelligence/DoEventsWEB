@@ -3,6 +3,7 @@
  *
  * API expuesta (paridad Lovable):
  * - `notifications`, `unreadCount`, `hasUnread`, `loading`, `loadError`, `loadErrorMessage`, `isEmpty`, `hasError`, `error`
+ * - `count`, `notificationCount`, `totalCount` (alias de `notifications.length`)
  * - `reload` / `refreshNotifications`, `markAllRead`, `markRead`, `dismissNotification`, `clearAll`
  *
  * Datos vía `fetchUserNotifications` — sin mocks.
@@ -91,6 +92,12 @@ export interface NotificationsContextValue {
   refreshNotifications: () => Promise<void>;
   /** Alias Lovable — mismo handler que `reload`. */
   refresh: () => Promise<void>;
+  /** Alias Lovable — total de notificaciones en lista. */
+  count: number;
+  /** Alias Lovable — mismo valor que `count`. */
+  notificationCount: number;
+  /** Alias Lovable — mismo valor que `count`. */
+  totalCount: number;
   addNotification: (n: Omit<Notification, 'id' | 'timeAgo' | 'read'>) => void;
   markAllRead: () => void;
   markRead: (id: string) => void;
@@ -113,6 +120,9 @@ const fallbackContext: NotificationsContextValue = {
   reload: async () => undefined,
   refreshNotifications: async () => undefined,
   refresh: async () => undefined,
+  count: 0,
+  notificationCount: 0,
+  totalCount: 0,
   addNotification: () => undefined,
   markAllRead: () => undefined,
   markRead: () => undefined,
@@ -277,6 +287,9 @@ export const NotificationsProvider = ({
         reload: reloadFromApi,
         refreshNotifications: reloadFromApi,
         refresh: reloadFromApi,
+        count: notifications.length,
+        notificationCount: notifications.length,
+        totalCount: notifications.length,
         addNotification,
         markAllRead,
         markRead,

@@ -164,7 +164,7 @@ const MainInfoSection = () => {
               <span className="text-sm">Número de personas</span>
             </div>
             <div className="flex items-center gap-3">
-              <button type="button" onClick={() => update({ capacity: String(Math.max(1, capacity - 1)) })} className="flex h-8 w-8 items-center justify-center rounded-full border border-border/60 shadow-sm hover:bg-primary/5">
+              <button type="button" onClick={() => update({ capacity: String(Math.max(1, capacity - 1)) })} className="flex h-8 w-8 items-center justify-center rounded-full border border-border/60 shadow-sm ring-2 ring-primary/20 hover:bg-primary/5">
                 <Minus className="w-4 h-4 text-primary" />
               </button>
               <span className="w-8 text-center font-extrabold text-primary">{capacity}</span>
@@ -178,7 +178,7 @@ const MainInfoSection = () => {
 
       <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-card px-3 py-2 shadow-sm">
         <Checkbox checked={form.hasParking} onCheckedChange={(v) => update({ hasParking: Boolean(v) })} id="parking" />
-        <label htmlFor="parking" className="flex items-center gap-2 text-sm">
+        <label htmlFor="parking" className="flex items-center gap-2 text-sm font-extrabold">
           <ParkingCircle className="h-4 w-4 text-primary" />
           Incluye parqueadero
         </label>

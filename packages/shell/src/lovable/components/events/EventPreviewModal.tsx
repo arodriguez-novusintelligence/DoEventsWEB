@@ -14,7 +14,7 @@ const Field = ({ icon: Icon, label, value }: { icon: any; label: string; value: 
       <Icon className="h-4 w-4 text-primary" />
       <span className="font-extrabold">{label}</span>
     </div>
-    <div className="mt-1 text-sm text-foreground">{value || '—'}</div>
+    <div className="mt-1 text-sm font-extrabold text-foreground">{value || '—'}</div>
   </div>
 );
 
@@ -247,7 +247,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
                   <ShieldCheck className="h-5 w-5" />
                   <span className="font-extrabold">Solicita tu reembolso</span>
                 </div>
-                <p className="mt-2 text-sm text-foreground">{refundLabel}</p>
+                <p className="mt-2 text-sm font-extrabold text-foreground">{refundLabel}</p>
                 <button className="mt-3 w-full rounded-full bg-card py-2.5 text-sm font-extrabold text-primary shadow-sm">
                   Ver política de reembolsos →
                 </button>

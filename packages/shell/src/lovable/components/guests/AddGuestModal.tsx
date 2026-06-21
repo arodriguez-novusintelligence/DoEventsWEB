@@ -661,7 +661,7 @@ export function AddGuestModal({
                   <AlertCircle className="h-7 w-7 text-destructive" />
                 </div>
                 <p className="px-4 text-sm font-extrabold text-destructive">{searchError}</p>
-                <Button type="button" variant="outline" size="sm" className="rounded-full gap-1.5 shadow-sm" onClick={() => void search()}>
+                <Button type="button" variant="outline" size="sm" className="rounded-full gap-1.5 font-extrabold shadow-sm" onClick={() => void search()}>
                   <RefreshCw className="h-4 w-4" />
                   Reintentar
                 </Button>
@@ -686,7 +686,7 @@ export function AddGuestModal({
                       type="button"
                       onClick={() => toggleSearchSelection(u.id)}
                       className={`flex w-full items-center gap-3 rounded-xl border p-3 text-left shadow-sm transition-colors ${
-                        selected ? 'border-primary bg-primary/5' : 'border-border/60 bg-card hover:bg-secondary/50'
+                        selected ? 'border-primary bg-primary/5 ring-2 ring-primary/20' : 'border-border/60 bg-card hover:bg-secondary/50'
                       }`}
                     >
                       {u.avatar ? (

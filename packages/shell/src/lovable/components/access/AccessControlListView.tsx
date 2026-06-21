@@ -45,33 +45,37 @@ const EventCard = ({
   const canControl = isAccessControlEnabled(ev.status);
 
   return (
-    <div className={`rounded-2xl bg-card p-5 shadow-sm border border-border/40 ${!canControl ? 'opacity-90' : ''}`}>
+    <div className={`rounded-2xl bg-card p-5 shadow-sm border border-border/60 ${!canControl ? 'opacity-90' : ''}`}>
       <div className="flex items-start justify-between gap-2">
         <h2 className="text-lg font-extrabold text-foreground leading-tight">{ev.title}</h2>
-        <span className={`shrink-0 rounded-full px-3 py-1 text-[11px] font-semibold ${statusStyles[ev.status]}`}>
+        <span className={`shrink-0 rounded-full px-3 py-1 text-[11px] font-extrabold shadow-sm ${statusStyles[ev.status]}`}>
           {statusLabels[ev.status]}
         </span>
       </div>
 
-      <div className="mt-2 flex items-center gap-2 text-sm text-primary font-medium">
+      <div className="mt-2 flex items-center gap-2 text-sm text-primary font-extrabold">
         <Calendar className="h-4 w-4" />
         {ev.date} – {ev.time}
       </div>
-      <div className="mt-1 flex items-start gap-2 text-sm text-primary font-medium">
+      <div className="mt-1 flex items-start gap-2 text-sm text-primary font-extrabold">
         <MapPin className="h-4 w-4 mt-0.5 shrink-0" />
         <span className="leading-snug">{ev.location}</span>
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-3">
         <div className="rounded-xl border border-border/60 bg-card p-3 text-center shadow-sm">
-          <DoorOpen className="h-4 w-4 text-primary mx-auto mb-1" />
+          <div className="mx-auto mb-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+            <DoorOpen className="h-4 w-4 text-primary" />
+          </div>
           <div className="text-2xl font-extrabold text-primary leading-none">{ev.doors}</div>
-          <div className="text-[11px] text-muted-foreground mt-1">Puertas</div>
+          <div className="text-[11px] font-extrabold text-muted-foreground mt-1">Puertas</div>
         </div>
         <div className="rounded-xl border border-border/60 bg-card p-3 text-center shadow-sm">
-          <Users className="h-4 w-4 text-primary mx-auto mb-1" />
+          <div className="mx-auto mb-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+            <Users className="h-4 w-4 text-primary" />
+          </div>
           <div className="text-2xl font-extrabold text-primary leading-none">{ev.staff}</div>
-          <div className="text-[11px] text-muted-foreground mt-1">Staff</div>
+          <div className="text-[11px] font-extrabold text-muted-foreground mt-1">Staff</div>
         </div>
       </div>
 
@@ -79,19 +83,19 @@ const EventCard = ({
         <>
           <button
             onClick={() => onScan(ev)}
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3 text-sm font-bold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors"
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-extrabold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors"
           >
             <ScanLine className="h-4 w-4" /> Escanear código
           </button>
           <button
             onClick={() => onConfigure?.(ev)}
-            className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl py-2.5 text-sm font-semibold text-primary hover:bg-primary/5 transition-colors"
+            className="mt-2 flex w-full items-center justify-center gap-2 rounded-full py-2.5 text-sm font-extrabold text-primary shadow-sm hover:bg-primary/5 transition-colors"
           >
             <Settings2 className="h-4 w-4" /> Configurar
           </button>
         </>
       ) : (
-        <div className="mt-4 flex items-start gap-2 rounded-xl border border-border bg-muted/40 px-3 py-3 text-xs text-muted-foreground">
+        <div className="mt-4 flex items-start gap-2 rounded-xl border border-border/60 bg-muted/40 px-3 py-3 text-xs font-extrabold text-muted-foreground shadow-sm">
           <Lock className="mt-0.5 h-4 w-4 shrink-0" />
           <span>
             El control de acceso no está disponible para eventos finalizados o cancelados.
@@ -143,9 +147,11 @@ const AccessControlListView = ({
           </p>
 
           {loading && (
-            <div className="flex flex-col items-center justify-center gap-3 rounded-2xl bg-card p-10 text-center shadow-sm">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <p className="text-sm text-muted-foreground">Cargando eventos…</p>
+            <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-card p-10 text-center shadow-sm">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                <Loader2 className="h-7 w-7 animate-spin text-primary" />
+              </div>
+              <p className="text-sm font-extrabold text-foreground">Cargando eventos…</p>
             </div>
           )}
 
@@ -154,9 +160,9 @@ const AccessControlListView = ({
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
                 <AlertCircle className="h-7 w-7 text-destructive" />
               </div>
-              <p className="mt-3 text-sm font-medium text-destructive">{loadError}</p>
+              <p className="mt-3 text-sm font-extrabold text-destructive">{loadError}</p>
               {onRetry && (
-                <Button type="button" variant="outline" size="sm" className="mt-4 gap-1.5 rounded-full" onClick={onRetry}>
+                <Button type="button" variant="outline" size="sm" className="mt-4 gap-1.5 rounded-full font-extrabold shadow-sm" onClick={onRetry}>
                   <RefreshCw className="h-3.5 w-3.5" />
                   Reintentar
                 </Button>
@@ -172,10 +178,10 @@ const AccessControlListView = ({
               <button
                 key={k}
                 onClick={() => setTab(k)}
-                className={`rounded-full px-4 py-3 text-sm font-semibold shadow-sm transition-all ${
+                className={`rounded-full px-4 py-3 text-sm font-extrabold shadow-sm transition-all ${
                   tab === k
                     ? 'bg-primary text-primary-foreground'
-                    : 'bg-card text-muted-foreground border border-border'
+                    : 'bg-card text-muted-foreground border border-border/60'
                 }`}
               >
                 {k === 'mios' ? 'Mis eventos' : 'Eventos asignados'}
@@ -188,8 +194,8 @@ const AccessControlListView = ({
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <Shield className="h-7 w-7 text-primary" />
               </div>
-              <p className="mt-3 text-sm font-semibold text-foreground">Sin eventos en esta categoría</p>
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="mt-3 text-sm font-extrabold text-foreground">Sin eventos en esta categoría</p>
+              <p className="mt-1 text-xs font-extrabold text-muted-foreground">
                 {tab === 'mios'
                   ? 'Publica un evento o espera asignación de staff para controlar accesos.'
                   : 'Aún no tienes eventos asignados como staff de acceso.'}
@@ -200,7 +206,7 @@ const AccessControlListView = ({
           {activeItems.length > 0 && (
             <section className="mb-6">
               <div className="mb-3 flex items-center gap-2 px-1">
-                <span className="rounded-full bg-success/10 px-2.5 py-0.5 text-[11px] font-semibold text-success">
+                <span className="rounded-full bg-success/10 px-2.5 py-0.5 text-[11px] font-extrabold text-success shadow-sm">
                   Activos / En ejecución
                 </span>
                 <span className="text-xs text-muted-foreground">({activeItems.length})</span>
@@ -216,7 +222,7 @@ const AccessControlListView = ({
           {inactiveItems.length > 0 && (
             <section className="mb-6">
               <div className="mb-3 flex items-center gap-2 px-1">
-                <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
+                <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-extrabold text-muted-foreground shadow-sm">
                   Inactivos
                 </span>
                 <span className="text-xs text-muted-foreground">({inactiveItems.length})</span>
@@ -232,7 +238,7 @@ const AccessControlListView = ({
           {pastItems.length > 0 && (
             <section className="mb-6">
               <div className="mb-3 flex items-center gap-2 px-1">
-                <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
+                <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-extrabold text-muted-foreground shadow-sm">
                   Finalizados / Cancelados
                 </span>
                 <span className="text-xs text-muted-foreground">({pastItems.length})</span>
@@ -251,7 +257,7 @@ const AccessControlListView = ({
                 if (onAssignEvent) onAssignEvent();
                 else toast.info('La asignación de staff requiere invitación del organizador');
               }}
-              className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-primary/40 bg-primary/5 px-4 py-3 text-sm font-semibold text-primary"
+              className="mt-2 flex w-full items-center justify-center gap-2 rounded-full border-2 border-dashed border-primary/25 bg-primary/5 px-4 py-3 text-sm font-extrabold text-primary shadow-sm"
             >
               <Plus className="h-4 w-4" /> Asignar evento
             </button>

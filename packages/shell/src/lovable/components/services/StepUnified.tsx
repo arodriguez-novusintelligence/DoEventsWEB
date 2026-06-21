@@ -681,7 +681,7 @@ const StepUnified = ({
                   onClick={() => updateForm({ bookingPreference: 'instant' })}
                   className={cn(
                     'w-full rounded-xl border p-4 text-left transition-colors flex items-start gap-3 shadow-sm',
-                    formData.bookingPreference === 'instant' ? 'border-primary bg-primary/5' : 'border-border/60 hover:border-muted-foreground'
+                    formData.bookingPreference === 'instant' ? 'border-primary bg-primary/5 ring-2 ring-primary/20' : 'border-border/60 hover:border-muted-foreground'
                   )}
                 >
                   <Zap className="h-5 w-5 text-primary mt-0.5 shrink-0" />
@@ -698,7 +698,7 @@ const StepUnified = ({
                   onClick={() => updateForm({ bookingPreference: 'approval' })}
                   className={cn(
                     'w-full rounded-xl border p-4 text-left transition-colors flex items-start gap-3 shadow-sm',
-                    formData.bookingPreference === 'approval' ? 'border-primary bg-primary/5' : 'border-border/60 hover:border-muted-foreground'
+                    formData.bookingPreference === 'approval' ? 'border-primary bg-primary/5 ring-2 ring-primary/20' : 'border-border/60 hover:border-muted-foreground'
                   )}
                 >
                   <ClipboardCheck className="h-5 w-5 text-primary mt-0.5 shrink-0" />
@@ -716,7 +716,7 @@ const StepUnified = ({
                 {REFUND_POLICIES.map((policy) => (
                   <label key={policy} className="flex items-center gap-3 cursor-pointer">
                     <RadioGroupItem value={policy} />
-                    <span className="text-sm text-foreground">{policy}</span>
+                    <span className="text-sm font-extrabold text-foreground">{policy}</span>
                   </label>
                 ))}
               </RadioGroup>

@@ -102,7 +102,7 @@ const MyPostsView = ({
                   type="button"
                   disabled={deletingId === post.id}
                   onClick={() => void handleDelete(post.id)}
-                  className="absolute top-3 right-3 flex h-9 w-9 items-center justify-center rounded-full border border-destructive/30 bg-card/90 text-destructive shadow-sm hover:bg-destructive/10 disabled:opacity-50"
+                  className="absolute top-3 right-3 flex h-9 w-9 items-center justify-center rounded-full border border-destructive/30 bg-card/90 text-destructive shadow-sm ring-2 ring-destructive/20 hover:bg-destructive/10 disabled:opacity-50"
                   aria-label="Eliminar publicación"
                 >
                   <Trash2 className="h-4 w-4" />

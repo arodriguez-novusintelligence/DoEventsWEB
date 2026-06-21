@@ -107,12 +107,12 @@ export const ReportPostDialog = ({
             value={details}
             onChange={(e) => setDetails(e.target.value)}
             rows={3}
-            className="border-border/60 shadow-sm"
+            className="border-border/60 shadow-sm font-extrabold"
           />
         </div>
 
         {submitError && (
-          <div className="flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive shadow-sm">
+          <div className="flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/5 p-3 text-sm font-extrabold text-destructive shadow-sm">
             <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
             <span>{submitError}</span>
           </div>

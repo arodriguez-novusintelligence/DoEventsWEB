@@ -94,7 +94,7 @@ export const MyPurchasesView = ({ onBack }: MyPurchasesViewProps) => {
             <Button
               type="button"
               variant="outline"
-              className="mt-4 rounded-full font-extrabold shadow-sm"
+              className="mt-4 rounded-full font-extrabold shadow-sm gap-1.5"
               onClick={retryLoad}
             >
               <RefreshCw className="mr-2 h-4 w-4" />
@@ -155,12 +155,12 @@ export const MyPurchasesView = ({ onBack }: MyPurchasesViewProps) => {
             </button>
 
             {!ticketCount && !venueBookings.length && !serviceBookings.length && (
-              <div className="rounded-2xl border border-border/60 bg-card p-10 text-center shadow-sm">
+              <div className="rounded-2xl border border-dashed border-primary/25 bg-card p-10 text-center shadow-sm">
                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                   <Ticket className="h-7 w-7 text-primary" />
                 </div>
                 <p className="mt-3 text-sm font-extrabold text-foreground">Sin compras ni reservas</p>
-                <p className="mt-1 text-xs text-muted-foreground">Tus boletas y reservas aparecerán aquí</p>
+                <p className="mt-1 text-xs font-extrabold text-muted-foreground">Tus boletas y reservas aparecerán aquí</p>
               </div>
             )}
           </>
