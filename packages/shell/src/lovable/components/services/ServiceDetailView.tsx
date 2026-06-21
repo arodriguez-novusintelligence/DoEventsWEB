@@ -155,14 +155,14 @@ const ServiceDetailView = ({
 
       <div className="px-4 mt-4">
         <h1 className="text-2xl font-extrabold text-primary leading-tight">{providerName || sector}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-1 text-sm font-extrabold text-muted-foreground">
           {allActivities.map((a) => a.activity).join(' · ')}
         </p>
         {(description || service.refundPolicy) && description !== service.refundPolicy && description !== locationLabel && (
           <p className="mt-3 text-sm leading-relaxed text-foreground/80">{description}</p>
         )}
         {locationLabel && locationLabel !== description && (
-          <p className="mt-2 flex items-center gap-1 text-xs text-muted-foreground">
+          <p className="mt-2 flex items-center gap-1 text-xs font-extrabold text-muted-foreground">
             <MapPin className="h-3.5 w-3.5 shrink-0 text-primary/70" />
             {locationLabel}
           </p>
@@ -220,7 +220,7 @@ const ServiceDetailView = ({
             {service.globalStartTime} - {service.globalEndTime}
           </p>
           {days.length > 0 && (
-            <p className="text-xs text-muted-foreground mt-1">Disponible: {days.join(', ')}</p>
+            <p className="text-xs font-extrabold text-muted-foreground mt-1">Disponible: {days.join(', ')}</p>
           )}
         </div>
 
@@ -247,11 +247,11 @@ const ServiceDetailView = ({
           <div className="flex items-center gap-2 mb-2">
             <Star className="h-5 w-5 fill-primary text-primary" />
             <span className="font-extrabold">{rating > 0 ? rating.toFixed(1) : 'Sin calificaciones'}</span>
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm font-extrabold text-muted-foreground">
               {reviewCount > 0 ? `(${reviewCount} reseñas)` : '(aún sin reseñas)'}
             </span>
           </div>
-          <p className="text-xs text-muted-foreground">Calificación promedio del proveedor.</p>
+          <p className="text-xs font-extrabold text-muted-foreground">Calificación promedio del proveedor.</p>
           {onRate && (
             <div className="mt-3 flex gap-1">
               {[1, 2, 3, 4, 5].map((s) => (

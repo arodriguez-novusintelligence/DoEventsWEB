@@ -220,7 +220,7 @@ const TicketDetailView = ({
                 {ticket.eventTitle}
               </h1>
               {ticket.orderDate && (
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="mt-1 text-xs font-extrabold text-muted-foreground">
                   Comprada el {ticket.orderDate}
                 </p>
               )}
@@ -305,7 +305,7 @@ const TicketDetailView = ({
             <div className="p-5 space-y-5">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-2">Categoría</p>
+                  <p className="text-sm font-extrabold text-muted-foreground mb-2">Categoría</p>
                   <span className="inline-block rounded-full bg-primary/10 px-4 py-2 text-xs font-extrabold text-primary uppercase max-w-full">
                     {ticket.category}
                   </span>
@@ -315,14 +315,14 @@ const TicketDetailView = ({
                   )}
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-muted-foreground mb-2">Puerta de ingreso</p>
+                  <p className="text-sm font-extrabold text-muted-foreground mb-2">Puerta de ingreso</p>
                   <p className="text-base font-extrabold text-foreground">{entranceLabel}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1.5">Fecha</p>
+                  <p className="text-sm font-extrabold text-muted-foreground mb-1.5">Fecha</p>
                   <div className="flex items-center gap-2">
                     <Calendar className="h-5 w-5 text-primary" />
                     <span className="text-base font-extrabold text-foreground">{ticket.eventDate}</span>
@@ -330,7 +330,7 @@ const TicketDetailView = ({
                 </div>
                 {ticket.startTime && (
                   <div className="text-right">
-                    <p className="text-sm text-muted-foreground mb-1.5">Hora inicio</p>
+                    <p className="text-sm font-extrabold text-muted-foreground mb-1.5">Hora inicio</p>
                     <div className="flex items-center justify-end gap-2">
                       <Clock className="h-5 w-5 text-primary" />
                       <span className="text-base font-extrabold text-foreground">{ticket.startTime}</span>

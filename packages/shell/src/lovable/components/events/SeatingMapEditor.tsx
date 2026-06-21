@@ -1836,7 +1836,7 @@ const ElementFormSheet = ({
           value={figure.name}
           onChange={(e) => onChange({ name: e.target.value })}
           placeholder="Ej: Baño principal"
-          className="h-11 rounded-lg"
+          className="h-11 rounded-xl border border-border/60 shadow-sm"
         />
       </Field>
       <NameStyleEditor figure={figure} onChange={onChange} />
@@ -1910,14 +1910,14 @@ const ImageAndRoleBlock = ({
             <button
               type="button"
               onClick={onPickImage}
-              className="rounded-lg border border-primary px-3 py-1.5 text-xs font-extrabold text-primary"
+              className="rounded-full border border-primary px-3 py-1.5 text-xs font-extrabold text-primary shadow-sm"
             >
               Cambiar imagen
             </button>
             <button
               type="button"
               onClick={onRemoveImage}
-              className="rounded-lg border border-destructive px-3 py-1.5 text-xs font-extrabold text-destructive"
+              className="rounded-full border border-destructive px-3 py-1.5 text-xs font-extrabold text-destructive shadow-sm"
             >
               Quitar imagen
             </button>
@@ -1941,7 +1941,7 @@ const ImageAndRoleBlock = ({
       <button
         type="button"
         onClick={onConvert}
-        className="w-full rounded-lg bg-primary px-3 py-2 text-xs font-extrabold text-primary-foreground"
+        className="w-full rounded-full bg-primary px-3 py-2 text-xs font-extrabold text-primary-foreground shadow-sm"
       >
         Convertir en {targetRoleLabel}
       </button>

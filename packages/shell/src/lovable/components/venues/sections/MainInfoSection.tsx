@@ -96,7 +96,7 @@ const MainInfoSection = () => {
         </div>
         <div>
           <h2 className="text-base font-extrabold text-foreground">Información principal</h2>
-          <p className="text-xs text-muted-foreground">Datos básicos del lugar que verán los organizadores</p>
+          <p className="text-xs font-extrabold text-muted-foreground">Datos básicos del lugar que verán los organizadores</p>
         </div>
       </div>
       <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-4 space-y-6">
@@ -251,7 +251,7 @@ const MainInfoSection = () => {
           rows={4}
           className="mt-1"
         />
-        <p className="text-xs text-muted-foreground mt-1">{form.description.length}/{MAX_DESC}</p>
+        <p className="text-xs font-extrabold text-muted-foreground mt-1">{form.description.length}/{MAX_DESC}</p>
       </div>
       </div>
     </div>

@@ -109,7 +109,7 @@ export const MyReservedServicesView = ({ onBack }: MyReservedServicesViewProps) 
               <Briefcase className="h-7 w-7 text-primary" />
             </div>
             <p className="mt-3 text-sm font-extrabold text-foreground">Sin reservas de servicios</p>
-            <p className="mt-1 text-xs text-muted-foreground">Tus reservas aparecerán aquí cuando contrates un servicio</p>
+            <p className="mt-1 text-xs font-extrabold text-muted-foreground">Tus reservas aparecerán aquí cuando contrates un servicio</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -125,14 +125,14 @@ export const MyReservedServicesView = ({ onBack }: MyReservedServicesViewProps) 
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="truncate text-sm font-extrabold text-foreground">{booking.serviceName}</p>
-                  <p className="text-xs text-muted-foreground">{formatDateRange(booking.startDate, booking.endDate)}</p>
+                  <p className="text-xs font-extrabold text-muted-foreground">{formatDateRange(booking.startDate, booking.endDate)}</p>
                   <p className="mt-1 text-xs font-extrabold text-primary">{formatBookingStatus(booking.status)}</p>
                 </div>
                 <div className="text-right shrink-0">
                   <p className="text-xs font-extrabold text-foreground">
                     {formatCurrency(booking.pricing?.total)}
                   </p>
-                  <ChevronRight className="mt-1 h-4 w-4 text-muted-foreground ml-auto" />
+                  <ChevronRight className="mt-1 h-4 w-4 text-primary/70 ml-auto" />
                 </div>
               </button>
             ))}

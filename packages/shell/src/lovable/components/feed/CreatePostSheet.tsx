@@ -144,7 +144,7 @@ const CreatePostSheet = ({
                 </Avatar>
                 <div>
                   <p className="text-sm font-extrabold text-card-foreground">{authorName}</p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs font-extrabold text-muted-foreground">
                     {visibility === 'public' ? 'Publicación pública' : 'Solo seguidores'}
                   </p>
                 </div>
@@ -175,7 +175,7 @@ const CreatePostSheet = ({
                   }}
                   maxLength={1000}
                   rows={4}
-                  className="w-full resize-none bg-transparent text-sm leading-relaxed outline-none placeholder:text-muted-foreground"
+                  className="w-full resize-none bg-transparent text-sm font-extrabold leading-relaxed outline-none placeholder:text-muted-foreground"
                 />
                 <MentionAutocomplete
                   options={mentionOptions}
@@ -195,7 +195,7 @@ const CreatePostSheet = ({
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   maxLength={100}
-                  className="w-full rounded-lg border border-border/60 bg-muted/50 py-2.5 pl-9 pr-3 text-sm shadow-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  className="w-full rounded-xl border border-border/60 bg-muted/50 py-2.5 pl-9 pr-3 text-sm font-extrabold shadow-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
                 />
               </div>
 
@@ -230,7 +230,7 @@ const CreatePostSheet = ({
                     Privado
                   </button>
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs font-extrabold text-muted-foreground">
                   {visibility === 'public'
                     ? 'Todos pueden ver esta publicación'
                     : 'Solo perfiles que te siguen pueden ver esta publicación'}

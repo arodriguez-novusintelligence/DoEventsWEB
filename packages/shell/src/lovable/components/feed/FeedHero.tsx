@@ -116,7 +116,7 @@ const FeedHero = ({
           <h1 className="mt-5 text-2xl font-extrabold text-primary-foreground">
             ¡Hola, {userName}! <span className="inline-block">👋</span>
           </h1>
-          <p className="mt-1 text-sm text-primary-foreground/85">
+          <p className="mt-1 text-sm font-extrabold text-primary-foreground/85">
             Descubre qué está pasando hoy cerca de ti
           </p>
         </div>
@@ -148,7 +148,7 @@ const FeedHero = ({
                   <div className={cn(
                     'flex h-12 w-12 items-center justify-center rounded-2xl ring-2 transition',
                     c.bg,
-                    active ? 'ring-primary scale-105' : 'ring-transparent',
+                    active ? 'ring-primary ring-primary/20 scale-105' : 'ring-2 ring-primary/20',
                   )}>
                     <Icon className={cn('h-6 w-6', c.color)} />
                   </div>
@@ -185,18 +185,18 @@ const FeedHero = ({
             </div>
             <div className="flex items-start gap-3 overflow-x-auto no-scrollbar pb-1">
               {storiesLoading && (
-                <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-primary/25 bg-card py-6 px-4 w-full shadow-sm">
+                <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-primary/25 border-border/60 bg-card py-6 px-4 w-full shadow-sm">
                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
                   <p className="text-xs font-extrabold text-muted-foreground">Cargando historias…</p>
                 </div>
               )}
               {!storiesLoading && useApiStories && apiStories!.length === 0 && (
-                <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-primary/25 bg-card py-6 px-4 w-full shadow-sm">
+                <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-primary/25 border-border/60 bg-card py-6 px-4 w-full shadow-sm">
                   <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                     <Sparkles className="h-7 w-7 text-primary" />
                   </div>
                   <p className="text-xs font-extrabold text-foreground">No hay historias cerca de ti aún</p>
-                  <p className="text-[10px] text-muted-foreground text-center">Sé el primero en compartir lo que está pasando</p>
+                  <p className="text-[10px] font-extrabold text-muted-foreground text-center">Sé el primero en compartir lo que está pasando</p>
                 </div>
               )}
               {!storiesLoading && useApiStories && apiStories!.map((s) => (
@@ -217,11 +217,11 @@ const FeedHero = ({
                     'relative h-16 w-16 rounded-full p-[2.5px]',
                     s.own
                       ? (s.hasStory
-                        ? 'bg-gradient-to-tr from-primary via-violet-500 to-pink-400'
+                        ? 'bg-gradient-to-tr from-primary via-primary/80 to-accent'
                         : 'bg-primary')
                       : s.live
-                        ? 'bg-gradient-to-tr from-rose-500 via-primary to-pink-400'
-                        : 'bg-gradient-to-tr from-primary via-violet-500 to-pink-400',
+                        ? 'bg-gradient-to-tr from-destructive via-primary to-accent'
+                        : 'bg-gradient-to-tr from-primary via-primary/80 to-accent',
                   )}>
                     <div className="h-full w-full overflow-hidden rounded-full border-2 border-card bg-muted flex items-center justify-center">
                       <UserAvatar name={s.name} imageUrl={s.imageUrl} size={58} />
@@ -248,7 +248,7 @@ const FeedHero = ({
                       </span>
                     )}
                     {s.live && (
-                      <span className="absolute -top-0.5 left-1/2 -translate-x-1/2 rounded-full bg-rose-500 px-1.5 py-0.5 text-[8px] font-extrabold text-white shadow-sm">LIVE</span>
+                      <span className="absolute -top-0.5 left-1/2 -translate-x-1/2 rounded-full bg-destructive px-1.5 py-0.5 text-[8px] font-extrabold text-destructive-foreground shadow-sm">LIVE</span>
                     )}
                   </div>
                   <span className="text-[10px] font-extrabold text-foreground truncate w-full text-center">{s.name}</span>

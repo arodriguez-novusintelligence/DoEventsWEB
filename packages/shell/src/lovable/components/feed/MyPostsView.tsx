@@ -76,7 +76,7 @@ const MyPostsView = ({
               <FileText className="h-7 w-7 text-primary" />
             </div>
             <p className="text-sm font-extrabold text-foreground">Sin publicaciones</p>
-            <p className="text-xs text-muted-foreground">Aún no has publicado en el muro</p>
+            <p className="text-xs font-extrabold text-muted-foreground">Aún no has publicado en el muro</p>
           </div>
         ) : (
           posts.map((post) => (

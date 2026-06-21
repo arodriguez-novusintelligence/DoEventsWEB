@@ -96,7 +96,9 @@ const EventCard = ({
         </>
       ) : (
         <div className="mt-4 flex items-start gap-2 rounded-xl border border-border/60 bg-muted/40 px-3 py-3 text-xs font-extrabold text-muted-foreground shadow-sm">
-          <Lock className="mt-0.5 h-4 w-4 shrink-0" />
+          <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted ring-2 ring-primary/20">
+            <Lock className="h-4 w-4 text-muted-foreground" />
+          </span>
           <span>
             El control de acceso no está disponible para eventos finalizados o cancelados.
           </span>
@@ -142,7 +144,7 @@ const AccessControlListView = ({
         />
 
         <div className="px-4 pt-4">
-          <p className="text-xs text-muted-foreground mb-4 px-1">
+          <p className="text-xs font-extrabold text-muted-foreground mb-4 px-1">
             Solo eventos activos o en ejecución permiten escaneo y configuración de puertas.
           </p>
 
@@ -190,7 +192,7 @@ const AccessControlListView = ({
           </div>
 
           {tabItems.length === 0 && (
-            <div className="rounded-2xl border border-dashed border-primary/25 bg-card p-10 text-center shadow-sm">
+            <div className="rounded-2xl border border-dashed border-primary/25 border-border/60 bg-card p-10 text-center shadow-sm">
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <Shield className="h-7 w-7 text-primary" />
               </div>
@@ -209,7 +211,7 @@ const AccessControlListView = ({
                 <span className="rounded-full bg-success/10 px-2.5 py-0.5 text-[11px] font-extrabold text-success shadow-sm">
                   Activos / En ejecución
                 </span>
-                <span className="text-xs text-muted-foreground">({activeItems.length})</span>
+                <span className="text-xs font-extrabold text-muted-foreground">({activeItems.length})</span>
               </div>
               <div className="space-y-4">
                 {activeItems.map((ev) => (
@@ -225,7 +227,7 @@ const AccessControlListView = ({
                 <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-extrabold text-muted-foreground shadow-sm">
                   Inactivos
                 </span>
-                <span className="text-xs text-muted-foreground">({inactiveItems.length})</span>
+                <span className="text-xs font-extrabold text-muted-foreground">({inactiveItems.length})</span>
               </div>
               <div className="space-y-4">
                 {inactiveItems.map((ev) => (
@@ -241,7 +243,7 @@ const AccessControlListView = ({
                 <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-extrabold text-muted-foreground shadow-sm">
                   Finalizados / Cancelados
                 </span>
-                <span className="text-xs text-muted-foreground">({pastItems.length})</span>
+                <span className="text-xs font-extrabold text-muted-foreground">({pastItems.length})</span>
               </div>
               <div className="space-y-4">
                 {pastItems.map((ev) => (

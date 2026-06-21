@@ -526,9 +526,9 @@ export function AddGuestModal({
   const modalInner = (
     <Tabs defaultValue="contacts" className="w-full">
           <TabsList className="mb-6 grid w-full grid-cols-3 rounded-xl border border-border/60 bg-secondary p-1 shadow-sm">
-            <TabsTrigger value="contacts" className="rounded-lg font-extrabold">Contactos</TabsTrigger>
-            <TabsTrigger value="search" className="rounded-lg font-extrabold">DoEvents</TabsTrigger>
-            <TabsTrigger value="manual" className="rounded-lg font-extrabold">Manual</TabsTrigger>
+            <TabsTrigger value="contacts" className="rounded-full font-extrabold shadow-sm data-[state=active]:ring-2 data-[state=active]:ring-primary/20">Contactos</TabsTrigger>
+            <TabsTrigger value="search" className="rounded-full font-extrabold shadow-sm data-[state=active]:ring-2 data-[state=active]:ring-primary/20">DoEvents</TabsTrigger>
+            <TabsTrigger value="manual" className="rounded-full font-extrabold shadow-sm data-[state=active]:ring-2 data-[state=active]:ring-primary/20">Manual</TabsTrigger>
           </TabsList>
           <TabsContent value="contacts" className="space-y-3">
             <p className="text-xs text-muted-foreground">Importa contactos del dispositivo como invitados.</p>
@@ -575,7 +575,7 @@ export function AddGuestModal({
                   <p className="text-xs text-muted-foreground">Verificando correo…</p>
                 )}
                 {(matchedExisting || matchedPlatformUser) && (
-                  <div className="flex items-start gap-2 rounded-lg border border-border/60 border-primary/30 bg-primary/5 px-3 py-2 text-xs text-foreground shadow-sm">
+                  <div className="flex items-start gap-2 rounded-xl border border-border/60 border-primary/30 bg-primary/5 px-3 py-2 text-xs font-extrabold text-foreground shadow-sm">
                     <UserCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                     <div>
                       {matchedExisting ? (

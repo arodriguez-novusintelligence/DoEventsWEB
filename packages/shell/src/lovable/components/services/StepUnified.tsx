@@ -478,7 +478,7 @@ const StepUnified = ({
         <SectionHeader icon={ListChecks} title="Selecciona las actividades" sectionKey="activities" />
         <CollapsibleContent className="mt-2 space-y-3 px-1">
           {!hasSectors ? (
-            <div className="rounded-2xl border border-dashed border-primary/25 bg-card p-6 text-center shadow-sm">
+            <div className="rounded-2xl border border-dashed border-primary/25 border-border/60 bg-card p-6 text-center shadow-sm">
               <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <Briefcase className="h-7 w-7 text-primary" />
               </div>
@@ -545,7 +545,7 @@ const StepUnified = ({
         <SectionHeader icon={DollarSign} title="Precio por Servicio y actividad" sectionKey="pricing" />
         <CollapsibleContent className="mt-2 space-y-3 px-1">
           {allActivities.length === 0 ? (
-            <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-primary/25 bg-card p-6 text-center shadow-sm">
+            <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-primary/25 border-border/60 bg-card p-6 text-center shadow-sm">
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <DollarSign className="h-7 w-7 text-primary" />
               </div>
@@ -571,14 +571,14 @@ const StepUnified = ({
                           <h5 className="text-sm font-extrabold text-foreground">{act}</h5>
                           <div className="grid grid-cols-2 gap-3">
                             <div>
-                              <label className="text-xs text-muted-foreground">Tipo de cobro</label>
+                              <label className="text-xs font-extrabold text-muted-foreground">Tipo de cobro</label>
                               <Select value={pricing.pricingType} onValueChange={(v) => updateActivityPricing(sector, act, { pricingType: v })}>
                                 <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
                                 <SelectContent>{PRICING_TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
                               </Select>
                             </div>
                             <div>
-                              <label className="text-xs text-muted-foreground">Moneda</label>
+                              <label className="text-xs font-extrabold text-muted-foreground">Moneda</label>
                               <Select value={pricing.currency} onValueChange={(v) => updateActivityPricing(sector, act, { currency: v })}>
                                 <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
                                 <SelectContent>{CURRENCIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
@@ -586,11 +586,11 @@ const StepUnified = ({
                             </div>
                           </div>
                           <div>
-                            <label className="text-xs text-muted-foreground">Costo</label>
+                            <label className="text-xs font-extrabold text-muted-foreground">Costo</label>
                             <Input className="mt-1" type="number" placeholder="0" value={pricing.cost} onChange={(e) => updateActivityPricing(sector, act, { cost: e.target.value })} />
                           </div>
                           <div>
-                            <label className="text-xs text-muted-foreground">Descripción</label>
+                            <label className="text-xs font-extrabold text-muted-foreground">Descripción</label>
                             <Textarea className="mt-1" placeholder="Describe qué incluye este costo" value={pricing.description} onChange={(e) => updateActivityPricing(sector, act, { description: e.target.value })} />
                           </div>
                         </div>

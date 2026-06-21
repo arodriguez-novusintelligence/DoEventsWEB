@@ -71,8 +71,10 @@ export const ReportPostDialog = ({
             </div>
             Reportar publicación
           </DialogTitle>
-          <DialogDescription className="flex items-start gap-2">
-            <Shield className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+          <DialogDescription className="flex items-start gap-2 text-sm font-extrabold text-muted-foreground">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20 mt-0.5">
+              <Shield className="h-4 w-4 text-primary" />
+            </span>
             <span>
               Indica por qué consideras que esta publicación debe ser revisada por nuestro equipo.
             </span>

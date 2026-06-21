@@ -51,7 +51,7 @@ const UserRow = ({
     <div className="min-w-0 flex-1">
       <p className="truncate text-sm font-extrabold text-foreground">{user.name}</p>
       {user.username && <p className="truncate text-xs text-primary">@{user.username.replace(/^@/, '')}</p>}
-      {user.email && <p className="truncate text-xs text-muted-foreground">{user.email}</p>}
+      {user.email && <p className="truncate text-xs font-extrabold text-muted-foreground">{user.email}</p>}
     </div>
     <button
       type="button"
@@ -178,7 +178,7 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
             </div>
             <div>
               <h3 className="text-lg font-extrabold text-foreground">Seleccionar anfitrión</h3>
-              <p className="text-xs text-muted-foreground mt-0.5">Busca en la plataforma o agrega manualmente</p>
+              <p className="text-xs font-extrabold text-muted-foreground mt-0.5">Busca en la plataforma o agrega manualmente</p>
             </div>
           </div>
           <button
@@ -246,7 +246,7 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
                     <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                       <Search className="h-7 w-7 text-primary" />
                     </div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm font-extrabold text-muted-foreground">
                       Escribe al menos 2 caracteres para buscar usuarios de Do•events
                     </p>
                   </div>
@@ -279,7 +279,7 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
                     <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                       <UserPlus className="h-7 w-7 text-primary" />
                     </div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm font-extrabold text-muted-foreground">
                       No se encontraron usuarios con “{query}”
                     </p>
                   </div>

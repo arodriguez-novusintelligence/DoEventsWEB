@@ -113,12 +113,12 @@ const SeatLocationModal = ({ open, onOpenChange, ticket }: Props) => {
           </div>
 
           {!ticketHasSeat(ticket) ? (
-            <div className="flex h-[200px] flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-primary/25 bg-card px-4 text-center shadow-sm">
+            <div className="flex h-[200px] flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-primary/25 border-border/60 bg-card px-4 text-center shadow-sm">
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <Armchair className="h-7 w-7 text-primary" />
               </div>
               <p className="text-sm font-extrabold text-foreground">Sin asiento numerado</p>
-              <p className="text-xs text-muted-foreground">Esta boleta no tiene asiento numerado.</p>
+              <p className="text-xs font-extrabold text-muted-foreground">Esta boleta no tiene asiento numerado.</p>
             </div>
           ) : loading ? (
             <div className="flex h-[320px] flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-card shadow-sm">
@@ -128,7 +128,7 @@ const SeatLocationModal = ({ open, onOpenChange, ticket }: Props) => {
               <p className="text-sm font-extrabold text-foreground">Cargando mapa…</p>
             </div>
           ) : error || !floors.length ? (
-            <div className="flex h-[200px] flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-primary/25 bg-card px-4 text-center shadow-sm">
+            <div className="flex h-[200px] flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-primary/25 border-border/60 bg-card px-4 text-center shadow-sm">
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
                 <AlertCircle className="h-7 w-7 text-destructive" />
               </div>
@@ -157,7 +157,7 @@ const SeatLocationModal = ({ open, onOpenChange, ticket }: Props) => {
             />
           )}
 
-          <div className="mt-4 flex items-center gap-4 text-[11px] text-muted-foreground border-t border-border/60 pt-3">
+          <div className="mt-4 flex items-center gap-4 text-[11px] font-extrabold text-muted-foreground border-t border-border/60 pt-3">
             <span className="inline-flex items-center gap-1.5"><span className="h-3 w-3 rounded-sm bg-primary" /> Tu silla</span>
             <span className="inline-flex items-center gap-1.5"><span className="h-3 w-3 rounded-sm bg-muted" /> Ocupada</span>
           </div>

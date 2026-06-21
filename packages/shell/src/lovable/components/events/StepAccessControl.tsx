@@ -95,7 +95,7 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
           <DoorOpen className="h-7 w-7 text-primary" />
         </div>
         <h3 className="text-base font-extrabold text-foreground">Sin puertas configuradas</h3>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-1 text-sm font-extrabold text-muted-foreground">
           Vuelve al paso de Lugar y agrega al menos una puerta para asignar personal de acceso.
         </p>
       </div>
@@ -124,17 +124,21 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
         <p className="mt-3 text-sm font-extrabold text-foreground">Personal asignado</p>
         <div className="mt-2 grid grid-cols-2 gap-3">
           <div className="rounded-2xl border border-border/60 bg-secondary/60 p-4 text-center shadow-sm">
-            <DoorOpen className="mx-auto mb-1 h-5 w-5 text-primary" />
+            <div className="mx-auto mb-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+              <DoorOpen className="h-4 w-4 text-primary" />
+            </div>
             <p className="text-2xl font-extrabold text-primary tabular-nums">{gates.length}</p>
-            <p className="text-xs text-muted-foreground">Puertas</p>
+            <p className="text-xs font-extrabold text-muted-foreground">Puertas</p>
           </div>
           <div className="rounded-2xl border border-border/60 bg-secondary/60 p-4 text-center shadow-sm">
-            <Users className="mx-auto mb-1 h-5 w-5 text-primary" />
+            <div className="mx-auto mb-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+              <Users className="h-4 w-4 text-primary" />
+            </div>
             <p className="text-2xl font-extrabold text-primary tabular-nums">{totalAssigned}</p>
-            <p className="text-xs text-muted-foreground">Asignados</p>
+            <p className="text-xs font-extrabold text-muted-foreground">Asignados</p>
           </div>
         </div>
-        <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
+        <div className="mt-3 flex items-center justify-between text-xs font-extrabold text-muted-foreground">
           <span>Configuración de puertas</span>
           <span className="font-extrabold">
             {gatesWithStaff}/{gates.length} asignadas
@@ -173,7 +177,7 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
                 </div>
                 <div className="min-w-0">
                   <p className="truncate text-sm font-extrabold text-foreground">{gate.name}</p>
-                  <p className="text-xs text-muted-foreground">Personal asignado ({assigned.length})</p>
+                  <p className="text-xs font-extrabold text-muted-foreground">Personal asignado ({assigned.length})</p>
                 </div>
               </div>
 
@@ -183,7 +187,7 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
                     <UserPlus className="h-7 w-7 text-primary" />
                   </div>
                   <p className="text-sm font-extrabold text-foreground">Sin personal asignado</p>
-                  <p className="text-xs text-muted-foreground">Asigna usuarios de la plataforma a esta puerta</p>
+                  <p className="text-xs font-extrabold text-muted-foreground">Asigna usuarios de la plataforma a esta puerta</p>
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -196,7 +200,7 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
                         <Avatar user={u} />
                         <div className="min-w-0">
                           <p className="truncate text-sm font-extrabold text-foreground">{u.name}</p>
-                          <p className="truncate text-xs text-muted-foreground">
+                          <p className="truncate text-xs font-extrabold text-muted-foreground">
                             {u.username ? `@${u.username.replace(/^@/, '')}` : u.email || ''}
                           </p>
                         </div>

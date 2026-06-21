@@ -175,7 +175,7 @@ const EventMedia = ({ event }: { event: EventItem }) => {
 const FavoriteHeartButton = ({
   active,
   onToggle,
-  className = 'absolute top-2.5 right-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-background/90 text-primary shadow-sm',
+  className = 'absolute top-2.5 right-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-background/90 text-primary shadow-sm ring-2 ring-primary/20',
   iconClassName = 'h-4 w-4',
 }: {
   active?: boolean;
@@ -233,7 +233,7 @@ const EventCard = ({
     <div className="p-3.5">
       <h3 className="text-sm font-extrabold text-foreground line-clamp-2 leading-snug">{event.title}</h3>
       <p className="mt-2 text-sm font-extrabold text-foreground">{event.date}</p>
-      <p className="mt-1.5 text-xs text-muted-foreground line-clamp-1">{event.location}</p>
+      <p className="mt-1.5 text-xs font-extrabold text-muted-foreground line-clamp-1">{event.location}</p>
       {event.description && (
         <p className="mt-2 text-xs text-foreground/80 line-clamp-2">{event.description}</p>
       )}
@@ -317,7 +317,7 @@ const OtherEventRow = ({
         </button>
       </div>
       <p className="mt-1 text-sm font-extrabold text-foreground">{event.date}</p>
-      <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{event.location}</p>
+      <p className="mt-1 text-xs font-extrabold text-muted-foreground line-clamp-2">{event.location}</p>
     </div>
   </button>
 );
@@ -954,7 +954,7 @@ const EventsView = ({
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
               <CalendarDays className="h-7 w-7 text-primary" />
             </div>
-            <p className="mt-3 text-sm text-muted-foreground">
+            <p className="mt-3 text-sm font-extrabold text-muted-foreground">
               Crea tu primer evento y hazte conocer<br />en nuestra red de <span className="font-extrabold text-foreground">eventers</span>
             </p>
             <Button className="mt-4 w-full rounded-full font-extrabold shadow-sm" size="lg" type="button" onClick={onCreateEvent}>
