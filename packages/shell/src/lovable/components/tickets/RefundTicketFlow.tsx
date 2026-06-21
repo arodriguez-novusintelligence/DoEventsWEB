@@ -147,9 +147,9 @@ const RefundTicketFlow = ({
           </div>
 
           <div className="px-4 pt-4">
-            <p className="text-sm font-semibold text-muted-foreground mb-2">Orden de compra</p>
-            <div className="rounded-2xl bg-primary px-4 py-3 text-center">
-              <p className="text-sm font-bold text-primary-foreground">{orderCode}</p>
+            <p className="text-sm font-extrabold text-muted-foreground mb-2">Orden de compra</p>
+            <div className="rounded-2xl border border-border/60 bg-primary px-4 py-3 text-center shadow-sm">
+              <p className="text-sm font-extrabold text-primary-foreground">{orderCode}</p>
             </div>
           </div>
 

@@ -236,7 +236,7 @@ const TicketDetailView = ({
           {isPending && <PendingCountdown expiresAtTs={ticket.paymentExpiresAtTs} />}
         </div>
 
-        <p className="text-sm font-semibold text-muted-foreground mb-2">Orden de compra</p>
+        <p className="text-sm font-extrabold text-muted-foreground mb-2">Orden de compra</p>
         {entries.length > 1 ? (
           <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
             {entries.map((entry, i) => {
@@ -246,7 +246,7 @@ const TicketDetailView = ({
                   key={entry.id}
                   type="button"
                   onClick={() => onActiveIndexChange(i)}
-                  className={`shrink-0 min-w-[120px] rounded-2xl border px-4 py-3 text-center transition-all ${
+                  className={`shrink-0 min-w-[120px] rounded-2xl border px-4 py-3 text-center transition-all shadow-sm ${
                     active ? 'bg-primary border-primary shadow-md' : 'bg-card border-border/60'
                   }`}
                 >
@@ -357,7 +357,7 @@ const TicketDetailView = ({
                 <button
                   type="button"
                   onClick={() => setSeatMapOpen(true)}
-                  className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-primary/30 bg-primary/5 py-3 text-sm font-bold text-primary hover:bg-primary/10"
+                  className="flex w-full items-center justify-center gap-2 rounded-2xl border border-border/60 bg-primary/5 py-3 text-sm font-extrabold text-primary shadow-sm hover:bg-primary/10"
                 >
                   <MapPin className="h-4 w-4" />
                   Ver ubicación de la silla

@@ -1621,7 +1621,7 @@ const CategoryFormSheet = ({
         {/* Seating map */}
         <div className="rounded-2xl bg-secondary/40 p-4">
           <div className="mb-3 flex items-center justify-between">
-            <h4 className="text-sm font-bold text-foreground">Mapa de silletería</h4>
+            <h4 className="text-sm font-extrabold text-foreground">Mapa de silletería</h4>
             <span className="text-xs text-muted-foreground">
               Número de sillas{' '}
               <span className="ml-1 font-bold text-foreground">{currentSeats}</span>

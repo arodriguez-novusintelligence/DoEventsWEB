@@ -735,7 +735,7 @@ const EventsView = ({
                   <div className={`h-14 w-14 rounded-full flex items-center justify-center transition-all ${isActive ? 'bg-primary ring-2 ring-primary/40' : c.bg}`}>
                     <Icon className={`h-6 w-6 ${isActive ? 'text-primary-foreground' : c.color}`} strokeWidth={2} />
                   </div>
-                  <span className={`text-[11px] font-medium text-center leading-tight line-clamp-2 ${isActive ? 'text-primary font-bold' : 'text-foreground'}`}>
+                  <span className={`text-[11px] font-medium text-center leading-tight line-clamp-2 ${isActive ? 'text-primary font-extrabold' : 'text-foreground'}`}>
                     {c.label}
                   </span>
                 </button>

@@ -81,7 +81,7 @@ export interface NotificationsContextValue {
   loadError: string | null;
   loadErrorMessage: string | null;
   isEmpty: boolean;
-  /** Alias Lovable — derivado de `!loading && unreadCount === 0`. */
+  /** Alias Lovable — mismo valor que `loading`. */
   isLoading: boolean;
   reload: () => Promise<void>;
   refreshNotifications: () => Promise<void>;

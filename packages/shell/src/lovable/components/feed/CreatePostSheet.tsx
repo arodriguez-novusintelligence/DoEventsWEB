@@ -122,14 +122,14 @@ const CreatePostSheet = ({
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[85vh]">
+      <DrawerContent className="max-h-[90dvh]">
         <div className="mx-auto w-full max-w-lg">
           <DrawerHeader className="flex items-center justify-between text-left">
             <div className="flex items-center gap-2">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <PenLine className="h-5 w-5 text-primary" />
               </div>
-              <DrawerTitle className="text-xl font-bold">Nueva publicación</DrawerTitle>
+              <DrawerTitle className="text-xl font-extrabold">Nueva publicación</DrawerTitle>
             </div>
           </DrawerHeader>
 
@@ -137,13 +137,13 @@ const CreatePostSheet = ({
             <div className="space-y-4">
               {/* Author preview */}
               <div className="flex items-center gap-3">
-                <Avatar className="h-10 w-10">
+                <Avatar className="h-10 w-10 ring-2 ring-primary/20">
                   <AvatarFallback className="bg-accent text-sm font-semibold text-accent-foreground">
                     {authorInitials}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="text-sm font-semibold text-card-foreground">{authorName}</p>
+                  <p className="text-sm font-extrabold text-card-foreground">{authorName}</p>
                   <p className="text-xs text-muted-foreground">
                     {visibility === 'public' ? 'Publicación pública' : 'Solo seguidores'}
                   </p>
@@ -195,13 +195,13 @@ const CreatePostSheet = ({
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   maxLength={100}
-                  className="w-full rounded-lg border border-border bg-muted/50 py-2.5 pl-9 pr-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  className="w-full rounded-lg border border-border/60 bg-muted/50 py-2.5 pl-9 pr-3 text-sm shadow-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
                 />
               </div>
 
               {/* Visibility selector */}
               <div className="space-y-2">
-                <p className="text-sm font-semibold text-card-foreground">Visibilidad</p>
+                <p className="text-sm font-extrabold text-card-foreground">Visibilidad</p>
                 <div className="flex gap-2">
                   <button
                     type="button"
@@ -210,7 +210,7 @@ const CreatePostSheet = ({
                       'flex flex-1 items-center justify-center gap-2 rounded-full border-2 py-2.5 text-sm font-semibold transition-all',
                       visibility === 'public'
                         ? 'border-primary bg-primary/10 text-primary'
-                        : 'border-border text-muted-foreground hover:border-primary/30'
+                        : 'border-border/60 text-muted-foreground hover:border-primary/30'
                     )}
                   >
                     <Globe className="h-4 w-4" />
@@ -223,7 +223,7 @@ const CreatePostSheet = ({
                       'flex flex-1 items-center justify-center gap-2 rounded-full border-2 py-2.5 text-sm font-semibold transition-all',
                       visibility === 'private'
                         ? 'border-primary bg-primary/10 text-primary'
-                        : 'border-border text-muted-foreground hover:border-primary/30'
+                        : 'border-border/60 text-muted-foreground hover:border-primary/30'
                     )}
                   >
                     <Lock className="h-4 w-4" />
@@ -241,7 +241,7 @@ const CreatePostSheet = ({
               {media.length > 0 && (
                 <div className="grid grid-cols-3 gap-2">
                   {media.map((src, i) => (
-                    <div key={i} className="group relative aspect-square overflow-hidden rounded-lg shadow-sm ring-1 ring-border/40">
+                    <div key={i} className="group relative aspect-square overflow-hidden rounded-lg shadow-sm ring-2 ring-primary/20">
                       {isVideo(src) ? (
                         <video src={src} className="h-full w-full object-cover" muted preload="metadata" />
                       ) : (
@@ -269,14 +269,14 @@ const CreatePostSheet = ({
               <div className="flex gap-2">
                 <button
                   onClick={() => imageInputRef.current?.click()}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-full border-2 border-dashed border-primary/30 py-3 text-sm font-semibold text-primary transition-colors hover:border-primary/60"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-full border-2 border-dashed border-primary/25 py-3 text-sm font-semibold text-primary shadow-sm transition-colors hover:border-primary/60"
                 >
                   <ImagePlus className="h-5 w-5" />
                   Fotos
                 </button>
                 <button
                   onClick={() => videoInputRef.current?.click()}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-full border-2 border-dashed border-primary/30 py-3 text-sm font-semibold text-primary transition-colors hover:border-primary/60"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-full border-2 border-dashed border-primary/25 py-3 text-sm font-semibold text-primary shadow-sm transition-colors hover:border-primary/60"
                 >
                   <Video className="h-5 w-5" />
                   Videos
