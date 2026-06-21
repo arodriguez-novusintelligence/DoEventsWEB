@@ -1,5 +1,5 @@
 {
-  "version": "2.0",
+  "version": "2.1",
   "description": "Mapeo Lovable → DoEventsWEB (DSF). Cobertura obligatoria para archivos UI cambiados.",
   "mapping": [
     { "lovable": "src/components/", "web": "packages/shell/src/lovable/components/" },
@@ -11,21 +11,32 @@
     { "lovable": "src/pages/ResetPassword.tsx", "web": "packages/mfe-auth/src/pages/ResetPasswordPage.tsx", "compareMode": "delegated" },
     { "lovable": "src/pages/VenueDetail.tsx", "web": "packages/shell/src/pages/PlaceDetailPage.tsx" },
     { "lovable": "src/pages/EventPublished.tsx", "web": "packages/shell/src/pages/EventDetailPage.tsx" },
+    { "lovable": "src/components/feed/MapView.tsx", "web": "packages/shell/src/pages/MapPage.tsx", "note": "Mapa explorador" },
+    { "lovable": "src/components/feed/GlobalSearchView.tsx", "web": "packages/shell/src/pages/SearchEventsPage.tsx" },
     { "lovable": "src/contexts/", "web": "packages/shell/src/lovable/contexts/" },
     { "lovable": "src/hooks/", "web": "packages/shell/src/lovable/hooks/" },
+    { "lovable": "src/index.css", "web": "packages/shell/src/index.css", "note": "Tokens CSS — validar vs reglasDiseno/tokens.yml" },
     { "lovable": "public/", "web": "packages/shell/public/" },
-    { "lovable": "reglasActuacion/", "web": "reglasActuacion/", "note": "Referencia — agente lee, no copia literal" },
-    { "lovable": "reglasDiseno/", "web": "docs/design/reglasDiseno/", "note": "Tokens y convenciones diseño DSF" }
+    { "lovable": "reglasActuacion/", "web": "docs/design/reglasActuacion-ref/", "note": "@reference — agente lee desde Lovable, no copia" },
+    { "lovable": "reglasDiseno/", "web": "docs/design/reglasDiseno/", "note": "@reference — tokens y convenciones DSF" }
   ],
   "forbidden": [
     "src/integrations/supabase/",
     "src/data/",
     "supabase/"
   ],
+  "exclude": [
+    "src/integrations/supabase/**",
+    "src/data/**",
+    "src/pages/Login.tsx",
+    "src/pages/SignUp.tsx",
+    "src/pages/ForgotPassword.tsx",
+    "src/pages/ResetPassword.tsx"
+  ],
   "agentManaged": [
     "packages/shell/src/lovable-bridge/",
     "ReglasAgente/",
     "docs/changes/"
   ],
-  "notes": "DSF: el agente empalma via lovable-bridge + @doevents/shared. Sin copy-paste literal."
+  "notes": "DSF v2.1 — empalme via lovable-bridge. Auth pages delegated a mfe-auth. reglasDiseno alimenta compare-design-similarity.py."
 }
