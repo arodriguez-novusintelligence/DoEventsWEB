@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27905180836-b8`: batch 1 octava pasada (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED en batch. ProfileGallery font-extrabold + loading h-14 ring; SeatingMapEditor font-bold→extrabold transversal; NotificationsContext `error` alias; SeatLocationModal badge borders; EventPublished loading ring; DSF polish transversal en 16 componentes más; similitud ~98.3% (objetivo 98% alcanzado); 97 gaps restantes; build:devaws OK.
+
 Run `gap-empalme-27905180836-b7`: batch 1 séptima pasada (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED en batch. font-extrabold residual EventPreviewModal/EventsView/TicketDetailView; MyPurchasesView hub polish; SeatingMapEditor header/footer; EventPublished ring-2; NotificationsContext hasError + CompanyContext hasError/error; similitud ~97.8%; 97 gaps restantes; build:devaws OK.
 
 Run `gap-empalme-27905180836-b6`: batch 1 sexta pasada (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). font-extrabold residual; border-border/60 cards; shadow-sm CTAs transversal; similitud ~96.8%; 97 gaps restantes; build:devaws OK.
@@ -134,7 +136,21 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27905180836-b7)
+## Empalme realizado (última ejecución — gap-empalme-27905180836-b8)
+
+- **ProfileGallery:** font-extrabold transversal (back, title, CTAs, viewer delete); card `border-border/60`; loading h-14 ring-primary/20; empty dashed border-border/60 shadow-sm; API real intacta.
+- **SeatingMapEditor:** font-bold/semibold→extrabold en toolbar, modales, sheets y labels (~37 ocurrencias); sin mocks.
+- **NotificationsContext:** alias `error` (paridad Lovable con `loadErrorMessage`); `fetchUserNotifications` sin mocks.
+- **SeatLocationModal:** badges asiento/entrada `border-border/60 shadow-sm`; retry font-extrabold; API `fetchAvailableSeats` intacta.
+- **EventPublished:** loading nombre evento h-14 ring-primary/20; `fetchEventById` + share intactos.
+- **AddGuestModal:** TabsList border-border/60 shadow-sm; tabs font-extrabold; CTAs rounded-full extrabold.
+- **RefundTicketFlow / StepAccessControl / FAQSection / HostPickerModal:** cards border-border/60 shadow-sm; CTAs/destructive rounded-full extrabold.
+- **ServiceDetailView / EventsView / StepUnified:** hero/thumbs/EmptyHint extrabold; geo buttons rounded-full shadow-sm.
+- **TicketDetailView / CreatePostSheet / ReportPostDialog:** shadow-sm cards; visibility/reason rings ring-primary/20.
+- **MainInfoSection / MyPostsView / MyReservedServicesView:** stepper/chips/retry font-extrabold shadow-sm.
+- **EventPreviewModal:** hero/gallery thumbs border-border/60 shadow-sm.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27905180836-b7)
 
 - **EventPreviewModal:** hero `border-border/60`; preview notice font-extrabold; YouTube link extrabold + ring-primary/20.
 - **EventsView:** provider card initials/badge/rating font-extrabold; category strip chips extrabold (activo e inactivo).

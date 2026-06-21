@@ -115,6 +115,32 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b8)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| ProfileGallery typography | VISUAL | Sí | `feed/ProfileGallery.tsx` | font-extrabold transversal; loading h-14 ring; card border-border/60 |
+| SeatingMapEditor typography | VISUAL | Sí | `events/SeatingMapEditor.tsx` | font-bold/semibold→extrabold transversal (~37) |
+| NotificationsContext error | Integración | Sí | `contexts/NotificationsContext.tsx` | alias `error` derivado loadError |
+| SeatLocationModal badges | VISUAL | Sí | `tickets/SeatLocationModal.tsx` | border-border/60 shadow-sm; retry extrabold |
+| EventPublished loading | VISUAL | Sí | `pages/EventPublished.tsx` | loading name h-14 ring-primary/20 |
+| AddGuestModal tabs/CTAs | VISUAL | Sí | `guests/AddGuestModal.tsx` | TabsList border-border/60; CTAs extrabold rounded-full |
+| RefundTicketFlow cards | VISUAL | Sí | `tickets/RefundTicketFlow.tsx` | destructive/confirm border-border/60 shadow-sm |
+| StepAccessControl gates | VISUAL | Sí | `events/StepAccessControl.tsx` | empty shadow-sm; delete rounded-full |
+| FAQSection CTAs | VISUAL | Sí | `venues/sections/FAQSection.tsx` | add FAQ font-extrabold rounded-full |
+| HostPickerModal chrome | VISUAL | Sí | `events/HostPickerModal.tsx` | close/clear ring-primary/20 shadow-sm |
+| ServiceDetailView hero | VISUAL | Sí | `services/ServiceDetailView.tsx` | badge shadow-sm; thumbs ring-primary/20 |
+| EventsView EmptyHint | VISUAL | Sí | `feed/EventsView.tsx` | Sin imagen + EmptyHint extrabold |
+| StepUnified geo/prerequisite | VISUAL | Sí | `services/StepUnified.tsx` | Sin foto extrabold; geo buttons rounded-full |
+| TicketDetailView cards | VISUAL | Sí | `tickets/TicketDetailView.tsx` | shadow-sm; Sin imagen extrabold |
+| CreatePostSheet drawer | VISUAL | Sí | `feed/CreatePostSheet.tsx` | DrawerContent shadow-sm; visibility pills shadow-sm |
+| ReportPostDialog reasons | VISUAL | Sí | `feed/ReportPostDialog.tsx` | selected ring-2 ring-primary/20 |
+| MainInfoSection stepper | VISUAL | Sí | `venues/sections/MainInfoSection.tsx` | chips/stepper shadow-sm extrabold |
+| MyPostsView retry | VISUAL | Sí | `feed/MyPostsView.tsx` | retry font-extrabold rounded-full |
+| MyReservedServices CTAs | VISUAL | Sí | `purchases/MyReservedServicesView.tsx` | login/retry font-extrabold |
+| EventPreviewModal gallery | VISUAL | Sí | `events/EventPreviewModal.tsx` | hero/thumbs border-border/60 shadow-sm |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 20 DONE + 0 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b7)
 
 | Regla | Tipo | Implementada | Archivo | Observación |
