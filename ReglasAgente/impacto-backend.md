@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27910611218-b1`: batch 1 (20 gaps manifiesto) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). DSF polish transversal: rings `ring-primary/10`, chevrons en anillo, `NotificationsContext.unreadNotifications`, footer `border-t` diálogos; similitud ~99.35%; build:devaws OK; 97 gaps batches 2–6 pendientes.
+
 Run `agent-27910611218`: prepare `53a73964` — manifiesto sin diff UI (`changedFiles: []`, `hasUiChanges: false`); `reglasDiseno/design-token-map.yml` solo referencia DSF; validación empalmes batch b15 (similitud 99.32%); build:devaws OK; sin cambios backend ni frontend de lógica; 97 gaps manifiesto batches 2–6 pendientes.
 
 Run `gap-empalme-27905180836-b15`: batch 1 decimoquinta pasada (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED en batch. ProfileGallery grid rings + lightbox controls; EventsView initial loading h-14 ring; SeatingMapEditor canvas dashed; NotificationsContext unread alias; MainInfoSection/HostPickerModal/StepUnified/AddGuestModal/FeedHero/ServiceDetailView/TicketDetailView polish; similitud ~99.32%; 97 gaps restantes; build:devaws OK.
@@ -759,7 +761,30 @@ Sí (parcial)
 - **AIAssistantView:** CreatedEntityCard tokens success.
 - **EventDetailView:** verificado intacto — `fetchEventDetail` + retry + `InvitationEventDetailView`.
 
-## Empalme realizado (última ejecución — gap-empalme-27905180836-b15)
+## Empalme realizado (última ejecución — gap-empalme-27910611218-b1)
+
+- **SeatingMapEditor:** sección mapa silletería `border-border/60 shadow-sm`; canvas/CTAs verificados batch previo; APIs guardado intactas.
+- **NotificationsContext:** alias `unreadNotifications` (lista filtrada no leídas); `fetchUserNotifications` sin mocks.
+- **ReportPostDialog:** footer `border-t border-border/60`; radios/textarea DSF; `reportPublication` API intacta.
+- **MyReservedServicesView:** filas reserva chevron en anillo `ring-primary/20`; `fetchUserServiceBookings` intacto.
+- **MainInfoSection:** card principal `ring-1 ring-primary/10`; labels/inputs extrabold batch previo.
+- **AccessControlListView:** tabs activos `ring-2 ring-primary/20`; banner info `border-border/60 bg-card shadow-sm`.
+- **MyPostsView:** empty state `ring-1 ring-primary/10`; loading/error h-14 rings.
+- **EventsView:** `EmptyHint` `ring-1 ring-primary/10`; APIs discover intactas.
+- **ServiceDetailView:** barra contratar sticky `ring-2 ring-primary/20`; hero/thumbs batch previo.
+- **HostPickerModal:** sheet shell `ring-1 ring-primary/10`; búsqueda API real intacta.
+- **CreatePostSheet:** drawer `ring-1 ring-primary/10`; publish API async intacta.
+- **FAQSection:** cards FAQ `ring-1 ring-primary/10`; empty dashed batch previo.
+- **StepUnified:** progress card `ring-1 ring-primary/10`; section headers rings batch previo.
+- **EventPublished:** Compartir `variant outline border-border/60`; `fetchEventById` + share intacto.
+- **MyPurchasesView:** hub rows chevron en anillo `ring-primary/20`; APIs grouped tickets/bookings intactas.
+- **AddGuestModal:** dialog `ring-1 ring-primary/10`; búsqueda `searchUsers` API real.
+- **TicketDetailView:** card principal `ring-1 ring-primary/10`; menú overflow ring batch previo.
+- **SeatLocationModal:** descripción header `font-extrabold`; mapa asientos API real.
+- **FeedHero:** card categorías `ring-1 ring-primary/10`; historias loading/empty batch previo.
+- **BankingHub:** banner PayPal título extrabold; **BACKEND_REQUIRED** delete/PayPal — `fetchBankAccountsByUser` intacto.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27905180836-b15)
 
 - **ProfileGallery:** grid cells `ring-primary/20 shadow-sm`; inline add tile `bg-card shadow-sm`; photo count + lightbox counter `font-extrabold`; nav/close controls `shadow-sm ring-primary-foreground/20`; API upload/delete intacta.
 - **EventsView:** initial discover loading con `h-14 ring-primary/20` + skeleton pills; category strip chips `ring-2 ring-primary/20` en todos los estados.

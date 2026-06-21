@@ -51,7 +51,7 @@ const FAQSection = () => {
       ) : (
         <div className="space-y-4 mt-4">
           {form.faqs.map((faq, index) => (
-            <div key={faq.id} className="p-4 rounded-xl border border-border/60 bg-secondary/20 shadow-sm">
+            <div key={faq.id} className="p-4 rounded-xl border border-border/60 bg-secondary/20 shadow-sm ring-1 ring-primary/10">
               <div className="flex items-start gap-3">
                 <div className="flex-1 space-y-3">
                   <div>

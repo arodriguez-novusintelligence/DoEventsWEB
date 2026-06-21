@@ -148,7 +148,7 @@ const AccessControlListView = ({
         />
 
         <div className="px-4 pt-4">
-          <p className="text-xs font-extrabold text-muted-foreground mb-4 px-1">
+          <p className="text-xs font-extrabold text-muted-foreground mb-4 rounded-xl border border-border/60 bg-card px-3 py-2 shadow-sm">
             Solo eventos activos o en ejecución permiten escaneo y configuración de puertas.
           </p>
 
@@ -186,7 +186,7 @@ const AccessControlListView = ({
                 onClick={() => setTab(k)}
                 className={`rounded-full px-4 py-3 text-sm font-extrabold shadow-sm transition-all ${
                   tab === k
-                    ? 'bg-primary text-primary-foreground'
+                    ? 'bg-primary text-primary-foreground ring-2 ring-primary/20'
                     : 'bg-card text-muted-foreground border border-border/60'
                 }`}
               >

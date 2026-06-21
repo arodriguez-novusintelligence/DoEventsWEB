@@ -122,7 +122,7 @@ const CreatePostSheet = ({
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[90dvh] border-t border-border/60 shadow-sm">
+      <DrawerContent className="max-h-[90dvh] border-t border-border/60 shadow-sm ring-1 ring-primary/10">
         <div className="mx-auto w-full max-w-lg">
           <DrawerHeader className="flex items-center justify-between text-left">
             <div className="flex items-center gap-2">

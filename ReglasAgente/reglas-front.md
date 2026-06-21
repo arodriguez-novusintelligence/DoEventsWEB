@@ -117,6 +117,32 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 1 (run 27910611218-b1)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| SeatingMapEditor seating section | VISUAL | Sí | `events/SeatingMapEditor.tsx` | border-border/60 shadow-sm en sección mapa; APIs guardado intactas |
+| NotificationsContext unread list | Integración | Sí | `contexts/NotificationsContext.tsx` | alias `unreadNotifications` filtrado; fetchUserNotifications sin mocks |
+| ReportPostDialog footer | VISUAL | Sí | `feed/ReportPostDialog.tsx` | border-t border-border/60; reportPublication API intacta |
+| MyReservedServices chevron | VISUAL | Sí | `purchases/MyReservedServicesView.tsx` | chevron ring-primary/20; fetchUserServiceBookings intacto |
+| MainInfoSection card ring | VISUAL | Sí | `venues/sections/MainInfoSection.tsx` | ring-1 ring-primary/10 card principal |
+| AccessControlListView tabs | VISUAL | Sí | `access/AccessControlListView.tsx` | tab activo ring-primary/20; banner info card |
+| MyPostsView empty ring | VISUAL | Sí | `feed/MyPostsView.tsx` | empty ring-1 ring-primary/10 |
+| EventsView EmptyHint ring | VISUAL | Sí | `feed/EventsView.tsx` | EmptyHint ring-1 ring-primary/10 |
+| ServiceDetailView hire bar | VISUAL | Sí | `services/ServiceDetailView.tsx` | sticky CTA ring-2 ring-primary/20 |
+| HostPickerModal sheet ring | VISUAL | Sí | `events/HostPickerModal.tsx` | ring-1 ring-primary/10 shell |
+| CreatePostSheet drawer ring | VISUAL | Sí | `feed/CreatePostSheet.tsx` | ring-1 ring-primary/10 drawer |
+| FAQSection card ring | VISUAL | Sí | `venues/sections/FAQSection.tsx` | FAQ rows ring-1 ring-primary/10 |
+| StepUnified progress ring | VISUAL | Sí | `services/StepUnified.tsx` | progress card ring-1 ring-primary/10 |
+| EventPublished share CTA | VISUAL | Sí | `pages/EventPublished.tsx` | Compartir outline border-border/60; fetchEventById intacto |
+| MyPurchasesView chevron rings | VISUAL | Sí | `purchases/MyPurchasesView.tsx` | hub rows chevron ring-primary/20; APIs reales |
+| AddGuestModal dialog ring | VISUAL | Sí | `guests/AddGuestModal.tsx` | ring-1 ring-primary/10; searchUsers API |
+| TicketDetailView card ring | VISUAL | Sí | `tickets/TicketDetailView.tsx` | card ring-1 ring-primary/10 |
+| SeatLocationModal header copy | VISUAL | Sí | `tickets/SeatLocationModal.tsx` | DialogDescription font-extrabold; mapa API real |
+| FeedHero categories ring | VISUAL | Sí | `feed/FeedHero.tsx` | categorías ring-1 ring-primary/10 |
+| BankingHub delete/PayPal | Bloqueo | Parcial | `banking/BankingHub.tsx` | BACKEND_REQUIRED; PayPal banner extrabold; fetchBankAccountsByUser intacto |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b15)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

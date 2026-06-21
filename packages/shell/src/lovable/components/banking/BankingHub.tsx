@@ -169,9 +169,10 @@ const BankingHub = ({ onBack }: BankingHubProps) => {
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-warning/10 ring-2 ring-primary/20">
               <AlertCircle className="h-5 w-5 text-warning" />
             </div>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              PayPal payout requiere integración backend pendiente. Los cobros vía cuenta bancaria siguen operativos.
-            </p>
+            <div className="text-xs text-muted-foreground leading-relaxed">
+              <p className="font-extrabold text-foreground">PayPal payout</p>
+              <p className="mt-1">Requiere integración backend pendiente. Los cobros vía cuenta bancaria siguen operativos.</p>
+            </div>
           </div>
         </div>
       )}

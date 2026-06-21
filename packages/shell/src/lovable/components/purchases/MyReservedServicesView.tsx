@@ -129,11 +129,13 @@ export const MyReservedServicesView = ({ onBack }: MyReservedServicesViewProps) 
                   <p className="text-xs font-extrabold text-muted-foreground">{formatDateRange(booking.startDate, booking.endDate)}</p>
                   <p className="mt-1 text-xs font-extrabold text-primary">{formatBookingStatus(booking.status)}</p>
                 </div>
-                <div className="text-right shrink-0">
+                <div className="text-right shrink-0 flex flex-col items-end gap-1">
                   <p className="text-xs font-extrabold text-foreground">
                     {formatCurrency(booking.pricing?.total)}
                   </p>
-                  <ChevronRight className="mt-1 h-4 w-4 text-primary/70 ml-auto" />
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full ring-2 ring-primary/20">
+                    <ChevronRight className="h-4 w-4 text-primary/70" />
+                  </span>
                 </div>
               </button>
             ))}

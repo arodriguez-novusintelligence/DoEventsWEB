@@ -784,7 +784,7 @@ export function AddGuestModal({
             )}
           </DialogTrigger>
         )}
-        <DialogContent stacked={isNested} className="sm:max-w-md rounded-2xl max-h-[92vh] overflow-y-auto border border-border/60 shadow-sm">
+        <DialogContent stacked={isNested} className="sm:max-w-md rounded-2xl max-h-[92vh] overflow-y-auto border border-border/60 shadow-sm ring-1 ring-primary/10">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-xl font-extrabold text-foreground">
               <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">

@@ -324,7 +324,7 @@ const StepUnified = ({
   return (
     <div className="space-y-4">
       {/* Section progress */}
-      <div className="rounded-2xl border border-border/60 bg-card p-3 shadow-sm">
+      <div className="rounded-2xl border border-border/60 bg-card p-3 shadow-sm ring-1 ring-primary/10">
         <div className="flex items-center justify-between text-xs font-extrabold text-muted-foreground mb-2">
           <span>Progreso del servicio</span>
           <span className="text-primary">{activeSectionIndex + 1} / {sectionOrder.length}</span>

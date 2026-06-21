@@ -1619,7 +1619,7 @@ const CategoryFormSheet = ({
         </Field>
 
         {/* Seating map */}
-        <div className="rounded-2xl bg-secondary/40 p-4">
+        <div className="rounded-2xl border border-border/60 bg-secondary/40 p-4 shadow-sm">
           <div className="mb-3 flex items-center justify-between">
             <h4 className="text-sm font-extrabold text-foreground">Mapa de silletería</h4>
             <span className="text-xs text-muted-foreground">

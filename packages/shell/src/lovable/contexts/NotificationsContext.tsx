@@ -2,13 +2,13 @@
  * Notifications context — empalme Lovable sobre API real `@doevents/shared`.
  *
  * API expuesta (paridad Lovable):
- * - `notifications`, `unreadCount`, `unread`, `hasUnread`, `hasNotifications`, `loading`, `loadError`, `loadErrorMessage`, `isEmpty`, `hasError`, `error`
+ * - `notifications`, `unreadNotifications`, `unreadCount`, `unread`, `hasUnread`, `hasNotifications`, `loading`, `loadError`, `loadErrorMessage`, `isEmpty`, `hasError`, `error`
  * - `count`, `notificationCount`, `totalCount` (alias de `notifications.length`)
  * - `reload` / `refreshNotifications` / `refresh` / `reloadNotifications` / `fetchNotifications`, `markAllRead`, `markRead` / `markAsRead`, `dismissNotification` / `removeNotification`, `clearAll` / `clearNotifications`
  *
  * Datos vía `fetchUserNotifications` — sin mocks.
  */
-import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, useMemo, ReactNode } from 'react';
 import {
   deleteAllNotifications,
   deleteNotification,
@@ -76,6 +76,8 @@ export interface Notification {
 
 export interface NotificationsContextValue {
   notifications: Notification[];
+  /** Alias Lovable — lista filtrada de notificaciones no leídas. */
+  unreadNotifications: Notification[];
   unreadCount: number;
   /** Alias Lovable — mismo valor que `unreadCount`. */
   unread: number;
@@ -122,6 +124,7 @@ export interface NotificationsContextValue {
 
 const fallbackContext: NotificationsContextValue = {
   notifications: [],
+  unreadNotifications: [],
   unreadCount: 0,
   unread: 0,
   hasUnread: false,
@@ -210,6 +213,10 @@ export const NotificationsProvider = ({
   }, [reloadFromApi]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
+  const unreadNotifications = useMemo(
+    () => notifications.filter((n) => !n.read),
+    [notifications],
+  );
 
   const addNotification = useCallback(
     (n: Omit<Notification, 'id' | 'timeAgo' | 'read'>) => {
@@ -296,6 +303,7 @@ export const NotificationsProvider = ({
     <NotificationsContext.Provider
       value={{
         notifications,
+        unreadNotifications,
         unreadCount,
         unread: unreadCount,
         hasUnread: unreadCount > 0,

@@ -124,7 +124,7 @@ const FeedHero = ({
 
       {/* Categorías card overlapping */}
       <div className="-mt-12 px-4">
-        <div className="mx-auto max-w-lg rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
+        <div className="mx-auto max-w-lg rounded-2xl border border-border/60 bg-card p-4 shadow-sm ring-1 ring-primary/10">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-base font-extrabold text-foreground">Categorías</h2>
             <button

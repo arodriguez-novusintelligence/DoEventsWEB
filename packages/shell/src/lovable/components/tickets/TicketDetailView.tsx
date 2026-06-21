@@ -267,7 +267,7 @@ const TicketDetailView = ({
         )}
 
         <div
-          className={`relative mt-4 overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm ${
+          className={`relative mt-4 overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm ring-1 ring-primary/10 ${
             isPending ? 'opacity-90' : ''
           }`}
         >

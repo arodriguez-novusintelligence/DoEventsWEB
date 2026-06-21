@@ -97,7 +97,7 @@ const SeatLocationModal = ({ open, onOpenChange, ticket }: Props) => {
             </span>
             Ubicación de tu silla
           </DialogTitle>
-          <DialogDescription className="text-primary-foreground/85">
+          <DialogDescription className="text-sm font-extrabold text-primary-foreground/85">
             {ticket.eventTitle} · {ticket.eventDate}
           </DialogDescription>
         </DialogHeader>

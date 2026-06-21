@@ -117,7 +117,9 @@ export const MyPurchasesView = ({ onBack }: MyPurchasesViewProps) => {
                   {ticketCount} boleta{ticketCount === 1 ? '' : 's'} activa{ticketCount === 1 ? '' : 's'}
                 </p>
               </div>
-              <ChevronRight className="h-5 w-5 text-primary/70" />
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full ring-2 ring-primary/20">
+                <ChevronRight className="h-4 w-4 text-primary/70" />
+              </span>
             </button>
 
             <button
@@ -134,7 +136,9 @@ export const MyPurchasesView = ({ onBack }: MyPurchasesViewProps) => {
                   {venueBookings.length} reserva{venueBookings.length === 1 ? '' : 's'}
                 </p>
               </div>
-              <ChevronRight className="h-5 w-5 text-primary/70" />
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full ring-2 ring-primary/20">
+                <ChevronRight className="h-4 w-4 text-primary/70" />
+              </span>
             </button>
 
             <button
@@ -151,7 +155,9 @@ export const MyPurchasesView = ({ onBack }: MyPurchasesViewProps) => {
                   {serviceBookings.length} reserva{serviceBookings.length === 1 ? '' : 's'}
                 </p>
               </div>
-              <ChevronRight className="h-5 w-5 text-primary/70" />
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full ring-2 ring-primary/20">
+                <ChevronRight className="h-4 w-4 text-primary/70" />
+              </span>
             </button>
 
             {!ticketCount && !venueBookings.length && !serviceBookings.length && (

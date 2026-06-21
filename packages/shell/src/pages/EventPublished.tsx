@@ -90,8 +90,8 @@ export const EventPublished = () => {
             {typeof navigator.share === 'function' && (
               <Button
                 type="button"
-                variant="ghost"
-                className="w-full rounded-full font-extrabold shadow-sm"
+                variant="outline"
+                className="w-full rounded-full border border-border/60 font-extrabold shadow-sm"
                 onClick={() => {
                   void navigator.share({
                     title: eventName || 'Mi evento en Do.Events',

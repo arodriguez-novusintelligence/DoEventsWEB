@@ -122,7 +122,7 @@ export const ReportPostDialog = ({
           </div>
         )}
 
-        <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-2">
+        <DialogFooter className="flex flex-col-reverse gap-2 border-t border-border/60 pt-4 sm:flex-row sm:justify-end sm:gap-2">
           <Button type="button" variant="outline" className="rounded-full font-extrabold shadow-sm" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
