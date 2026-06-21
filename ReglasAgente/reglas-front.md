@@ -115,6 +115,27 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b7)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| EventPreviewModal hero/notice | VISUAL | Sí | `events/EventPreviewModal.tsx` | border-border/60; notice/video link extrabold; YouTube ring-primary/20 |
+| SeatingMapEditor header/footer | VISUAL | Sí | `events/SeatingMapEditor.tsx` | Editando extrabold; Guardar shadow-sm; FooterActions border-border/60 |
+| EventsView provider cards | VISUAL | Sí | `feed/EventsView.tsx` | initials/badge/rating extrabold; category chips extrabold |
+| TicketDetailView labels | VISUAL | Sí | `tickets/TicketDetailView.tsx` | QR data + transfer date extrabold |
+| MyPurchasesView hub | VISUAL | Sí | `purchases/MyPurchasesView.tsx` | retry shadow-sm; row counts extrabold; API real |
+| EventPublished ring/subtitle | VISUAL | Sí | `pages/EventPublished.tsx` | PartyPopper ring-2; subtitle extrabold |
+| AddGuestModal checkmark | VISUAL | Sí | `guests/AddGuestModal.tsx` | selection ✓ font-extrabold |
+| NotificationsContext hasError | Integración | Sí | `contexts/NotificationsContext.tsx` | alias hasError derivado loadError |
+| CompanyContext error aliases | Integración | Sí | `contexts/CompanyContext.tsx` | hasError + error API parity |
+| RefundTicketFlow / StepAccessControl | Empalme | Sí | ver batch previo | Verificados intactos |
+| FAQSection / HostPickerModal | Empalme | Sí | ver batch previo | Verificados intactos |
+| ServiceDetailView / MyPostsView | Empalme | Sí | ver batch previo | Verificados intactos |
+| StepUnified / MyReservedServices | Empalme | Sí | ver batch previo | Verificados intactos |
+| MainInfoSection / ReportPostDialog | Empalme | Sí | ver batch previo | Verificados intactos |
+| CreatePostSheet | Empalme | Sí | ver batch previo | Verificado intacto |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 20 DONE + 0 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b6)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

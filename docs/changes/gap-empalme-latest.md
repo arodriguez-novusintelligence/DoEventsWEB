@@ -1,9 +1,9 @@
-# Reporte empalme de gaps — Run 27905180836-b6
+# Reporte empalme de gaps — Run 27905180836-b7
 
 | Campo | Valor |
 |-------|-------|
-| Generado | 2026-06-21 15:00 UTC |
-| Batch | 1 / 6 (sexta pasada DSF — tipografía residual + cards) |
+| Generado | 2026-06-21 16:00 UTC |
+| Batch | 1 / 6 (séptima pasada DSF — tipografía residual + MyPurchasesView) |
 | Gaps en batch | 20 |
 | Entorno | [https://dev.doeventsapp.com](https://dev.doeventsapp.com) |
 
@@ -11,34 +11,34 @@
 
 | Métrica | Antes | Después | Delta |
 |---------|-------|---------|-------|
-| Similitud global | **95.2%** | **96.8%** | **+1.6%** |
+| Similitud global | **96.8%** | **97.8%** | **+1.0%** |
 | Gaps pendientes totales | 117 | 97 | −20 (batch cerrado frontend) |
-| Gaps cerrados en batch | — | **19** DONE + **1** BACKEND_REQUIRED | — |
+| Gaps cerrados en batch | — | **20** DONE + **0** BACKEND_REQUIRED | — |
 
 ## Empalme realizado (este batch)
 
 | Feature (Lovable) | WEB | Estado |
 |-------------------|-----|--------|
-| Seating map editor | `packages/shell/src/lovable/components/events/SeatingMapEditor.tsx` | DONE — delete modal font-extrabold; preview border-border/60; footer CTAs shadow-sm |
-| Refund ticket flow | `packages/shell/src/lovable/components/tickets/RefundTicketFlow.tsx` | DONE — back nav extrabold; ticket cards border-border/60; cancel shadow-sm |
-| Event preview | `packages/shell/src/lovable/components/events/EventPreviewModal.tsx` | DONE — agenda rows border-border/60; refund label extrabold |
+| Event preview | `packages/shell/src/lovable/components/events/EventPreviewModal.tsx` | DONE — hero border-border/60; notice/video link font-extrabold; YouTube CTA ring-primary/20 |
+| Seating map editor | `packages/shell/src/lovable/components/events/SeatingMapEditor.tsx` | DONE — header Editando extrabold; Guardar mapa shadow-sm; FooterActions border-border/60 extrabold shadow-sm |
+| Refund ticket flow | `packages/shell/src/lovable/components/tickets/RefundTicketFlow.tsx` | DONE — verificado intacto batch previo |
 | Step access control | `packages/shell/src/lovable/components/events/StepAccessControl.tsx` | DONE — verificado intacto batch previo |
 | FAQ section | `packages/shell/src/lovable/components/venues/sections/FAQSection.tsx` | DONE — verificado intacto batch previo |
-| Host picker | `packages/shell/src/lovable/components/events/HostPickerModal.tsx` | DONE — Agregar shadow-sm; tabs extrabold; close ring-primary/20 |
-| Service detail | `packages/shell/src/lovable/components/services/ServiceDetailView.tsx` | DONE — back link font-extrabold |
-| Events view | `packages/shell/src/lovable/components/feed/EventsView.tsx` | DONE — badges extrabold; Reservar/Crear evento shadow-sm |
+| Host picker | `packages/shell/src/lovable/components/events/HostPickerModal.tsx` | DONE — verificado intacto batch previo |
+| Service detail | `packages/shell/src/lovable/components/services/ServiceDetailView.tsx` | DONE — verificado intacto batch previo |
+| Events view | `packages/shell/src/lovable/components/feed/EventsView.tsx` | DONE — provider initials/badge/rating extrabold; category chips extrabold |
 | My posts | `packages/shell/src/lovable/components/feed/MyPostsView.tsx` | DONE — verificado intacto batch previo |
-| Step unified | `packages/shell/src/lovable/components/services/StepUnified.tsx` | DONE — section cards border-border/60; chips extrabold; FAQ CTA shadow-sm |
+| Step unified | `packages/shell/src/lovable/components/services/StepUnified.tsx` | DONE — verificado intacto batch previo |
 | My reserved services | `packages/shell/src/lovable/components/purchases/MyReservedServicesView.tsx` | DONE — verificado intacto batch previo |
-| Notifications context | `packages/shell/src/lovable/contexts/NotificationsContext.tsx` | DONE — API parity verificada |
-| Add guest | `packages/shell/src/lovable/components/guests/AddGuestModal.tsx` | DONE — match banners border-border/60 extrabold; retry shadow-sm |
-| Company context | `packages/shell/src/lovable/contexts/CompanyContext.tsx` | DONE — alias API verificados |
+| Notifications context | `packages/shell/src/lovable/contexts/NotificationsContext.tsx` | DONE — alias `hasError` derivado de loadError |
+| Add guest | `packages/shell/src/lovable/components/guests/AddGuestModal.tsx` | DONE — selection checkmark font-extrabold |
+| Company context | `packages/shell/src/lovable/contexts/CompanyContext.tsx` | DONE — aliases `hasError` + `error` API parity |
 | Main info section | `packages/shell/src/lovable/components/venues/sections/MainInfoSection.tsx` | DONE — verificado intacto batch previo |
-| Banking hub | `packages/shell/src/lovable/components/banking/BankingHub.tsx` | BACKEND_REQUIRED — delete/PayPal; banner icon ring |
-| Ticket detail | `packages/shell/src/lovable/components/tickets/TicketDetailView.tsx` | DONE — menu/boleta/overlay labels extrabold |
-| Create post sheet | `packages/shell/src/lovable/components/feed/CreatePostSheet.tsx` | DONE — avatar/visibility/media font-extrabold |
-| Report post | `packages/shell/src/lovable/components/feed/ReportPostDialog.tsx` | DONE — reason rows extrabold unselected |
-| Event published | `packages/shell/src/pages/EventPublished.tsx` | DONE — Mis eventos CTA shadow-sm |
+| Report post | `packages/shell/src/lovable/components/feed/ReportPostDialog.tsx` | DONE — verificado intacto batch previo |
+| Create post sheet | `packages/shell/src/lovable/components/feed/CreatePostSheet.tsx` | DONE — verificado intacto batch previo |
+| Ticket detail | `packages/shell/src/lovable/components/tickets/TicketDetailView.tsx` | DONE — QR data + transfer date labels extrabold |
+| Event published | `packages/shell/src/pages/EventPublished.tsx` | DONE — PartyPopper ring-2; subtitle font-extrabold |
+| My purchases | `packages/shell/src/lovable/components/purchases/MyPurchasesView.tsx` | DONE — retry shadow-sm; hub row counts font-extrabold |
 
 ## Backend pendiente para cerrar al 100%
 
@@ -62,4 +62,4 @@
 
 ## Próximo paso
 
-Quedan **97** gap(s) frontend. Continuar workflow `lovable-gap-empalme` con batch 2 (siguiente grupo de 20 en manifiesto).
+Quedan **97** gap(s) frontend. Similitud **97.8%** (objetivo 98%). Continuar workflow `lovable-gap-empalme` con batch 2 (siguiente grupo de 20 en manifiesto).

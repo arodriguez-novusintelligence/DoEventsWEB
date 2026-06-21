@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27905180836-b7`: batch 1 séptima pasada (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED en batch. font-extrabold residual EventPreviewModal/EventsView/TicketDetailView; MyPurchasesView hub polish; SeatingMapEditor header/footer; EventPublished ring-2; NotificationsContext hasError + CompanyContext hasError/error; similitud ~97.8%; 97 gaps restantes; build:devaws OK.
+
 Run `gap-empalme-27905180836-b6`: batch 1 sexta pasada (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). font-extrabold residual; border-border/60 cards; shadow-sm CTAs transversal; similitud ~96.8%; 97 gaps restantes; build:devaws OK.
 
 Run `gap-empalme-27905180836-b5`: batch 1 quinta pasada (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). EventPublished card border-border/60 CTAs extrabold; font-extrabold transversal RefundTicketFlow/StepAccessControl/HostPickerModal/StepUnified/TicketDetailView; CompanyContext `companyName` alias; similitud ~95.2%; 97 gaps restantes; build:devaws OK.
@@ -132,7 +134,20 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27905180836-b6)
+## Empalme realizado (última ejecución — gap-empalme-27905180836-b7)
+
+- **EventPreviewModal:** hero `border-border/60`; preview notice font-extrabold; YouTube link extrabold + ring-primary/20.
+- **EventsView:** provider card initials/badge/rating font-extrabold; category strip chips extrabold (activo e inactivo).
+- **TicketDetailView:** QR payload + transfer overlay date labels font-extrabold.
+- **AddGuestModal:** selection checkmark font-extrabold.
+- **MyPurchasesView:** retry CTA shadow-sm extrabold; hub row counts font-extrabold; API real intacta.
+- **SeatingMapEditor:** header Editando extrabold; Guardar mapa shadow-sm; FooterActions border-border/60 extrabold shadow-sm.
+- **EventPublished:** PartyPopper ring-2 (paridad h-14); subtitle font-extrabold; CTAs API share intactos.
+- **NotificationsContext:** alias `hasError` derivado de `loadError`; API `fetchUserNotifications` sin mocks.
+- **CompanyContext:** aliases `hasError` + `error` (paridad Lovable); `fetchUserById` sin mocks.
+- **Verificados intactos:** RefundTicketFlow, StepAccessControl, FAQSection, HostPickerModal, ServiceDetailView, MyPostsView, StepUnified, MyReservedServicesView, MainInfoSection, ReportPostDialog, CreatePostSheet.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27905180836-b6)
 
 - **SeatingMapEditor:** delete modal font-extrabold + shadow-sm; seat preview `border-border/60`; footer CTAs shadow-sm extrabold.
 - **RefundTicketFlow:** back nav font-extrabold; ticket cards unselected `border-border/60`; cancel buttons shadow-sm.
