@@ -13,6 +13,35 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-21 11:56 UTC] prepare-cb27c830
+
+### 1. Resumen del cambio detectado
+Manifiesto: UI=False, reglas=False, 2 archivo(s); similitud diseño=80.86%
+
+### 2. Tipo de cambio (preliminar)
+- [x] VISUAL
+- [ ] FRONT_LOGIC
+- [ ] BACKEND_REQUIRED
+- [ ] RISKY
+
+### 3. Archivos modificados en DoEventsWEB
+- Pendiente — el agente adapta sin copia literal
+
+### 4. Archivos modificados en DoEventsBack (si aplica)
+- Pendiente evaluacion agente
+
+### 5. Evidencia de que no se usaron mocks
+- Sin port deterministico de componentes en esta fase.
+- El agente debe usar `lovable-bridge/*` + `@doevents/shared`.
+
+### 6. Resultado build/test
+- `npm run build:devaws`: pending
+
+### 7. Riesgos pendientes
+- Agente debe completar adaptacion y actualizar esta entrada.
+
+---
+
 ## [2026-06-21 15:30 UTC] gap-empalme-27902063419-b5
 
 ### 1. Resumen del empalme
