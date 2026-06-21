@@ -54,11 +54,15 @@ const EventCard = ({
       </div>
 
       <div className="mt-2 flex items-center gap-2 text-sm text-primary font-extrabold">
-        <Calendar className="h-4 w-4" />
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+          <Calendar className="h-4 w-4" />
+        </span>
         {ev.date} – {ev.time}
       </div>
       <div className="mt-1 flex items-start gap-2 text-sm text-primary font-extrabold">
-        <MapPin className="h-4 w-4 mt-0.5 shrink-0" />
+        <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+          <MapPin className="h-4 w-4" />
+        </span>
         <span className="leading-snug">{ev.location}</span>
       </div>
 
@@ -259,7 +263,7 @@ const AccessControlListView = ({
                 if (onAssignEvent) onAssignEvent();
                 else toast.info('La asignación de staff requiere invitación del organizador');
               }}
-              className="mt-2 flex w-full items-center justify-center gap-2 rounded-full border-2 border-dashed border-primary/25 bg-primary/5 px-4 py-3 text-sm font-extrabold text-primary shadow-sm"
+              className="mt-2 flex w-full items-center justify-center gap-2 rounded-full border-2 border-dashed border-primary/25 border-border/60 bg-primary/5 px-4 py-3 text-sm font-extrabold text-primary shadow-sm"
             >
               <Plus className="h-4 w-4" /> Asignar evento
             </button>

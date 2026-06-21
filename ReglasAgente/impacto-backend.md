@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27905180836-b14`: batch 1 decimocuarta pasada (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`StoryViewersSheet` viewers API). EventsView EmptyHint dashed + FavoriteHeart rings + metadata extrabold; FeedHero stories loading h-14 ring; StoryViewersSheet loading/empty DSF; ReportPostDialog error ring; MyReservedServicesView login dashed; ServiceDetailView/FAQSection/AccessControlListView/MainInfoSection/StepUnified/AddGuestModal/SeatingMapEditor/TicketDetailView polish; NotificationsContext hasNotifications alias; similitud ~99.18%; 97 gaps restantes; build:devaws OK.
+
 Run `gap-empalme-27905180836-b13`: batch 1 decimotercera pasada (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED en batch. MessagesListView empalme DSF completo (border-border/60, font-extrabold, h-14 loading rings, filter chips shadow-sm); NotificationsSheet loading/empty dashed + action CTAs rounded-full; NotificationsContext clearNotifications alias; HostPickerModal empty dashed cards; MyPostsView/MyReservedServicesView dashed empty; EventPublished ring-2; EventsView provider heart ring; AddGuestModal search styling; 12 componentes verificados intactos; similitud ~99.05%; 97 gaps restantes; build:devaws OK.
 
 Run `gap-empalme-27905180836-b12`: batch 1 duodécima pasada (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED en batch. FeedHero gradientes semánticos + category ring-primary/20; NotificationsContext markAsRead/removeNotification/reloadNotifications aliases; StepAccessControl stat icon rings; SeatingMapEditor CTAs rounded-full; EventsView heart ring + location extrabold; AddGuestModal tabs rounded-full; polish transversal 14 componentes más; similitud ~98.95%; 97 gaps restantes; build:devaws OK.
@@ -146,7 +148,25 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27905180836-b13)
+## Empalme realizado (última ejecución — gap-empalme-27905180836-b14)
+
+- **EventsView:** `EmptyHint` dashed `border-primary/25 border-border/60`; fallback hearts `ring-primary/20`; row favorites vía `FavoriteHeartButton`; event description + venue/provider metadata font-extrabold; discover loading bar extrabold; APIs reales intactas.
+- **FeedHero:** stories loading spinner en contenedor h-14 ring-primary/20 (paridad empty state).
+- **StoryViewersSheet:** loading h-14 ring; skeleton avatar ring-primary/20; empty `border-border/60`; backend copy font-extrabold; **BACKEND_REQUIRED** — sin mock viewers (`GET /stories/{id}/viewers`).
+- **ReportPostDialog:** error AlertCircle en well ring-destructive/20; textarea `focus-visible:ring-primary/20`; `reportPublication` API intacta.
+- **MyReservedServicesView:** login gate dashed border-primary/25; subtitle extrabold; `fetchUserServiceBookings` intacto.
+- **ServiceDetailView:** activity names + schedule/availability/refund font-extrabold.
+- **FAQSection:** Input/Textarea border-border/60 shadow-sm extrabold; delete btn rounded-full ring-destructive/20.
+- **AccessControlListView:** Calendar/MapPin icon wells ring-primary/20; assign CTA border-border/60.
+- **MainInfoSection:** form Input/SelectTrigger border-border/60 font-extrabold; custom extras Input rounded border shadow-sm.
+- **StepUnified:** helper copy font-extrabold; photo preview border-border/60 shadow-sm.
+- **AddGuestModal:** manual tab Labels/Inputs border-border/60 focus ring; UserCheck icon well ring-primary/20; contacts helper extrabold.
+- **SeatingMapEditor:** legend close btn ring-primary/20; legend icon chips ring-primary/20; descriptions extrabold.
+- **TicketDetailView:** Calendar/Clock/MapPin icon wells ring-primary/20 en filas fecha/hora/asiento.
+- **NotificationsContext:** alias `hasNotifications` (= `notifications.length > 0`); JSDoc API parity actualizado.
+- **Verificados intactos:** MyPostsView, HostPickerModal, CreatePostSheet, EventPublished, MyPurchasesView, SeatLocationModal.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27905180836-b13)
 
 - **MessagesListView:** `border-border/40`→`border-border/60` en cards; font-extrabold transversal (títulos, FilterChip, EmptyState, búsqueda); FilterChip active `shadow-sm`; header/search `border-border/60`; loading h-14 ring-primary/20 (lista + búsqueda usuarios); empty búsqueda `border-dashed border-primary/25`; archive button ring-primary/20; APIs `searchUsers` intactas.
 - **NotificationsSheet:** DrawerTitle/font-extrabold; unread badge extrabold; links acción extrabold; unread icon ring-primary/20; loading h-14 ring; empty `border-dashed border-primary/25`; retry `border-border/60`; Aceptar/Rechazar/Calificar CTAs `rounded-full font-extrabold shadow-sm`; API `fetchUserNotifications` sin mocks.

@@ -324,7 +324,9 @@ const TicketDetailView = ({
                 <div>
                   <p className="text-sm font-extrabold text-muted-foreground mb-1.5">Fecha</p>
                   <div className="flex items-center gap-2">
-                    <Calendar className="h-5 w-5 text-primary" />
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                      <Calendar className="h-5 w-5 text-primary" />
+                    </span>
                     <span className="text-base font-extrabold text-foreground">{ticket.eventDate}</span>
                   </div>
                 </div>
@@ -332,7 +334,9 @@ const TicketDetailView = ({
                   <div className="text-right">
                     <p className="text-sm font-extrabold text-muted-foreground mb-1.5">Hora inicio</p>
                     <div className="flex items-center justify-end gap-2">
-                      <Clock className="h-5 w-5 text-primary" />
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                        <Clock className="h-5 w-5 text-primary" />
+                      </span>
                       <span className="text-base font-extrabold text-foreground">{ticket.startTime}</span>
                     </div>
                   </div>
@@ -359,7 +363,9 @@ const TicketDetailView = ({
                   onClick={() => setSeatMapOpen(true)}
                   className="flex w-full items-center justify-center gap-2 rounded-full border border-border/60 bg-primary/5 py-3 text-sm font-extrabold text-primary shadow-sm hover:bg-primary/10"
                 >
-                  <MapPin className="h-4 w-4" />
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                    <MapPin className="h-4 w-4 text-primary" />
+                  </span>
                   Ver ubicación de la silla
                 </button>
               )}

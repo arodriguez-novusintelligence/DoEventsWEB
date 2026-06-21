@@ -186,7 +186,9 @@ const FeedHero = ({
             <div className="flex items-start gap-3 overflow-x-auto no-scrollbar pb-1">
               {storiesLoading && (
                 <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-primary/25 border-border/60 bg-card py-6 px-4 w-full shadow-sm">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  </div>
                   <p className="text-xs font-extrabold text-muted-foreground">Cargando historias…</p>
                 </div>
               )}

@@ -344,10 +344,10 @@ const StepUnified = ({
           </span>
           <h3 className="text-sm font-extrabold text-foreground">Foto del servicio <span className="text-destructive">*</span></h3>
         </div>
-        <p className="text-xs text-muted-foreground mb-3">
+        <p className="text-xs font-extrabold text-muted-foreground mb-3">
           Sube una foto tuya o de tu trabajo. Es obligatoria para publicar el servicio.
         </p>
-        <div className="relative mx-auto h-40 w-full max-w-xs overflow-hidden rounded-2xl bg-muted">
+        <div className="relative mx-auto h-40 w-full max-w-xs overflow-hidden rounded-2xl border border-border/60 bg-muted shadow-sm">
           {coverPreview ? (
             <img src={coverPreview} alt="Vista previa" className="h-full w-full object-cover" />
           ) : (
@@ -630,7 +630,7 @@ const StepUnified = ({
               </Button>
             </div>
             {formData.latitude != null && formData.longitude != null && (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs font-extrabold text-muted-foreground">
                 {formData.locationCity || formData.locationLabel} · {formData.latitude.toFixed(4)}, {formData.longitude.toFixed(4)}
               </p>
             )}
@@ -674,7 +674,7 @@ const StepUnified = ({
           <div className="rounded-2xl bg-card p-4 shadow-sm border border-border/60 space-y-6">
             <div>
               <h4 className="text-sm font-extrabold text-foreground">Preferencias en las reservas</h4>
-              <p className="text-xs text-muted-foreground">Configura cómo quieres recibir y aprobar las reservas</p>
+              <p className="text-xs font-extrabold text-muted-foreground">Configura cómo quieres recibir y aprobar las reservas</p>
               <div className="mt-3 space-y-3">
                 <button
                   type="button"
@@ -690,7 +690,7 @@ const StepUnified = ({
                       <span className="text-sm font-extrabold text-foreground">Activa la Reserva inmediata</span>
                       <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-extrabold text-primary">Recomendada</span>
                     </div>
-                    <p className="mt-1 text-xs text-muted-foreground">Permite que tus clientes reserven automáticamente.</p>
+                    <p className="mt-1 text-xs font-extrabold text-muted-foreground">Permite que tus clientes reserven automáticamente.</p>
                   </div>
                 </button>
                 <button
@@ -704,14 +704,14 @@ const StepUnified = ({
                   <ClipboardCheck className="h-5 w-5 text-primary mt-0.5 shrink-0" />
                   <div>
                     <span className="text-sm font-extrabold text-foreground">Aprueba todas las reservas</span>
-                    <p className="mt-1 text-xs text-muted-foreground">Revisa siempre las solicitudes antes de aprobar.</p>
+                    <p className="mt-1 text-xs font-extrabold text-muted-foreground">Revisa siempre las solicitudes antes de aprobar.</p>
                   </div>
                 </button>
               </div>
             </div>
             <div>
               <h4 className="text-sm font-extrabold text-foreground">¿Cuándo pueden solicitar reembolsos?</h4>
-              <p className="text-xs text-muted-foreground">Define hasta qué momento pueden cancelar y recibir reembolso.</p>
+              <p className="text-xs font-extrabold text-muted-foreground">Define hasta qué momento pueden cancelar y recibir reembolso.</p>
               <RadioGroup value={formData.refundPolicy} onValueChange={(v) => updateForm({ refundPolicy: v })} className="mt-3 space-y-2">
                 {REFUND_POLICIES.map((policy) => (
                   <label key={policy} className="flex items-center gap-3 cursor-pointer">
@@ -735,7 +735,7 @@ const StepUnified = ({
         <SectionHeader icon={HelpCircle} title="Preguntas frecuentes (FAQ)" sectionKey="faq" />
         <CollapsibleContent className="mt-2 px-1">
           <div className="rounded-2xl bg-card p-4 shadow-sm border border-border/60">
-            <p className="text-xs text-muted-foreground">Agrega preguntas y respuestas que los clientes suelen hacer</p>
+            <p className="text-xs font-extrabold text-muted-foreground">Agrega preguntas y respuestas que los clientes suelen hacer</p>
             <div className="mt-4 space-y-4">
               {formData.faqs.map((faq, i) => (
                 <div key={i} className="rounded-xl border border-border/60 p-4 shadow-sm">
@@ -752,7 +752,7 @@ const StepUnified = ({
                   </div>
                   <Input placeholder="Ej: ¿Cuál es el horario de check-in?" value={faq.question} onChange={(e) => { const next = formData.faqs.map((f, idx) => idx === i ? { ...f, question: e.target.value } : f); updateForm({ faqs: next }); }} />
                   <div className="mt-2">
-                    <span className="text-xs text-muted-foreground">Respuesta</span>
+                    <span className="text-xs font-extrabold text-muted-foreground">Respuesta</span>
                     <Textarea className="mt-1" placeholder="Escribe la respuesta aquí..." value={faq.answer} onChange={(e) => { const next = formData.faqs.map((f, idx) => idx === i ? { ...f, answer: e.target.value } : f); updateForm({ faqs: next }); }} />
                   </div>
                 </div>

@@ -94,11 +94,12 @@ export const MyReservedServicesView = ({ onBack }: MyReservedServicesViewProps) 
             </Button>
           </div>
         ) : !userId ? (
-          <div className="rounded-2xl border border-border/60 bg-card p-10 text-center shadow-sm">
+          <div className="rounded-2xl border border-dashed border-primary/25 border-border/60 bg-card p-10 text-center shadow-sm">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
               <Briefcase className="h-7 w-7 text-primary" />
             </div>
             <p className="mt-3 text-sm font-extrabold text-foreground">Inicia sesión para ver tus reservas</p>
+            <p className="mt-1 text-xs font-extrabold text-muted-foreground">Accede con tu cuenta para consultar reservas de servicios</p>
             <Button type="button" className="mt-4 rounded-full font-extrabold shadow-sm" onClick={() => navigate('/auth/login')}>
               Iniciar sesión
             </Button>

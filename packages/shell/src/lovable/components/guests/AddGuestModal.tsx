@@ -531,7 +531,7 @@ export function AddGuestModal({
             <TabsTrigger value="manual" className="rounded-full font-extrabold shadow-sm data-[state=active]:ring-2 data-[state=active]:ring-primary/20">Manual</TabsTrigger>
           </TabsList>
           <TabsContent value="contacts" className="space-y-3">
-            <p className="text-xs text-muted-foreground">Importa contactos del dispositivo como invitados.</p>
+            <p className="text-xs font-extrabold text-muted-foreground">Importa contactos del dispositivo como invitados.</p>
             <Button
               type="button"
               variant="outline"
@@ -546,20 +546,20 @@ export function AddGuestModal({
             <form onSubmit={(e) => void submit(e)} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Nombre *</Label>
-                  <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Nombre" />
+                  <Label className="font-extrabold">Nombre *</Label>
+                  <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Nombre" className="border-border/60 focus-visible:ring-2 focus-visible:ring-primary/20 font-extrabold" />
                 </div>
                 <div className="space-y-2">
-                  <Label>Apellido *</Label>
-                  <Input value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} placeholder="Apellido" />
+                  <Label className="font-extrabold">Apellido *</Label>
+                  <Input value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} placeholder="Apellido" className="border-border/60 focus-visible:ring-2 focus-visible:ring-primary/20 font-extrabold" />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label>Usuario</Label>
-                <Input value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} placeholder="@nombreusuario" />
+                <Label className="font-extrabold">Usuario</Label>
+                <Input value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} placeholder="@nombreusuario" className="border-border/60 focus-visible:ring-2 focus-visible:ring-primary/20 font-extrabold" />
               </div>
               <div className="space-y-2">
-                <Label>Email</Label>
+                <Label className="font-extrabold">Email</Label>
                 <Input
                   type="email"
                   value={form.email}
@@ -570,13 +570,16 @@ export function AddGuestModal({
                   }}
                   onBlur={(e) => { void lookupEmail(e.target.value); }}
                   placeholder="ejemplo@email.com"
+                  className="border-border/60 focus-visible:ring-2 focus-visible:ring-primary/20 font-extrabold"
                 />
                 {isCheckingEmail && (
-                  <p className="text-xs text-muted-foreground">Verificando correo…</p>
+                  <p className="text-xs font-extrabold text-muted-foreground">Verificando correo…</p>
                 )}
                 {(matchedExisting || matchedPlatformUser) && (
                   <div className="flex items-start gap-2 rounded-xl border border-border/60 border-primary/30 bg-primary/5 px-3 py-2 text-xs font-extrabold text-foreground shadow-sm">
-                    <UserCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                    <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                      <UserCheck className="h-4 w-4 text-primary" />
+                    </span>
                     <div>
                       {matchedExisting ? (
                         <>

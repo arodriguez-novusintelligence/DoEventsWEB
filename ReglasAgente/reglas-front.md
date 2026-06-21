@@ -115,6 +115,30 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+---
+
+## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b14)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| EventsView EmptyHint dashed | VISUAL | Sí | `feed/EventsView.tsx` | border-dashed border-primary/25; FavoriteHeart rings en rows/fallback |
+| FeedHero stories loading | VISUAL | Sí | `feed/FeedHero.tsx` | h-14 ring-primary/20 en carga historias |
+| StoryViewersSheet DSF | Bloqueo | Parcial | `feed/StoryViewersSheet.tsx` | BACKEND_REQUIRED viewers API; loading/empty DSF |
+| ReportPostDialog error ring | VISUAL | Sí | `feed/ReportPostDialog.tsx` | AlertCircle well ring-destructive/20; textarea focus ring |
+| MyReservedServices login | VISUAL | Sí | `purchases/MyReservedServicesView.tsx` | login dashed + subtitle extrabold; API real |
+| ServiceDetailView labels | VISUAL | Sí | `services/ServiceDetailView.tsx` | activity/schedule/refund font-extrabold |
+| FAQSection inputs | VISUAL | Sí | `venues/sections/FAQSection.tsx` | Input/Textarea border-border/60; delete ring |
+| AccessControlListView icons | VISUAL | Sí | `access/AccessControlListView.tsx` | Calendar/MapPin icon wells ring-primary/20 |
+| MainInfoSection forms | VISUAL | Sí | `venues/sections/MainInfoSection.tsx` | Input/Select border-border/60 font-extrabold |
+| StepUnified helpers | VISUAL | Sí | `services/StepUnified.tsx` | helper copy extrabold; photo preview border |
+| AddGuestModal manual tab | VISUAL | Sí | `guests/AddGuestModal.tsx` | Labels/Inputs DSF; UserCheck ring |
+| SeatingMapEditor legend | VISUAL | Sí | `events/SeatingMapEditor.tsx` | legend close/icon rings; descriptions extrabold |
+| TicketDetailView icons | VISUAL | Sí | `tickets/TicketDetailView.tsx` | Calendar/Clock/MapPin icon wells |
+| NotificationsContext hasNotifications | Integración | Sí | `contexts/NotificationsContext.tsx` | alias `hasNotifications` derivado |
+| MyPostsView / HostPicker / CreatePost | Empalme | Sí | ver batch previo | Verificados intactos |
+| EventPublished / MyPurchases / SeatLocation | Empalme | Sí | ver batch previo | Verificados intactos |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b13)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

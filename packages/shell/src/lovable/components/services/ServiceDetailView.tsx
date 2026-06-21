@@ -199,7 +199,7 @@ const ServiceDetailView = ({
               const p = service.activityPricing[`${s}::${activity}`];
               return (
                 <li key={`${s}-${activity}`} className="flex items-center justify-between text-sm">
-                  <span className="text-foreground">{activity}</span>
+                  <span className="font-extrabold text-foreground">{activity}</span>
                   {p?.cost && (
                     <span className="font-extrabold text-primary">
                       {p.currency} {Number(p.cost).toLocaleString()} · {p.pricingType}
@@ -216,7 +216,7 @@ const ServiceDetailView = ({
             <SectionIcon icon={Clock} />
             <h3 className="font-extrabold">Horario</h3>
           </div>
-          <p className="text-sm">
+          <p className="text-sm font-extrabold text-foreground">
             {service.globalStartTime} - {service.globalEndTime}
           </p>
           {days.length > 0 && (
@@ -229,7 +229,7 @@ const ServiceDetailView = ({
             <SectionIcon icon={CalendarDays} />
             <h3 className="font-extrabold">Disponibilidad</h3>
           </div>
-          <p className="text-sm">
+          <p className="text-sm font-extrabold text-foreground">
             {service.selectedDates.length} fecha(s) disponibles
             {service.blockedDates.length > 0 && ` · ${service.blockedDates.length} bloqueada(s)`}
           </p>
@@ -240,7 +240,7 @@ const ServiceDetailView = ({
             <SectionIcon icon={ShieldCheck} />
             <h3 className="font-extrabold">Política de reembolso</h3>
           </div>
-          <p className="text-sm">{service.refundPolicy}</p>
+          <p className="text-sm font-extrabold text-foreground">{service.refundPolicy}</p>
         </div>
 
         <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">

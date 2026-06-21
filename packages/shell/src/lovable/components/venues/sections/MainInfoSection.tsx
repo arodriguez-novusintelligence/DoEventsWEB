@@ -32,7 +32,7 @@ const SelectWithExtras = ({
   return (
     <div>
       <Select value="" onValueChange={(v) => { if (v && !selected.includes(v)) onChange([...selected, v]); }}>
-        <SelectTrigger className="border-0 border-b rounded-none px-0 focus:ring-0 shadow-none">
+        <SelectTrigger className="border-0 border-b border-border/60 rounded-none px-0 focus:ring-0 shadow-none font-extrabold">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent className="max-h-[300px] bg-popover">
@@ -61,7 +61,7 @@ const SelectWithExtras = ({
               value={customValue}
               onChange={(e) => setCustomValue(e.target.value)}
               placeholder={addAnotherLabel}
-              className="h-9"
+              className="h-9 border border-border/60 rounded-lg shadow-sm font-extrabold"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   e.preventDefault();
@@ -108,7 +108,7 @@ const MainInfoSection = () => {
           value={form.name}
           onChange={(e) => update({ name: e.target.value })}
           placeholder="Ej: Salón Las Palmas"
-          className="border-0 border-b rounded-none px-0 focus-visible:ring-0 shadow-none mt-1"
+          className="border-0 border-b border-border/60 rounded-none px-0 focus-visible:ring-0 shadow-none mt-1 font-extrabold"
         />
       </div>
 
@@ -118,7 +118,7 @@ const MainInfoSection = () => {
           value={form.placeType || ''}
           onValueChange={(v) => update({ placeType: v })}
         >
-          <SelectTrigger className="border-0 border-b rounded-none px-0 focus:ring-0 shadow-none mt-1">
+          <SelectTrigger className="border-0 border-b border-border/60 rounded-none px-0 focus:ring-0 shadow-none mt-1 font-extrabold">
             <SelectValue placeholder="Selecciona el tipo de lugar" />
           </SelectTrigger>
           <SelectContent className="max-h-[300px] bg-popover">
@@ -129,7 +129,7 @@ const MainInfoSection = () => {
         </Select>
         {form.placeType === 'Otro' && (
           <Input
-            className="mt-2"
+            className="mt-2 border-0 border-b border-border/60 rounded-none px-0 focus-visible:ring-0 shadow-none font-extrabold"
             placeholder="¿Qué tipo de lugar es?"
             value={form.placeTypeOther}
             onChange={(e) => update({ placeTypeOther: e.target.value })}

@@ -2404,7 +2404,7 @@ const LegendModal = ({ onClose }: { onClose: () => void }) => (
         </div>
         <button
           onClick={onClose}
-          className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-foreground"
+          className="flex h-8 w-8 items-center justify-center rounded-full border border-border/60 bg-secondary text-foreground ring-2 ring-primary/20 shadow-sm"
         >
           <X className="h-4 w-4" />
         </button>
@@ -2419,12 +2419,12 @@ const LegendModal = ({ onClose }: { onClose: () => void }) => (
           { icon: <LayoutGrid className="h-4 w-4" />, t: 'Sillas', d: 'Muestra el detalle de las sillas numeradas dentro de cada categoría.' },
         ].map((it, i) => (
           <li key={i} className="flex items-start gap-3">
-            <div className="mt-0.5 flex h-7 w-7 items-center justify-center rounded-md bg-secondary text-foreground">
+            <div className="mt-0.5 flex h-7 w-7 items-center justify-center rounded-md bg-primary/10 text-foreground ring-2 ring-primary/20">
               {it.icon}
             </div>
             <div>
               <p className="text-sm font-extrabold text-foreground">{it.t}</p>
-              <p className="text-xs text-muted-foreground">{it.d}</p>
+              <p className="text-xs font-extrabold text-muted-foreground">{it.d}</p>
             </div>
           </li>
         ))}

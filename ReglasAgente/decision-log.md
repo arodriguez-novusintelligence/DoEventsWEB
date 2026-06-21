@@ -13,6 +13,55 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-21 23:00 UTC] gap-empalme-27905180836-b14
+
+### 1. Resumen del empalme
+Batch 1 decimocuarta pasada (20 gaps, manifiesto `27905180836-b14`, similitud baseline **80.81%**): empalme DSF focalizado en **EventsView** (EmptyHint dashed, FavoriteHeart rings en rows/fallback, metadata extrabold); **FeedHero** stories loading h-14 ring; **StoryViewersSheet** loading/empty DSF + BACKEND_REQUIRED viewers API; **ReportPostDialog** error icon ring + textarea focus ring; **MyReservedServicesView** login dashed + subtitle; **ServiceDetailView** activity/schedule extrabold; **FAQSection** inputs/delete DSF; **AccessControlListView** Calendar/MapPin icon rings; **MainInfoSection** form inputs border-border/60 extrabold; **StepUnified** helper copy + photo preview border; **AddGuestModal** manual tab labels/inputs/UserCheck ring; **SeatingMapEditor** legend modal rings; **TicketDetailView** Calendar/Clock/MapPin icon wells; **NotificationsContext** alias `hasNotifications`; 6 componentes verificados intactos batch previo. **19 gaps DONE** frontend; **1 BACKEND_REQUIRED** (`StoryViewersSheet`). Similitud **99.18%**. **97 gaps** restantes.
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Seating map editor | `packages/shell/src/lovable/components/events/SeatingMapEditor.tsx` | DONE |
+| Notifications context | `packages/shell/src/lovable/contexts/NotificationsContext.tsx` | DONE |
+| My posts view | `packages/shell/src/lovable/components/feed/MyPostsView.tsx` | DONE |
+| Report post dialog | `packages/shell/src/lovable/components/feed/ReportPostDialog.tsx` | DONE |
+| My reserved services | `packages/shell/src/lovable/components/purchases/MyReservedServicesView.tsx` | DONE |
+| Service detail | `packages/shell/src/lovable/components/services/ServiceDetailView.tsx` | DONE |
+| FAQ section | `packages/shell/src/lovable/components/venues/sections/FAQSection.tsx` | DONE |
+| Events view | `packages/shell/src/lovable/components/feed/EventsView.tsx` | DONE |
+| Access control list | `packages/shell/src/lovable/components/access/AccessControlListView.tsx` | DONE |
+| Main info section | `packages/shell/src/lovable/components/venues/sections/MainInfoSection.tsx` | DONE |
+| Host picker modal | `packages/shell/src/lovable/components/events/HostPickerModal.tsx` | DONE |
+| Step unified | `packages/shell/src/lovable/components/services/StepUnified.tsx` | DONE |
+| Create post sheet | `packages/shell/src/lovable/components/feed/CreatePostSheet.tsx` | DONE |
+| Add guest modal | `packages/shell/src/lovable/components/guests/AddGuestModal.tsx` | DONE |
+| Event published | `packages/shell/src/pages/EventPublished.tsx` | DONE |
+| Ticket detail | `packages/shell/src/lovable/components/tickets/TicketDetailView.tsx` | DONE |
+| Feed hero | `packages/shell/src/lovable/components/feed/FeedHero.tsx` | DONE |
+| My purchases | `packages/shell/src/lovable/components/purchases/MyPurchasesView.tsx` | DONE |
+| Story viewers sheet | `packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx` | BACKEND_REQUIRED |
+| Seat location modal | `packages/shell/src/lovable/components/tickets/SeatLocationModal.tsx` | DONE |
+
+### 3. Similitud antes/después
+- **Antes:** 80.81% (manifiesto CI `27905180836-b14`)
+- **Después:** 99.18% (post batch b14; objetivo 98% alcanzado; 97 gaps restantes)
+
+### 4. Build
+`npm run build:devaws`: **OK**
+
+### 5. Evidencia anti-mock
+```bash
+grep -R "mock\|fake\|dummy\|sampleData\|hardcoded" packages/shell/src/pages || true
+```
+Sin coincidencias runtime (solo comentario documental en Login.tsx).
+
+### 6. Riesgos pendientes
+Brechas backend acumuladas: StoryViewersSheet viewers API, BankingHub delete/PayPal, KYC submit, GlobalSearch posts, Booking add-ons, PublishFlow banking, EditProfile password.
+
+### 7. Decisión
+**APPLIED** — 19 DONE frontend, 1 BACKEND_REQUIRED en batch, build OK, similitud ≥98%.
+
 ## [2026-06-21 22:00 UTC] gap-empalme-27905180836-b13
 
 ### 1. Resumen del empalme

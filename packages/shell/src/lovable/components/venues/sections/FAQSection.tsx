@@ -60,7 +60,7 @@ const FAQSection = () => {
                       placeholder="Ej: ¿Cuál es el horario de check-in?"
                       value={faq.question}
                       onChange={(e) => updateFAQ(faq.id, 'question', e.target.value)}
-                      className="mt-1"
+                      className="mt-1 border-border/60 shadow-sm font-extrabold"
                     />
                   </div>
                   <div>
@@ -70,11 +70,11 @@ const FAQSection = () => {
                       value={faq.answer}
                       onChange={(e) => updateFAQ(faq.id, 'answer', e.target.value)}
                       rows={2}
-                      className="mt-1"
+                      className="mt-1 border-border/60 shadow-sm font-extrabold"
                     />
                   </div>
                 </div>
-                <Button variant="ghost" size="icon" className="text-destructive hover:bg-destructive/10 hover:text-destructive" onClick={() => removeFAQ(faq.id)}>
+                <Button variant="ghost" size="icon" className="rounded-full text-destructive hover:bg-destructive/10 hover:text-destructive ring-2 ring-destructive/20" onClick={() => removeFAQ(faq.id)}>
                   <Trash2 className="w-4 h-4" />
                 </Button>
               </div>
