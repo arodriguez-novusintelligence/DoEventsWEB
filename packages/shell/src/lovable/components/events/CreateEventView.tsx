@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
-import { ChevronLeft, CalendarDays } from 'lucide-react';
+import { ChevronLeft, CalendarDays, Loader2 } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
 import { EventFormData, initialEventFormData } from '@lovable/data/eventFormData';
 import StepEventDetails from './StepEventDetails';
@@ -242,6 +242,7 @@ const CreateEventView = ({
           <h1 className="text-lg font-extrabold text-foreground">
             {headerTitle || (mode === 'edit' ? 'Editar evento' : 'Crear evento')}
           </h1>
+          {publishing && <Loader2 className="h-4 w-4 animate-spin text-primary" aria-label="Publicando" />}
         </div>
 
         {/* Stepper */}

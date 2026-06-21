@@ -588,9 +588,14 @@ const VenueDetailReservation = ({
             </p>
 
             {additionalServices.length === 0 ? (
-              <p className="mt-4 rounded-xl border border-dashed border-border bg-secondary/30 px-4 py-6 text-center text-xs text-muted-foreground">
-                Aún no hay servicios publicados disponibles cerca de este lugar.
-              </p>
+              <div className="mt-4 flex flex-col items-center rounded-xl border border-dashed border-border bg-secondary/30 px-4 py-6 text-center">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                  <Briefcase className="h-7 w-7 text-primary" />
+                </div>
+                <p className="mt-3 text-xs text-muted-foreground">
+                  Aún no hay servicios publicados disponibles cerca de este lugar.
+                </p>
+              </div>
             ) : (
               <div className="mt-3 space-y-2">
                 {additionalServices.map((s) => {

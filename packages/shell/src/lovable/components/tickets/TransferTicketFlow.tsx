@@ -9,6 +9,8 @@ import {
   X,
   Calendar,
   Clock,
+  Loader2,
+  Ticket,
 } from 'lucide-react';
 import { searchUsers } from '@doevents/shared';
 import type { Ticket } from '@lovable/data/ticketsData';
@@ -171,8 +173,8 @@ const TransferTicketFlow = ({ ticket, entries, currentUserId, onClose, onComplet
   if (entries.length === 0) {
     return (
       <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-secondary px-6 text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
-          <AlertCircle className="h-7 w-7 text-primary" />
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+          <Ticket className="h-7 w-7 text-primary" />
         </div>
         <p className="mt-4 text-base font-semibold text-foreground">No hay boletas para transferir</p>
         <p className="mt-2 text-sm text-muted-foreground">
@@ -415,8 +417,13 @@ const TransferTicketFlow = ({ ticket, entries, currentUserId, onClose, onComplet
                 </button>
               )}
             </div>
-            <p className="text-center text-sm text-muted-foreground mt-4">
-              {searching ? 'Buscando…' : `${results.length} resultado${results.length === 1 ? '' : 's'}`}
+            <p className="text-center text-sm text-muted-foreground mt-4 flex items-center justify-center gap-2">
+              {searching ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                  Buscando…
+                </>
+              ) : `${results.length} resultado${results.length === 1 ? '' : 's'}`}
             </p>
           </div>
 
@@ -451,7 +458,12 @@ const TransferTicketFlow = ({ ticket, entries, currentUserId, onClose, onComplet
               );
             })}
             {!searching && query.trim() && results.length === 0 && (
-              <p className="py-8 text-center text-sm text-muted-foreground">No encontramos usuarios con ese criterio.</p>
+              <div className="flex flex-col items-center py-8 text-center">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                  <UserPlus className="h-7 w-7 text-primary" />
+                </div>
+                <p className="mt-3 text-sm text-muted-foreground">No encontramos usuarios con ese criterio.</p>
+              </div>
             )}
           </div>
         </div>
@@ -582,7 +594,12 @@ const TransferTicketFlow = ({ ticket, entries, currentUserId, onClose, onComplet
                 onClick={() => void confirmTransfer()}
                 className="w-full rounded-full bg-primary py-4 text-sm font-bold text-primary-foreground shadow disabled:opacity-50"
               >
-                {submitting ? 'Compartiendo…' : 'Confirmar y compartir'}
+                {submitting ? (
+                  <span className="inline-flex items-center justify-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Compartiendo…
+                  </span>
+                ) : 'Confirmar y compartir'}
               </button>
             </div>
           </div>

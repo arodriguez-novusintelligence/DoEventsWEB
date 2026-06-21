@@ -4,7 +4,7 @@ import { Button } from '@lovable/components/ui/button';
 import {
   Heart, MessageSquare, Repeat2, Share2, UserPlus, CheckCheck,
   CalendarPlus, Mail, Ticket, CreditCard, ShieldCheck, Star,
-  Megaphone, FileText, Trash2, MessagesSquare, AtSign, Building2, Briefcase, Crown, Bell, Loader2,
+  Megaphone, FileText, Trash2, MessagesSquare, AtSign, Building2, Briefcase, Crown, Bell, Loader2, AlertCircle, RefreshCw,
 } from 'lucide-react';
 import { useNotifications, Notification, NotificationType } from '@lovable/contexts/NotificationsContext';
 import { cn } from '@lovable/lib/utils';
@@ -410,22 +410,23 @@ const NotificationsSheet = ({
             </div>
           ) : loadError ? (
             <div className="flex flex-col items-center py-12 text-center px-4">
-              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
-                <Bell className="h-7 w-7 text-destructive" strokeWidth={2} />
+              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
+                <AlertCircle className="h-7 w-7 text-destructive" strokeWidth={2} />
               </div>
               <p className="text-sm font-semibold text-foreground">Error al cargar</p>
               <p className="mt-1 max-w-[260px] text-xs text-muted-foreground">{loadError}</p>
               <button
                 type="button"
                 onClick={() => { void reload(); }}
-                className="mt-4 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground"
+                className="mt-4 flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground"
               >
+                <RefreshCw className="h-3.5 w-3.5" />
                 Reintentar
               </button>
             </div>
           ) : notifications.length === 0 ? (
             <div className="flex flex-col items-center py-12 text-center">
-              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <Bell className="h-7 w-7 text-primary" strokeWidth={2} />
               </div>
               <p className="text-sm font-semibold text-foreground">Sin notificaciones</p>

@@ -459,7 +459,7 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
             </div>
             ) : (
               <div className="rounded-xl border border-dashed border-primary/25 bg-card px-4 py-6 text-center">
-                <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                   <ShoppingCart className="h-7 w-7 text-primary" />
                 </div>
                 <p className="text-sm font-semibold text-foreground">No hay servicios adicionales</p>
@@ -516,9 +516,12 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
             }}
           >
             <CreditCard className="h-5 w-5" />
-            {submitting
-              ? 'Creando reserva…'
-              : startDate && endDate
+            {submitting ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Creando reserva…
+              </>
+            ) : startDate && endDate
                 ? `Reservar — ${formatCurrency(bookingTotal, currency)}`
                 : 'Selecciona las fechas'}
           </Button>

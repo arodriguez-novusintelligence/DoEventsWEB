@@ -117,7 +117,8 @@ const PaymentGatewaySheet = ({ open, onOpenChange, booking, onSuccess, sellerNam
                 <X className="h-4 w-4" />
               </button>
             )}
-            <SheetTitle className="text-base font-bold text-foreground">
+            <SheetTitle className="flex items-center gap-2 text-base font-bold text-foreground">
+              <CreditCard className="h-5 w-5 text-primary" />
               {step === 'success' ? '¡Reserva confirmada!' : booking.orderId ? 'Confirmar orden' : 'Pago seguro'}
             </SheetTitle>
             {step !== 'success' && booking.orderId && (
@@ -176,8 +177,8 @@ const PaymentGatewaySheet = ({ open, onOpenChange, booking, onSuccess, sellerNam
           {/* ── SUCCESS ── */}
           {step === 'success' && (
             <div className="flex flex-col items-center justify-center py-10 text-center space-y-4">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
-                <CheckCircle2 className="h-10 w-10 text-primary" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                <CheckCircle2 className="h-7 w-7 text-primary" />
               </div>
               <div>
                 <h2 className="text-xl font-bold text-foreground">¡Pago exitoso!</h2>

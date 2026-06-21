@@ -101,6 +101,32 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 2 (run 27901296255-b2)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| NotificationsSheet empty/error | VISUAL | Sí | `feed/NotificationsSheet.tsx` | Bell h-14 ring; AlertCircle + RefreshCw |
+| ServiceDetailView empty | VISUAL | Sí | `services/ServiceDetailView.tsx` | Briefcase ring-primary/20 |
+| CreateEventView publish | VISUAL | Sí | `events/CreateEventView.tsx` | Loader2 header publicación |
+| TransferTicketFlow UX | VISUAL | Sí | `tickets/TransferTicketFlow.tsx` | Ticket empty ring; Loader2 search/submit |
+| EditProfileView password | Bloqueo | Parcial | `feed/EditProfileView.tsx` | BACKEND_REQUIRED; Loader2 guardar |
+| ProfileGallery empty | VISUAL | Sí | `feed/ProfileGallery.tsx` | ImagePlus h-14 ring-primary/20 |
+| StepEventSummary empties | VISUAL | Sí | `events/StepEventSummary.tsx` | access/FAQ/agenda h-14 ring; Loader2 publish |
+| VenueDetailReservation addons | VISUAL | Sí | `venues/VenueDetailReservation.tsx` | Briefcase empty ring-primary/20 |
+| RefundTicketFlow tokens | VISUAL | Sí | `tickets/RefundTicketFlow.tsx` | h-14 ring ineligible/success/policy; Loader2 |
+| TopHeader avatar | VISUAL | Sí | `feed/TopHeader.tsx` | Verificado ring-primary/20 intacto |
+| BookingSheet add-ons | Bloqueo | Parcial | `services/BookingSheet.tsx` | BACKEND_REQUIRED catálogo; empty ring |
+| FollowersSheet empty | VISUAL | Sí | `feed/FollowersSheet.tsx` | Users h-14 ring-primary/20 tabs |
+| AIAssistantFAB PRO | VISUAL | Sí | `ai/AIAssistantFAB.tsx` | Verificado ring-primary/20 intacto |
+| ContactImportModal empty | VISUAL | Sí | `guests/ContactImportModal.tsx` | UserPlus h-14 ring-primary/20 |
+| MessagesListView empty | VISUAL | Sí | `chat/MessagesListView.tsx` | MessageSquare h-14 ring-primary/20 |
+| PublishFlowModal banking | Bloqueo | Parcial | `events/PublishFlowModal.tsx` | BACKEND_REQUIRED; error/success ring |
+| StepEventDetails loading | Integración | Sí | `events/StepEventDetails.tsx` | Loader2 catálogos API real |
+| StatsEventListView empty | VISUAL | Sí | `stats/StatsEventListView.tsx` | h-14 ring empty/error |
+| PaymentGatewaySheet PSP | Bloqueo | Parcial | `services/PaymentGatewaySheet.tsx` | BACKEND_REQUIRED; success h-14 ring |
+| FAQSection empty | VISUAL | Sí | `venues/sections/FAQSection.tsx` | Verificado canonical ring intacto |
+| Batch 2 gaps (20) | Empalme | Sí | ver `decision-log.md` | 16 DONE + 4 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 1 (run 27901296255-b1)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

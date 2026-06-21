@@ -121,7 +121,7 @@ const ServiceDetailView = ({
             </button>
           ) : (
             <div className="flex h-56 w-full flex-col items-center justify-center gap-2 rounded-2xl bg-muted text-sm text-muted-foreground">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <Briefcase className="h-7 w-7 text-primary" />
               </div>
               Sin foto del servicio

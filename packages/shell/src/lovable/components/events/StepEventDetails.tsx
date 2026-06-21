@@ -19,6 +19,7 @@ import {
   ChevronUp,
   Sparkles,
   Pencil,
+  Loader2,
 } from 'lucide-react';
 import {
   EventFormData,
@@ -67,8 +68,10 @@ const StepEventDetails = ({
   const [categories, setCategories] = useState<Array<{ id: string; label: string }>>(
     EVENT_CATEGORIES.map((c) => ({ id: c, label: c })),
   );
+  const [loadingMeta, setLoadingMeta] = useState(true);
 
   useEffect(() => {
+    setLoadingMeta(true);
     void getPreferences()
       .then((res) => {
         const opts = (res.data || []).map((p) => ({ id: String(p.id), label: p.name })).filter((o) => o.label);
@@ -83,7 +86,8 @@ const StepEventDetails = ({
         })).filter((o) => o.label);
         if (opts.length) setEventTypes(opts);
       })
-      .catch(() => undefined);
+      .catch(() => undefined)
+      .finally(() => setLoadingMeta(false));
   }, []);
 
   const categoryLabel =
@@ -187,6 +191,7 @@ const StepEventDetails = ({
         <h2 className="flex items-center gap-2 text-xl font-bold text-primary">
           <CalendarDays className="h-5 w-5" />
           Detalles del evento
+          {loadingMeta && <Loader2 className="h-4 w-4 animate-spin" aria-label="Cargando catálogos" />}
         </h2>
         <p className="mt-1 text-sm text-foreground">
           Cuéntanos sobre tu evento: nombre, descripción y fechas.{' '}

@@ -12,6 +12,7 @@ import {
   FileText,
   MessageCircle,
   Bell,
+  Loader2,
 } from 'lucide-react';
 import type { Ticket } from '@lovable/data/ticketsData';
 import { toast } from 'sonner';
@@ -109,8 +110,12 @@ const RefundTicketFlow = ({
             <ChevronLeft className="h-5 w-5" /> Atrás
           </button>
           <div className="mt-8 rounded-2xl bg-destructive/10 border border-destructive/30 p-5">
-            <div className="flex items-center gap-2 mb-2">
-              <AlertCircle className="h-5 w-5 text-destructive" />
+            <div className="flex flex-col items-center text-center mb-4">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
+                <AlertCircle className="h-7 w-7 text-destructive" />
+              </div>
+            </div>
+            <div className="flex items-center gap-2 mb-2 justify-center">
               <span className="font-extrabold text-foreground">Reembolso no disponible</span>
             </div>
             <p className="text-sm text-foreground/80 leading-relaxed">
@@ -339,7 +344,9 @@ const RefundTicketFlow = ({
                 onClick={() => void confirmRefund()}
                 className="flex-1 rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground shadow disabled:opacity-50"
               >
-                {submitting ? 'Radicando…' : 'Confirmar reembolso'}
+                {submitting ? (
+                  <span className="inline-flex items-center justify-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Radicando…</span>
+                ) : 'Confirmar reembolso'}
               </button>
             </div>
           </div>
@@ -358,8 +365,8 @@ const RefundTicketFlow = ({
           </div>
 
           <div className="px-4 pt-4 flex flex-col items-center text-center">
-            <div className="h-16 w-16 rounded-full bg-primary/15 grid place-items-center">
-              <FileText className="h-8 w-8 text-primary" />
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+              <FileText className="h-7 w-7 text-primary" />
             </div>
             <h1 className="mt-3 text-2xl font-extrabold text-foreground">Política de recaudos y reembolsos</h1>
           </div>
@@ -383,10 +390,8 @@ const RefundTicketFlow = ({
       {step === 'success' && (
         <div className="min-h-screen pb-28">
           <div className="px-4 pt-12 flex flex-col items-center text-center">
-            <div className="h-32 w-32 rounded-full bg-primary/10 grid place-items-center">
-              <div className="h-20 w-20 rounded-full bg-primary grid place-items-center">
-                <Check className="h-12 w-12 text-primary-foreground" strokeWidth={3} />
-              </div>
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+              <Check className="h-7 w-7 text-primary" strokeWidth={3} />
             </div>
             <h1 className="mt-6 text-3xl font-extrabold text-foreground">Reembolso solicitado</h1>
             <p className="text-base text-muted-foreground mt-2 max-w-xs">

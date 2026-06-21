@@ -265,7 +265,7 @@ const FollowersSheet = ({
           <TabsContent value="followers" className="mt-0 flex-1 overflow-y-auto px-5 pb-8">
             {filter(followers).length === 0 ? (
               <div className="flex flex-col items-center py-12 text-center">
-                <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                   <Users className="h-7 w-7 text-primary" />
                 </div>
                 <p className="text-sm font-semibold text-foreground">Aún no tienes seguidores</p>
@@ -290,7 +290,7 @@ const FollowersSheet = ({
           <TabsContent value="following" className="mt-0 flex-1 overflow-y-auto px-5 pb-8">
             {filter(following).length === 0 ? (
               <div className="flex flex-col items-center py-12 text-center">
-                <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                   <UserPlus className="h-7 w-7 text-primary" />
                 </div>
                 <p className="text-sm font-semibold text-foreground">Aún no sigues a nadie</p>
@@ -320,7 +320,7 @@ const FollowersSheet = ({
               </div>
             ) : filter(requests).length === 0 ? (
               <div className="flex flex-col items-center py-12 text-center">
-                <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                   <Clock className="h-7 w-7 text-primary" />
                 </div>
                 <p className="text-sm font-semibold text-foreground">Sin solicitudes pendientes</p>

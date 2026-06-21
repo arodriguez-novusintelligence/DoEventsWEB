@@ -172,8 +172,8 @@ const ProfileGallery = ({
               onClick={() => fileInputRef.current?.click()}
               className="flex w-full flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-primary/25 py-16 text-muted-foreground hover:border-primary/50 hover:bg-accent/30 transition-colors"
             >
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                <ImagePlus className="h-8 w-8 text-primary" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                <ImagePlus className="h-7 w-7 text-primary" />
               </div>
               <div className="text-center">
                 <p className="text-sm font-semibold text-foreground">Agrega tus mejores fotos</p>

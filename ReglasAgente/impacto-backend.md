@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27901296255-b2`: batch 2 (20 gaps) — 16 DONE frontend; 4 BACKEND_REQUIRED (`EditProfileView` password/gustos, `BookingSheet` add-ons, `PublishFlowModal` banking, `PaymentGatewaySheet` PSP). Patrón Lovable: ring-primary/20 h-14, Loader2, AlertCircle/RefreshCw.
+
 Run `gap-empalme-27901296255-b1`: batch 1 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingForm` SWIFT/PayPal). Patrón Lovable: ring-primary/20 h-14, warning tokens, ring-destructive/20 errores.
 
 Run `gap-empalme-27901296255-b6`: batch 6 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`PaymentGatewaySheet` PSP, `StoryViewersSheet`, `KycCertificationView`). Manifiesto `38e2c759` sin diff UI; build:devaws OK.
@@ -80,7 +82,28 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27901296255-b1)
+## Empalme realizado (última ejecución — gap-empalme-27901296255-b2)
+
+- **NotificationsSheet:** empty/error Bell h-14 ring; AlertCircle + RefreshCw retry.
+- **ServiceDetailView:** empty imagen Briefcase ring-primary/20.
+- **CreateEventView:** Loader2 en header durante publicación; CalendarDays intacto.
+- **TransferTicketFlow:** empty Ticket ring; Loader2 búsqueda/submit; empty UserPlus búsqueda.
+- **ProfileGallery:** empty h-14 ring-primary/20; Loader2 carga/guardar intacto.
+- **StepEventSummary:** section empties access/FAQ/agenda h-14 ring; Loader2 FAB publicar.
+- **VenueDetailReservation:** addon empty Briefcase ring-primary/20.
+- **RefundTicketFlow:** ineligible/success/policy h-14 ring; Loader2 submit.
+- **FollowersSheet:** empty tabs h-14 ring-primary/20.
+- **ContactImportModal:** empty h-14 ring-primary/20; unsupported browser banner intacto.
+- **MessagesListView:** EmptyState h-14 ring-primary/20.
+- **StepEventDetails:** Loader2 carga catálogos tipos/categorías API real.
+- **StatsEventListView:** empty/error h-14 ring; ProfileSectionBanner intacto.
+- **PublishFlowModal:** error/success ring; banner BACKEND_REQUIRED banking; Loader2 guardar.
+- **PaymentGatewaySheet:** success h-14 ring; CreditCard título; banner orden/PSP intacto.
+- **BookingSheet:** addon empty ring; Loader2 submit — catálogo add-ons BACKEND_REQUIRED.
+- **EditProfileView:** Loader2 guardar; banners BACKEND_REQUIRED password/gustos intactos.
+- **TopHeader / AIAssistantFAB / FAQSection:** verificados alineados (sin diff).
+
+## Empalme realizado (ejecución anterior — gap-empalme-27901296255-b1)
 
 - **StepAgenda:** empty CalendarDays h-14 ring-primary/20; timeline intacta.
 - **MyServicesView:** warning tokens borrador; empty reseñas/wizard h-14 ring-primary/20.

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   FileText, MapPin, ShieldCheck, Calendar, HelpCircle, Clock,
-  ChevronDown, ChevronUp, Save, Eye, Megaphone, Menu, Pencil, ExternalLink, Home,
+  ChevronDown, ChevronUp, Save, Eye, Megaphone, Menu, Pencil, ExternalLink, Home, Loader2,
 } from 'lucide-react';
 import { EventFormData, REFUND_POLICY_OPTIONS, SEATING_CURRENCIES } from '@lovable/data/eventFormData';
 import { PULEP_PORTAL_URL } from '@lovable/lib/pulepColombia';
@@ -382,8 +382,8 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
           return (
             <div className="space-y-3">
               <div className="rounded-2xl border border-dashed border-border bg-card p-6 text-center">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                  <ShieldCheck className="h-6 w-6 text-primary" />
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                  <ShieldCheck className="h-7 w-7 text-primary" />
                 </div>
                 <p className="mt-2 text-sm font-semibold text-foreground">Sin control de acceso</p>
                 <p className="mt-1 text-xs text-muted-foreground">Configura puertas en el paso de ubicación del lugar.</p>
@@ -544,8 +544,8 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
           return (
             <div className="space-y-3">
               <div className="rounded-2xl border border-dashed border-border bg-card p-6 text-center">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                  <HelpCircle className="h-6 w-6 text-primary" />
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                  <HelpCircle className="h-7 w-7 text-primary" />
                 </div>
                 <p className="mt-2 text-sm font-semibold text-foreground">Sin preguntas frecuentes</p>
                 <p className="mt-1 text-xs text-muted-foreground">Agrega FAQs en el paso correspondiente del wizard.</p>
@@ -582,8 +582,8 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
           return (
             <div className="space-y-3">
               <div className="rounded-2xl border border-dashed border-border bg-card p-6 text-center">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                  <Clock className="h-6 w-6 text-primary" />
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                  <Clock className="h-7 w-7 text-primary" />
                 </div>
                 <p className="mt-2 text-sm font-semibold text-foreground">Sin agenda configurada</p>
                 <p className="mt-1 text-xs text-muted-foreground">Define días y actividades en el paso de agenda.</p>
@@ -701,7 +701,7 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
                 {publishing ? `${publishLabel}…` : publishLabel}
               </span>
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 text-primary">
-                <Megaphone className="h-4 w-4" />
+                {publishing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Megaphone className="h-4 w-4" />}
               </span>
             </button>
           </div>

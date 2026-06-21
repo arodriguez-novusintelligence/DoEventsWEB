@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Megaphone, Share2, X, ExternalLink, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Megaphone, Share2, X, ExternalLink, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { getCurrentEnv } from '@doevents/shared';
 
@@ -171,7 +171,9 @@ const PublishFlowModal = ({ open, eventId, onClose, onFinalize, onSubmitBank }: 
               disabled={saving}
               className="mt-5 w-full rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground disabled:opacity-60"
             >
-              {saving ? 'Guardando…' : 'Guardar y publicar'}
+              {saving ? (
+                <span className="inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Guardando…</span>
+              ) : 'Guardar y publicar'}
             </button>
             <button
               onClick={() => setStage('bank')}
@@ -184,9 +186,19 @@ const PublishFlowModal = ({ open, eventId, onClose, onFinalize, onSubmitBank }: 
 
         {stage === 'error' && (
           <div className="flex flex-col items-center text-center">
-            <AlertCircle className="h-12 w-12 text-destructive" />
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
+              <AlertCircle className="h-7 w-7 text-destructive" />
+            </div>
             <h3 className="mt-4 text-lg font-bold text-foreground">Revisa los datos</h3>
             <p className="mt-2 text-sm text-muted-foreground">{errorMessage}</p>
+            {!onSubmitBank && (
+              <div className="mt-4 w-full rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-left">
+                <p className="text-xs font-semibold text-primary">Persistencia bancaria (BACKEND_REQUIRED)</p>
+                <p className="mt-1 text-[11px] text-muted-foreground">
+                  El registro bancario post-publicación requiere integración con DoEventsBack.
+                </p>
+              </div>
+            )}
             <button
               onClick={() => setStage('bankForm')}
               className="mt-5 w-full rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground"
@@ -198,8 +210,8 @@ const PublishFlowModal = ({ open, eventId, onClose, onFinalize, onSubmitBank }: 
 
         {stage === 'success' && (
           <div className="flex flex-col items-center text-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
-              <CheckCircle2 className="h-8 w-8 text-primary" />
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+              <CheckCircle2 className="h-7 w-7 text-primary" />
             </div>
             <h3 className="mt-4 text-2xl font-extrabold text-foreground">
               ¡Felicitaciones tu evento se ha publicado!

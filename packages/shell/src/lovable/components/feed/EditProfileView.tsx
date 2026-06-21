@@ -22,6 +22,7 @@ import {
   Eye,
   EyeOff,
   Building2,
+  Loader2,
 } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
 import { Input } from '@lovable/components/ui/input';
@@ -594,7 +595,12 @@ const EditProfileView = ({
           }}
           className="w-full rounded-full py-6 text-base font-bold"
         >
-          {saving ? 'Guardando…' : 'Guardar cambios'}
+          {saving ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Guardando…
+            </>
+          ) : 'Guardar cambios'}
         </Button>
       </div>
     </div>
