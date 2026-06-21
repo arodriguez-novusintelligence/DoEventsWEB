@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27901296255-b4`: batch 4 (20 gaps) — 16 DONE frontend; 4 BACKEND_REQUIRED (`PaymentMethodsDashboard`/`BankingHub` delete+PayPal, `StoryViewersSheet`, `GlobalSearchView` posts). Patrón Lovable: ring-primary/20 h-14, ring-destructive/20 errores, RefreshCw retry, shadow-sm cards.
+
 Run `gap-empalme-27901296255-b3`: batch 3 (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED. Patrón Lovable: ring-primary/20 h-14, ring-destructive/20 errores, Loader2, shadow-sm cards, EmptyHint unificado.
 
 Run `gap-empalme-27901296255-b2`: batch 2 (20 gaps) — 16 DONE frontend; 4 BACKEND_REQUIRED (`EditProfileView` password/gustos, `BookingSheet` add-ons, `PublishFlowModal` banking, `PaymentGatewaySheet` PSP). Patrón Lovable: ring-primary/20 h-14, Loader2, AlertCircle/RefreshCw.
@@ -84,7 +86,28 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27901296255-b3)
+## Empalme realizado (última ejecución — gap-empalme-27901296255-b4)
+
+- **MainInfoSection:** FileText header h-10 ring-primary/20; card parqueadero shadow-sm border-border.
+- **StoryViewersSheet:** skeleton cards shadow-sm; header Eye ring; badge BACKEND_REQUIRED viewers intacto.
+- **PaymentMethodsDashboard:** pending banner Clock h-14 ring-warning/30; verification AlertCircle h-14 ring-destructive/20; delete BACKEND_REQUIRED.
+- **MediaUpload:** header ImageIcon h-10 ring-primary/20; empty FileUp h-14 ring intacto.
+- **ScanQRSheet:** success/error feedback h-10 ring primary/destructive; cámara AlertCircle h-14 ring intacto.
+- **ReportPostDialog:** Flag header h-10 ring-destructive/20; radios shadow-sm intactos.
+- **BookingReviewSheet:** Calendar header h-10 ring-primary/20; ShieldCheck términos shadow-sm intacto.
+- **BankingHub:** error h-14 ring-destructive/20 + RefreshCw retry; banner PayPal BACKEND_REQUIRED intacto.
+- **FeedHero:** ubicación MapPin ring-primary-foreground/20; categorías shadow-sm; Sparkles empty intacto.
+- **AccessControlListView:** error h-14 ring-destructive/20 + RefreshCw; empty Shield ring intacto.
+- **MyPurchasesView / MyReservedServicesView / MyReservedVenuesView:** error h-14 ring-destructive/20 + RefreshCw; empty/login rings intactos.
+- **KycContext:** flags `isInReview`, `isRejected` derivados; `needsCertification`/`loadErrorMessage` intactos.
+- **TermsDialog:** ScrollText header h-10 ring-primary/20; CheckCircle2 CTA intacto.
+- **ChangeLocationSheet:** MapPin header h-10 ring-primary/20; card ubicación shadow-sm intacto.
+- **ProfileCommentsView:** error h-14 ring-destructive/20 + RefreshCw; empty MessageSquare ring intacto.
+- **ServiceReservationDetail:** loading card shadow-sm centrada; error/empty rings intactos.
+- **CompanyContext:** `accountTypeLabel` derivado (Personal/Empresa); `hasCompany`/`isEmpty` intactos.
+- **GlobalSearchView:** error h-14 ring-destructive/20 + RefreshCw; tab posts badge BACKEND_REQUIRED; TabsList shadow-sm.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27901296255-b3)
 
 - **LocationSection:** empty mapa bg-card shadow-sm; MapPin h-14 ring-primary/20.
 - **MyTicketsView:** empty Ticket ring-primary/20; error AlertCircle ring-destructive/20.

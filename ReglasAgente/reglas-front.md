@@ -103,6 +103,32 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 4 (run 27901296255-b4)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| MainInfoSection header | VISUAL | Sí | `venues/sections/MainInfoSection.tsx` | FileText h-10 ring; parking shadow-sm card |
+| StoryViewersSheet skeleton | Bloqueo | Parcial | `feed/StoryViewersSheet.tsx` | BACKEND_REQUIRED viewers API; skeleton shadow-sm |
+| PaymentMethodsDashboard cards | VISUAL | Parcial | `banking/PaymentMethodsDashboard.tsx` | BACKEND_REQUIRED delete; Clock/AlertCircle h-14 rings |
+| MediaUpload header | VISUAL | Sí | `venues/MediaUpload.tsx` | ImageIcon h-10 ring-primary/20 |
+| ScanQR feedback | Integración | Sí | `access/ScanQRSheet.tsx` | Success/error h-10 ring primary/destructive |
+| ReportPostDialog header | VISUAL | Sí | `feed/ReportPostDialog.tsx` | Flag h-10 ring-destructive/20 |
+| BookingReviewSheet header | VISUAL | Sí | `services/BookingReviewSheet.tsx` | Calendar h-10 ring-primary/20 |
+| BankingHub error retry | Integración | Parcial | `banking/BankingHub.tsx` | BACKEND_REQUIRED delete/PayPal; RefreshCw retry |
+| FeedHero location ring | VISUAL | Sí | `feed/FeedHero.tsx` | MapPin ring-primary-foreground/20 |
+| AccessControlListView error | Integración | Sí | `access/AccessControlListView.tsx` | h-14 ring-destructive/20 + RefreshCw |
+| MyPurchases retry | Integración | Sí | `purchases/MyPurchasesView.tsx` | h-14 ring-destructive/20 + RefreshCw |
+| MyReservedServices error | Integración | Sí | `purchases/MyReservedServicesView.tsx` | h-14 ring-destructive/20 + RefreshCw |
+| KycContext flags | Integración | Sí | `contexts/KycContext.tsx` | isInReview/isRejected derivados API |
+| TermsDialog header | VISUAL | Sí | `auth/TermsDialog.tsx` | ScrollText h-10 ring-primary/20 |
+| MyReservedVenues error | Integración | Sí | `purchases/MyReservedVenuesView.tsx` | h-14 ring-destructive/20 + RefreshCw |
+| ChangeLocation header | VISUAL | Sí | `feed/ChangeLocationSheet.tsx` | MapPin h-10 ring-primary/20 |
+| ProfileComments error | VISUAL | Sí | `feed/ProfileCommentsView.tsx` | h-14 ring-destructive/20 + RefreshCw |
+| ServiceReservationDetail loading | VISUAL | Sí | `purchases/ServiceReservationDetail.tsx` | Loading card shadow-sm |
+| CompanyContext label | Integración | Sí | `contexts/CompanyContext.tsx` | accountTypeLabel Personal/Empresa |
+| GlobalSearch posts | Bloqueo | Parcial | `feed/GlobalSearchView.tsx` | BACKEND_REQUIRED tab posts; error ring + RefreshCw |
+| Batch 4 gaps (20) | Empalme | Sí | ver `decision-log.md` | 16 DONE + 4 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 3 (run 27901296255-b3)
 
 | Regla | Tipo | Implementada | Archivo | Observación |
