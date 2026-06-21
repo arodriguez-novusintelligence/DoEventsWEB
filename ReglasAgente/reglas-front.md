@@ -119,6 +119,24 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+---
+
+## Ejecución 2026-06-21 gap-empalme batch 1 (run 27910611218-b5)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| ProfileGallery card/progress | VISUAL | Sí | `feed/ProfileGallery.tsx` | ring-primary/10 card; progress label extrabold + ring; save footer border-t; lightbox ring shadow-sm |
+| ProfileGalleryPage onRetry | Integración | Sí | `pages/ProfileGalleryPage.tsx` | onRetry → fetchProfileGallery API real sin mocks |
+| NotificationsSheet cards | VISUAL | Sí | `feed/NotificationsSheet.tsx` | verificado intacto b4; fetchUserNotifications intacto |
+| SeatingMapEditor / NotificationsContext | Empalme | Sí | ver batch b1/b2/b3/b4 | Verificados intactos |
+| MyReservedServices / ReportPostDialog | Empalme | Sí | ver batch b1/b2/b3/b4 | Verificados intactos |
+| MainInfoSection / AccessControlListView | Empalme | Sí | ver batch b1/b2/b3/b4 | Verificados intactos |
+| MyPostsView / EventsView / ServiceDetailView | Empalme | Sí | ver batch b1/b2/b3/b4 | Verificados intactos |
+| CreatePostSheet / HostPickerModal / FAQSection | Empalme | Sí | ver batch b1/b2/b3/b4 | Verificados intactos |
+| StepUnified / EventPublished / AddGuestModal | Empalme | Sí | ver batch b1/b2/b3/b4 | Verificados intactos |
+| TicketDetailView / FeedHero / SeatLocationModal | Empalme | Sí | ver batch b1/b2/b3/b4 | Verificados intactos |
+| Batch 1 gaps b5 (20) | Empalme | Sí | ver `decision-log.md` | 20 DONE + 0 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 1 (run 27910611218-b4)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

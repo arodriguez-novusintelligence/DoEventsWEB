@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27910611218-b5`: batch 1 quinta pasada (20 gaps manifiesto b5) — 20 DONE frontend; 0 BACKEND_REQUIRED en batch. ProfileGallery ring-primary/10 + progress label extrabold + save footer border-t + lightbox ring; ProfileGalleryPage onRetry fetchProfileGallery; NotificationsSheet verificado intacto b4; 18 gaps verificados intactos b1/b2/b3/b4; similitud ~99.62%; build:devaws OK; 97 gaps batches 2–6 pendientes.
+
 Run `gap-empalme-27910611218-b4`: batch 1 cuarta pasada (20 gaps manifiesto b4) — 20 DONE frontend; 0 BACKEND_REQUIRED en batch. MessagesListView + NotificationsSheet empalme DSF nuevo; 18 gaps verificados intactos b1/b2/b3; similitud ~99.54%; build:devaws OK; 97 gaps batches 2–6 pendientes.
 
 Run `gap-empalme-27910611218-b3`: batch 1 tercera pasada (20 gaps manifiesto b3) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). ContactImportModal empalme DSF (search border-border/60, selected ring-primary/20, empty dashed, footer border-t); BankingHub ring-primary/10 banners + dashboard wrapper; 18 gaps verificados intactos b1/b2; similitud ~99.48%; build:devaws OK; 97 gaps batches 2–6 pendientes.
@@ -160,7 +162,14 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27910611218-b4)
+## Empalme realizado (última ejecución — gap-empalme-27910611218-b5)
+
+- **ProfileGallery:** card principal `ring-1 ring-primary/10`; progress bar con label Progreso/% font-extrabold + ring-primary/10; save CTA footer `border-t border-border/60 pt-5`; lightbox image `shadow-sm ring-2 ring-primary-foreground/20`; grid/error/empty DSF intactos; APIs `onAddFiles`/`onRemove`/`onSave` vía props reales.
+- **ProfileGalleryPage:** `onRetry` cableado a `fetchProfileGallery` cuando hay `loadError`; sin mocks.
+- **NotificationsSheet:** verificado intacto b4 (max-h-[90dvh] ring-primary/10, rows border-border/60, unread font-extrabold); `fetchUserNotifications` intacto.
+- **Verificados intactos (b1/b2/b3/b4):** SeatingMapEditor, NotificationsContext, MyReservedServicesView, ReportPostDialog, MainInfoSection, AccessControlListView, MyPostsView, EventsView, ServiceDetailView, CreatePostSheet, HostPickerModal, FAQSection, StepUnified, EventPublished, AddGuestModal, TicketDetailView, FeedHero, SeatLocationModal.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27910611218-b4)
 
 - **MessagesListView:** header action buttons ring-2 ring-primary/20 shadow-sm; event room cards ring-1 ring-primary/10; status badges + unread badges font-extrabold shadow-sm; private chat unread ring-1 ring-primary/10; contact story labels font-extrabold; empty dashed border-primary/25 border-border/60; `searchUsers` API real intacta.
 - **NotificationsSheet:** DrawerContent max-h-[90dvh] border-border/60 shadow-sm ring-1 ring-primary/10; header border-b border-border/60; notification rows card mx-4 border-border/60 shadow-sm; unread ring-1 ring-primary/10 + font-extrabold; action CTAs rounded-full shadow-sm; `fetchUserNotifications`/`respondFollowRequest` intactos.
