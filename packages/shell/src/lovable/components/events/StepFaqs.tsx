@@ -44,9 +44,11 @@ const StepFaqs = ({ formData, updateForm }: Props) => {
       <p className="text-sm font-bold text-primary">Preguntas frecuentes</p>
 
       {faqs.length === 0 && (
-        <div className="flex flex-col items-center rounded-2xl border border-dashed border-border bg-card px-4 py-8 text-center">
-          <HelpCircle className="h-8 w-8 text-muted-foreground" />
-          <p className="mt-2 text-sm font-semibold text-foreground">Aún no hay preguntas</p>
+        <div className="flex flex-col items-center rounded-2xl border border-dashed border-border bg-card px-4 py-8 text-center shadow-sm">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+            <HelpCircle className="h-7 w-7 text-primary" />
+          </div>
+          <p className="mt-3 text-sm font-semibold text-foreground">Aún no hay preguntas</p>
           <p className="mt-1 text-xs text-muted-foreground">
             Usa el formulario de abajo para agregar la primera FAQ de tu evento.
           </p>

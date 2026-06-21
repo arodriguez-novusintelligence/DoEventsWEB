@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronLeft, ChevronDown, ChevronUp, Download, Ticket, ShieldCheck, Percent, XCircle, Users, CheckCircle, X, Check, Clock } from 'lucide-react';
+import { ChevronLeft, ChevronDown, ChevronUp, Download, Ticket, ShieldCheck, Percent, XCircle, Users, CheckCircle, X, Check, Clock, Loader2 } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@lovable/components/ui/avatar';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@lovable/components/ui/table';
 import type { EventChatRoom } from '@lovable/data/chatData';
@@ -223,8 +223,11 @@ const AccessControlView = ({ event, onBack }: AccessControlViewProps) => {
           <ChevronLeft className="h-5 w-5" />
         </button>
         <div className="min-w-0 flex-1">
-          <h1 className="text-base font-bold text-foreground truncate">Estadísticas</h1>
-          <p className="text-xs text-muted-foreground truncate">{event.eventName} - Control de Accesos</p>
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="h-4 w-4 text-primary" />
+            <h1 className="text-base font-bold text-foreground truncate">Control de accesos</h1>
+          </div>
+          <p className="text-xs text-muted-foreground truncate">{event.eventName}</p>
         </div>
         <button
           onClick={() => exportAccessExcel(data, event.eventName)}
@@ -237,9 +240,24 @@ const AccessControlView = ({ event, onBack }: AccessControlViewProps) => {
 
       <div className="mx-auto max-w-lg px-4 py-4 space-y-6">
         {loading && (
-          <p className="py-6 text-center text-sm text-muted-foreground">Cargando control de accesos…</p>
+          <p className="flex items-center justify-center gap-2 py-6 text-sm text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin text-primary" />
+            Cargando control de accesos…
+          </p>
         )}
-        {selectedCategory ? (
+        {!loading && data.totalTickets === 0 && (
+          <div className="rounded-2xl border border-dashed border-border bg-card p-8 text-center shadow-sm">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+              <ShieldCheck className="h-7 w-7 text-primary" />
+            </div>
+            <p className="mt-3 text-sm font-semibold text-foreground">Sin datos de acceso</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Cuando se registren escaneos QR para este evento, verás métricas aquí.
+            </p>
+          </div>
+        )}
+        {!loading && data.totalTickets > 0 && (
+          selectedCategory ? (
           <CategorySeatMap category={selectedCategory} onBack={() => setSelectedCategory(null)} />
         ) : (
           <>
@@ -378,6 +396,7 @@ const AccessControlView = ({ event, onBack }: AccessControlViewProps) => {
               </div>
             </section>
           </>
+        )
         )}
       </div>
     </div>

@@ -26,7 +26,7 @@ import {
   likeVenue,
   likeService,
   resolveUserLocation,
-  Loader,
+  Loader2,
   RootState,
   useToast,
   EVENT_FAVORITE_CHANGED_EVENT,
@@ -379,13 +379,15 @@ export const EventsPage: React.FC = () => {
 
   if (loading && !nearby.length && !recommendedAll.length && !serviceProviders.length) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center bg-background">
-        <Loader />
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-2 bg-background pb-24">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="text-sm text-muted-foreground">Descubriendo eventos cerca de ti…</p>
       </div>
     );
   }
 
   return (
+    <div className="min-h-screen pb-24" aria-label="Descubre eventos">
     <EventsView
       publishedEvents={myEvents}
       nearbyEvents={nearby}
@@ -440,6 +442,7 @@ export const EventsPage: React.FC = () => {
       likedServiceIds={likedServiceIds}
       onToggleServiceLike={(serviceId) => { void handleToggleServiceLike(serviceId); }}
     />
+    </div>
   );
 };
 

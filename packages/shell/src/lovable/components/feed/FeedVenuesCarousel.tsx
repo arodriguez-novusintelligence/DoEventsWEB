@@ -53,9 +53,11 @@ const FeedVenuesCarousel = ({ venues = [], loading, onOpenVenue }: FeedVenuesCar
 
   if (!list.length) {
     return (
-      <section className="mx-4 my-5 rounded-2xl border border-dashed border-border bg-card p-6 text-center">
-        <Building2 className="mx-auto h-8 w-8 text-muted-foreground" />
-        <p className="mt-2 text-sm font-semibold text-foreground">Sin lugares cercanos</p>
+      <section className="mx-4 my-5 rounded-2xl border border-dashed border-border bg-card p-6 text-center shadow-sm">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+          <Building2 className="h-7 w-7 text-primary" />
+        </div>
+        <p className="mt-3 text-sm font-semibold text-foreground">Sin lugares cercanos</p>
         <p className="mt-1 text-xs text-muted-foreground">
           Publica un lugar o ajusta tu ubicación para ver espacios para alquilar.
         </p>

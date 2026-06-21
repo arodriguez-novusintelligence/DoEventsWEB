@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, CreditCard, Building2, CheckCircle2, Lock, ChevronDown, Loader2, ShieldCheck } from 'lucide-react';
+import { X, CreditCard, Building2, CheckCircle2, Lock, ChevronDown, Loader2, ShieldCheck, AlertCircle } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@lovable/components/ui/sheet';
 import { Button } from '@lovable/components/ui/button';
 import { Input } from '@lovable/components/ui/input';
@@ -137,11 +137,14 @@ const PaymentGatewaySheet = ({ open, onOpenChange, booking, onSuccess, sellerNam
 
         <div className="px-5 py-4">
           {!booking.orderId && step !== 'success' && (
-            <div className="mb-4 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3">
-              <p className="text-sm font-semibold text-destructive">Orden de pago no disponible</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Completa la reserva nuevamente para generar una orden válida antes de pagar.
-              </p>
+            <div className="mb-4 flex gap-3 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3">
+              <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
+              <div>
+                <p className="text-sm font-semibold text-destructive">Orden de pago no disponible</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Completa la reserva nuevamente para generar una orden válida antes de pagar.
+                </p>
+              </div>
             </div>
           )}
           {booking.orderId && step !== 'success' && step !== 'processing' && (

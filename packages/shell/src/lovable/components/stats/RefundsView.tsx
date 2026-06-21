@@ -22,7 +22,7 @@ const formatCurrency = (n: number, c = 'COP') =>
   `${c === 'USD' ? 'US$' : c === 'EUR' ? '€' : '$'} ${n.toLocaleString('es-CO')}`;
 
 const statusMeta: Record<RefundStatus, { label: string; icon: typeof Clock; className: string; dot: string }> = {
-  pending:   { label: 'Pendiente', icon: Clock,        className: 'bg-amber-500/10 text-amber-600',   dot: 'bg-amber-500' },
+  pending:   { label: 'Pendiente', icon: Clock,        className: 'bg-secondary text-secondary-foreground', dot: 'bg-secondary' },
   approved:  { label: 'Aprobado',  icon: CheckCircle2, className: 'bg-primary/10 text-primary',       dot: 'bg-primary' },
   rejected:  { label: 'Rechazado', icon: XCircle,      className: 'bg-destructive/10 text-destructive', dot: 'bg-destructive' },
   processed: { label: 'Procesado', icon: ShieldCheck,  className: 'bg-primary/10 text-primary', dot: 'bg-primary' },
@@ -484,9 +484,12 @@ const RefundsView = ({ event, onBack }: RefundsViewProps) => {
           })}
 
           {filtered.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <RefreshCw className="h-10 w-10 text-muted-foreground" />
-              <p className="mt-3 text-sm text-muted-foreground">No hay solicitudes en este estado</p>
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card py-16 text-center shadow-sm">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                <RefreshCw className="h-7 w-7 text-primary" />
+              </div>
+              <p className="mt-3 text-sm font-semibold text-foreground">No hay solicitudes en este estado</p>
+              <p className="mt-1 text-xs text-muted-foreground">Prueba otro filtro o vuelve más tarde.</p>
             </div>
           )}
         </div>

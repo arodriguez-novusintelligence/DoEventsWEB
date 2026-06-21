@@ -63,9 +63,11 @@ const SalesStatsView = ({ event, onBack }: SalesStatsViewProps) => {
           </p>
         )}
         {!loading && salesData.categories.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-border bg-card p-8 text-center">
-            <Ticket className="mx-auto h-8 w-8 text-muted-foreground" />
-            <p className="mt-2 text-sm font-semibold text-foreground">Sin ventas registradas</p>
+          <div className="rounded-2xl border border-dashed border-border bg-card p-8 text-center shadow-sm">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+              <Ticket className="h-7 w-7 text-primary" />
+            </div>
+            <p className="mt-3 text-sm font-semibold text-foreground">Sin ventas registradas</p>
             <p className="mt-1 text-xs text-muted-foreground">
               Cuando se vendan boletos para este evento, verás el desglose por categoría aquí.
             </p>

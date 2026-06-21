@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Calendar, Clock } from 'lucide-react';
+import { Calendar, Clock, ShieldCheck } from 'lucide-react';
 import { EventFormData, REFUND_POLICY_OPTIONS, RefundPolicy } from '@lovable/data/eventFormData';
 
 interface Props {
@@ -100,9 +100,12 @@ const StepRefundPolicy = ({ formData, updateForm, showErrors }: Props) => {
 
       {/* Política de reembolso */}
       <div className="rounded-2xl bg-card p-5 shadow-sm">
-        <p className="mb-4 text-base font-bold text-foreground">
-          ¿Cuándo pueden los asistentes solicitar reembolsos?
-        </p>
+        <div className="mb-4 flex items-center gap-2">
+          <ShieldCheck className="h-5 w-5 text-primary" />
+          <p className="text-base font-bold text-foreground">
+            ¿Cuándo pueden los asistentes solicitar reembolsos?
+          </p>
+        </div>
         <div className="space-y-3">
           {REFUND_POLICY_OPTIONS.map((opt) => {
             const isSelected = selected === opt.value;
