@@ -148,6 +148,7 @@ export const ProfileGalleryPage: React.FC = () => {
       photos={displayPhotos}
       loading={loading}
       loadError={loadError}
+      onRetry={loadError ? () => void load() : undefined}
       saving={saving}
       hasChanges={hasChanges}
       onAddFiles={handleAddFiles}

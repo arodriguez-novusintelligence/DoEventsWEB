@@ -104,7 +104,7 @@ const ProfileGallery = ({
           Volver al perfil
         </button>
 
-        <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
+        <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm ring-1 ring-primary/10">
           {loadError && (
             <div className="mb-4 flex flex-col items-center gap-3 rounded-2xl border border-destructive/30 bg-card py-8 text-center shadow-sm">
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
@@ -146,7 +146,11 @@ const ProfileGallery = ({
           </div>
 
           <div className="mb-5">
-            <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+            <div className="mb-1.5 flex items-center justify-between text-xs font-extrabold text-muted-foreground">
+              <span>Progreso</span>
+              <span>{Math.round((photos.length / MAX_GALLERY_PHOTOS) * 100)}%</span>
+            </div>
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted ring-1 ring-primary/10">
               <div
                 className="h-full rounded-full bg-primary transition-all duration-300"
                 style={{ width: `${(photos.length / MAX_GALLERY_PHOTOS) * 100}%` }}
@@ -223,7 +227,7 @@ const ProfileGallery = ({
           )}
 
           {hasChanges && photos.length > 0 && (
-            <div className="mt-5">
+            <div className="mt-5 border-t border-border/60 pt-5">
               <Button
                 type="button"
                 disabled={saving}
@@ -284,7 +288,7 @@ const ProfileGallery = ({
           <img
             src={currentViewerPhoto.url}
             alt=""
-            className="max-h-[85vh] max-w-[90vw] rounded-lg object-contain"
+            className="max-h-[85vh] max-w-[90vw] rounded-lg object-contain shadow-sm ring-2 ring-primary-foreground/20"
             onClick={(e) => e.stopPropagation()}
           />
 
