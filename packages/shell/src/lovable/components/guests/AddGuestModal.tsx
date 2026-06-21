@@ -685,14 +685,14 @@ export function AddGuestModal({
                       key={u.id}
                       type="button"
                       onClick={() => toggleSearchSelection(u.id)}
-                      className={`flex w-full items-center gap-3 rounded-xl border p-3 text-left transition-colors ${
-                        selected ? 'border-primary bg-primary/5' : 'border-border bg-card hover:bg-secondary/50'
+                      className={`flex w-full items-center gap-3 rounded-xl border p-3 text-left shadow-sm transition-colors ${
+                        selected ? 'border-primary bg-primary/5' : 'border-border/60 bg-card hover:bg-secondary/50'
                       }`}
                     >
                       {u.avatar ? (
                         <img src={u.avatar} alt="" className="h-10 w-10 rounded-full object-cover" />
                       ) : (
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20 text-sm font-semibold text-primary">
                           {u.name.charAt(0)}{u.lastName.charAt(0)}
                         </div>
                       )}
@@ -744,7 +744,7 @@ export function AddGuestModal({
       <>
         <div className="flex flex-col h-full min-h-0">
           <div className="flex items-center justify-between mb-4 shrink-0">
-            <h2 className="text-xl font-semibold text-primary">Agregar invitado</h2>
+            <h2 className="text-xl font-extrabold text-primary">Agregar invitado</h2>
             <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={closeModal}>
               <X className="h-4 w-4" />
             </Button>

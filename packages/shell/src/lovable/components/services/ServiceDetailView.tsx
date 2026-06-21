@@ -189,10 +189,10 @@ const ServiceDetailView = ({
 
       {/* Resumen */}
       <div className="px-4 mt-4 space-y-4">
-        <div className="rounded-2xl bg-card p-4 shadow-sm">
+        <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
             <SectionIcon icon={Briefcase} />
-            <h3 className="font-bold">Actividades y tarifas</h3>
+            <h3 className="font-extrabold">Actividades y tarifas</h3>
           </div>
           <ul className="space-y-2.5">
             {allActivities.map(({ sector: s, activity }) => {
@@ -211,10 +211,10 @@ const ServiceDetailView = ({
           </ul>
         </div>
 
-        <div className="rounded-2xl bg-card p-4 shadow-sm">
+        <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
             <SectionIcon icon={Clock} />
-            <h3 className="font-bold">Horario</h3>
+            <h3 className="font-extrabold">Horario</h3>
           </div>
           <p className="text-sm">
             {service.globalStartTime} - {service.globalEndTime}
@@ -224,10 +224,10 @@ const ServiceDetailView = ({
           )}
         </div>
 
-        <div className="rounded-2xl bg-card p-4 shadow-sm">
+        <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
             <SectionIcon icon={CalendarDays} />
-            <h3 className="font-bold">Disponibilidad</h3>
+            <h3 className="font-extrabold">Disponibilidad</h3>
           </div>
           <p className="text-sm">
             {service.selectedDates.length} fecha(s) disponibles
@@ -235,18 +235,18 @@ const ServiceDetailView = ({
           </p>
         </div>
 
-        <div className="rounded-2xl bg-card p-4 shadow-sm">
+        <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
             <SectionIcon icon={ShieldCheck} />
-            <h3 className="font-bold">Política de reembolso</h3>
+            <h3 className="font-extrabold">Política de reembolso</h3>
           </div>
           <p className="text-sm">{service.refundPolicy}</p>
         </div>
 
-        <div className="rounded-2xl bg-card p-4 shadow-sm">
+        <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
           <div className="flex items-center gap-2 mb-2">
             <Star className="h-5 w-5 fill-primary text-primary" />
-            <span className="font-bold">{rating > 0 ? rating.toFixed(1) : 'Sin calificaciones'}</span>
+            <span className="font-extrabold">{rating > 0 ? rating.toFixed(1) : 'Sin calificaciones'}</span>
             <span className="text-sm text-muted-foreground">
               {reviewCount > 0 ? `(${reviewCount} reseñas)` : '(aún sin reseñas)'}
             </span>

@@ -96,8 +96,10 @@ export function ContactImportModal({ open, onOpenChange, onImportContacts }: Pro
       <DialogContent className="sm:max-w-md rounded-2xl h-[80vh] flex flex-col">
         <DialogHeader className="space-y-3">
           <div className="flex items-center justify-between">
-            <DialogTitle className="flex items-center gap-2 text-lg font-semibold text-foreground">
-              <UserPlus className="h-5 w-5 text-primary" />
+            <DialogTitle className="flex items-center gap-3 text-lg font-extrabold text-foreground">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
+                <UserPlus className="h-5 w-5 text-primary" />
+              </span>
               Importa contactos como invitados
             </DialogTitle>
           </div>
@@ -133,9 +135,9 @@ export function ContactImportModal({ open, onOpenChange, onImportContacts }: Pro
               </div>
               <div className="flex-1 overflow-y-auto space-y-2">
                 {filtered.map((c) => (
-                  <label key={c.id} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer ${selected.has(c.id) ? 'bg-primary/5 border-primary' : 'bg-muted/30 border-border'}`}>
+                  <label key={c.id} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer shadow-sm ${selected.has(c.id) ? 'bg-primary/5 border-primary' : 'bg-muted/30 border-border/60'}`}>
                     <Checkbox checked={selected.has(c.id)} onCheckedChange={(ch) => toggleOne(c.id, !!ch)} />
-                    <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <div className="w-9 h-9 rounded-full bg-primary/10 ring-2 ring-primary/20 flex items-center justify-center shrink-0">
                       <Smartphone className="h-4 w-4 text-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -151,7 +153,7 @@ export function ContactImportModal({ open, onOpenChange, onImportContacts }: Pro
               <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <UserPlus className="h-7 w-7 text-primary" />
               </div>
-              <p className="text-sm font-semibold text-foreground">Importar desde tu dispositivo</p>
+              <p className="text-sm font-extrabold text-foreground">Importar desde tu dispositivo</p>
               <p className="mt-1 text-xs text-muted-foreground">
                 Pulsa el botón superior para elegir contactos de tu teléfono o agenda.
               </p>

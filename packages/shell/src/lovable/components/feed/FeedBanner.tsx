@@ -42,7 +42,7 @@ export const FeedBanner = ({
         <button
           type="button"
           onClick={handleDismiss}
-          className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-background/60 text-muted-foreground hover:text-foreground"
+          className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-background/60 text-muted-foreground ring-1 ring-border/60 hover:text-foreground"
           aria-label="Cerrar banner"
         >
           <X className="h-4 w-4" />
@@ -53,7 +53,7 @@ export const FeedBanner = ({
           <Megaphone className="h-5 w-5 text-primary" />
         </div>
         <div className="min-w-0 flex-1 pr-6">
-          <h3 className="text-sm font-bold text-foreground">{title}</h3>
+          <h3 className="text-sm font-extrabold text-foreground">{title}</h3>
           <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{message}</p>
           {onAction && (
             <Button

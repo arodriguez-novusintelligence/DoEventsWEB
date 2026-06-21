@@ -50,7 +50,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
           <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
             <Eye className="h-5 w-5 text-primary" />
           </span>
-          <button onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-xl bg-card ring-2 ring-border/40 text-muted-foreground shadow-sm">
+          <button onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-xl bg-card ring-2 ring-primary/20 text-muted-foreground shadow-sm">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -88,7 +88,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
           </div>
 
           {/* Date / details card */}
-          <div className="mt-4 rounded-2xl bg-card p-4 shadow-sm">
+          <div className="mt-4 rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
             <div className="grid grid-cols-2 gap-4">
               <Field icon={Calendar} label="Fecha" value={`Inicio\n${formatDate(data.startDate)}\n\nFin\n${formatDate(data.endDate)}`} />
               <Field icon={Clock} label="Hora" value={`Inicio\n${data.startTime || '—'}\n\nFin\n${data.endTime || '—'}`} />
@@ -111,7 +111,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
             <>
               {/* Descripción */}
               <div className="mt-4">
-                <h3 className="text-sm font-bold text-foreground">Descripción de evento</h3>
+                <h3 className="text-sm font-extrabold text-foreground">Descripción de evento</h3>
                 <p className="mt-2 text-sm text-foreground whitespace-pre-wrap">{data.description || '—'}</p>
               </div>
 
@@ -119,7 +119,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
               {data.agenda.length > 0 && (
                 <div className="mt-6 space-y-4">
                   {data.agenda.map((day, i) => (
-                    <div key={day.id} className="rounded-2xl bg-card p-4 shadow-sm">
+                    <div key={day.id} className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
                       <div className="flex items-center gap-2">
                         <Calendar className="h-5 w-5 text-primary" />
                         <div>
@@ -148,7 +148,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
               )}
 
               {/* Lugar */}
-              <div className="mt-6 rounded-2xl bg-card p-4 shadow-sm">
+              <div className="mt-6 rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
                 <div className="flex items-start gap-3">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20 text-primary">
                     <HomeIcon className="h-5 w-5" />
@@ -183,8 +183,8 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
               {/* Video */}
               {data.videoUrl && (
                 <div className="mt-6">
-                  <h3 className="text-sm font-bold text-foreground">Video del evento</h3>
-                  <div className="mt-2 relative overflow-hidden rounded-2xl bg-card shadow-sm">
+                  <h3 className="text-sm font-extrabold text-foreground">Video del evento</h3>
+                  <div className="mt-2 relative overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
                     <div className="flex h-44 items-center justify-center bg-foreground/10">
                       <div className="flex h-14 w-14 items-center justify-center rounded-full bg-card/90 text-foreground ring-2 ring-primary/20">
                         <Play className="h-5 w-5" />
@@ -199,10 +199,10 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
 
               {/* Organizador */}
               <div className="mt-6">
-                <h3 className="text-sm font-bold text-foreground">Organizador del evento</h3>
-                <div className="mt-2 rounded-2xl bg-card p-4 shadow-sm">
+                <h3 className="text-sm font-extrabold text-foreground">Organizador del evento</h3>
+                <div className="mt-2 rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/15 text-base font-bold text-primary">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/15 ring-2 ring-primary/20 text-base font-bold text-primary">
                       {(data.hosts[0]?.initials || 'TU').slice(0, 2)}
                     </div>
                     <div className="flex-1">
@@ -218,11 +218,11 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
               {/* Anfitriones */}
               {data.hosts.length > 0 && (
                 <div className="mt-4">
-                  <h3 className="text-sm font-bold text-foreground">Anfitrión del evento</h3>
+                  <h3 className="text-sm font-extrabold text-foreground">Anfitrión del evento</h3>
                   {data.hosts.map((h) => (
-                    <div key={h.id} className="mt-2 rounded-2xl bg-card p-4 shadow-sm">
+                    <div key={h.id} className="mt-2 rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/15 text-base font-bold text-primary">{h.initials || h.name?.slice(0,2).toUpperCase()}</div>
+                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/15 ring-2 ring-primary/20 text-base font-bold text-primary">{h.initials || h.name?.slice(0,2).toUpperCase()}</div>
                         <div className="flex-1">
                           <div className="font-bold text-foreground">{h.name}</div>
                           {h.role && <div className="text-xs text-muted-foreground">{h.role}</div>}

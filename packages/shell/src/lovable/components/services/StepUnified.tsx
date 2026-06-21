@@ -337,12 +337,12 @@ const StepUnified = ({
         </div>
       </div>
 
-      <div className="rounded-2xl bg-card p-4 shadow-sm border border-border/50">
+      <div className="rounded-2xl bg-card p-4 shadow-sm border border-border/60">
         <div className="flex items-center gap-2 mb-3">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
             <Camera className="h-5 w-5 text-primary" />
           </span>
-          <h3 className="text-sm font-bold text-foreground">Foto del servicio <span className="text-destructive">*</span></h3>
+          <h3 className="text-sm font-extrabold text-foreground">Foto del servicio <span className="text-destructive">*</span></h3>
         </div>
         <p className="text-xs text-muted-foreground mb-3">
           Sube una foto tuya o de tu trabajo. Es obligatoria para publicar el servicio.
@@ -556,9 +556,9 @@ const StepUnified = ({
               const activities = formData.activities[sector] || [];
               if (activities.length === 0) return null;
               return (
-                <div key={sector} className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
-                  <div className="bg-primary/5 px-4 py-3 border-b border-border">
-                    <h4 className="text-sm font-bold text-primary">{sector}</h4>
+                <div key={sector} className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
+                  <div className="bg-primary/5 px-4 py-3 border-b border-border/60">
+                    <h4 className="text-sm font-extrabold text-primary">{sector}</h4>
                   </div>
                   <div className="p-4 space-y-4">
                     {activities.map((act) => {
@@ -567,7 +567,7 @@ const StepUnified = ({
                         currency: 'COP', cost: '', pricingType: 'Por servicio', description: '',
                       };
                       return (
-                        <div key={act} className="rounded-xl border border-border p-3 space-y-3">
+                        <div key={act} className="rounded-xl border border-border/60 p-3 space-y-3 shadow-sm">
                           <h5 className="text-sm font-semibold text-foreground">{act}</h5>
                           <div className="grid grid-cols-2 gap-3">
                             <div>
@@ -738,7 +738,7 @@ const StepUnified = ({
             <p className="text-xs text-muted-foreground">Agrega preguntas y respuestas que los clientes suelen hacer</p>
             <div className="mt-4 space-y-4">
               {formData.faqs.map((faq, i) => (
-                <div key={i} className="rounded-xl border border-border p-4">
+                <div key={i} className="rounded-xl border border-border/60 p-4 shadow-sm">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <GripVertical className="h-4 w-4 text-muted-foreground" />

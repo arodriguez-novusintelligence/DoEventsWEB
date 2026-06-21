@@ -181,12 +181,12 @@ const TicketDetailView = ({
               <button
                 type="button"
                 onClick={() => setMenuOpen((v) => !v)}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-card shadow-sm border border-border"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-card shadow-sm border border-border/60 ring-2 ring-primary/20"
               >
                 <MoreVertical className="h-5 w-5 text-foreground" />
               </button>
               {menuOpen && (
-                <div className="absolute right-0 top-12 z-30 w-60 rounded-2xl bg-card shadow-lg border border-border overflow-hidden">
+                <div className="absolute right-0 top-12 z-30 w-60 rounded-2xl bg-card shadow-lg border border-border/60 overflow-hidden">
                   {canTransfer && onTransfer && (
                     <button
                       type="button"
@@ -201,7 +201,7 @@ const TicketDetailView = ({
                     <button
                       type="button"
                       onClick={() => { setMenuOpen(false); setRefundOpen(true); }}
-                      className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium hover:bg-accent border-t border-border"
+                      className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium hover:bg-accent border-t border-border/60"
                     >
                       <Banknote className="h-5 w-5 text-primary" />
                       Solicitar reembolso
@@ -247,7 +247,7 @@ const TicketDetailView = ({
                   type="button"
                   onClick={() => onActiveIndexChange(i)}
                   className={`shrink-0 min-w-[120px] rounded-2xl border px-4 py-3 text-center transition-all ${
-                    active ? 'bg-primary border-primary shadow-md' : 'bg-card border-border'
+                    active ? 'bg-primary border-primary shadow-md' : 'bg-card border-border/60'
                   }`}
                 >
                   <p className={`text-sm font-bold ${active ? 'text-primary-foreground' : 'text-foreground'}`}>

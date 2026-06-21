@@ -99,7 +99,7 @@ const MainInfoSection = () => {
           <p className="text-xs text-muted-foreground">Datos básicos del lugar que verán los organizadores</p>
         </div>
       </div>
-      <div className="rounded-2xl bg-card border border-border shadow-sm p-4 space-y-6">
+      <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-4 space-y-6">
       <MediaUpload />
 
       <div>
@@ -176,7 +176,7 @@ const MainInfoSection = () => {
         </div>
       )}
 
-      <div className="flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 shadow-sm">
+      <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-card px-3 py-2 shadow-sm">
         <Checkbox checked={form.hasParking} onCheckedChange={(v) => update({ hasParking: Boolean(v) })} id="parking" />
         <label htmlFor="parking" className="flex items-center gap-2 text-sm">
           <ParkingCircle className="h-4 w-4 text-primary" />

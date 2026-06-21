@@ -28,7 +28,7 @@ type SearchUserRow = {
 };
 
 const Avatar = ({ user }: { user: SearchUserRow }) => (
-  <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/15 text-sm font-bold text-primary">
+  <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/15 ring-2 ring-primary/20 text-sm font-bold text-primary">
     {user.avatar ? (
       <img src={user.avatar} alt={user.name} className="h-full w-full object-cover" />
     ) : (
@@ -46,7 +46,7 @@ const UserRow = ({
   added: boolean;
   onAdd: () => void;
 }) => (
-  <div className="flex items-center gap-3 rounded-2xl bg-secondary px-3 py-2.5">
+  <div className="flex items-center gap-3 rounded-2xl border border-border/60 bg-secondary px-3 py-2.5 shadow-sm">
     <Avatar user={user} />
     <div className="min-w-0 flex-1">
       <p className="truncate text-sm font-bold text-foreground">{user.name}</p>
@@ -177,7 +177,7 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
               <UserPlus className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-foreground">Seleccionar anfitrión</h3>
+              <h3 className="text-lg font-extrabold text-foreground">Seleccionar anfitrión</h3>
               <p className="text-xs text-muted-foreground mt-0.5">Busca en la plataforma o agrega manualmente</p>
             </div>
           </div>

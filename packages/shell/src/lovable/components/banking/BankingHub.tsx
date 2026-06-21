@@ -132,7 +132,7 @@ const BankingHub = ({ onBack }: BankingHubProps) => {
       {view === 'form' ? (
         <BankingForm onComplete={handleFormComplete} editingMethod={editingMethod} />
       ) : loading ? (
-        <div className="flex flex-col items-center justify-center gap-3 py-24">
+        <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-card py-24 shadow-sm mx-4">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
           <p className="text-sm text-muted-foreground">Cargando métodos de cobro…</p>
         </div>
@@ -161,7 +161,7 @@ const BankingHub = ({ onBack }: BankingHubProps) => {
       )}
       {view === 'dashboard' && !loading && !loadError && methods.some((m) => m.type === 'paypal') && (
         <div className="mx-auto max-w-4xl px-4 pb-6">
-          <div className="flex gap-3 rounded-xl border border-warning/30 bg-warning/5 p-4">
+          <div className="flex gap-3 rounded-xl border border-warning/30 bg-warning/5 p-4 shadow-sm">
             <AlertCircle className="h-5 w-5 shrink-0 text-warning" />
             <p className="text-xs text-muted-foreground leading-relaxed">
               PayPal payout requiere integración backend pendiente. Los cobros vía cuenta bancaria siguen operativos.

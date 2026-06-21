@@ -51,7 +51,7 @@ const MyPostsView = ({
 
       <div className="px-4 pt-4 space-y-4">
         {loading ? (
-          <div className="flex flex-col items-center gap-3 rounded-2xl bg-card py-16 text-center shadow-sm">
+          <div className="flex flex-col items-center gap-3 rounded-2xl border border-border/60 bg-card py-16 text-center shadow-sm">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
             <p className="text-sm text-muted-foreground">Cargando publicaciones…</p>
           </div>

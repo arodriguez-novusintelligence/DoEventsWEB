@@ -766,7 +766,7 @@ const SeatingMapEditor = ({
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-border bg-card px-4 py-3 shadow-sm">
+      <div className="flex items-center justify-between border-b border-border/60 bg-card px-4 py-3 shadow-sm">
         <button
           onClick={onClose}
           className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20 text-foreground"
@@ -777,7 +777,7 @@ const SeatingMapEditor = ({
           <p className="text-[11px] font-bold uppercase tracking-widest text-primary">
             Editando
           </p>
-          <h2 className="text-base font-bold text-foreground">Piso {currentFloor}</h2>
+          <h2 className="text-base font-extrabold text-foreground">Piso {currentFloor}</h2>
         </div>
         <button
           onClick={() => setShowLegend(true)}

@@ -212,7 +212,7 @@ const EventCard = ({
 }) => (
   <button
     onClick={onClick}
-    className="min-w-[210px] max-w-[210px] flex-shrink-0 rounded-2xl bg-card shadow-sm overflow-hidden border border-border/40 text-left transition-transform active:scale-[0.98]"
+    className="min-w-[210px] max-w-[210px] flex-shrink-0 rounded-2xl bg-card shadow-sm overflow-hidden border border-border/60 text-left transition-transform active:scale-[0.98]"
   >
     <div className="relative h-36">
       <EventMedia event={event} />
@@ -254,7 +254,7 @@ const UpcomingEventRow = ({
 }) => (
   <button
     onClick={onClick}
-    className="flex w-full gap-3 rounded-2xl bg-card p-3 shadow-sm border border-border/40 items-center text-left active:scale-[0.99]"
+    className="flex w-full gap-3 rounded-2xl bg-card p-3 shadow-sm border border-border/60 items-center text-left active:scale-[0.99]"
   >
     <div className="relative h-20 w-20 flex-shrink-0 rounded-xl overflow-hidden bg-muted">
       <EventMedia event={event} />
@@ -293,7 +293,7 @@ const OtherEventRow = ({
 }) => (
   <button
     onClick={onClick}
-    className="flex w-full gap-3 rounded-2xl bg-card p-3 shadow-sm border border-border/40 text-left active:scale-[0.99]"
+    className="flex w-full gap-3 rounded-2xl bg-card p-3 shadow-sm border border-border/60 text-left active:scale-[0.99]"
   >
     <div className="relative h-24 w-24 flex-shrink-0 rounded-xl overflow-hidden bg-muted">
       <EventMedia event={event} />
@@ -432,7 +432,7 @@ const VenueCard = ({
 }) => (
   <button
     onClick={onClick}
-    className="min-w-[210px] max-w-[210px] flex-shrink-0 rounded-2xl bg-card shadow-sm overflow-hidden border border-border/40 text-left transition-transform active:scale-[0.98]"
+    className="min-w-[210px] max-w-[210px] flex-shrink-0 rounded-2xl bg-card shadow-sm overflow-hidden border border-border/60 text-left transition-transform active:scale-[0.98]"
   >
     <div className="relative h-36">
       <SafeImage
@@ -481,7 +481,7 @@ const ProviderProfileCard = ({
   const showAvatar = provider.avatarUrl && !avatarFailed;
 
   return (
-  <div className="min-w-[180px] max-w-[180px] flex-shrink-0 rounded-2xl bg-card shadow-sm overflow-hidden border border-border/40 text-left">
+  <div className="min-w-[180px] max-w-[180px] flex-shrink-0 rounded-2xl bg-card shadow-sm overflow-hidden border border-border/60 text-left">
     <button
       type="button"
       onClick={onClick}
@@ -703,7 +703,7 @@ const EventsView = ({
                 key={p.id}
                 type="button"
                 onClick={() => handleFilterChange(p.id)}
-                className={`flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold whitespace-nowrap shadow-sm transition-all border border-border/40 ${
+                className={`flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold whitespace-nowrap shadow-sm transition-all border border-border/60 ${
                   active
                     ? 'bg-primary text-primary-foreground border-primary'
                     : 'bg-card text-foreground hover:bg-accent/50'

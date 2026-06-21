@@ -105,7 +105,7 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-xl font-bold text-primary">Control de accesos</h2>
+        <h2 className="text-xl font-extrabold text-primary">Control de accesos</h2>
         <p className="mt-1 text-sm text-foreground">
           Asigna el personal a cada puerta del lugar, encargado de escanear los QR de los boletos a la entrada de tu evento.{' '}
           <span className="font-semibold">Recuerda, deben ser usuarios de la plataforma.</span>
@@ -113,7 +113,7 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
       </div>
 
       {/* Summary */}
-      <div className="rounded-2xl bg-card p-4 shadow-sm">
+      <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
         <h3 className="text-sm font-bold text-foreground">{formData.name || 'Evento sin nombre'}</h3>
         {formData.location.detectedCity && (
           <p className="mt-0.5 flex items-center gap-1 text-xs font-semibold text-primary">
@@ -166,7 +166,7 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
             source: 'platform' as const,
           });
           return (
-            <div key={gate.id} className="rounded-2xl bg-card p-4 shadow-sm">
+            <div key={gate.id} className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
               <div className="mb-3 flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20 text-primary">
                   <DoorOpen className="h-5 w-5" />
@@ -189,7 +189,7 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
                   {assigned.map((u) => (
                     <div
                       key={u.id}
-                      className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-3 py-2"
+                      className="flex items-center justify-between gap-3 rounded-xl border border-border/60 bg-card px-3 py-2 shadow-sm"
                     >
                       <div className="flex min-w-0 items-center gap-3">
                         <Avatar user={u} />

@@ -113,7 +113,7 @@ const SeatLocationModal = ({ open, onOpenChange, ticket }: Props) => {
           </div>
 
           {!ticketHasSeat(ticket) ? (
-            <div className="flex h-[200px] flex-col items-center justify-center gap-2 rounded-2xl bg-secondary px-4 text-center">
+            <div className="flex h-[200px] flex-col items-center justify-center gap-2 rounded-2xl border border-border/60 bg-card px-4 text-center shadow-sm">
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <Armchair className="h-7 w-7 text-primary" />
               </div>
@@ -125,7 +125,7 @@ const SeatLocationModal = ({ open, onOpenChange, ticket }: Props) => {
               <p className="text-sm text-muted-foreground">Cargando mapa…</p>
             </div>
           ) : error || !floors.length ? (
-            <div className="flex h-[200px] flex-col items-center justify-center gap-3 rounded-2xl bg-secondary px-4 text-center">
+            <div className="flex h-[200px] flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-card px-4 text-center shadow-sm">
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
                 <AlertCircle className="h-7 w-7 text-destructive" />
               </div>

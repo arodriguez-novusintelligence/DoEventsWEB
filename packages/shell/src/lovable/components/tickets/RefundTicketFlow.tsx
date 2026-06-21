@@ -286,7 +286,7 @@ const RefundTicketFlow = ({
               <p className="text-sm font-semibold text-muted-foreground mb-2">Boletas a reembolsar</p>
               <div className="space-y-2">
                 {selectedEntries.map((e, idx) => (
-                  <div key={e.id} className="rounded-2xl border border-border p-3 flex items-center gap-3">
+                  <div key={e.id} className="rounded-2xl border border-border/60 p-3 flex items-center gap-3 shadow-sm">
                     <div className="h-9 w-9 rounded-full bg-primary text-primary-foreground grid place-items-center font-bold text-sm">
                       {idx + 1}
                     </div>
@@ -314,7 +314,7 @@ const RefundTicketFlow = ({
             </div>
 
             {grossTotal > 0 && (
-              <div className="rounded-2xl bg-secondary/60 border border-border p-4 space-y-2">
+              <div className="rounded-2xl bg-secondary/60 border border-border/60 p-4 space-y-2 shadow-sm">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal boletas</span>
                   <span className="font-semibold text-foreground">{formatCOP(grossTotal)}</span>

@@ -38,6 +38,9 @@ export { CompanyContext };
 
 export const useCompany = () => useContext(CompanyContext);
 
+/** Alias Lovable — misma API que `useCompany`. */
+export const useCompanyContext = useCompany;
+
 interface CompanyProviderProps {
   userId?: string | null;
   children: ReactNode;

@@ -79,7 +79,7 @@ export const MyPurchasesView = ({ onBack }: MyPurchasesViewProps) => {
 
       <div className="px-4 pt-4 space-y-3">
         {loading ? (
-          <div className="flex flex-col items-center justify-center gap-3 py-12">
+          <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-card py-12 shadow-sm">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
             <p className="text-sm text-muted-foreground">Cargando compras…</p>
           </div>
@@ -104,13 +104,13 @@ export const MyPurchasesView = ({ onBack }: MyPurchasesViewProps) => {
             <button
               type="button"
               onClick={() => navigate('/tickets')}
-              className="flex w-full items-center gap-3 rounded-2xl bg-card p-4 shadow-sm text-left hover:bg-accent/40 transition-colors"
+              className="flex w-full items-center gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-sm text-left hover:bg-accent/40 transition-colors"
             >
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
                 <Ticket className="h-5 w-5 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-foreground">Boletas</p>
+                <p className="text-sm font-extrabold text-foreground">Boletas</p>
                 <p className="text-xs text-muted-foreground">
                   {ticketCount} boleta{ticketCount === 1 ? '' : 's'} activa{ticketCount === 1 ? '' : 's'}
                 </p>
@@ -121,13 +121,13 @@ export const MyPurchasesView = ({ onBack }: MyPurchasesViewProps) => {
             <button
               type="button"
               onClick={() => navigate('/purchases/venues')}
-              className="flex w-full items-center gap-3 rounded-2xl bg-card p-4 shadow-sm text-left hover:bg-accent/40 transition-colors"
+              className="flex w-full items-center gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-sm text-left hover:bg-accent/40 transition-colors"
             >
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
                 <Building2 className="h-5 w-5 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-foreground">Reservas de lugares</p>
+                <p className="text-sm font-extrabold text-foreground">Reservas de lugares</p>
                 <p className="text-xs text-muted-foreground">
                   {venueBookings.length} reserva{venueBookings.length === 1 ? '' : 's'}
                 </p>
@@ -138,13 +138,13 @@ export const MyPurchasesView = ({ onBack }: MyPurchasesViewProps) => {
             <button
               type="button"
               onClick={() => navigate('/purchases/services')}
-              className="flex w-full items-center gap-3 rounded-2xl bg-card p-4 shadow-sm text-left hover:bg-accent/40 transition-colors"
+              className="flex w-full items-center gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-sm text-left hover:bg-accent/40 transition-colors"
             >
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
                 <Briefcase className="h-5 w-5 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-foreground">Reservas de servicios</p>
+                <p className="text-sm font-extrabold text-foreground">Reservas de servicios</p>
                 <p className="text-xs text-muted-foreground">
                   {serviceBookings.length} reserva{serviceBookings.length === 1 ? '' : 's'}
                 </p>
@@ -157,7 +157,7 @@ export const MyPurchasesView = ({ onBack }: MyPurchasesViewProps) => {
                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                   <Ticket className="h-7 w-7 text-primary" />
                 </div>
-                <p className="mt-3 text-sm font-semibold text-foreground">Sin compras ni reservas</p>
+                <p className="mt-3 text-sm font-extrabold text-foreground">Sin compras ni reservas</p>
                 <p className="mt-1 text-xs text-muted-foreground">Tus boletas y reservas aparecerán aquí</p>
               </div>
             )}

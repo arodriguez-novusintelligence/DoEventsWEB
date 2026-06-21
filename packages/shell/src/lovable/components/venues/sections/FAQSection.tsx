@@ -31,7 +31,7 @@ const FAQSection = () => {
         <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
           <HelpCircle className="h-5 w-5 text-primary" />
         </span>
-        <Label className="form-label mb-0">Preguntas frecuentes</Label>
+        <Label className="form-label mb-0 font-extrabold">Preguntas frecuentes</Label>
       </div>
       <p className="form-sublabel text-sm text-muted-foreground">
         Opcional: agrega preguntas que los clientes suelen hacer sobre tu lugar.
