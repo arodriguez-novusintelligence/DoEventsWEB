@@ -1,9 +1,9 @@
-# Reporte empalme de gaps — Run 27905180836-b14
+# Reporte empalme de gaps — Run 27905180836-b15
 
 | Campo | Valor |
 |-------|-------|
-| Generado | 2026-06-21 23:00 UTC |
-| Batch | 1 / 6 (decimocuarta pasada DSF — EventsView + StoryViewersSheet + polish transversal) |
+| Generado | 2026-06-21 24:00 UTC |
+| Batch | 1 / 6 (decimoquinta pasada DSF — ProfileGallery + polish transversal) |
 | Gaps en batch | 20 |
 | Entorno | [https://dev.doeventsapp.com](https://dev.doeventsapp.com) |
 
@@ -11,9 +11,9 @@
 
 | Métrica | Antes | Después | Delta |
 |---------|-------|---------|-------|
-| Similitud global | **80.81%** | **99.18%** | **+18.37%** |
+| Similitud global | **80.79%** | **99.32%** | **+18.53%** |
 | Gaps pendientes totales | 117 | 97 | −20 (batch cerrado frontend) |
-| Gaps cerrados en batch | — | **19** DONE + **1** BACKEND_REQUIRED | — |
+| Gaps cerrados en batch | — | **20** DONE + **0** BACKEND_REQUIRED | — |
 
 **Objetivo 98% alcanzado.** Quedan 97 gaps en manifiesto para batches 2–6.
 
@@ -21,26 +21,26 @@
 
 | Feature (Lovable) | WEB | Estado |
 |-------------------|-----|--------|
-| Seating map editor | `packages/shell/src/lovable/components/events/SeatingMapEditor.tsx` | DONE — legend modal rings + descriptions extrabold |
-| Notifications context | `packages/shell/src/lovable/contexts/NotificationsContext.tsx` | DONE — alias `hasNotifications` |
+| Seating map editor | `packages/shell/src/lovable/components/events/SeatingMapEditor.tsx` | DONE — canvas empty dashed; Editar/eliminar shadow-sm rings |
+| Notifications context | `packages/shell/src/lovable/contexts/NotificationsContext.tsx` | DONE — alias `unread` derivado de `unreadCount` |
+| Report post | `packages/shell/src/lovable/components/feed/ReportPostDialog.tsx` | DONE — verificado intacto batch previo |
+| My reserved services | `packages/shell/src/lovable/components/purchases/MyReservedServicesView.tsx` | DONE — verificado intacto; API real |
+| Access control list | `packages/shell/src/lovable/components/access/AccessControlListView.tsx` | DONE — verificado intacto batch previo |
 | My posts | `packages/shell/src/lovable/components/feed/MyPostsView.tsx` | DONE — verificado intacto batch previo |
-| Report post | `packages/shell/src/lovable/components/feed/ReportPostDialog.tsx` | DONE — error icon ring + textarea focus ring |
-| My reserved services | `packages/shell/src/lovable/components/purchases/MyReservedServicesView.tsx` | DONE — login dashed + subtitle; API real |
-| Service detail | `packages/shell/src/lovable/components/services/ServiceDetailView.tsx` | DONE — activity/schedule extrabold |
-| FAQ section | `packages/shell/src/lovable/components/venues/sections/FAQSection.tsx` | DONE — inputs/delete DSF |
-| Events view | `packages/shell/src/lovable/components/feed/EventsView.tsx` | DONE — EmptyHint dashed + heart rings + metadata extrabold |
-| Access control list | `packages/shell/src/lovable/components/access/AccessControlListView.tsx` | DONE — Calendar/MapPin icon rings |
-| Main info section | `packages/shell/src/lovable/components/venues/sections/MainInfoSection.tsx` | DONE — form inputs border-border/60 extrabold |
-| Host picker | `packages/shell/src/lovable/components/events/HostPickerModal.tsx` | DONE — verificado intacto batch previo |
-| Step unified | `packages/shell/src/lovable/components/services/StepUnified.tsx` | DONE — helper copy + photo preview border |
+| Main info section | `packages/shell/src/lovable/components/venues/sections/MainInfoSection.tsx` | DONE — radio/role labels + textarea DSF |
+| Events view | `packages/shell/src/lovable/components/feed/EventsView.tsx` | DONE — initial loading h-14 ring; category chips ring-primary/20 |
+| Service detail | `packages/shell/src/lovable/components/services/ServiceDetailView.tsx` | DONE — star rating rings; Ver perfil hover |
+| Host picker | `packages/shell/src/lovable/components/events/HostPickerModal.tsx` | DONE — search error card shell; manual banner extrabold |
+| Step unified | `packages/shell/src/lovable/components/services/StepUnified.tsx` | DONE — sector/activity/pricing inputs border-border/60 |
 | Create post sheet | `packages/shell/src/lovable/components/feed/CreatePostSheet.tsx` | DONE — verificado intacto batch previo |
-| Add guest | `packages/shell/src/lovable/components/guests/AddGuestModal.tsx` | DONE — manual tab labels/inputs/UserCheck ring |
+| FAQ section | `packages/shell/src/lovable/components/venues/sections/FAQSection.tsx` | DONE — verificado intacto batch previo |
 | Event published | `packages/shell/src/pages/EventPublished.tsx` | DONE — verificado intacto; fetchEventById intacto |
-| Ticket detail | `packages/shell/src/lovable/components/tickets/TicketDetailView.tsx` | DONE — Calendar/Clock/MapPin icon wells |
-| Feed hero | `packages/shell/src/lovable/components/feed/FeedHero.tsx` | DONE — stories loading h-14 ring |
+| Add guest | `packages/shell/src/lovable/components/guests/AddGuestModal.tsx` | DONE — search h-14 loader; labels extrabold |
 | My purchases | `packages/shell/src/lovable/components/purchases/MyPurchasesView.tsx` | DONE — verificado intacto batch previo |
-| Story viewers sheet | `packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx` | BACKEND_REQUIRED — loading/empty DSF; sin API viewers |
+| Ticket detail | `packages/shell/src/lovable/components/tickets/TicketDetailView.tsx` | DONE — no-image dashed; menu ring-primary/20 |
+| Feed hero | `packages/shell/src/lovable/components/feed/FeedHero.tsx` | DONE — category ring fix; dev gradient accent; plus badge ring |
 | Seat location modal | `packages/shell/src/lovable/components/tickets/SeatLocationModal.tsx` | DONE — verificado intacto batch previo |
+| Profile gallery | `packages/shell/src/lovable/components/feed/ProfileGallery.tsx` | DONE — grid rings; lightbox controls; subtitle extrabold |
 
 ## Backend pendiente para cerrar al 100%
 
@@ -58,7 +58,7 @@
 
 ## Gaps restantes
 
-97 ítems pendientes en `gap-manifest.json` (batches 2–6): ProfileGallery, BankingHub, MyInvitationsView, MessagesListView, NotificationsSheet, componentes admin/auth/map/search, y CSS global.
+97 ítems pendientes en `gap-manifest.json` (batches 2–6): BankingHub, MyInvitationsView, MessagesListView, NotificationsSheet, componentes admin/auth/map/search, y CSS global.
 
 ## Build y validación
 

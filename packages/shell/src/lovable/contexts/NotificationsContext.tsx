@@ -2,7 +2,7 @@
  * Notifications context — empalme Lovable sobre API real `@doevents/shared`.
  *
  * API expuesta (paridad Lovable):
- * - `notifications`, `unreadCount`, `hasUnread`, `hasNotifications`, `loading`, `loadError`, `loadErrorMessage`, `isEmpty`, `hasError`, `error`
+ * - `notifications`, `unreadCount`, `unread`, `hasUnread`, `hasNotifications`, `loading`, `loadError`, `loadErrorMessage`, `isEmpty`, `hasError`, `error`
  * - `count`, `notificationCount`, `totalCount` (alias de `notifications.length`)
  * - `reload` / `refreshNotifications` / `refresh` / `reloadNotifications` / `fetchNotifications`, `markAllRead`, `markRead` / `markAsRead`, `dismissNotification` / `removeNotification`, `clearAll` / `clearNotifications`
  *
@@ -77,6 +77,8 @@ export interface Notification {
 export interface NotificationsContextValue {
   notifications: Notification[];
   unreadCount: number;
+  /** Alias Lovable — mismo valor que `unreadCount`. */
+  unread: number;
   hasUnread: boolean;
   /** Alias Lovable — inverso de `isEmpty` cuando no hay error ni carga. */
   hasNotifications: boolean;
@@ -121,6 +123,7 @@ export interface NotificationsContextValue {
 const fallbackContext: NotificationsContextValue = {
   notifications: [],
   unreadCount: 0,
+  unread: 0,
   hasUnread: false,
   hasNotifications: false,
   loading: false,
@@ -294,6 +297,7 @@ export const NotificationsProvider = ({
       value={{
         notifications,
         unreadCount,
+        unread: unreadCount,
         hasUnread: unreadCount > 0,
         hasNotifications: notifications.length > 0,
         loading,

@@ -1049,11 +1049,11 @@ const SeatingMapEditor = ({
             })}
 
             {figures.length === 0 && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-card/80 px-6 py-8 text-center shadow-sm backdrop-blur-sm">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-primary/25 border-border/60 bg-card/80 px-6 py-8 text-center shadow-sm backdrop-blur-sm">
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                   <LayoutGrid className={`h-7 w-7 ${dark ? 'text-primary-foreground' : 'text-primary'}`} />
                 </div>
-                <p className={`text-sm ${dark ? 'text-zinc-400' : 'text-muted-foreground'}`}>
+                <p className={`text-sm font-extrabold ${dark ? 'text-zinc-400' : 'text-muted-foreground'}`}>
                   Toca una figura abajo para agregarla y configurarla como{' '}
                   <span className="font-extrabold text-foreground">Categoría</span> o{' '}
                   <span className="font-extrabold text-foreground">Elemento</span>.
@@ -1158,13 +1158,13 @@ const SeatingMapEditor = ({
             </button>
             <button
               onClick={() => setEditingId(selected.id)}
-              className="rounded-full bg-primary px-3 py-1.5 text-xs font-extrabold text-primary-foreground"
+              className="rounded-full bg-primary px-3 py-1.5 text-xs font-extrabold text-primary-foreground shadow-sm"
             >
               <Pencil className="mr-1 inline h-3.5 w-3.5" /> Editar
             </button>
             <button
               onClick={() => deleteFigure(selected.id)}
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-destructive/10 text-destructive"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-destructive/10 text-destructive ring-2 ring-destructive/20 shadow-sm"
               title="Eliminar"
             >
               <Trash2 className="h-4 w-4" />

@@ -186,7 +186,7 @@ const TicketDetailView = ({
                 <MoreVertical className="h-5 w-5 text-foreground" />
               </button>
               {menuOpen && (
-                <div className="absolute right-0 top-12 z-30 w-60 overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
+                <div className="absolute right-0 top-12 z-30 w-60 overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm ring-2 ring-primary/20">
                   {canTransfer && onTransfer && (
                     <button
                       type="button"
@@ -292,7 +292,7 @@ const TicketDetailView = ({
                 ) : ticket.eventImage ? (
                   <img src={ticket.eventImage} alt={ticket.eventTitle} className="h-full w-full object-cover" />
                 ) : (
-                  <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-card">
+                  <div className="flex h-full w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-primary/25 border-border/60 bg-card">
                     <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                       <TicketIcon className="h-7 w-7 text-primary" />
                     </div>

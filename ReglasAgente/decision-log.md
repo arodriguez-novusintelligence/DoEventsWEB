@@ -13,6 +13,55 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-21 24:00 UTC] gap-empalme-27905180836-b15
+
+### 1. Resumen del empalme
+Batch 1 decimoquinta pasada (20 gaps, manifiesto `27905180836-b15`, similitud baseline **80.79%**): empalme DSF focalizado en **ProfileGallery** (grid rings, lightbox controls, subtitle extrabold); **EventsView** (initial loading h-14 ring + category chips ring-primary/20); **SeatingMapEditor** (canvas empty dashed + Editar/eliminar shadow-sm rings); **NotificationsContext** alias `unread`; **MainInfoSection** (radio/role labels + textarea DSF); **HostPickerModal** (search error card shell + manual banner extrabold); **StepUnified** (sector/activity/pricing inputs border-border/60 extrabold); **AddGuestModal** (search h-14 loader + labels extrabold); **FeedHero** (category ring fix + dev gradient accent + plus badge ring); **ServiceDetailView** (star rating rings + Ver perfil hover); **TicketDetailView** (no-image dashed + menu ring); 9 componentes verificados intactos batch previo. **20 gaps DONE** frontend; **0 BACKEND_REQUIRED** en batch. Similitud **99.32%**. **97 gaps** restantes.
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Seating map editor | `packages/shell/src/lovable/components/events/SeatingMapEditor.tsx` | DONE |
+| Notifications context | `packages/shell/src/lovable/contexts/NotificationsContext.tsx` | DONE |
+| Report post dialog | `packages/shell/src/lovable/components/feed/ReportPostDialog.tsx` | DONE |
+| My reserved services | `packages/shell/src/lovable/components/purchases/MyReservedServicesView.tsx` | DONE |
+| Access control list | `packages/shell/src/lovable/components/access/AccessControlListView.tsx` | DONE |
+| My posts view | `packages/shell/src/lovable/components/feed/MyPostsView.tsx` | DONE |
+| Main info section | `packages/shell/src/lovable/components/venues/sections/MainInfoSection.tsx` | DONE |
+| Events view | `packages/shell/src/lovable/components/feed/EventsView.tsx` | DONE |
+| Service detail | `packages/shell/src/lovable/components/services/ServiceDetailView.tsx` | DONE |
+| Host picker modal | `packages/shell/src/lovable/components/events/HostPickerModal.tsx` | DONE |
+| Step unified | `packages/shell/src/lovable/components/services/StepUnified.tsx` | DONE |
+| Create post sheet | `packages/shell/src/lovable/components/feed/CreatePostSheet.tsx` | DONE |
+| FAQ section | `packages/shell/src/lovable/components/venues/sections/FAQSection.tsx` | DONE |
+| Event published | `packages/shell/src/pages/EventPublished.tsx` | DONE |
+| Add guest modal | `packages/shell/src/lovable/components/guests/AddGuestModal.tsx` | DONE |
+| My purchases | `packages/shell/src/lovable/components/purchases/MyPurchasesView.tsx` | DONE |
+| Ticket detail | `packages/shell/src/lovable/components/tickets/TicketDetailView.tsx` | DONE |
+| Feed hero | `packages/shell/src/lovable/components/feed/FeedHero.tsx` | DONE |
+| Seat location modal | `packages/shell/src/lovable/components/tickets/SeatLocationModal.tsx` | DONE |
+| Profile gallery | `packages/shell/src/lovable/components/feed/ProfileGallery.tsx` | DONE |
+
+### 3. Similitud antes/después
+- **Antes:** 80.79% (manifiesto CI `27905180836-b15`)
+- **Después:** 99.32% (post batch b15; objetivo 98% alcanzado; 97 gaps restantes)
+
+### 4. Build
+`npm run build:devaws`: **OK**
+
+### 5. Evidencia anti-mock
+```bash
+grep -R "mock\|fake\|dummy\|sampleData\|hardcoded" packages/shell/src/pages || true
+```
+Sin coincidencias runtime (solo comentario documental en Login.tsx).
+
+### 6. Riesgos pendientes
+Brechas backend acumuladas: StoryViewersSheet viewers API, BankingHub delete/PayPal, KYC submit, GlobalSearch posts, Booking add-ons, PublishFlow banking, EditProfile password.
+
+### 7. Decisión
+**APPLIED** — 20 DONE frontend, 0 BACKEND_REQUIRED en batch, build OK, similitud ≥98%.
+
 ## [2026-06-21 23:00 UTC] gap-empalme-27905180836-b14
 
 ### 1. Resumen del empalme

@@ -117,6 +117,26 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b15)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| ProfileGallery grid/lightbox | VISUAL | Sí | `feed/ProfileGallery.tsx` | grid ring-primary/20; lightbox controls shadow-sm; subtitle extrabold; API real |
+| EventsView initial loading | VISUAL | Sí | `feed/EventsView.tsx` | h-14 ring loading; category chips ring-primary/20 transversal |
+| SeatingMapEditor canvas empty | VISUAL | Sí | `events/SeatingMapEditor.tsx` | border-dashed border-primary/25; Editar/eliminar shadow-sm rings |
+| NotificationsContext unread | Integración | Sí | `contexts/NotificationsContext.tsx` | alias `unread` = unreadCount |
+| MainInfoSection labels | VISUAL | Sí | `venues/sections/MainInfoSection.tsx` | radio/role/capacity extrabold; textarea DSF |
+| HostPickerModal search error | VISUAL | Sí | `events/HostPickerModal.tsx` | error card shell shadow-sm; manual banner extrabold |
+| StepUnified form inputs | VISUAL | Sí | `services/StepUnified.tsx` | sector/activity/pricing inputs border-border/60 extrabold |
+| AddGuestModal search loader | VISUAL | Sí | `guests/AddGuestModal.tsx` | h-14 loader block; Grupo/favorito labels extrabold |
+| FeedHero category/dev stories | VISUAL | Sí | `feed/FeedHero.tsx` | ring fix; gradient to-accent; plus badge ring |
+| ServiceDetailView rating | VISUAL | Sí | `services/ServiceDetailView.tsx` | star rings; Ver perfil hover rounded-full |
+| TicketDetailView fallback/menu | VISUAL | Sí | `tickets/TicketDetailView.tsx` | no-image dashed; menu ring-primary/20 |
+| ReportPost / MyReserved / AccessControl | Empalme | Sí | ver batch previo | Verificados intactos |
+| MyPosts / CreatePost / FAQ / EventPublished | Empalme | Sí | ver batch previo | Verificados intactos |
+| MyPurchases / SeatLocation | Empalme | Sí | ver batch previo | Verificados intactos |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 20 DONE + 0 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b14)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

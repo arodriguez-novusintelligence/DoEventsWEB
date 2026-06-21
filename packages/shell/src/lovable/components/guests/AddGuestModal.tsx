@@ -608,7 +608,7 @@ export function AddGuestModal({
                 selectContentClassName={isNested || embedded ? "z-[120]" : undefined}
               />
               <div className="space-y-2">
-                <Label>Grupo</Label>
+                <Label className="font-extrabold">Grupo</Label>
                 <Select value={form.groupId || "none"} onValueChange={(v) => setForm({ ...form, groupId: v === "none" ? undefined : v })}>
                   <SelectTrigger><SelectValue placeholder="Amigos (predeterminado)" /></SelectTrigger>
                   <SelectContent className={isNested || embedded ? "z-[120]" : undefined}>
@@ -626,7 +626,7 @@ export function AddGuestModal({
               </div>
               <div className="flex items-center space-x-2 pt-2">
                 <Switch id="fav" checked={form.isFavorite} onCheckedChange={(c) => setForm({ ...form, isFavorite: c })} />
-                <Label htmlFor="fav" className="text-sm">Marcar como invitado favorito</Label>
+                <Label htmlFor="fav" className="text-sm font-extrabold">Marcar como invitado favorito</Label>
               </div>
               <Button type="submit" className="w-full rounded-full font-extrabold shadow-sm" disabled={isSaving}>
                 {isSaving ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Guardando…</> : "Agregar invitado"}
@@ -640,13 +640,13 @@ export function AddGuestModal({
           </TabsContent>
           <TabsContent value="search" className="space-y-4">
             <div className="space-y-2">
-              <Label>Buscar usuario en DoEvents</Label>
+              <Label className="font-extrabold">Buscar usuario en DoEvents</Label>
               <div className="flex gap-2">
                 <Input
                   value={searchUsername}
                   onChange={(e) => setSearchUsername(e.target.value)}
                   placeholder="@nombreusuario"
-                  className="border-border/60 focus-visible:ring-2 focus-visible:ring-primary/20"
+                  className="border-border/60 font-extrabold focus-visible:ring-2 focus-visible:ring-primary/20"
                   onKeyDown={(e) => e.key === "Enter" && void search()}
                 />
                 <Button onClick={() => void search()} disabled={isSearching} variant="outline" className="rounded-full font-extrabold shadow-sm">
@@ -657,9 +657,17 @@ export function AddGuestModal({
                   )}
                 </Button>
               </div>
-              <p className="text-xs text-muted-foreground">Usuarios reales registrados en DoEvents (mín. 2 caracteres).</p>
+              <p className="text-xs font-extrabold text-muted-foreground">Usuarios reales registrados en DoEvents (mín. 2 caracteres).</p>
             </div>
-            {searchError && (
+            {isSearching && (
+              <div className="flex flex-col items-center gap-3 rounded-2xl border border-border/60 bg-card py-8 shadow-sm">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                  <Loader2 className="h-7 w-7 animate-spin text-primary" />
+                </div>
+                <p className="text-sm font-extrabold text-muted-foreground">Buscando usuario…</p>
+              </div>
+            )}
+            {searchError && !isSearching && (
               <div className="flex flex-col items-center gap-3 rounded-2xl border border-destructive/30 bg-card py-8 text-center shadow-sm">
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
                   <AlertCircle className="h-7 w-7 text-destructive" />
@@ -677,10 +685,10 @@ export function AddGuestModal({
                   <Search className="h-7 w-7 text-primary" />
                 </div>
                 <p className="text-sm font-extrabold text-foreground">Sin resultados</p>
-                <p className="text-xs text-muted-foreground px-4">Prueba con otro nombre de usuario</p>
+                <p className="text-xs font-extrabold text-muted-foreground px-4">Prueba con otro nombre de usuario</p>
               </div>
             )}
-            {searchResults.length > 0 && (
+            {searchResults.length > 0 && !isSearching && (
               <div className="space-y-2 max-h-52 overflow-y-auto">
                 {searchResults.map((u) => {
                   const selected = selectedSearchIds.has(u.id);

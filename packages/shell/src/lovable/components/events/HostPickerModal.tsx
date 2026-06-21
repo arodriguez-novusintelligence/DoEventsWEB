@@ -50,7 +50,7 @@ const UserRow = ({
     <Avatar user={user} />
     <div className="min-w-0 flex-1">
       <p className="truncate text-sm font-extrabold text-foreground">{user.name}</p>
-      {user.username && <p className="truncate text-xs text-primary">@{user.username.replace(/^@/, '')}</p>}
+      {user.username && <p className="truncate text-xs font-extrabold text-primary">@{user.username.replace(/^@/, '')}</p>}
       {user.email && <p className="truncate text-xs font-extrabold text-muted-foreground">{user.email}</p>}
     </div>
     <button
@@ -258,8 +258,8 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
                     <p className="text-sm font-extrabold text-foreground">Buscando…</p>
                   </div>
                 ) : searchError ? (
-                  <div className="flex flex-col items-center py-8 text-center">
-                    <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
+                  <div className="flex flex-col items-center gap-3 rounded-2xl border border-destructive/30 bg-card py-8 text-center shadow-sm">
+                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
                       <AlertCircle className="h-7 w-7 text-destructive" />
                     </div>
                     <p className="text-sm font-extrabold text-destructive">Error al buscar usuarios</p>
@@ -299,7 +299,7 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
 
           {tab === 'manual' && (
             <div className="space-y-3">
-              <div className="flex items-center gap-2 rounded-xl border border-primary/20 border-border/60 bg-primary/5 p-3 text-xs text-foreground shadow-sm">
+              <div className="flex items-center gap-2 rounded-xl border border-primary/20 border-border/60 bg-primary/5 p-3 text-xs font-extrabold text-foreground shadow-sm">
                 <BookUser className="h-4 w-4 shrink-0" />
                 Agrega un anfitrión que no está registrado en la plataforma.
               </div>

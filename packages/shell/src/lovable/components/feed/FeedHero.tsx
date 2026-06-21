@@ -148,7 +148,7 @@ const FeedHero = ({
                   <div className={cn(
                     'flex h-12 w-12 items-center justify-center rounded-2xl ring-2 transition',
                     c.bg,
-                    active ? 'ring-primary ring-primary/20 scale-105' : 'ring-2 ring-primary/20',
+                    active ? 'ring-2 ring-primary/20 scale-105' : 'ring-2 ring-primary/20',
                   )}>
                     <Icon className={cn('h-6 w-6', c.color)} />
                   </div>
@@ -233,7 +233,7 @@ const FeedHero = ({
                         role="button"
                         tabIndex={0}
                         aria-label="Agregar historia"
-                        className="absolute bottom-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-primary border-2 border-card z-10"
+                        className="absolute bottom-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-primary border-2 border-card z-10 shadow-sm ring-2 ring-primary/20"
                         onClick={(e) => {
                           e.stopPropagation();
                           onCreateStory?.();
@@ -260,13 +260,13 @@ const FeedHero = ({
                 <button key={s.id} type="button" className="flex flex-col items-center gap-1 shrink-0 w-16">
                   <div className={cn(
                     'relative h-16 w-16 rounded-full p-[2.5px]',
-                    s.own ? 'bg-primary' : 'bg-gradient-to-tr from-primary via-accent to-pink-400'
+                    s.own ? 'bg-primary' : 'bg-gradient-to-tr from-primary via-accent to-accent'
                   )}>
                     <div className="h-full w-full overflow-hidden rounded-full border-2 border-card">
                       <img src={s.image} alt={s.name} className="h-full w-full object-cover" />
                     </div>
                     {s.own && (
-                      <span className="absolute bottom-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-primary border-2 border-card">
+                      <span className="absolute bottom-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-primary border-2 border-card shadow-sm ring-2 ring-primary/20">
                         <Plus className="h-3 w-3 text-primary-foreground" />
                       </span>
                     )}

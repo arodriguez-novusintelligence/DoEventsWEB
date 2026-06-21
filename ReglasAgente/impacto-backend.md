@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27905180836-b15`: batch 1 decimoquinta pasada (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED en batch. ProfileGallery grid rings + lightbox controls; EventsView initial loading h-14 ring; SeatingMapEditor canvas dashed; NotificationsContext unread alias; MainInfoSection/HostPickerModal/StepUnified/AddGuestModal/FeedHero/ServiceDetailView/TicketDetailView polish; similitud ~99.32%; 97 gaps restantes; build:devaws OK.
+
 Run `gap-empalme-27905180836-b14`: batch 1 decimocuarta pasada (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`StoryViewersSheet` viewers API). EventsView EmptyHint dashed + FavoriteHeart rings + metadata extrabold; FeedHero stories loading h-14 ring; StoryViewersSheet loading/empty DSF; ReportPostDialog error ring; MyReservedServicesView login dashed; ServiceDetailView/FAQSection/AccessControlListView/MainInfoSection/StepUnified/AddGuestModal/SeatingMapEditor/TicketDetailView polish; NotificationsContext hasNotifications alias; similitud ~99.18%; 97 gaps restantes; build:devaws OK.
 
 Run `gap-empalme-27905180836-b13`: batch 1 decimotercera pasada (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED en batch. MessagesListView empalme DSF completo (border-border/60, font-extrabold, h-14 loading rings, filter chips shadow-sm); NotificationsSheet loading/empty dashed + action CTAs rounded-full; NotificationsContext clearNotifications alias; HostPickerModal empty dashed cards; MyPostsView/MyReservedServicesView dashed empty; EventPublished ring-2; EventsView provider heart ring; AddGuestModal search styling; 12 componentes verificados intactos; similitud ~99.05%; 97 gaps restantes; build:devaws OK.
@@ -755,7 +757,22 @@ Sí (parcial)
 - **AIAssistantView:** CreatedEntityCard tokens success.
 - **EventDetailView:** verificado intacto — `fetchEventDetail` + retry + `InvitationEventDetailView`.
 
-## Empalme realizado (última ejecución — gap-empalme-27902063419-b4)
+## Empalme realizado (última ejecución — gap-empalme-27905180836-b15)
+
+- **ProfileGallery:** grid cells `ring-primary/20 shadow-sm`; inline add tile `bg-card shadow-sm`; photo count + lightbox counter `font-extrabold`; nav/close controls `shadow-sm ring-primary-foreground/20`; API upload/delete intacta.
+- **EventsView:** initial discover loading con `h-14 ring-primary/20` + skeleton pills; category strip chips `ring-2 ring-primary/20` en todos los estados.
+- **SeatingMapEditor:** canvas empty `border-dashed border-primary/25`; copy extrabold; Editar `shadow-sm`; eliminar `ring-destructive/20 shadow-sm`.
+- **NotificationsContext:** alias `unread` = `unreadCount`; API real `fetchUserNotifications` intacta.
+- **MainInfoSection:** radio/capacity/role labels extrabold; textarea `border-border/60 shadow-sm`; plus capacity `ring-primary/20`.
+- **HostPickerModal:** search error card shell `border-destructive/30 shadow-sm`; manual banner extrabold; username line extrabold.
+- **StepUnified:** sector/activity/pricing inputs y selects `border-border/60 font-extrabold focus:ring-primary/20`.
+- **AddGuestModal:** search tab `h-14` loader block; Grupo/favorito labels extrabold; resultados ocultos durante búsqueda.
+- **FeedHero:** category chip ring fix; dev stories gradient `to-accent`; plus badge `shadow-sm ring-primary/20`.
+- **ServiceDetailView:** star rating `ring-primary/20`; Ver perfil hover rounded-full.
+- **TicketDetailView:** no-image fallback dashed; overflow menu `ring-primary/20`.
+- **Verificados intactos:** ReportPostDialog, MyReservedServicesView, AccessControlListView, MyPostsView, CreatePostSheet, FAQSection, EventPublished, MyPurchasesView, SeatLocationModal.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27902063419-b4)
 
 - **StoryViewer:** implementación en ruta Lovable; fullscreen; barras progreso `animate-story-progress`; Loader2 carga; empty Sparkles h-14 ring; tap prev/next; APIs reales.
 - **AddStorySheet / CreateStorySheet:** Sheet bottom Lovable; header Sparkles h-10 ring; tabs imagen/video/estado/live; upload media API real.

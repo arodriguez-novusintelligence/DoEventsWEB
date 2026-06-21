@@ -454,11 +454,11 @@ const StepUnified = ({
             </div>
             <div className="mt-4 flex items-center gap-2">
               <Checkbox checked={showOtherSector} onCheckedChange={(v) => setShowOtherSector(!!v)} />
-              <span className="text-sm text-foreground">Otro. ¿Cuál?</span>
+              <span className="text-sm font-extrabold text-foreground">Otro. ¿Cuál?</span>
             </div>
             {showOtherSector && (
               <Input
-                className="mt-2"
+                className="mt-2 border-border/60 shadow-sm font-extrabold focus-visible:ring-2 focus-visible:ring-primary/20"
                 placeholder="Describe tu sector"
                 value={formData.sectorOther}
                 onChange={(e) => updateForm({ sectorOther: e.target.value })}
@@ -518,10 +518,10 @@ const StepUnified = ({
                         if (!v) updateForm({ activityOthers: { ...formData.activityOthers, [sector]: '' } });
                       }}
                     />
-                    <span className="text-sm text-foreground">Otro. ¿Cuál?</span>
+                    <span className="text-sm font-extrabold text-foreground">Otro. ¿Cuál?</span>
                   </div>
                   <Input
-                    className="mt-2"
+                    className="mt-2 border-border/60 shadow-sm font-extrabold focus-visible:ring-2 focus-visible:ring-primary/20"
                     placeholder="Describe la actividad"
                     value={otherText}
                     onChange={(e) =>
@@ -573,25 +573,25 @@ const StepUnified = ({
                             <div>
                               <label className="text-xs font-extrabold text-muted-foreground">Tipo de cobro</label>
                               <Select value={pricing.pricingType} onValueChange={(v) => updateActivityPricing(sector, act, { pricingType: v })}>
-                                <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                                <SelectTrigger className="mt-1 border-border/60 shadow-sm font-extrabold focus:ring-2 focus:ring-primary/20"><SelectValue /></SelectTrigger>
                                 <SelectContent>{PRICING_TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
                               </Select>
                             </div>
                             <div>
                               <label className="text-xs font-extrabold text-muted-foreground">Moneda</label>
                               <Select value={pricing.currency} onValueChange={(v) => updateActivityPricing(sector, act, { currency: v })}>
-                                <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                                <SelectTrigger className="mt-1 border-border/60 shadow-sm font-extrabold focus:ring-2 focus:ring-primary/20"><SelectValue /></SelectTrigger>
                                 <SelectContent>{CURRENCIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
                               </Select>
                             </div>
                           </div>
                           <div>
                             <label className="text-xs font-extrabold text-muted-foreground">Costo</label>
-                            <Input className="mt-1" type="number" placeholder="0" value={pricing.cost} onChange={(e) => updateActivityPricing(sector, act, { cost: e.target.value })} />
+                            <Input className="mt-1 border-border/60 shadow-sm font-extrabold focus-visible:ring-2 focus-visible:ring-primary/20" type="number" placeholder="0" value={pricing.cost} onChange={(e) => updateActivityPricing(sector, act, { cost: e.target.value })} />
                           </div>
                           <div>
                             <label className="text-xs font-extrabold text-muted-foreground">Descripción</label>
-                            <Textarea className="mt-1" placeholder="Describe qué incluye este costo" value={pricing.description} onChange={(e) => updateActivityPricing(sector, act, { description: e.target.value })} />
+                            <Textarea className="mt-1 border-border/60 shadow-sm font-extrabold focus-visible:ring-2 focus-visible:ring-primary/20" placeholder="Describe qué incluye este costo" value={pricing.description} onChange={(e) => updateActivityPricing(sector, act, { description: e.target.value })} />
                           </div>
                         </div>
                       );

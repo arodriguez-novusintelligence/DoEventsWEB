@@ -128,7 +128,7 @@ const ProfileGallery = ({
                 </span>
                 Mi Galería de Fotos
               </h2>
-              <p className="text-xs text-muted-foreground mt-0.5">
+              <p className="text-xs font-extrabold text-muted-foreground mt-0.5">
                 {photos.length} de {MAX_GALLERY_PHOTOS} fotos
               </p>
             </div>
@@ -185,7 +185,7 @@ const ProfileGallery = ({
           ) : (
             <div className="grid grid-cols-3 gap-2">
               {photos.map((photo, i) => (
-                <div key={photo.id} className="group relative aspect-square overflow-hidden rounded-xl">
+                <div key={photo.id} className="group relative aspect-square overflow-hidden rounded-xl shadow-sm ring-2 ring-primary/20">
                   <img
                     src={photo.url}
                     alt={`Foto ${i + 1}`}
@@ -214,7 +214,7 @@ const ProfileGallery = ({
                   type="button"
                   disabled={saving}
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex aspect-square items-center justify-center rounded-xl border-2 border-dashed border-primary/25 hover:border-primary/50 hover:bg-accent/30 transition-colors disabled:opacity-60"
+                  className="flex aspect-square items-center justify-center rounded-xl border-2 border-dashed border-primary/25 bg-card shadow-sm hover:border-primary/50 hover:bg-accent/30 transition-colors disabled:opacity-60"
                 >
                   <ImagePlus className="h-7 w-7 text-primary/40" />
                 </button>
@@ -256,7 +256,7 @@ const ProfileGallery = ({
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); setViewingIndex(null); }}
-            className="absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-background/20 text-background z-10 backdrop-blur-sm"
+            className="absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-background/20 text-background z-10 backdrop-blur-sm shadow-sm ring-2 ring-primary-foreground/20"
           >
             <X className="h-5 w-5" />
           </button>
@@ -265,7 +265,7 @@ const ProfileGallery = ({
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); navigateViewer('prev'); }}
-              className="absolute left-3 flex h-10 w-10 items-center justify-center rounded-full bg-background/20 text-background z-10 backdrop-blur-sm"
+              className="absolute left-3 flex h-10 w-10 items-center justify-center rounded-full bg-background/20 text-background z-10 backdrop-blur-sm shadow-sm ring-2 ring-primary-foreground/20"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -275,7 +275,7 @@ const ProfileGallery = ({
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); navigateViewer('next'); }}
-              className="absolute right-3 flex h-10 w-10 items-center justify-center rounded-full bg-background/20 text-background z-10 backdrop-blur-sm"
+              className="absolute right-3 flex h-10 w-10 items-center justify-center rounded-full bg-background/20 text-background z-10 backdrop-blur-sm shadow-sm ring-2 ring-primary-foreground/20"
             >
               <ChevronRight className="h-5 w-5" />
             </button>
@@ -289,7 +289,7 @@ const ProfileGallery = ({
           />
 
           <div className="absolute bottom-6 flex items-center gap-3">
-            <span className="text-sm text-white/70">{viewingIndex + 1} / {photos.length}</span>
+            <span className="text-sm font-extrabold text-white/70">{viewingIndex + 1} / {photos.length}</span>
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); handleRemove(currentViewerPhoto.id); }}

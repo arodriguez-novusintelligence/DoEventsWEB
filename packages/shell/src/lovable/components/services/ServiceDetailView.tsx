@@ -171,7 +171,7 @@ const ServiceDetailView = ({
           <button
             type="button"
             onClick={onOpenProvider}
-            className="mt-2 text-xs font-extrabold text-primary"
+            className="mt-2 rounded-full px-2 py-0.5 text-xs font-extrabold text-primary hover:bg-primary/5 transition-colors"
           >
             Ver perfil del proveedor
           </button>
@@ -258,7 +258,7 @@ const ServiceDetailView = ({
                 <button
                   key={s}
                   type="button"
-                  className="p-1"
+                  className="rounded-full p-1 ring-2 ring-primary/20 hover:bg-primary/5 transition-colors"
                   onClick={() => { void onRate(s); }}
                 >
                   <Star className={`h-6 w-6 ${s <= Math.round(rating) ? 'fill-primary text-primary' : 'text-muted'}`} />

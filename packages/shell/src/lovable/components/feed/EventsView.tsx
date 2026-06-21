@@ -661,9 +661,15 @@ const EventsView = ({
     <div className="mx-auto max-w-lg pb-40 bg-background">
       {isInitialDiscoverLoad && (
         <div className="px-4 pt-4 space-y-6">
+          <div className="flex flex-col items-center gap-3 rounded-2xl border border-border/60 bg-card py-10 shadow-sm">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+              <Loader2 className="h-7 w-7 animate-spin text-primary" />
+            </div>
+            <p className="text-sm font-extrabold text-muted-foreground">Cargando descubrimiento…</p>
+          </div>
           <div className="flex gap-2.5">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-10 w-24 animate-pulse rounded-full bg-muted" />
+              <div key={i} className="h-10 w-24 animate-pulse rounded-full bg-muted ring-2 ring-primary/10" />
             ))}
           </div>
           {[1, 2].map((i) => (
@@ -671,7 +677,7 @@ const EventsView = ({
               <div className="h-5 w-40 animate-pulse rounded bg-muted" />
               <div className="flex gap-4 overflow-hidden">
                 {[1, 2].map((j) => (
-                  <div key={j} className="h-52 w-[210px] shrink-0 animate-pulse rounded-2xl bg-muted" />
+                  <div key={j} className="h-52 w-[210px] shrink-0 animate-pulse rounded-2xl bg-muted ring-2 ring-primary/10" />
                 ))}
               </div>
             </div>
@@ -722,7 +728,7 @@ const EventsView = ({
                   onClick={() => clickable && setSelectedCategory(isActive ? null : c.label)}
                   className="flex flex-col items-center gap-1.5 min-w-[64px] max-w-[64px]"
                 >
-                  <div className={`h-14 w-14 rounded-full flex items-center justify-center transition-all ${isActive ? 'bg-primary ring-2 ring-primary/20' : c.bg}`}>
+                  <div className={`h-14 w-14 rounded-full flex items-center justify-center transition-all ring-2 ring-primary/20 ${isActive ? 'bg-primary' : c.bg}`}>
                     <Icon className={`h-6 w-6 ${isActive ? 'text-primary-foreground' : c.color}`} strokeWidth={2} />
                   </div>
                   <span className={`text-[11px] font-extrabold text-center leading-tight line-clamp-2 ${isActive ? 'text-primary' : 'text-foreground'}`}>

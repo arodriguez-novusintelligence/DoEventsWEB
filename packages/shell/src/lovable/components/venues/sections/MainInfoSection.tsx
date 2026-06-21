@@ -146,11 +146,11 @@ const MainInfoSection = () => {
         >
           <div className="flex items-center gap-2">
             <RadioGroupItem value="yes" id="seat-yes" />
-            <label htmlFor="seat-yes" className="text-sm">Sí (teatro, estadio…)</label>
+            <label htmlFor="seat-yes" className="text-sm font-extrabold">Sí (teatro, estadio…)</label>
           </div>
           <div className="flex items-center gap-2">
             <RadioGroupItem value="no" id="seat-no" />
-            <label htmlFor="seat-no" className="text-sm">No</label>
+            <label htmlFor="seat-no" className="text-sm font-extrabold">No</label>
           </div>
         </RadioGroup>
       </div>
@@ -161,14 +161,14 @@ const MainInfoSection = () => {
           <div className="flex items-center justify-between mt-2">
             <div className="flex items-center gap-2 text-muted-foreground">
               <Users className="w-5 h-5 text-primary" />
-              <span className="text-sm">Número de personas</span>
+              <span className="text-sm font-extrabold">Número de personas</span>
             </div>
             <div className="flex items-center gap-3">
               <button type="button" onClick={() => update({ capacity: String(Math.max(1, capacity - 1)) })} className="flex h-8 w-8 items-center justify-center rounded-full border border-border/60 shadow-sm ring-2 ring-primary/20 hover:bg-primary/5">
                 <Minus className="w-4 h-4 text-primary" />
               </button>
               <span className="w-8 text-center font-extrabold text-primary">{capacity}</span>
-              <button type="button" onClick={() => update({ capacity: String(capacity + 1) })} className="flex h-8 w-8 items-center justify-center rounded-full border border-primary bg-primary text-primary-foreground shadow-sm">
+              <button type="button" onClick={() => update({ capacity: String(capacity + 1) })} className="flex h-8 w-8 items-center justify-center rounded-full border border-primary bg-primary text-primary-foreground shadow-sm ring-2 ring-primary/20">
                 <Plus className="w-4 h-4" />
               </button>
             </div>
@@ -236,7 +236,7 @@ const MainInfoSection = () => {
                 onChange={() => update({ hostRole: rol })}
                 className="w-4 h-4 accent-primary"
               />
-              <span className="text-sm">{rol === 'dueno' ? 'Dueño' : 'Administrador'}</span>
+              <span className="text-sm font-extrabold">{rol === 'dueno' ? 'Dueño' : 'Administrador'}</span>
             </label>
           ))}
         </div>
@@ -249,7 +249,7 @@ const MainInfoSection = () => {
           onChange={(e) => update({ description: e.target.value.slice(0, MAX_DESC) })}
           placeholder="Describe tu espacio con las características principales..."
           rows={4}
-          className="mt-1"
+          className="mt-1 border-border/60 shadow-sm font-extrabold focus-visible:ring-2 focus-visible:ring-primary/20"
         />
         <p className="text-xs font-extrabold text-muted-foreground mt-1">{form.description.length}/{MAX_DESC}</p>
       </div>
