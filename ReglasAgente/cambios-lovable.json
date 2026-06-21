@@ -5153,6 +5153,32 @@
       "tipoCambio": "VISUAL",
       "riskLevel": "MEDIUM",
       "decision": "APPLIED"
+    },
+    {
+      "id": "prepare-53a73964",
+      "lovableSha": "53a739643557ad3160d565bb3e0709e12ce68183",
+      "before": "HEAD~1",
+      "timestamp": "2026-06-21 16:33 UTC",
+      "workflowRunId": "27910611218",
+      "changeTypes": [
+        "VISUAL"
+      ],
+      "designSimilarityPercent": 80.77,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 17.23,
+      "requiresDesignAlignment": true,
+      "summary": "Manifiesto: UI=False, reglas=False, 1 archivo(s); similitud diseño=80.77%",
+      "changedFilesLovable": [
+        "reglasDiseno/design-token-map.yml"
+      ],
+      "webFilesModified": [],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "pending",
+      "pendingRisks": [
+        "Adaptacion pendiente por agente Cursor"
+      ],
+      "agentStatus": "pending"
     }
   ]
 }
