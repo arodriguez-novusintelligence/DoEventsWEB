@@ -93,7 +93,7 @@ export function ContactImportModal({ open, onOpenChange, onImportContacts }: Pro
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md rounded-2xl h-[80vh] flex flex-col">
+      <DialogContent className="sm:max-w-md rounded-2xl h-[80vh] flex flex-col border border-border/60 shadow-sm">
         <DialogHeader className="space-y-3">
           <div className="flex items-center justify-between">
             <DialogTitle className="flex items-center gap-3 text-lg font-extrabold text-foreground">
@@ -105,18 +105,24 @@ export function ContactImportModal({ open, onOpenChange, onImportContacts }: Pro
           </div>
           <p className="text-xs text-muted-foreground">Importa contactos del dispositivo como invitados.</p>
           {!isDeviceContactsSupported() && (
-            <div className="rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 text-left text-xs text-muted-foreground">
+            <div className="rounded-xl border border-border/60 border-primary/20 bg-primary/5 px-3 py-2 text-left text-xs text-muted-foreground shadow-sm">
               La importación de contactos no está disponible en este navegador. Usa un dispositivo móvil compatible.
             </div>
           )}
           <Button
             type="button"
             variant="outline"
-            className="w-full gap-2 rounded-xl"
+            className="w-full gap-2 rounded-full border-border/60 font-extrabold shadow-sm"
             onClick={() => void loadFromDevice()}
             disabled={loading || !isDeviceContactsSupported()}
           >
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Smartphone className="h-4 w-4" />}
+            {loading ? (
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                <Loader2 className="h-4 w-4 animate-spin text-primary" />
+              </span>
+            ) : (
+              <Smartphone className="h-4 w-4" />
+            )}
             {isDeviceContactsSupported() ? 'Seleccionar del dispositivo' : 'Contactos no disponibles en este navegador'}
           </Button>
           {contacts.length > 0 && (
@@ -131,7 +137,7 @@ export function ContactImportModal({ open, onOpenChange, onImportContacts }: Pro
             <>
               <div className="flex items-center space-x-3 py-2">
                 <Checkbox id="select-all" checked={allSelected} onCheckedChange={(c) => toggleAll(!!c)} />
-                <label htmlFor="select-all" className="text-sm font-medium">Seleccionar todos ({filtered.length})</label>
+                <label htmlFor="select-all" className="text-sm font-extrabold">Seleccionar todos ({filtered.length})</label>
               </div>
               <div className="flex-1 overflow-y-auto space-y-2">
                 {filtered.map((c) => (
@@ -141,7 +147,7 @@ export function ContactImportModal({ open, onOpenChange, onImportContacts }: Pro
                       <Smartphone className="h-4 w-4 text-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-foreground truncate">{c.name}</p>
+                      <p className="font-extrabold text-foreground truncate">{c.name}</p>
                       <p className="text-sm text-muted-foreground truncate">{c.phone}</p>
                     </div>
                   </label>
@@ -161,7 +167,7 @@ export function ContactImportModal({ open, onOpenChange, onImportContacts }: Pro
           )}
         </div>
         <div className="pt-4">
-          <Button onClick={handleImport} className="w-full rounded-full bg-primary hover:bg-primary/90 text-primary-foreground" disabled={!selected.size}>
+          <Button onClick={handleImport} className="w-full rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-extrabold shadow-sm" disabled={!selected.size}>
             Agregar contactos ({selected.size})
           </Button>
         </div>

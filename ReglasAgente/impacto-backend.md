@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27905180836-b9`: batch 1 novena pasada (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). ContactImportModal DSF completo (Dialog shadow-sm, font-extrabold, rounded-full CTAs); SeatingMapEditor border-border/60 transversal + shadow-sm modales; RefundTicketFlow/TicketDetailView/EventsView/HostPickerModal/StepUnified/AddGuestModal/CreatePostSheet/ReportPostDialog polish; BankingHub retry/back extrabold + PayPal banner icon ring; similitud ~98.6%; 97 gaps restantes; build:devaws OK.
+
 Run `gap-empalme-27905180836-b8`: batch 1 octava pasada (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED en batch. ProfileGallery font-extrabold + loading h-14 ring; SeatingMapEditor font-bold→extrabold transversal; NotificationsContext `error` alias; SeatLocationModal badge borders; EventPublished loading ring; DSF polish transversal en 16 componentes más; similitud ~98.3% (objetivo 98% alcanzado); 97 gaps restantes; build:devaws OK.
 
 Run `gap-empalme-27905180836-b7`: batch 1 séptima pasada (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED en batch. font-extrabold residual EventPreviewModal/EventsView/TicketDetailView; MyPurchasesView hub polish; SeatingMapEditor header/footer; EventPublished ring-2; NotificationsContext hasError + CompanyContext hasError/error; similitud ~97.8%; 97 gaps restantes; build:devaws OK.
@@ -136,7 +138,20 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27905180836-b8)
+## Empalme realizado (última ejecución — gap-empalme-27905180836-b9)
+
+- **ContactImportModal:** DialogContent `border-border/60 shadow-sm`; device-pick CTA rounded-full font-extrabold; select-all/contact names extrabold; import CTA shadow-sm; empty h-14 ring intacto; `pickDeviceContacts` API real.
+- **SeatingMapEditor:** `border-border`→`border-border/60` transversal (~30 ocurrencias); modales `shadow-2xl`→`shadow-sm`; ring chips `ring-primary/20`; dashed add CTAs rounded-full shadow-sm.
+- **RefundTicketFlow:** selected card shadow-sm; confirm event card border-border/60; policy sections border-border/60; back nav font-extrabold; close button ring-primary/20.
+- **TicketDetailView:** tab chips shadow-sm; overlay badges shadow-sm; seat CTA rounded-full.
+- **EventsView:** category ring-primary/20; providers loading h-14 ring; eventers label font-extrabold.
+- **HostPickerModal:** sheet shadow-sm (paridad modal elevation).
+- **StepUnified:** upload dashed border-border/60; sector/activity inactive chips border-border/60 shadow-sm; preference cards shadow-sm.
+- **AddGuestModal / CreatePostSheet / ReportPostDialog:** dialog/sheet shells shadow-sm border-border/60; media CTAs dashed border-border/60; footer CTAs font-extrabold.
+- **BankingHub:** BACKEND_REQUIRED banner intacto; back/retry font-extrabold; PayPal warning icon ring-primary/20; `fetchBankAccountsByUser` API real.
+- **Verificados intactos:** EventPreviewModal, StepAccessControl, FAQSection, ServiceDetailView, MyPostsView, MyReservedServicesView, NotificationsContext, MainInfoSection, EventPublished.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27905180836-b8)
 
 - **ProfileGallery:** font-extrabold transversal (back, title, CTAs, viewer delete); card `border-border/60`; loading h-14 ring-primary/20; empty dashed border-border/60 shadow-sm; API real intacta.
 - **SeatingMapEditor:** font-bold/semibold→extrabold en toolbar, modales, sheets y labels (~37 ocurrencias); sin mocks.

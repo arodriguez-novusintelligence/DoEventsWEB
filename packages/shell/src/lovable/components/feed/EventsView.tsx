@@ -732,7 +732,7 @@ const EventsView = ({
                   onClick={() => clickable && setSelectedCategory(isActive ? null : c.label)}
                   className="flex flex-col items-center gap-1.5 min-w-[64px] max-w-[64px]"
                 >
-                  <div className={`h-14 w-14 rounded-full flex items-center justify-center transition-all ${isActive ? 'bg-primary ring-2 ring-primary/40' : c.bg}`}>
+                  <div className={`h-14 w-14 rounded-full flex items-center justify-center transition-all ${isActive ? 'bg-primary ring-2 ring-primary/20' : c.bg}`}>
                     <Icon className={`h-6 w-6 ${isActive ? 'text-primary-foreground' : c.color}`} strokeWidth={2} />
                   </div>
                   <span className={`text-[11px] font-extrabold text-center leading-tight line-clamp-2 ${isActive ? 'text-primary' : 'text-foreground'}`}>
@@ -864,9 +864,11 @@ const EventsView = ({
             onAction={onViewAllProviders}
           />
           {servicesLoading ? (
-            <div className="mt-4 flex items-center justify-center gap-2 py-8">
-              <Loader2 className="h-6 w-6 animate-spin text-primary" />
-              <span className="text-sm text-muted-foreground">Buscando servicios cerca…</span>
+            <div className="mt-4 flex flex-col items-center justify-center gap-2 py-8">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                <Loader2 className="h-7 w-7 animate-spin text-primary" />
+              </div>
+              <span className="text-sm font-extrabold text-muted-foreground">Buscando servicios cerca…</span>
             </div>
           ) : filteredProviders.length > 0 ? (
             <>
@@ -953,7 +955,7 @@ const EventsView = ({
               <CalendarDays className="h-7 w-7 text-primary" />
             </div>
             <p className="mt-3 text-sm text-muted-foreground">
-              Crea tu primer evento y hazte conocer<br />en nuestra red de <strong className="text-foreground">eventers</strong>
+              Crea tu primer evento y hazte conocer<br />en nuestra red de <span className="font-extrabold text-foreground">eventers</span>
             </p>
             <Button className="mt-4 w-full rounded-full font-extrabold shadow-sm" size="lg" type="button" onClick={onCreateEvent}>
               Crear evento

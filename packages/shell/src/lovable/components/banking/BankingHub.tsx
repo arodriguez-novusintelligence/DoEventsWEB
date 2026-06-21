@@ -124,7 +124,7 @@ const BankingHub = ({ onBack }: BankingHubProps) => {
           <Button
             type="button"
             variant="ghost"
-            className="text-primary"
+            className="font-extrabold text-primary"
             onClick={() => setView('dashboard')}
           >
             ← Volver al listado
@@ -146,7 +146,7 @@ const BankingHub = ({ onBack }: BankingHubProps) => {
             <AlertCircle className="h-7 w-7 text-destructive" />
           </div>
           <p className="text-sm font-extrabold text-foreground">{loadError}</p>
-          <Button type="button" variant="outline" className="rounded-full shadow-sm" onClick={() => void loadMethods()}>
+          <Button type="button" variant="outline" className="rounded-full font-extrabold shadow-sm" onClick={() => void loadMethods()}>
             <RefreshCw className="mr-2 h-4 w-4" />
             Reintentar
           </Button>
@@ -166,7 +166,9 @@ const BankingHub = ({ onBack }: BankingHubProps) => {
       {view === 'dashboard' && !loading && !loadError && methods.some((m) => m.type === 'paypal') && (
         <div className="mx-auto max-w-4xl px-4 pb-6">
           <div className="flex gap-3 rounded-xl border border-border/60 border-warning/30 bg-warning/5 p-4 shadow-sm">
-            <AlertCircle className="h-5 w-5 shrink-0 text-warning" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-warning/10 ring-2 ring-primary/20">
+              <AlertCircle className="h-5 w-5 text-warning" />
+            </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
               PayPal payout requiere integración backend pendiente. Los cobros vía cuenta bancaria siguen operativos.
             </p>

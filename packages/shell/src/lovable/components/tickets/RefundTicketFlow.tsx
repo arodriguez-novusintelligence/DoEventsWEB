@@ -193,7 +193,7 @@ const RefundTicketFlow = ({
                   type="button"
                   onClick={() => toggle(e.id)}
                   className={`w-full text-left rounded-3xl bg-card overflow-hidden border-2 transition-all ${
-                    isSel ? 'border-primary shadow-md' : 'border-border/60 shadow-sm'
+                    isSel ? 'border-primary shadow-sm' : 'border-border/60 shadow-sm'
                   }`}
                 >
                   <div className="relative h-40">
@@ -256,7 +256,7 @@ const RefundTicketFlow = ({
       {step === 'confirm' && (
         <div className="min-h-screen pb-8">
           <div className="px-4 pt-4">
-            <button type="button" onClick={() => setStep('select')} className="text-primary">
+            <button type="button" onClick={() => setStep('select')} className="flex items-center gap-1 text-primary font-extrabold">
               <ChevronLeft className="h-6 w-6" />
             </button>
           </div>
@@ -270,7 +270,7 @@ const RefundTicketFlow = ({
           </div>
 
           <div className="px-4 pt-6 space-y-5">
-            <div className="rounded-2xl bg-primary/10 p-4">
+            <div className="rounded-2xl border border-border/60 bg-primary/10 p-4 shadow-sm">
               <p className="text-xs uppercase font-extrabold text-muted-foreground">Evento</p>
               <p className="mt-1 font-extrabold text-foreground">{ticket.eventTitle}</p>
               <div className="mt-2 flex items-center gap-4 text-sm text-foreground">
@@ -359,7 +359,7 @@ const RefundTicketFlow = ({
             <button type="button" onClick={() => setStep('confirm')} className="flex items-center gap-1 text-primary font-extrabold">
               <ChevronLeft className="h-5 w-5" /> Volver
             </button>
-            <button type="button" onClick={() => setStep('confirm')} className="h-9 w-9 rounded-full bg-card border border-border/60 grid place-items-center">
+            <button type="button" onClick={() => setStep('confirm')} className="flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-card shadow-sm ring-2 ring-primary/20">
               <X className="h-4 w-4" />
             </button>
           </div>
@@ -372,11 +372,11 @@ const RefundTicketFlow = ({
           </div>
 
           <div className="px-4 pt-6 space-y-4 text-sm text-foreground/90 leading-relaxed">
-            <section className="rounded-2xl bg-card p-4 shadow-sm">
+            <section className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
               <h2 className="font-extrabold text-foreground mb-2">Comisiones de la plataforma</h2>
               <p>Las comisiones cobradas por la plataforma <span className="font-extrabold">no son reembolsables</span>.</p>
             </section>
-            <section className="rounded-2xl bg-card p-4 shadow-sm">
+            <section className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
               <h2 className="font-extrabold text-foreground mb-2">Tiempos de procesamiento</h2>
               <p>Los reembolsos aprobados se procesan en <span className="font-extrabold">3 a 5 días hábiles</span>.</p>
             </section>

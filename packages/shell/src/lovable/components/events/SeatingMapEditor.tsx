@@ -766,7 +766,7 @@ const SeatingMapEditor = ({
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-border/60 bg-card px-4 py-3 shadow-sm">
+      <div className="flex items-center justify-between border-b border-border/60/60 bg-card px-4 py-3 shadow-sm">
         <button
           onClick={onClose}
           className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20 text-foreground"
@@ -788,7 +788,7 @@ const SeatingMapEditor = ({
       </div>
 
       {/* Toolbar icons */}
-      <div className="flex items-center gap-2 overflow-x-auto border-b border-border/60 bg-card px-3 py-2">
+      <div className="flex items-center gap-2 overflow-x-auto border-b border-border/60/60 bg-card px-3 py-2">
         <ToolbarIcon
           onClick={undo}
           icon={<Undo2 className="h-4 w-4" />}
@@ -1049,7 +1049,7 @@ const SeatingMapEditor = ({
             })}
 
             {figures.length === 0 && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-card/80 px-6 py-8 text-center shadow-sm backdrop-blur-sm">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/60/60 bg-card/80 px-6 py-8 text-center shadow-sm backdrop-blur-sm">
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                   <LayoutGrid className={`h-7 w-7 ${dark ? 'text-primary-foreground' : 'text-primary'}`} />
                 </div>
@@ -1068,19 +1068,19 @@ const SeatingMapEditor = ({
         <div className="pointer-events-none absolute right-4 top-1/2 z-20 flex -translate-y-1/2 flex-col gap-2">
           <button
             onClick={() => setZoom((z) => Math.min(z + 25, 400))}
-            className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-card text-foreground shadow-sm"
+            className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-full border border-border/60/60 bg-card text-foreground shadow-sm"
           >
             <Plus className="h-4 w-4" />
           </button>
           <button
             onClick={() => setZoom(100)}
-            className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-card text-foreground shadow-sm"
+            className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-full border border-border/60/60 bg-card text-foreground shadow-sm"
           >
             <Focus className="h-4 w-4" />
           </button>
           <button
             onClick={() => setZoom((z) => Math.max(z - 25, 50))}
-            className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-card text-foreground shadow-sm"
+            className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-full border border-border/60/60 bg-card text-foreground shadow-sm"
           >
             <Minus className="h-4 w-4" />
           </button>
@@ -1096,24 +1096,24 @@ const SeatingMapEditor = ({
         const bumpInner = (d: number) => updateFigure(selected.id, { arcInner: Math.max(20, Math.min(85, arcInner + d)) });
         const bumpSpan = (d: number) => updateFigure(selected.id, { arcSpan: Math.max(60, Math.min(180, arcSpan + d)) });
         return (
-        <div className="border-t border-border/60 bg-card">
+        <div className="border-t border-border/60/60 bg-card">
         {isArc && !selected.locked && (
           <div className="flex flex-wrap items-center gap-3 px-4 pt-2 text-xs">
             <div className="flex items-center gap-1.5">
               <span className="text-muted-foreground">Curvatura</span>
-              <button onClick={() => bumpInner(-5)} className="flex h-6 w-6 items-center justify-center rounded-full border border-border/60 bg-card shadow-sm text-foreground">−</button>
+              <button onClick={() => bumpInner(-5)} className="flex h-6 w-6 items-center justify-center rounded-full border border-border/60/60 bg-card shadow-sm text-foreground">−</button>
               <span className="w-8 text-center font-extrabold tabular-nums">{arcInner}</span>
-              <button onClick={() => bumpInner(5)} className="flex h-6 w-6 items-center justify-center rounded-full border border-border/60 bg-card shadow-sm text-foreground">+</button>
+              <button onClick={() => bumpInner(5)} className="flex h-6 w-6 items-center justify-center rounded-full border border-border/60/60 bg-card shadow-sm text-foreground">+</button>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="text-muted-foreground">Apertura</span>
-              <button onClick={() => bumpSpan(-10)} className="flex h-6 w-6 items-center justify-center rounded-full border border-border/60 bg-card shadow-sm text-foreground">−</button>
+              <button onClick={() => bumpSpan(-10)} className="flex h-6 w-6 items-center justify-center rounded-full border border-border/60/60 bg-card shadow-sm text-foreground">−</button>
               <span className="w-10 text-center font-extrabold tabular-nums">{arcSpan}°</span>
-              <button onClick={() => bumpSpan(10)} className="flex h-6 w-6 items-center justify-center rounded-full border border-border/60 bg-card shadow-sm text-foreground">+</button>
+              <button onClick={() => bumpSpan(10)} className="flex h-6 w-6 items-center justify-center rounded-full border border-border/60/60 bg-card shadow-sm text-foreground">+</button>
             </div>
           </div>
         )}
-        <div className="flex items-center justify-between gap-2 border-t border-border/60 bg-card px-4 py-2">
+        <div className="flex items-center justify-between gap-2 border-t border-border/60/60 bg-card px-4 py-2">
           <div className="flex min-w-0 items-center gap-2">
             <span
               className="h-7 w-7 flex-shrink-0 rounded-md"
@@ -1132,7 +1132,7 @@ const SeatingMapEditor = ({
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => setTextEditId(selected.id)}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-border/60 bg-card shadow-sm text-foreground"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-border/60/60 bg-card shadow-sm text-foreground"
               title="Estilo de texto"
             >
               <Type className="h-4 w-4" />
@@ -1140,7 +1140,7 @@ const SeatingMapEditor = ({
             <button
               onClick={() => updateFigure(selected.id, { name: '' })}
               disabled={!selected.name}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-border/60 bg-card shadow-sm text-foreground disabled:opacity-40"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-border/60/60 bg-card shadow-sm text-foreground disabled:opacity-40"
               title="Eliminar título"
             >
               <Eraser className="h-4 w-4" />
@@ -1150,7 +1150,7 @@ const SeatingMapEditor = ({
               className={`flex h-8 w-8 items-center justify-center rounded-full border ${
                 selected.locked
                   ? 'border-primary bg-primary text-primary-foreground'
-                  : 'border-border bg-card text-foreground'
+                  : 'border-border/60 bg-card text-foreground'
               }`}
               title={selected.locked ? 'Desbloquear' : 'Bloquear'}
             >
@@ -1176,7 +1176,7 @@ const SeatingMapEditor = ({
       })()}
 
       {/* Save bar */}
-      <div className="flex items-center justify-between border-t border-border/60 bg-card px-4 py-2 text-xs text-muted-foreground">
+      <div className="flex items-center justify-between border-t border-border/60/60 bg-card px-4 py-2 text-xs text-muted-foreground">
         <span>
           {figures.filter((f) => f.role === 'category').length} categorías ·{' '}
           {totalSeats} asientos
@@ -1191,7 +1191,7 @@ const SeatingMapEditor = ({
       </div>
 
       {/* Shape picker */}
-      <div className="flex gap-2 overflow-x-auto border-t border-border/60 bg-card px-3 py-3">
+      <div className="flex gap-2 overflow-x-auto border-t border-border/60/60 bg-card px-3 py-3">
         {SHAPES.map((s) => (
           <button
             key={s.id}
@@ -1204,7 +1204,7 @@ const SeatingMapEditor = ({
                 setPendingShape(s.id);
               }
             }}
-            className="flex min-w-[72px] flex-shrink-0 flex-col items-center justify-center gap-1 rounded-2xl border border-border/60 bg-card shadow-sm px-3 py-2 text-foreground transition-colors hover:border-primary hover:bg-primary/5"
+            className="flex min-w-[72px] flex-shrink-0 flex-col items-center justify-center gap-1 rounded-2xl border border-border/60/60 bg-card shadow-sm px-3 py-2 text-foreground transition-colors hover:border-primary hover:bg-primary/5"
           >
             {s.id === 'image' ? (
               <ImageIcon className="h-5 w-5 text-primary" aria-hidden />
@@ -1327,7 +1327,7 @@ const SeatingMapEditor = ({
         const word = isCategory ? 'esta categoría' : 'este elemento';
         return (
           <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/40 p-5">
-            <div className="w-full max-w-sm rounded-3xl bg-card p-6 text-center shadow-2xl">
+            <div className="w-full max-w-sm rounded-3xl bg-card p-6 text-center shadow-sm border border-border/60">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center">
                 <div
                   className="flex h-16 w-16 items-center justify-center text-white"
@@ -1388,7 +1388,7 @@ const ToolbarIcon = ({
         ? dark
           ? 'border-foreground bg-foreground text-background'
           : 'border-primary bg-primary text-primary-foreground'
-        : 'border-border bg-card text-foreground'
+        : 'border-border/60 bg-card text-foreground'
     } ${disabled ? 'opacity-40' : ''}`}
   >
     {icon}
@@ -1407,7 +1407,7 @@ const Chip = ({
   <button
     type="button"
     onClick={onClick}
-    className="flex flex-shrink-0 items-center gap-1.5 rounded-full border border-border/60 bg-card shadow-sm px-3 py-1.5 text-xs font-extrabold text-foreground"
+    className="flex flex-shrink-0 items-center gap-1.5 rounded-full border border-border/60/60 bg-card shadow-sm px-3 py-1.5 text-xs font-extrabold text-foreground"
   >
     {icon}
     {label}
@@ -1424,7 +1424,7 @@ const RolePickerModal = ({
   onClose: () => void;
 }) => (
   <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4">
-    <div className="w-full max-w-sm rounded-2xl bg-card p-5 shadow-2xl">
+    <div className="w-full max-w-sm rounded-2xl bg-card p-5 shadow-sm border border-border/60">
       <h3 className="mb-4 text-center text-base font-extrabold text-foreground">
         ¿Qué deseas crear con {SHAPE_LABEL(shape)}?
       </h3>
@@ -1443,7 +1443,7 @@ const RolePickerModal = ({
         </button>
         <button
           onClick={() => onPick('element')}
-          className="flex w-full items-start gap-3 rounded-xl border border-border/60 bg-card shadow-sm p-3 text-left"
+          className="flex w-full items-start gap-3 rounded-xl border border-border/60/60 bg-card shadow-sm p-3 text-left"
         >
           <Box className="mt-0.5 h-4 w-4 text-foreground" />
           <div>
@@ -1513,7 +1513,7 @@ const CategoryFormSheet = ({
             value={figure.name}
             onChange={(e) => onChange({ name: e.target.value })}
             placeholder="Ej: Palco"
-            className="h-10 border-0 border-b border-border bg-transparent px-0 text-base shadow-none focus-visible:ring-0"
+            className="h-10 border-0 border-b border-border/60/60 bg-transparent px-0 text-base shadow-none focus-visible:ring-0"
           />
         </Field>
         <NameStyleEditor figure={figure} onChange={onChange} />
@@ -1528,7 +1528,7 @@ const CategoryFormSheet = ({
                   key={c}
                   onClick={() => onChange({ color: c })}
                   className={`h-10 w-10 rounded-full border-2 transition-all ${
-                    active ? 'ring-2 ring-primary ring-offset-2' : 'border-border'
+                    active ? 'ring-2 ring-primary/20' : 'border-border/60'
                   }`}
                   style={{ background: c }}
                 >
@@ -1563,7 +1563,7 @@ const CategoryFormSheet = ({
                 value={figure.price ?? 0}
                 onChange={(e) => onChange({ price: Number(e.target.value) })}
                 placeholder="$450.000"
-                className="h-10 border-0 border-b border-border bg-transparent px-0 text-base shadow-none focus-visible:ring-0"
+                className="h-10 border-0 border-b border-border/60/60 bg-transparent px-0 text-base shadow-none focus-visible:ring-0"
               />
             </Field>
           </div>
@@ -1614,7 +1614,7 @@ const CategoryFormSheet = ({
             onChange={(e) => onChange({ description: e.target.value })}
             placeholder="Sillas preferenciales con servicio de bar"
             rows={2}
-            className="w-full resize-none border-0 border-b border-border bg-transparent px-0 py-1 text-sm text-foreground outline-none placeholder:text-muted-foreground"
+            className="w-full resize-none border-0 border-b border-border/60/60 bg-transparent px-0 py-1 text-sm text-foreground outline-none placeholder:text-muted-foreground"
           />
         </Field>
 
@@ -1629,7 +1629,7 @@ const CategoryFormSheet = ({
           </div>
 
           <div
-            className={`mb-4 rounded-xl border border-border/60 border-l-4 p-3 shadow-sm ${
+            className={`mb-4 rounded-xl border border-border/60/60 border-l-4 p-3 shadow-sm ${
               withinCapacity
                 ? 'border-l-success bg-success/10'
                 : 'border-l-destructive bg-destructive/10'
@@ -1708,7 +1708,7 @@ const CategoryFormSheet = ({
           {/* Seat grid preview */}
           {rows > 0 && spr > 0 && (
             <div
-              className="mt-4 rounded-2xl border border-border/60 p-3 shadow-sm"
+              className="mt-4 rounded-2xl border border-border/60/60 p-3 shadow-sm"
               style={{ background: '#FFFDF7' }}
             >
               <div
@@ -1749,7 +1749,7 @@ const CategoryFormSheet = ({
                                       ? 'border-muted bg-muted text-muted-foreground line-through'
                                       : isA1
                                       ? 'border-primary ring-2 ring-primary'
-                                      : 'border-border'
+                                      : 'border-border/60'
                                   }`}
                                   style={
                                     disabled
@@ -1857,7 +1857,7 @@ const ElementFormSheet = ({
           onChange={(e) => onChange({ notes: e.target.value })}
           placeholder="Notas adicionales sobre el elemento"
           rows={3}
-          className="w-full resize-none rounded-lg border border-border bg-secondary/40 p-3 text-sm text-foreground outline-none placeholder:text-muted-foreground"
+          className="w-full resize-none rounded-lg border border-border/60 bg-secondary/40 p-3 text-sm text-foreground outline-none placeholder:text-muted-foreground"
         />
       </Field>
 
@@ -1894,7 +1894,7 @@ const ImageAndRoleBlock = ({
   onConvert: () => void;
   targetRoleLabel: 'categoría' | 'elemento';
 }) => (
-  <div className="space-y-3 rounded-2xl border border-border bg-secondary/40 p-4">
+  <div className="space-y-3 rounded-2xl border border-border/60 bg-secondary/40 p-4">
     <div>
       <p className="mb-2 text-xs font-extrabold uppercase tracking-wider text-muted-foreground">
         Imagen de la figura
@@ -1904,7 +1904,7 @@ const ImageAndRoleBlock = ({
           <img
             src={figure.imageUrl}
             alt={figure.name}
-            className="h-16 w-16 rounded-lg border border-border object-cover"
+            className="h-16 w-16 rounded-lg border border-border/60 object-cover"
           />
           <div className="flex flex-1 flex-col gap-2">
             <button
@@ -1927,14 +1927,14 @@ const ImageAndRoleBlock = ({
         <button
           type="button"
           onClick={onPickImage}
-          className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border bg-card px-3 py-3 text-xs font-extrabold text-foreground"
+          className="flex w-full items-center justify-center gap-2 rounded-full border-2 border-dashed border-primary/25 border-border/60 bg-card px-3 py-3 text-xs font-extrabold text-foreground shadow-sm"
         >
           <Plus className="h-4 w-4" />
           Adjuntar imagen desde mi galería
         </button>
       )}
     </div>
-    <div className="border-t border-border pt-3">
+    <div className="border-t border-border/60 pt-3">
       <p className="mb-2 text-xs font-extrabold uppercase tracking-wider text-muted-foreground">
         Convertir figura
       </p>
@@ -1968,8 +1968,8 @@ const Sheet = ({
   onClose: () => void;
 }) => (
   <div className="fixed inset-0 z-[70] flex items-end justify-center bg-black/40 sm:items-center">
-    <div className="flex max-h-[92vh] w-full max-w-md flex-col rounded-t-3xl bg-card shadow-2xl sm:rounded-3xl">
-      <div className="flex items-center justify-between border-b border-border px-5 py-4">
+    <div className="flex max-h-[92vh] w-full max-w-md flex-col rounded-t-3xl bg-card shadow-sm border border-border/60 sm:rounded-3xl">
+      <div className="flex items-center justify-between border-b border-border/60 px-5 py-4">
         <h3 className="text-lg font-extrabold text-foreground">{title}</h3>
         <button
           onClick={onClose}
@@ -2020,7 +2020,7 @@ const Select = ({
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className={`h-10 w-full appearance-none border-0 border-b border-border bg-transparent ${
+      className={`h-10 w-full appearance-none border-0 border-b border-border/60/60 bg-transparent ${
         leftIcon ? 'pl-6' : 'pl-0'
       } pr-8 text-sm text-foreground outline-none`}
     >
@@ -2058,7 +2058,7 @@ const Stepper = ({
       <button
         type="button"
         onClick={() => onChange(Math.max(min, value - 1))}
-        className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-foreground"
+        className="flex h-8 w-8 items-center justify-center rounded-full border border-border/60 text-foreground"
       >
         <Minus className="h-3.5 w-3.5" />
       </button>
@@ -2068,7 +2068,7 @@ const Stepper = ({
       <button
         type="button"
         onClick={() => onChange(Math.min(max, value + 1))}
-        className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-foreground"
+        className="flex h-8 w-8 items-center justify-center rounded-full border border-border/60 text-foreground"
       >
         <Plus className="h-3.5 w-3.5" />
       </button>
@@ -2085,7 +2085,7 @@ const FooterActions = ({
   onSave: () => void;
   secondary?: React.ReactNode;
 }) => (
-  <div className="border-t border-border/60 bg-card px-5 py-4 shadow-sm">
+  <div className="border-t border-border/60/60 bg-card px-5 py-4 shadow-sm">
     {secondary && <div className="mb-3 flex justify-end">{secondary}</div>}
     <div className="grid grid-cols-2 gap-3">
       <Button
@@ -2394,7 +2394,7 @@ export const SeatsGrid = ({
 
 const LegendModal = ({ onClose }: { onClose: () => void }) => (
   <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4">
-    <div className="w-full max-w-sm rounded-2xl bg-card p-5 shadow-2xl">
+    <div className="w-full max-w-sm rounded-2xl bg-card p-5 shadow-sm border border-border/60">
       <div className="mb-3 flex items-center justify-between">
         <div>
           <p className="text-[11px] font-extrabold uppercase tracking-widest text-primary">
@@ -2453,7 +2453,7 @@ const NameStyleEditor = ({
   const deco = figure.textDecoration ?? 'none';
 
   return (
-    <div className="rounded-xl border border-border bg-secondary/40">
+    <div className="rounded-xl border border-border/60 bg-secondary/40">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
@@ -2479,7 +2479,7 @@ const NameStyleEditor = ({
         </span>
       </button>
       {open && (
-        <div className="space-y-3 border-t border-border px-3 py-3">
+        <div className="space-y-3 border-t border-border/60 px-3 py-3">
           {/* Font family */}
           <div>
             <p className="mb-1.5 text-[11px] font-extrabold uppercase tracking-wider text-muted-foreground">
@@ -2488,7 +2488,7 @@ const NameStyleEditor = ({
             <select
               value={family}
               onChange={(e) => onChange({ fontFamily: e.target.value })}
-              className="h-9 w-full rounded-lg border border-border/60 bg-card shadow-sm px-2 text-sm text-foreground"
+              className="h-9 w-full rounded-lg border border-border/60/60 bg-card shadow-sm px-2 text-sm text-foreground"
             >
               {FONT_FAMILIES.map((f) => (
                 <option key={f.value} value={f.value}>
@@ -2513,7 +2513,7 @@ const NameStyleEditor = ({
                     className={`h-8 min-w-8 rounded-md border px-2 text-xs font-extrabold ${
                       active
                         ? 'border-primary bg-primary text-primary-foreground'
-                        : 'border-border bg-card text-foreground'
+                        : 'border-border/60 bg-card text-foreground'
                     }`}
                   >
                     {s}
@@ -2536,7 +2536,7 @@ const NameStyleEditor = ({
                 className={`flex h-9 w-9 items-center justify-center rounded-md border ${
                   weight === 'bold'
                     ? 'border-primary bg-primary text-primary-foreground'
-                    : 'border-border bg-card text-foreground'
+                    : 'border-border/60 bg-card text-foreground'
                 }`}
               >
                 <Bold className="h-4 w-4" />
@@ -2549,7 +2549,7 @@ const NameStyleEditor = ({
                 className={`flex h-9 w-9 items-center justify-center rounded-md border ${
                   style === 'italic'
                     ? 'border-primary bg-primary text-primary-foreground'
-                    : 'border-border bg-card text-foreground'
+                    : 'border-border/60 bg-card text-foreground'
                 }`}
               >
                 <Italic className="h-4 w-4" />
@@ -2564,7 +2564,7 @@ const NameStyleEditor = ({
                 className={`flex h-9 w-9 items-center justify-center rounded-md border ${
                   deco === 'underline'
                     ? 'border-primary bg-primary text-primary-foreground'
-                    : 'border-border bg-card text-foreground'
+                    : 'border-border/60 bg-card text-foreground'
                 }`}
               >
                 <Underline className="h-4 w-4" />
@@ -2585,7 +2585,7 @@ const NameStyleEditor = ({
                     type="button"
                     onClick={() => onChange({ textColor: c })}
                     className={`h-7 w-7 rounded-full border-2 ${
-                      active ? 'ring-2 ring-primary ring-offset-2' : 'border-border'
+                      active ? 'ring-2 ring-primary/20' : 'border-border/60'
                     }`}
                     style={{ background: c }}
                   />
@@ -2595,7 +2595,7 @@ const NameStyleEditor = ({
                 type="color"
                 value={color}
                 onChange={(e) => onChange({ textColor: e.target.value })}
-                className="h-8 w-10 cursor-pointer rounded-md border border-border/60 bg-card shadow-sm"
+                className="h-8 w-10 cursor-pointer rounded-md border border-border/60/60 bg-card shadow-sm"
                 title="Color personalizado"
               />
             </div>
@@ -2646,7 +2646,7 @@ const TextStyleModal = ({
 
   return (
     <div className="fixed inset-0 z-[70] flex items-end justify-center bg-black/40 p-4 sm:items-center">
-      <div className="w-full max-w-md rounded-2xl bg-card p-5 shadow-2xl">
+      <div className="w-full max-w-md rounded-2xl bg-card p-5 shadow-sm border border-border/60">
         <h3 className="mb-4 text-base font-extrabold text-foreground">Estilo de texto</h3>
 
         <div className="mb-4 flex flex-wrap gap-2">
@@ -2657,7 +2657,7 @@ const TextStyleModal = ({
               className={`rounded-full border px-3 py-1.5 text-xs font-extrabold transition-colors ${
                 tab === t.id
                   ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-border bg-card text-foreground'
+                  : 'border-border/60 bg-card text-foreground'
               }`}
             >
               {t.label}
@@ -2674,7 +2674,7 @@ const TextStyleModal = ({
                   key={c}
                   onClick={() => set({ textColor: c })}
                   className={`h-9 w-9 rounded-full border-2 ${
-                    active ? 'ring-2 ring-primary ring-offset-2' : 'border-border'
+                    active ? 'ring-2 ring-primary/20' : 'border-border/60'
                   }`}
                   style={{ background: c }}
                 />
@@ -2691,7 +2691,7 @@ const TextStyleModal = ({
                 type="color"
                 value={draft.textColor ?? '#000000'}
                 onChange={(e) => set({ textColor: e.target.value })}
-                className="h-10 w-12 cursor-pointer rounded-md border border-border/60 bg-card shadow-sm"
+                className="h-10 w-12 cursor-pointer rounded-md border border-border/60/60 bg-card shadow-sm"
               />
               <Input
                 value={draft.textColor ?? ''}
@@ -2714,7 +2714,7 @@ const TextStyleModal = ({
                   className={`rounded-xl border px-3 py-2 text-left text-sm ${
                     active
                       ? 'border-primary bg-primary/10 text-primary'
-                      : 'border-border bg-card text-foreground'
+                      : 'border-border/60 bg-card text-foreground'
                   }`}
                   style={{ fontFamily: f.value }}
                 >
@@ -2730,7 +2730,7 @@ const TextStyleModal = ({
             <div className="flex items-center gap-3">
               <button
                 onClick={() => set({ fontSize: Math.max(8, (draft.fontSize ?? 11) - 1) })}
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-card shadow-sm"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-border/60/60 bg-card shadow-sm"
               >
                 <Minus className="h-4 w-4" />
               </button>
@@ -2742,7 +2742,7 @@ const TextStyleModal = ({
               />
               <button
                 onClick={() => set({ fontSize: Math.min(72, (draft.fontSize ?? 11) + 1) })}
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-card shadow-sm"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-border/60/60 bg-card shadow-sm"
               >
                 <Plus className="h-4 w-4" />
               </button>
@@ -2752,7 +2752,7 @@ const TextStyleModal = ({
         )}
 
         {/* Format toggles - always visible */}
-        <div className="mt-5 flex items-center gap-2 border-t border-border pt-4">
+        <div className="mt-5 flex items-center gap-2 border-t border-border/60 pt-4">
           <button
             onClick={() =>
               set({ fontWeight: draft.fontWeight === 'bold' ? 'normal' : 'bold' })
@@ -2760,7 +2760,7 @@ const TextStyleModal = ({
             className={`flex h-9 w-9 items-center justify-center rounded-full border ${
               draft.fontWeight === 'bold'
                 ? 'border-primary bg-primary text-primary-foreground'
-                : 'border-border bg-card text-foreground'
+                : 'border-border/60 bg-card text-foreground'
             }`}
             title="Negrita"
           >
@@ -2773,7 +2773,7 @@ const TextStyleModal = ({
             className={`flex h-9 w-9 items-center justify-center rounded-full border ${
               draft.fontStyle === 'italic'
                 ? 'border-primary bg-primary text-primary-foreground'
-                : 'border-border bg-card text-foreground'
+                : 'border-border/60 bg-card text-foreground'
             }`}
             title="Itálica"
           >
@@ -2788,7 +2788,7 @@ const TextStyleModal = ({
             className={`flex h-9 w-9 items-center justify-center rounded-full border ${
               draft.textDecoration === 'underline'
                 ? 'border-primary bg-primary text-primary-foreground'
-                : 'border-border bg-card text-foreground'
+                : 'border-border/60 bg-card text-foreground'
             }`}
             title="Subrayado"
           >
@@ -2796,7 +2796,7 @@ const TextStyleModal = ({
           </button>
 
           <div
-            className="ml-auto rounded-md border border-dashed border-border px-3 py-1.5"
+            className="ml-auto rounded-full border border-dashed border-primary/25 border-border/60 px-3 py-1.5 font-extrabold shadow-sm"
             style={{
               color: draft.textColor,
               fontFamily: draft.fontFamily,

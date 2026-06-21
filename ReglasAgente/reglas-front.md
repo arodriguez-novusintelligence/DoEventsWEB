@@ -115,6 +115,28 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b9)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| ContactImportModal DSF | VISUAL | Sí | `guests/ContactImportModal.tsx` | Dialog shadow-sm; font-extrabold; rounded-full CTAs; device pick ring |
+| SeatingMapEditor borders | VISUAL | Sí | `events/SeatingMapEditor.tsx` | border-border/60 transversal; modales shadow-sm; ring-primary/20 |
+| RefundTicketFlow cards | VISUAL | Sí | `tickets/RefundTicketFlow.tsx` | shadow-sm selected; confirm border-border/60; back extrabold |
+| TicketDetailView tabs | VISUAL | Sí | `tickets/TicketDetailView.tsx` | shadow-sm tabs/overlays; seat CTA rounded-full |
+| EventsView loading | VISUAL | Sí | `feed/EventsView.tsx` | ring-primary/20; providers h-14 ring; eventers extrabold |
+| HostPickerModal shell | VISUAL | Sí | `events/HostPickerModal.tsx` | sheet shadow-sm |
+| StepUnified chips | VISUAL | Sí | `services/StepUnified.tsx` | inactive chips border-border/60 shadow-sm; preference cards shadow-sm |
+| AddGuestModal shell | VISUAL | Sí | `guests/AddGuestModal.tsx` | dialog border-border/60 shadow-sm; empty dashed border-border/60 |
+| CreatePostSheet media | VISUAL | Sí | `feed/CreatePostSheet.tsx` | dashed CTAs border-border/60 |
+| ReportPostDialog footer | VISUAL | Sí | `feed/ReportPostDialog.tsx` | footer CTAs font-extrabold |
+| BankingHub delete/PayPal | Bloqueo | Parcial | `banking/BankingHub.tsx` | BACKEND_REQUIRED; back/retry extrabold; PayPal icon ring |
+| EventPreviewModal / StepAccessControl | Empalme | Sí | ver batch previo | Verificados intactos |
+| FAQSection / ServiceDetailView | Empalme | Sí | ver batch previo | Verificados intactos |
+| MyPostsView / MyReservedServices | Empalme | Sí | ver batch previo | Verificados intactos |
+| NotificationsContext API | Integración | Sí | `contexts/NotificationsContext.tsx` | API parity verificada |
+| MainInfoSection / EventPublished | Empalme | Sí | ver batch previo | Verificados intactos |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b8)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

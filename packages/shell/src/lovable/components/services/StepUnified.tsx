@@ -403,7 +403,7 @@ const StepUnified = ({
             ))}
             {formData.gallery.length < 10 && (
               <>
-                <label className="flex aspect-square cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-primary/30 text-primary">
+                <label className="flex aspect-square cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-primary/25 border-border/60 text-primary shadow-sm">
                   <Video className="h-4 w-4" />
                   <input type="file" accept="video/*" multiple className="sr-only" onChange={(e) => addGalleryFiles(e.target.files, 'video')} />
                 </label>
@@ -445,7 +445,7 @@ const StepUnified = ({
                     'rounded-full px-4 py-2 text-sm font-extrabold transition-colors',
                     formData.sectors.includes(sector)
                       ? 'bg-primary text-primary-foreground'
-                      : 'bg-accent text-accent-foreground'
+                      : 'border border-border/60 bg-accent text-accent-foreground shadow-sm'
                   )}
                 >
                   {sector}
@@ -504,7 +504,7 @@ const StepUnified = ({
                           'rounded-full px-4 py-2 text-sm font-extrabold transition-colors',
                           selectedActivities.includes(act)
                             ? 'bg-primary text-primary-foreground font-extrabold'
-                            : 'bg-accent text-accent-foreground'
+                            : 'border border-border/60 bg-accent text-accent-foreground shadow-sm'
                         )}
                       >
                         {act}
@@ -680,7 +680,7 @@ const StepUnified = ({
                   type="button"
                   onClick={() => updateForm({ bookingPreference: 'instant' })}
                   className={cn(
-                    'w-full rounded-xl border p-4 text-left transition-colors flex items-start gap-3',
+                    'w-full rounded-xl border p-4 text-left transition-colors flex items-start gap-3 shadow-sm',
                     formData.bookingPreference === 'instant' ? 'border-primary bg-primary/5' : 'border-border/60 hover:border-muted-foreground'
                   )}
                 >
@@ -697,7 +697,7 @@ const StepUnified = ({
                   type="button"
                   onClick={() => updateForm({ bookingPreference: 'approval' })}
                   className={cn(
-                    'w-full rounded-xl border p-4 text-left transition-colors flex items-start gap-3',
+                    'w-full rounded-xl border p-4 text-left transition-colors flex items-start gap-3 shadow-sm',
                     formData.bookingPreference === 'approval' ? 'border-primary bg-primary/5' : 'border-border/60 hover:border-muted-foreground'
                   )}
                 >

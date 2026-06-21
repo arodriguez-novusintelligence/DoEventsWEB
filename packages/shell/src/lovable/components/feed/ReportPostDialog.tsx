@@ -119,10 +119,10 @@ export const ReportPostDialog = ({
         )}
 
         <DialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-2">
-          <Button type="button" variant="outline" className="rounded-full shadow-sm" onClick={() => onOpenChange(false)}>
+          <Button type="button" variant="outline" className="rounded-full font-extrabold shadow-sm" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
-          <Button type="button" variant="destructive" className="gap-1.5 rounded-full shadow-sm" onClick={handleSubmit} disabled={submitting}>
+          <Button type="button" variant="destructive" className="gap-1.5 rounded-full font-extrabold shadow-sm" onClick={handleSubmit} disabled={submitting}>
             {submitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

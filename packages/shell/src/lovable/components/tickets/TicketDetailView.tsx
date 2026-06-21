@@ -247,7 +247,7 @@ const TicketDetailView = ({
                   type="button"
                   onClick={() => onActiveIndexChange(i)}
                   className={`shrink-0 min-w-[120px] rounded-2xl border px-4 py-3 text-center transition-all shadow-sm ${
-                    active ? 'bg-primary border-primary shadow-md' : 'bg-card border-border/60'
+                    active ? 'bg-primary border-primary shadow-sm' : 'bg-card border-border/60'
                   }`}
                 >
                   <p className={`text-sm font-extrabold ${active ? 'text-primary-foreground' : 'text-foreground'}`}>
@@ -357,7 +357,7 @@ const TicketDetailView = ({
                 <button
                   type="button"
                   onClick={() => setSeatMapOpen(true)}
-                  className="flex w-full items-center justify-center gap-2 rounded-2xl border border-border/60 bg-primary/5 py-3 text-sm font-extrabold text-primary shadow-sm hover:bg-primary/10"
+                  className="flex w-full items-center justify-center gap-2 rounded-full border border-border/60 bg-primary/5 py-3 text-sm font-extrabold text-primary shadow-sm hover:bg-primary/10"
                 >
                   <MapPin className="h-4 w-4" />
                   Ver ubicación de la silla
@@ -368,7 +368,7 @@ const TicketDetailView = ({
 
           {isTransferred && activeEntry && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="flex flex-col items-center gap-1.5 rounded-2xl bg-foreground px-5 py-3 shadow-xl">
+              <div className="flex flex-col items-center gap-1.5 rounded-2xl bg-foreground px-5 py-3 shadow-sm">
                 <div className="flex items-center gap-2">
                   <div className="h-5 w-5 rounded-full bg-primary grid place-items-center">
                     <Check className="h-3 w-3 text-primary-foreground" strokeWidth={4} />
@@ -384,7 +384,7 @@ const TicketDetailView = ({
 
           {isRefunded && activeEntry && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="flex flex-col items-center gap-1.5 rounded-2xl bg-destructive px-5 py-3 shadow-xl">
+              <div className="flex flex-col items-center gap-1.5 rounded-2xl bg-destructive px-5 py-3 shadow-sm">
                 <div className="flex items-center gap-2">
                   <Banknote className="h-4 w-4 text-destructive-foreground" />
                   <span className="text-sm font-extrabold text-destructive-foreground">Reembolsada</span>

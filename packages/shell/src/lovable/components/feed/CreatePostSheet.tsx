@@ -269,14 +269,14 @@ const CreatePostSheet = ({
               <div className="flex gap-2">
                 <button
                   onClick={() => imageInputRef.current?.click()}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-full border-2 border-dashed border-primary/25 py-3 text-sm font-extrabold text-primary shadow-sm transition-colors hover:border-primary/60"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-full border-2 border-dashed border-primary/25 border-border/60 py-3 text-sm font-extrabold text-primary shadow-sm transition-colors hover:border-primary/60"
                 >
                   <ImagePlus className="h-5 w-5" />
                   Fotos
                 </button>
                 <button
                   onClick={() => videoInputRef.current?.click()}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-full border-2 border-dashed border-primary/25 py-3 text-sm font-extrabold text-primary shadow-sm transition-colors hover:border-primary/60"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-full border-2 border-dashed border-primary/25 border-border/60 py-3 text-sm font-extrabold text-primary shadow-sm transition-colors hover:border-primary/60"
                 >
                   <Video className="h-5 w-5" />
                   Videos
