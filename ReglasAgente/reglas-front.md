@@ -121,6 +121,24 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 1 (run 27910611218-b6)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| MessagesListView back/past/search | VISUAL | Sí | `chat/MessagesListView.tsx` | back pill ring; past unread shadow-sm ring; search cards border-border/60; EmptyState layout |
+| NotificationsSheet badge/retry | VISUAL | Sí | `feed/NotificationsSheet.tsx` | header unread pill ring; retry ring-primary/20; fetchUserNotifications intacto |
+| NotificationsContext loadingState | Integración | Sí | `contexts/NotificationsContext.tsx` | loadingState derivado; NOTIFICATIONS_UPDATED_EVENT re-export |
+| EventPublished card/ghost CTAs | VISUAL | Sí | `pages/EventPublished.tsx` | ring-1 ring-primary/10 card; ghost flat; outline ring; fetchEventById intacto |
+| SeatingMapEditor / MyReservedServices | Empalme | Sí | ver batch b1/b2/b3/b4/b5 | Verificados intactos |
+| ReportPostDialog / MainInfoSection | Empalme | Sí | ver batch b1/b2/b3/b4/b5 | Verificados intactos |
+| AccessControlListView / MyPostsView | Empalme | Sí | ver batch b1/b2/b3/b4/b5 | Verificados intactos |
+| EventsView / ServiceDetailView | Empalme | Sí | ver batch b1/b2/b3/b4/b5 | Verificados intactos |
+| CreatePostSheet / HostPickerModal | Empalme | Sí | ver batch b1/b2/b3/b4/b5 | Verificados intactos |
+| FAQSection / StepUnified | Empalme | Sí | ver batch b1/b2/b3/b4/b5 | Verificados intactos |
+| AddGuestModal / TicketDetailView | Empalme | Sí | ver batch b1/b2/b3/b4/b5 | Verificados intactos |
+| FeedHero / SeatLocationModal | Empalme | Sí | ver batch b1/b2/b3/b4/b5 | Verificados intactos |
+| Batch 1 gaps b6 (20) | Empalme | Sí | ver `decision-log.md` | 20 DONE + 0 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 1 (run 27910611218-b5)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

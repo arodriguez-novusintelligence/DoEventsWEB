@@ -281,7 +281,10 @@ const MessagesListView = ({
     return (
       <div
         key={room.id}
-        className="flex w-full items-center gap-3 rounded-2xl bg-card p-3 border border-border/60 opacity-90"
+        className={cn(
+          'flex w-full items-center gap-3 rounded-2xl bg-card p-3 border border-border/60 opacity-90 shadow-sm',
+          room.unreadCount > 0 && 'ring-1 ring-primary/10',
+        )}
       >
         <button
           type="button"
@@ -313,7 +316,7 @@ const MessagesListView = ({
                 {status.label}
               </span>
               {room.unreadCount > 0 && (
-                <Badge className="h-4 min-w-[16px] rounded-full bg-primary px-1.5 text-[10px] text-primary-foreground">
+                <Badge className="h-4 min-w-[16px] rounded-full bg-primary px-1.5 text-[10px] font-extrabold text-primary-foreground shadow-sm ring-1 ring-primary/20">
                   {room.unreadCount > 99 ? '99+' : room.unreadCount}
                 </Badge>
               )}
@@ -377,7 +380,7 @@ const MessagesListView = ({
               </Badge>
             )}
           </div>
-          <p className="mt-0.5 text-xs text-muted-foreground line-clamp-1">{chat.lastMessage}</p>
+          <p className="mt-0.5 text-xs font-extrabold text-muted-foreground line-clamp-1">{chat.lastMessage}</p>
         </div>
       </button>
     </div>
@@ -390,7 +393,7 @@ const MessagesListView = ({
     return (
       <div
         key={user.id}
-        className="flex w-full items-center gap-3 rounded-2xl border border-primary/20 bg-card p-3"
+        className="flex w-full items-center gap-3 rounded-2xl border border-border/60 bg-card p-3 shadow-sm ring-1 ring-primary/10"
       >
         <button
           type="button"
@@ -412,7 +415,7 @@ const MessagesListView = ({
         <button
           type="button"
           onClick={() => user.id && onStartDirectChat?.(user.id)}
-          className="shrink-0 rounded-full bg-primary px-3 py-1.5 text-xs font-extrabold text-primary-foreground"
+          className="shrink-0 rounded-full bg-primary px-3 py-1.5 text-xs font-extrabold text-primary-foreground shadow-sm ring-1 ring-primary/20"
         >
           Chatear
         </button>
@@ -455,7 +458,12 @@ const MessagesListView = ({
         {/* Brand header row */}
         <div className="bg-card px-4 py-3 border-b border-border/60 shadow-sm">
           <div className="flex items-center justify-between gap-3">
-            <button type="button" onClick={onBack} className="flex items-center text-primary">
+            <button
+              type="button"
+              onClick={onBack}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-primary shadow-sm ring-2 ring-primary/20 hover:bg-accent"
+              aria-label="Volver"
+            >
               <ChevronLeft className="h-5 w-5" />
             </button>
             <div className="flex items-center gap-1 flex-1">
@@ -717,7 +725,7 @@ const MessagesListView = ({
 };
 
 const EmptyState = ({ text }: { text: string }) => (
-  <div className="mx-4 flex flex-col items-center justify-center rounded-2xl border border-dashed border-primary/25 border-border/60 bg-card py-16 text-center shadow-sm">
+  <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-primary/25 border-border/60 bg-card py-16 text-center shadow-sm">
     <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
       <MessageSquare className="h-7 w-7 text-primary" strokeWidth={2} />
     </div>

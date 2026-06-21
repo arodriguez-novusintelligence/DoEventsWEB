@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27910611218-b6`: batch 1 sexta pasada (20 gaps manifiesto b6) — 20 DONE frontend; 0 BACKEND_REQUIRED en batch. MessagesListView empalme DSF b6 (back pill ring, past rooms shadow-sm + unread ring, search cards border-border/60, private lastMessage extrabold, EmptyState layout); NotificationsSheet header badge + retry ring; NotificationsContext loadingState + NOTIFICATIONS_UPDATED_EVENT export; EventPublished card ring-primary/10 + ghost flat CTAs; 16 gaps verificados intactos b1–b5; similitud ~99.70%; build:devaws OK; 97 gaps batches 2–6 pendientes.
+
 Run `gap-empalme-27910611218-b5`: batch 1 quinta pasada (20 gaps manifiesto b5) — 20 DONE frontend; 0 BACKEND_REQUIRED en batch. ProfileGallery ring-primary/10 + progress label extrabold + save footer border-t + lightbox ring; ProfileGalleryPage onRetry fetchProfileGallery; NotificationsSheet verificado intacto b4; 18 gaps verificados intactos b1/b2/b3/b4; similitud ~99.62%; build:devaws OK; 97 gaps batches 2–6 pendientes.
 
 Run `gap-empalme-27910611218-b4`: batch 1 cuarta pasada (20 gaps manifiesto b4) — 20 DONE frontend; 0 BACKEND_REQUIRED en batch. MessagesListView + NotificationsSheet empalme DSF nuevo; 18 gaps verificados intactos b1/b2/b3; similitud ~99.54%; build:devaws OK; 97 gaps batches 2–6 pendientes.
@@ -162,7 +164,15 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27910611218-b5)
+## Empalme realizado (última ejecución — gap-empalme-27910611218-b6)
+
+- **MessagesListView:** back ChevronLeft pill h-10 ring-2 ring-primary/20 shadow-sm; past event rows shadow-sm + ring-primary/10 cuando unread; past unread Badge font-extrabold shadow-sm ring-primary/20; private lastMessage font-extrabold; user search cards border-border/60 shadow-sm ring-primary/10; Chatear CTA shadow-sm ring; EmptyState sin mx-4 duplicado; APIs `searchUsers` intactas.
+- **NotificationsSheet:** header unread pill shadow-sm ring-1 ring-primary/20; retry Reintentar ring-2 ring-primary/20; `fetchUserNotifications`/`respondFollowRequest` intactos.
+- **NotificationsContext:** alias derivado `loadingState` (`idle`|`loading`|`error`|`empty`|`ready`); re-export `NOTIFICATIONS_UPDATED_EVENT`; `fetchUserNotifications` sin mocks.
+- **EventPublished:** card ring-1 ring-primary/10; outline Copiar/Compartir ring-1 ring-primary/10; ghost Ir al feed/Mis eventos sin shadow-sm; `fetchEventById` + share intactos.
+- **Verificados intactos (b1/b2/b3/b4/b5):** SeatingMapEditor, MyReservedServicesView, ReportPostDialog, MainInfoSection, AccessControlListView, MyPostsView, EventsView, ServiceDetailView, CreatePostSheet, HostPickerModal, FAQSection, StepUnified, AddGuestModal, TicketDetailView, FeedHero, SeatLocationModal.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27910611218-b5)
 
 - **ProfileGallery:** card principal `ring-1 ring-primary/10`; progress bar con label Progreso/% font-extrabold + ring-primary/10; save CTA footer `border-t border-border/60 pt-5`; lightbox image `shadow-sm ring-2 ring-primary-foreground/20`; grid/error/empty DSF intactos; APIs `onAddFiles`/`onRemove`/`onSave` vía props reales.
 - **ProfileGalleryPage:** `onRetry` cableado a `fetchProfileGallery` cuando hay `loadError`; sin mocks.

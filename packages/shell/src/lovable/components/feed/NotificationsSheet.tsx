@@ -384,7 +384,7 @@ const NotificationsSheet = ({
             </div>
             Notificaciones
             {hasUnread && (
-              <span className="inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-extrabold text-primary-foreground">
+              <span className="inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-extrabold text-primary-foreground shadow-sm ring-1 ring-primary/20">
                 {unreadCount > 99 ? '99+' : unreadCount}
               </span>
             )}
@@ -429,7 +429,7 @@ const NotificationsSheet = ({
               <button
                 type="button"
                 onClick={() => { void refreshNotifications(); }}
-                className="mt-4 flex items-center gap-1.5 rounded-full border border-border/60 bg-card px-4 py-2 text-xs font-extrabold text-primary hover:bg-accent/40 shadow-sm transition-colors"
+                className="mt-4 flex items-center gap-1.5 rounded-full border border-border/60 bg-card px-4 py-2 text-xs font-extrabold text-primary hover:bg-accent/40 shadow-sm ring-2 ring-primary/20 transition-colors"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
                 Reintentar

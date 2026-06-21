@@ -46,7 +46,7 @@ export const EventPublished = () => {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center bg-secondary px-6 text-center pb-24">
-      <div className="w-full max-w-sm rounded-2xl border border-border/60 bg-card p-8 shadow-sm ring-2 ring-primary/20">
+      <div className="w-full max-w-sm rounded-2xl border border-border/60 bg-card p-8 shadow-sm ring-1 ring-primary/10">
       <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
         <PartyPopper className="h-7 w-7 text-primary" />
       </div>
@@ -81,7 +81,7 @@ export const EventPublished = () => {
             <Button
               type="button"
               variant="outline"
-              className="w-full rounded-full border border-border/60 font-extrabold shadow-sm"
+              className="w-full rounded-full border border-border/60 font-extrabold shadow-sm ring-1 ring-primary/10"
               onClick={copyLink}
             >
               <Copy className="mr-2 h-4 w-4" />
@@ -91,7 +91,7 @@ export const EventPublished = () => {
               <Button
                 type="button"
                 variant="outline"
-                className="w-full rounded-full border border-border/60 font-extrabold shadow-sm"
+                className="w-full rounded-full border border-border/60 font-extrabold shadow-sm ring-1 ring-primary/10"
                 onClick={() => {
                   void navigator.share({
                     title: eventName || 'Mi evento en Do.Events',
@@ -108,7 +108,7 @@ export const EventPublished = () => {
         <Button
           type="button"
           variant={eventId ? 'ghost' : 'outline'}
-          className="w-full rounded-full font-extrabold shadow-sm"
+          className="w-full rounded-full font-extrabold"
           onClick={() => navigate('/')}
         >
           Ir al feed
@@ -116,7 +116,7 @@ export const EventPublished = () => {
         <Button
           type="button"
           variant="ghost"
-          className="w-full rounded-full font-extrabold shadow-sm"
+          className="w-full rounded-full font-extrabold"
           onClick={() => navigate('/my-events')}
         >
           Mis eventos

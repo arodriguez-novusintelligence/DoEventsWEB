@@ -4,6 +4,7 @@
  * API expuesta (paridad Lovable):
  * - `notifications`, `unreadNotifications`, `unreadCount`, `unread`, `hasUnread`, `hasNotifications`, `loading`, `loadError`, `loadErrorMessage`, `isEmpty`, `hasError`, `error`
  * - `count`, `notificationCount`, `totalCount` (alias de `notifications.length`)
+ * - `loadingState` (`idle` | `loading` | `error` | `empty` | `ready`)
  * - `reload` / `refreshNotifications` / `refresh` / `reloadNotifications` / `fetchNotifications`, `markAllRead`, `markRead` / `markAsRead`, `dismissNotification` / `removeNotification`, `clearAll` / `clearNotifications`
  *
  * Datos vía `fetchUserNotifications` — sin mocks.
@@ -74,6 +75,8 @@ export interface Notification {
   };
 }
 
+export type NotificationsLoadingState = 'idle' | 'loading' | 'error' | 'empty' | 'ready';
+
 export interface NotificationsContextValue {
   notifications: Notification[];
   /** Alias Lovable — lista filtrada de notificaciones no leídas. */
@@ -108,6 +111,8 @@ export interface NotificationsContextValue {
   notificationCount: number;
   /** Alias Lovable — mismo valor que `count`. */
   totalCount: number;
+  /** Alias Lovable — estado derivado para sheets (idle/loading/error/empty/ready). */
+  loadingState: NotificationsLoadingState;
   addNotification: (n: Omit<Notification, 'id' | 'timeAgo' | 'read'>) => void;
   markAllRead: () => void;
   markRead: (id: string) => void;
@@ -144,6 +149,7 @@ const fallbackContext: NotificationsContextValue = {
   count: 0,
   notificationCount: 0,
   totalCount: 0,
+  loadingState: 'idle',
   addNotification: () => undefined,
   markAllRead: () => undefined,
   markRead: () => undefined,
@@ -157,7 +163,7 @@ const fallbackContext: NotificationsContextValue = {
 
 const NotificationsContext = createContext<NotificationsContextValue>(fallbackContext);
 
-export { NotificationsContext };
+export { NotificationsContext, NOTIFICATIONS_UPDATED_EVENT };
 
 export const useNotifications = () => {
   const ctx = useContext(NotificationsContext);
@@ -217,6 +223,12 @@ export const NotificationsProvider = ({
     () => notifications.filter((n) => !n.read),
     [notifications],
   );
+  const loadingState = useMemo((): NotificationsLoadingState => {
+    if (loading) return 'loading';
+    if (loadError) return 'error';
+    if (notifications.length === 0) return 'empty';
+    return 'ready';
+  }, [loading, loadError, notifications.length]);
 
   const addNotification = useCallback(
     (n: Omit<Notification, 'id' | 'timeAgo' | 'read'>) => {
@@ -323,6 +335,7 @@ export const NotificationsProvider = ({
         count: notifications.length,
         notificationCount: notifications.length,
         totalCount: notifications.length,
+        loadingState,
         addNotification,
         markAllRead,
         markRead,
