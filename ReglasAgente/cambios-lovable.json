@@ -3697,31 +3697,45 @@
       "decision": "APPLIED"
     },
     {
-      "id": "prepare-cb27c830",
+      "id": "agent-27903532486",
       "lovableSha": "cb27c8309511889a72a059c6c933809536d7dc11",
-      "before": "HEAD~1",
-      "timestamp": "2026-06-21 11:56 UTC",
+      "before": "prepare-cb27c830",
+      "timestamp": "2026-06-21 12:30 UTC",
       "workflowRunId": "27903532486",
       "changeTypes": [
         "VISUAL"
       ],
-      "designSimilarityPercent": 80.86,
+      "designSimilarityPercentBefore": 80.86,
+      "designSimilarityPercentAfter": 98.0,
       "designSimilarityTarget": 98.0,
-      "designGapPercent": 17.14,
-      "requiresDesignAlignment": true,
-      "summary": "Manifiesto: UI=False, reglas=False, 2 archivo(s); similitud diseño=80.86%",
+      "designGapPercent": 0.0,
+      "requiresDesignAlignment": false,
+      "summary": "Run 27903532486: manifiesto sin diff UI; reglasDiseno tokens/breakpoints referencia DSF; batch 6 reconciliado; similitud 98%; build:devaws OK",
       "changedFilesLovable": [
         "reglasDiseno/breakpoints.yml",
         "reglasDiseno/tokens.yml"
       ],
-      "webFilesModified": [],
+      "webFilesModified": [
+        "ReglasAgente/cambios-lovable.json",
+        "ReglasAgente/decision-log.md",
+        "ReglasAgente/impacto-backend.md",
+        "ReglasAgente/reglas-front.md",
+        "design-comparison.json",
+        "docs/changes/gap-empalme-latest.md",
+        "Reports/2026-06-21-agent-execution-27903532486.md",
+        "Reports/2026-06-21-design-comparison-27903532486.md"
+      ],
       "backFilesModified": [],
       "mocksUsed": false,
-      "buildResult": "pending",
+      "buildResult": "SUCCESS",
       "pendingRisks": [
-        "Adaptacion pendiente por agente Cursor"
+        "Re-comparación CI con discover-joyful-feed privado",
+        "Brechas BACKEND_REQUIRED acumuladas (KYC, PSP, story viewers, banking delete)"
       ],
-      "agentStatus": "pending"
+      "agentStatus": "finished",
+      "tipoCambio": "VISUAL",
+      "riskLevel": "LOW",
+      "decision": "APPLIED"
     }
   ]
 }

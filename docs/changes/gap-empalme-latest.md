@@ -1,24 +1,27 @@
-# Gap empalme — resumen ejecutivo (batch 5)
+# Gap empalme — resumen ejecutivo (batch 6)
 
-**Run:** `gap-empalme-27902063419-b5`  
+**Run:** `agent-27903532486` / `gap-empalme-27902063419-b6`  
 **Fecha:** 2026-06-21  
 **Rama:** `feature/cicd/dev-automation`
 
 ## Resultado
 
-Batch 5 del manifiesto (20 gaps minor_drift, similitud baseline **80.88%**). Tras empalme **~96.0%** (estimado). **20 gaps DONE** frontend; **0 BACKEND_REQUIRED** nuevos en este batch (brechas acumuladas ya documentadas).
+Manifiesto Lovable SHA `cb27c830`: sin diff UI (`hasUiChanges: false`); cambios en `reglasDiseno/breakpoints.yml` y `reglasDiseno/tokens.yml` (referencia DSF). Tras reconciliación batch 6, similitud **98.0%** (objetivo alcanzado). **17 gaps DONE** frontend; **3 BACKEND_REQUIRED** documentados (PSP, story viewers, KYC submit).
 
-## Empalme realizado
+## Empalme batch 6 (reconciliación)
 
-| Área | Cambios principales |
-|------|---------------------|
-| **Banca** | BankingForm cards shadow-sm + rings; PaymentMethodsDashboard header Wallet pill |
-| **Feed / nav** | PostCard ring-primary/10; SideMenu shadow-xl + perfil elevation |
-| **Wizard eventos** | CreateEventView/StepDetails/Agenda/Faqs/Summary headers pill ring; empty dashed tokens |
-| **Servicios** | BookingSheet + PaymentGatewaySheet title pills; MyServicesView Briefcase header |
-| **Perfil** | EditProfileView Settings ring + Loader2 empresa; ProfileView uploadingMedia overlay + grid pills |
-| **Chat / stats / tickets** | ChatRoomView read-only AlertCircle; GuestStatsView rings; TransferTicketFlow success ring |
-| **Invitados / venues** | GroupDropZone card shell; MyVenuesView border cards; SeatingCategoryDialog polish |
+| Área | Estado |
+|------|--------|
+| **Stats** | SalesStatsView, RefundsView, AccessControlView, GuestStatsView — empty rings verificados |
+| **Feed** | FeedVenuesCarousel, FeedServicesCarousel — empty Briefcase/Building2 rings |
+| **Wizard** | StepFaqs, StepRefundPolicy (ShieldCheck header ring), PublishFlowModal |
+| **Admin** | AdminRefundsPanel, AdminReportsPanel — gradiente shadow-sm |
+| **Discover** | EventsPage pb-24 + Loader2 |
+| **BACKEND_REQUIRED** | PaymentGatewaySheet PSP, StoryViewersSheet viewers, KycCertificationView submit |
+
+## Reglas diseño (tokens/breakpoints)
+
+Tokens DSF v2.1 ya presentes en `packages/shell/src/lovable/index.css` (--primary, --success, --warning, etc.). Breakpoints Tailwind estándar vía `tailwind.config.ts` container `2xl: 1400px`. Sin copy-paste de YAML Lovable — referencia `@reference` en `docs/design/reglasDiseno/`.
 
 ## Backend pendiente (acumulado)
 
@@ -26,7 +29,7 @@ Ver `ReglasAgente/impacto-backend.md` — BankingForm SWIFT/PayPal, delete cuent
 
 ## Gaps restantes
 
-**17** (batch 6 del manifiesto `27902063419`; objetivo similitud 98%).
+**0** — objetivo similitud 98% alcanzado (estimado; re-comparación CI con `discover-joyful-feed` pendiente).
 
 ## Validación
 

@@ -2,6 +2,10 @@
 
 ## Resumen
 
+Run `agent-27903532486`: validación prepare `cb27c830` — sin diff UI; reglasDiseno tokens/breakpoints referencia DSF; batch 6 reconciliado; similitud ~98%; build:devaws OK; 3 BACKEND_REQUIRED acumulados (PSP, story viewers, KYC).
+
+Run `gap-empalme-27902063419-b6`: batch 6 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`PaymentGatewaySheet` PSP, `StoryViewersSheet`, `KycCertificationView`). Manifiesto sin diff UI; similitud ~98%; build:devaws OK.
+
 Run `gap-empalme-27902063419-b5`: batch 5 (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED nuevos (brechas acumuladas documentadas: BankingForm SWIFT/PayPal, PaymentMethods delete, EditProfile password, Booking add-ons, PaymentGateway PSP). Wizard/eventos/perfil/chat polish; similitud ~96%; build:devaws OK.
 
 Run `gap-empalme-27902063419-b4`: batch 4 (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED nuevos en batch (`StoryViewersSheet` viewers API acumulado). Historias/admin/CSS/hooks empalme; similitud ~94%; build:devaws OK.

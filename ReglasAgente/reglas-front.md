@@ -237,6 +237,17 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 | MainInfoSection | VISUAL | Sí | `venues/sections/MainInfoSection.tsx` | FileText ring verificado |
 | Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
 
+## Ejecución 2026-06-21 agent-27903532486 (prepare cb27c830)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| Manifiesto sin UI | Validación | Sí | — | changedFiles reglasDiseno only; hasUiChanges false |
+| ReglasDiseno tokens | VISUAL | Sí | `lovable/index.css` | DSF v2.1 --primary/--success/--warning referencia |
+| ReglasDiseno breakpoints | VISUAL | Sí | `tailwind.config.ts` | container 2xl 1400px; sin copy YAML |
+| Batch 6 reconciliación | Empalme | Sí | ver `gap-empalme-27902063419-b6` | 17 DONE + 3 BACKEND_REQUIRED; similitud ~98% |
+| Build devaws | Validación | Sí | — | npm run build:devaws SUCCESS |
+| Anti-mock pages | Bloqueo | Sí | `packages/shell/src/pages/` | grep sin coincidencias runtime |
+
 ## Ejecución 2026-06-21 gap-empalme batch 6 (run 27902063419-b6)
 
 | Regla | Tipo | Implementada | Archivo | Observación |
