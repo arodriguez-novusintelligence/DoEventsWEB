@@ -186,7 +186,7 @@ const TicketDetailView = ({
                 <MoreVertical className="h-5 w-5 text-foreground" />
               </button>
               {menuOpen && (
-                <div className="absolute right-0 top-12 z-30 w-60 rounded-2xl bg-card shadow-lg border border-border/60 overflow-hidden">
+                <div className="absolute right-0 top-12 z-30 w-60 overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
                   {canTransfer && onTransfer && (
                     <button
                       type="button"
@@ -267,7 +267,7 @@ const TicketDetailView = ({
         )}
 
         <div
-          className={`relative mt-4 rounded-3xl border border-border/60 bg-card shadow-lg overflow-hidden ${
+          className={`relative mt-4 overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm ${
             isPending ? 'opacity-90' : ''
           }`}
         >
@@ -296,7 +296,7 @@ const TicketDetailView = ({
                     <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                       <TicketIcon className="h-7 w-7 text-primary" />
                     </div>
-                    <p className="text-xs text-muted-foreground">Sin imagen del evento</p>
+                    <p className="text-xs font-extrabold text-muted-foreground">Sin imagen del evento</p>
                   </div>
                 )}
               </div>

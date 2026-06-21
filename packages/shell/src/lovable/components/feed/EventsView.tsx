@@ -167,7 +167,7 @@ const EventMedia = ({ event }: { event: EventItem }) => {
       <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
         <CalendarDays className="h-7 w-7 text-primary" />
       </div>
-      Sin imagen
+      <span className="font-extrabold text-foreground">Sin imagen</span>
     </div>
   );
 };
@@ -367,7 +367,7 @@ const EmptyHint = ({ children, icon: Icon = Search }: { children: ReactNode; ico
     <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
       <Icon className="h-7 w-7 text-primary" />
     </div>
-    <p className="text-sm text-muted-foreground max-w-[260px]">{children}</p>
+    <p className="max-w-[260px] text-sm font-extrabold text-muted-foreground">{children}</p>
   </div>
 );
 
@@ -948,7 +948,7 @@ const EventsView = ({
 
       {!isInitialDiscoverLoad && showEvents && (
         <section className="px-4 pt-8 text-center">
-          <div className="rounded-2xl bg-card border border-dashed border-primary/25 p-6 flex flex-col items-center shadow-sm">
+          <div className="flex flex-col items-center rounded-2xl border border-dashed border-primary/25 border-border/60 bg-card p-6 shadow-sm">
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
               <CalendarDays className="h-7 w-7 text-primary" />
             </div>

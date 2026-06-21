@@ -126,14 +126,14 @@ const ServiceDetailView = ({
               />
             </button>
           ) : (
-            <div className="flex h-56 w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-primary/25 bg-muted text-sm text-muted-foreground">
+            <div className="flex h-56 w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-primary/25 border-border/60 bg-muted text-sm text-muted-foreground shadow-sm">
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <Briefcase className="h-7 w-7 text-primary" />
               </div>
               <span className="font-extrabold text-foreground">Sin foto del servicio</span>
             </div>
           )}
-          <span className="absolute top-3 left-3 rounded-full bg-primary px-3 py-1 text-xs font-extrabold text-primary-foreground">
+          <span className="absolute left-3 top-3 rounded-full bg-primary px-3 py-1 text-xs font-extrabold text-primary-foreground shadow-sm">
             Servicio
           </span>
         </div>
@@ -144,7 +144,7 @@ const ServiceDetailView = ({
                 key={url}
                 type="button"
                 onClick={() => setActiveImage(i)}
-                className={`h-14 w-14 shrink-0 overflow-hidden rounded-lg border-2 ${i === activeImage ? 'border-primary' : 'border-transparent'}`}
+                className={`h-14 w-14 shrink-0 overflow-hidden rounded-lg border-2 shadow-sm ${i === activeImage ? 'border-primary ring-2 ring-primary/20' : 'border-border/60'}`}
               >
                 <img src={url} alt="" className="h-full w-full object-cover" />
               </button>

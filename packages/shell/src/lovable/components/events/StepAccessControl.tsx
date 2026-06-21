@@ -178,7 +178,7 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
               </div>
 
               {assigned.length === 0 ? (
-                <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-primary/25 bg-secondary/40 py-8 text-center">
+                <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-primary/25 border-border/60 bg-secondary/40 py-8 text-center shadow-sm">
                   <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                     <UserPlus className="h-7 w-7 text-primary" />
                   </div>
@@ -204,7 +204,7 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
                       <button
                         type="button"
                         onClick={() => removeUser(gate.id, u.id)}
-                        className="flex h-9 w-9 items-center justify-center rounded-lg text-destructive hover:bg-destructive/10"
+                        className="flex h-9 w-9 items-center justify-center rounded-full border border-destructive/30 text-destructive shadow-sm hover:bg-destructive/10"
                         aria-label={`Quitar ${u.name}`}
                       >
                         <Trash2 className="h-4 w-4" />

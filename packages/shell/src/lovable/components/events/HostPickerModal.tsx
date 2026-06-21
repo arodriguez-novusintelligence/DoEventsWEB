@@ -184,7 +184,7 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
           <button
             type="button"
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground ring-2 ring-primary/20 hover:bg-secondary"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-card text-muted-foreground ring-2 ring-primary/20 shadow-sm hover:bg-secondary"
             aria-label="Cerrar"
           >
             <X className="h-5 w-5" />
@@ -232,7 +232,7 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
                   <button
                     type="button"
                     onClick={() => setQuery('')}
-                    className="absolute right-2 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary"
+                    className="absolute right-2 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-card text-muted-foreground ring-2 ring-primary/20 shadow-sm hover:bg-secondary"
                     aria-label="Limpiar"
                   >
                     <X className="h-4 w-4" />
@@ -299,7 +299,7 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
 
           {tab === 'manual' && (
             <div className="space-y-3">
-              <div className="flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 p-3 text-xs text-foreground">
+              <div className="flex items-center gap-2 rounded-xl border border-primary/20 border-border/60 bg-primary/5 p-3 text-xs text-foreground shadow-sm">
                 <BookUser className="h-4 w-4 shrink-0" />
                 Agrega un anfitrión que no está registrado en la plataforma.
               </div>

@@ -109,7 +109,7 @@ const RefundTicketFlow = ({
           <button type="button" onClick={onClose} className="flex items-center gap-1 text-primary font-extrabold">
             <ChevronLeft className="h-5 w-5" /> Atrás
           </button>
-          <div className="mt-8 rounded-2xl bg-destructive/10 border border-destructive/30 p-5">
+          <div className="mt-8 rounded-2xl border border-destructive/30 bg-destructive/10 p-5 shadow-sm">
             <div className="flex flex-col items-center text-center mb-4">
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
                 <AlertCircle className="h-7 w-7 text-destructive" />
@@ -154,7 +154,7 @@ const RefundTicketFlow = ({
           </div>
 
           <div className="px-4 pt-4">
-            <div className="rounded-2xl bg-primary/5 border border-primary/20 p-3 flex gap-2">
+            <div className="flex gap-2 rounded-2xl border border-primary/20 border-border/60 bg-primary/5 p-3 shadow-sm">
               <Info className="h-5 w-5 text-primary shrink-0 mt-0.5" />
               <p className="text-sm text-foreground leading-snug">
                 Los reembolsos se procesarán de 3 a 5 días hábiles. Se aplican términos y condiciones.
@@ -300,7 +300,7 @@ const RefundTicketFlow = ({
               </div>
             </div>
 
-            <div className="rounded-2xl bg-primary/5 border border-primary/20 p-4 space-y-2">
+            <div className="space-y-2 rounded-2xl border border-border/60 bg-primary/5 p-4 shadow-sm">
               <div className="flex items-center gap-2">
                 <Info className="h-5 w-5 text-primary" />
                 <span className="font-extrabold text-foreground">Comisiones no reembolsables</span>

@@ -2,7 +2,7 @@
  * Notifications context — empalme Lovable sobre API real `@doevents/shared`.
  *
  * API expuesta (paridad Lovable):
- * - `notifications`, `unreadCount`, `hasUnread`, `loading`, `loadError`, `loadErrorMessage`, `isEmpty`, `hasError`
+ * - `notifications`, `unreadCount`, `hasUnread`, `loading`, `loadError`, `loadErrorMessage`, `isEmpty`, `hasError`, `error`
  * - `reload` / `refreshNotifications`, `markAllRead`, `markRead`, `dismissNotification`, `clearAll`
  *
  * Datos vía `fetchUserNotifications` — sin mocks.
@@ -83,6 +83,8 @@ export interface NotificationsContextValue {
   isEmpty: boolean;
   /** Alias Lovable — flag derivado de `loadError`. */
   hasError: boolean;
+  /** Alias Lovable — mensaje de error (mismo que `loadErrorMessage`). */
+  error: string | null;
   /** Alias Lovable — mismo valor que `loading`. */
   isLoading: boolean;
   reload: () => Promise<void>;
@@ -104,6 +106,7 @@ const fallbackContext: NotificationsContextValue = {
   loadErrorMessage: null,
   isEmpty: true,
   hasError: false,
+  error: null,
   isLoading: false,
   reload: async () => undefined,
   refreshNotifications: async () => undefined,
@@ -266,6 +269,7 @@ export const NotificationsProvider = ({
         loadErrorMessage: loadError,
         isEmpty: !loading && !loadError && notifications.length === 0,
         hasError: Boolean(loadError),
+        error: loadError,
         isLoading: loading,
         reload: reloadFromApi,
         refreshNotifications: reloadFromApi,

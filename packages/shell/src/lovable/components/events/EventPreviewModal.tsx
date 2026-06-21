@@ -61,7 +61,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
             {heroImg ? (
               <img src={heroImg} alt={data.name} className="h-44 w-full object-cover" />
             ) : (
-              <div className="flex h-44 w-full flex-col items-center justify-center rounded-2xl border border-dashed border-primary/25 bg-muted">
+              <div className="flex h-44 w-full flex-col items-center justify-center rounded-2xl border border-dashed border-primary/25 border-border/60 bg-muted shadow-sm">
                 <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                   <Eye className="h-7 w-7 text-primary" />
                 </div>
@@ -166,10 +166,10 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
                 {showVenueImgs && (
                   <div className="mt-2 flex flex-wrap gap-2">
                     {venueImgs.map((src, i) => (
-                      <img key={i} src={src} className="h-20 w-20 rounded-lg object-cover" />
+                      <img key={i} src={src} className="h-20 w-20 rounded-lg border border-border/60 object-cover shadow-sm" />
                     ))}
                     {seatingFigures.length > 0 && (
-                      <div className="flex h-20 w-20 items-center justify-center rounded-lg bg-secondary text-[10px] text-muted-foreground text-center">
+                      <div className="flex h-20 w-20 flex-col items-center justify-center gap-1 rounded-lg border border-border/60 bg-secondary text-center text-[10px] text-muted-foreground shadow-sm">
                         Mapa de butacas
                       </div>
                     )}

@@ -122,7 +122,7 @@ const CreatePostSheet = ({
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[90dvh] border-t border-border/60">
+      <DrawerContent className="max-h-[90dvh] border-t border-border/60 shadow-sm">
         <div className="mx-auto w-full max-w-lg">
           <DrawerHeader className="flex items-center justify-between text-left">
             <div className="flex items-center gap-2">
@@ -209,8 +209,8 @@ const CreatePostSheet = ({
                     className={cn(
                       'flex flex-1 items-center justify-center gap-2 rounded-full border-2 py-2.5 text-sm font-extrabold transition-all',
                       visibility === 'public'
-                        ? 'border-primary bg-primary/10 text-primary'
-                        : 'border-border/60 text-muted-foreground hover:border-primary/30'
+                        ? 'border-primary bg-primary/10 text-primary shadow-sm'
+                        : 'border-border/60 text-muted-foreground shadow-sm hover:border-primary/30'
                     )}
                   >
                     <Globe className="h-4 w-4" />
@@ -222,8 +222,8 @@ const CreatePostSheet = ({
                     className={cn(
                       'flex flex-1 items-center justify-center gap-2 rounded-full border-2 py-2.5 text-sm font-extrabold transition-all',
                       visibility === 'private'
-                        ? 'border-primary bg-primary/10 text-primary'
-                        : 'border-border/60 text-muted-foreground hover:border-primary/30'
+                        ? 'border-primary bg-primary/10 text-primary shadow-sm'
+                        : 'border-border/60 text-muted-foreground shadow-sm hover:border-primary/30'
                     )}
                   >
                     <Lock className="h-4 w-4" />

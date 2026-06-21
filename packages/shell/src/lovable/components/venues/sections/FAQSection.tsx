@@ -43,7 +43,7 @@ const FAQSection = () => {
             <HelpCircle className="h-7 w-7 text-primary" />
           </div>
           <p className="mt-3 text-sm font-extrabold text-foreground">Sin preguntas frecuentes aún</p>
-          <Button type="button" variant="outline" className="mt-4 w-full rounded-full border-dashed shadow-sm" onClick={addFAQ}>
+          <Button type="button" variant="outline" className="mt-4 w-full rounded-full border-dashed font-extrabold shadow-sm" onClick={addFAQ}>
             <Plus className="w-4 h-4 mr-2" />
             Agregar pregunta
           </Button>
@@ -80,7 +80,7 @@ const FAQSection = () => {
               </div>
             </div>
           ))}
-          <Button type="button" variant="outline" className="w-full rounded-full border-dashed shadow-sm" onClick={addFAQ}>
+          <Button type="button" variant="outline" className="w-full rounded-full border-dashed font-extrabold shadow-sm" onClick={addFAQ}>
             <Plus className="w-4 h-4 mr-2" />
             Agregar otra pregunta
           </Button>

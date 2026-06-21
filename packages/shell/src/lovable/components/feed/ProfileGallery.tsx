@@ -98,21 +98,21 @@ const ProfileGallery = ({
         <button
           type="button"
           onClick={onBack}
-          className="flex items-center gap-2 text-sm font-semibold text-primary mb-4"
+          className="mb-4 flex items-center gap-2 text-sm font-extrabold text-primary"
         >
           <ArrowLeft className="h-4 w-4" />
           Volver al perfil
         </button>
 
-        <div className="rounded-2xl bg-card p-5 shadow-sm">
+        <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
           {loadError && (
             <div className="mb-4 flex flex-col items-center gap-3 rounded-2xl border border-destructive/30 bg-card py-8 text-center shadow-sm">
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
                 <AlertCircle className="h-7 w-7 text-destructive" />
               </div>
-              <p className="text-sm font-medium text-destructive px-4">{loadError}</p>
+              <p className="px-4 text-sm font-extrabold text-destructive">{loadError}</p>
               {onRetry && (
-                <Button type="button" variant="outline" size="sm" className="rounded-full gap-1.5" onClick={onRetry}>
+                <Button type="button" variant="outline" size="sm" className="gap-1.5 rounded-full font-extrabold shadow-sm" onClick={onRetry}>
                   <RefreshCw className="h-4 w-4" />
                   Reintentar
                 </Button>
@@ -122,7 +122,7 @@ const ProfileGallery = ({
 
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="flex items-center gap-2 text-lg font-bold text-foreground">
+              <h2 className="flex items-center gap-2 text-lg font-extrabold text-foreground">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
                   <ImagePlus className="h-5 w-5 text-primary" />
                 </span>
@@ -137,7 +137,7 @@ const ProfileGallery = ({
                 type="button"
                 disabled={loading || saving}
                 onClick={() => fileInputRef.current?.click()}
-                className="flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors disabled:opacity-60"
+                className="flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-extrabold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 disabled:opacity-60"
               >
                 <ImagePlus className="h-4 w-4" />
                 Agregar
@@ -155,9 +155,11 @@ const ProfileGallery = ({
           </div>
 
           {loading ? (
-            <div className="flex flex-col items-center py-10">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <p className="mt-3 text-sm text-muted-foreground">Cargando galería…</p>
+            <div className="flex flex-col items-center rounded-2xl border border-border/60 bg-card py-10 shadow-sm">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                <Loader2 className="h-7 w-7 animate-spin text-primary" />
+              </div>
+              <p className="mt-3 text-sm font-extrabold text-muted-foreground">Cargando galería…</p>
               <div className="mt-6 grid w-full grid-cols-3 gap-2 animate-pulse">
                 {Array.from({ length: 6 }).map((_, i) => (
                   <div key={i} className="aspect-square rounded-xl bg-muted" />
@@ -168,13 +170,13 @@ const ProfileGallery = ({
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex w-full flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-primary/25 py-16 text-muted-foreground hover:border-primary/50 hover:bg-accent/30 transition-colors"
+              className="flex w-full flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-primary/25 border-border/60 py-16 text-muted-foreground shadow-sm transition-colors hover:border-primary/50 hover:bg-accent/30"
             >
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <ImagePlus className="h-7 w-7 text-primary" />
               </div>
               <div className="text-center">
-                <p className="text-sm font-semibold text-foreground">Agrega tus mejores fotos</p>
+                <p className="text-sm font-extrabold text-foreground">Agrega tus mejores fotos</p>
                 <p className="text-xs text-muted-foreground mt-1">
                   Hasta {MAX_GALLERY_PHOTOS} fotos · JPG, PNG, WEBP
                 </p>
@@ -226,7 +228,7 @@ const ProfileGallery = ({
                 type="button"
                 disabled={saving}
                 onClick={onSave}
-                className="w-full rounded-full gap-2 shadow-sm"
+                className="w-full gap-2 rounded-full font-extrabold shadow-sm"
               >
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 {saving ? 'Guardando…' : 'Guardar galería'}
@@ -291,7 +293,7 @@ const ProfileGallery = ({
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); handleRemove(currentViewerPhoto.id); }}
-              className="flex items-center gap-1.5 rounded-full bg-destructive/80 px-3 py-1.5 text-xs font-medium text-destructive-foreground"
+              className="flex items-center gap-1.5 rounded-full bg-destructive/80 px-3 py-1.5 text-xs font-extrabold text-destructive-foreground shadow-sm"
             >
               <Trash2 className="h-3 w-3" /> Eliminar
             </button>

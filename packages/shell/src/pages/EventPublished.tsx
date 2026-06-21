@@ -56,7 +56,9 @@ export const EventPublished = () => {
       <h1 className="mt-6 text-2xl font-extrabold text-foreground">¡Evento publicado!</h1>
       {loadingName ? (
         <div className="mt-4 flex justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+            <Loader2 className="h-7 w-7 animate-spin text-primary" />
+          </div>
         </div>
       ) : eventName ? (
         <p className="mt-3 text-base font-extrabold text-primary">{eventName}</p>

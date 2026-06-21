@@ -64,7 +64,7 @@ const MyPostsView = ({
             </div>
             <p className="text-sm font-extrabold text-destructive">{loadError}</p>
             {onRetry && (
-              <Button type="button" variant="outline" className="rounded-full shadow-sm" onClick={onRetry}>
+              <Button type="button" variant="outline" className="rounded-full font-extrabold shadow-sm" onClick={onRetry}>
                 <RefreshCw className="mr-2 h-4 w-4" />
                 Reintentar
               </Button>

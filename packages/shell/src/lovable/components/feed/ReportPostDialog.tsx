@@ -86,7 +86,7 @@ export const ReportPostDialog = ({
                 key={item.id}
                 className={`flex items-center gap-2 rounded-xl border p-3 text-sm cursor-pointer transition-colors shadow-sm ${
                   reason === item.id
-                    ? 'border-primary bg-primary/5 font-extrabold ring-1 ring-primary/30'
+                    ? 'border-primary bg-primary/5 font-extrabold ring-2 ring-primary/20'
                     : 'border-border/60 font-extrabold hover:bg-accent/50'
                 }`}
               >

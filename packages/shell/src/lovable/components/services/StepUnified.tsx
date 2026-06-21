@@ -355,7 +355,7 @@ const StepUnified = ({
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <Camera className="h-7 w-7 text-primary" />
               </div>
-              <span className="text-xs">Sin foto</span>
+              <span className="text-xs font-extrabold text-foreground">Sin foto</span>
             </div>
           )}
         </div>
@@ -549,7 +549,7 @@ const StepUnified = ({
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <DollarSign className="h-7 w-7 text-primary" />
               </div>
-              <p className="text-sm text-muted-foreground">Selecciona servicios y actividades primero.</p>
+              <p className="text-sm font-extrabold text-foreground">Selecciona servicios y actividades primero.</p>
             </div>
           ) : (
             formData.sectors.map((sector) => {
@@ -620,11 +620,11 @@ const StepUnified = ({
               onChange={(e) => updateForm({ locationLabel: e.target.value })}
             />
             <div className="flex flex-col gap-2 sm:flex-row">
-              <Button type="button" variant="outline" className="flex-1" disabled={locating} onClick={() => void applyDeviceLocation()}>
+              <Button type="button" variant="outline" className="flex-1 rounded-full font-extrabold shadow-sm" disabled={locating} onClick={() => void applyDeviceLocation()}>
                 {locating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Crosshair className="mr-2 h-4 w-4" />}
                 Usar mi ubicación
               </Button>
-              <Button type="button" variant="outline" className="flex-1" disabled={locating} onClick={() => void searchServiceLocation()}>
+              <Button type="button" variant="outline" className="flex-1 rounded-full font-extrabold shadow-sm" disabled={locating} onClick={() => void searchServiceLocation()}>
                 {locating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <MapPin className="mr-2 h-4 w-4" />}
                 Buscar en mapa
               </Button>

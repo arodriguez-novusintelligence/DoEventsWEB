@@ -104,10 +104,10 @@ const SeatLocationModal = ({ open, onOpenChange, ticket }: Props) => {
 
         <div className="px-5 py-4">
           <div className="flex items-center justify-between text-xs mb-3 gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 font-extrabold text-primary">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-primary/10 px-2.5 py-1 font-extrabold text-primary shadow-sm">
               <Armchair className="h-3.5 w-3.5" /> {displaySeat}
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1 font-extrabold text-foreground">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-secondary px-2.5 py-1 font-extrabold text-foreground shadow-sm">
               <DoorOpen className="h-3.5 w-3.5 text-primary" /> {ticket.entrance || 'Entrada principal'}
             </span>
           </div>
@@ -137,7 +137,7 @@ const SeatLocationModal = ({ open, onOpenChange, ticket }: Props) => {
                 type="button"
                 variant="outline"
                 size="sm"
-                className="gap-1.5 rounded-full shadow-sm"
+                className="gap-1.5 rounded-full font-extrabold shadow-sm"
                 onClick={() => setReloadKey((k) => k + 1)}
               >
                 <RefreshCw className="h-3.5 w-3.5" />

@@ -86,7 +86,7 @@ export const MyReservedServicesView = ({ onBack }: MyReservedServicesViewProps) 
               type="button"
               variant="outline"
               size="sm"
-              className="mt-4 gap-1.5 rounded-full shadow-sm"
+              className="mt-4 gap-1.5 rounded-full font-extrabold shadow-sm"
               onClick={() => setReloadKey((k) => k + 1)}
             >
               <RefreshCw className="h-3.5 w-3.5" />
@@ -99,7 +99,7 @@ export const MyReservedServicesView = ({ onBack }: MyReservedServicesViewProps) 
               <Briefcase className="h-7 w-7 text-primary" />
             </div>
             <p className="mt-3 text-sm font-extrabold text-foreground">Inicia sesión para ver tus reservas</p>
-            <Button type="button" className="mt-4 rounded-full shadow-sm" onClick={() => navigate('/auth/login')}>
+            <Button type="button" className="mt-4 rounded-full font-extrabold shadow-sm" onClick={() => navigate('/auth/login')}>
               Iniciar sesión
             </Button>
           </div>

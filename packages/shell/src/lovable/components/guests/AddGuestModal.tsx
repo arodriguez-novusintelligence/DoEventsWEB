@@ -525,17 +525,17 @@ export function AddGuestModal({
 
   const modalInner = (
     <Tabs defaultValue="contacts" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6 rounded-xl bg-secondary p-1">
-            <TabsTrigger value="contacts" className="rounded-lg">Contactos</TabsTrigger>
-            <TabsTrigger value="search" className="rounded-lg">DoEvents</TabsTrigger>
-            <TabsTrigger value="manual" className="rounded-lg">Manual</TabsTrigger>
+          <TabsList className="mb-6 grid w-full grid-cols-3 rounded-xl border border-border/60 bg-secondary p-1 shadow-sm">
+            <TabsTrigger value="contacts" className="rounded-lg font-extrabold">Contactos</TabsTrigger>
+            <TabsTrigger value="search" className="rounded-lg font-extrabold">DoEvents</TabsTrigger>
+            <TabsTrigger value="manual" className="rounded-lg font-extrabold">Manual</TabsTrigger>
           </TabsList>
           <TabsContent value="contacts" className="space-y-3">
             <p className="text-xs text-muted-foreground">Importa contactos del dispositivo como invitados.</p>
             <Button
               type="button"
               variant="outline"
-              className="w-full gap-2 rounded-xl border-icon-primary/20"
+              className="w-full gap-2 rounded-full border border-border/60 font-extrabold shadow-sm"
               onClick={() => setContactsOpen(true)}
               disabled={isSaving}
             >
@@ -625,7 +625,7 @@ export function AddGuestModal({
                 <Switch id="fav" checked={form.isFavorite} onCheckedChange={(c) => setForm({ ...form, isFavorite: c })} />
                 <Label htmlFor="fav" className="text-sm">Marcar como invitado favorito</Label>
               </div>
-              <Button type="submit" className="w-full rounded-full shadow-sm" disabled={isSaving}>
+              <Button type="submit" className="w-full rounded-full font-extrabold shadow-sm" disabled={isSaving}>
                 {isSaving ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Guardando…</> : "Agregar invitado"}
               </Button>
               {keepOpenAfterAdd && (
@@ -706,7 +706,7 @@ export function AddGuestModal({
                 })}
                 <Button
                   onClick={() => void addSelectedSearchResults()}
-                  className="w-full rounded-full shadow-sm"
+                  className="w-full rounded-full font-extrabold shadow-sm"
                   disabled={isSaving || selectedSearchIds.size === 0}
                 >
                   {isSaving ? (
@@ -730,7 +730,7 @@ export function AddGuestModal({
                     {foundUser.username && <p className="text-sm text-muted-foreground">@{foundUser.username.replace(/^@/, '')}</p>}
                   </div>
                 </div>
-                <Button onClick={() => void addFound()} className="w-full rounded-full shadow-sm" disabled={isSaving}>
+                <Button onClick={() => void addFound()} className="w-full rounded-full font-extrabold shadow-sm" disabled={isSaving}>
                   {isSaving ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Agregando…</> : "Agregar a mis invitados"}
                 </Button>
               </div>
