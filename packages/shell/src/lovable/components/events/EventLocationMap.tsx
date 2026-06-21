@@ -91,30 +91,30 @@ const EventLocationMap = ({ lat, lng, onPick }: Props) => {
   }, [lat, lng, ready]);
 
   return (
-    <div className="relative h-48 w-full overflow-hidden rounded-2xl border border-border bg-muted shadow-sm">
+    <div className="relative h-48 w-full overflow-hidden rounded-2xl border border-border/60 bg-muted shadow-sm ring-1 ring-primary/10">
       {!ready && !loadError && (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 animate-pulse bg-muted/80">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
-            <MapPin className="h-5 w-5 text-primary" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+            <MapPin className="h-7 w-7 text-primary" />
           </div>
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <span className="text-xs text-muted-foreground">Cargando mapa…</span>
+          <span className="text-xs font-extrabold text-muted-foreground">Cargando mapa…</span>
         </div>
       )}
       {loadError && (
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 rounded-2xl border border-destructive/30 bg-card/95 shadow-sm mx-2 px-4 text-center">
+        <div className="absolute inset-0 z-10 mx-2 flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-primary/25 bg-card/95 px-4 text-center shadow-sm ring-1 ring-destructive/20">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
             <AlertCircle className="h-7 w-7 text-destructive" />
           </div>
-          <p className="text-xs font-medium text-foreground">No se pudo cargar el mapa</p>
-          <p className="text-[10px] text-muted-foreground">
+          <p className="text-xs font-extrabold text-foreground">No se pudo cargar el mapa</p>
+          <p className="text-[10px] font-extrabold text-muted-foreground">
             Verifica la clave de Google Maps o ingresa la dirección manualmente.
           </p>
           <Button
             type="button"
             variant="outline"
             size="sm"
-            className="mt-1 gap-1.5 rounded-full"
+            className="mt-1 gap-1.5 rounded-full font-extrabold shadow-sm"
             onClick={() => {
               scriptPromise = null;
               setRetryKey((k) => k + 1);

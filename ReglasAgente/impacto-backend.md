@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27910611218-b2`: batch 1 segunda pasada (20 gaps manifiesto b2) — 20 DONE frontend; 0 BACKEND_REQUIRED en batch. MyInvitationsView + EventLocationMap empalme DSF nuevo; 18 gaps verificados intactos desde b1; similitud ~99.42%; build:devaws OK; 97 gaps batches 2–6 pendientes.
+
 Run `gap-empalme-27910611218-b1`: batch 1 (20 gaps manifiesto) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). DSF polish transversal: rings `ring-primary/10`, chevrons en anillo, `NotificationsContext.unreadNotifications`, footer `border-t` diálogos; similitud ~99.35%; build:devaws OK; 97 gaps batches 2–6 pendientes.
 
 Run `agent-27910611218`: prepare `53a73964` — manifiesto sin diff UI (`changedFiles: []`, `hasUiChanges: false`); `reglasDiseno/design-token-map.yml` solo referencia DSF; validación empalmes batch b15 (similitud 99.32%); build:devaws OK; sin cambios backend ni frontend de lógica; 97 gaps manifiesto batches 2–6 pendientes.
@@ -154,7 +156,13 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27905180836-b14)
+## Empalme realizado (última ejecución — gap-empalme-27910611218-b2)
+
+- **MyInvitationsView:** loading h-14 ring-primary/20; error/empty font-extrabold; empty dashed border-primary/25 ring-primary/10; invitation cards border-border/60 ring-primary/10; image fallback ring-primary/20; status badges font-extrabold shadow-sm; retry rounded-full shadow-sm; props API real intactas.
+- **EventLocationMap:** shell border-border/60 ring-primary/10; loading MapPin h-14 ring; copy font-extrabold; error panel dashed border-primary/25 ring-destructive/20; retry font-extrabold shadow-sm; Google Maps API real intacta.
+- **Verificados intactos (b1):** SeatingMapEditor, NotificationsContext (`unreadNotifications`), ReportPostDialog, MyReservedServicesView, MainInfoSection, AccessControlListView, MyPostsView, EventsView, ServiceDetailView, CreatePostSheet, HostPickerModal, FAQSection, StepUnified, EventPublished, AddGuestModal, TicketDetailView, FeedHero, SeatLocationModal.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27905180836-b14)
 
 - **EventsView:** `EmptyHint` dashed `border-primary/25 border-border/60`; fallback hearts `ring-primary/20`; row favorites vía `FavoriteHeartButton`; event description + venue/provider metadata font-extrabold; discover loading bar extrabold; APIs reales intactas.
 - **FeedHero:** stories loading spinner en contenedor h-14 ring-primary/20 (paridad empty state).

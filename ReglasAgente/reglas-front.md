@@ -117,6 +117,20 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 1 (run 27910611218-b2)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| MyInvitationsView cards | VISUAL | Sí | `invitations/MyInvitationsView.tsx` | loading h-14 ring; cards border-border/60 ring-primary/10; status extrabold |
+| EventLocationMap shell | VISUAL | Sí | `events/EventLocationMap.tsx` | border-border/60 ring-primary/10; MapPin h-14 loading; error dashed |
+| SeatingMapEditor / NotificationsContext | Empalme | Sí | ver batch b1 | Verificados intactos |
+| ReportPost / MyReservedServices / MainInfo | Empalme | Sí | ver batch b1 | Verificados intactos |
+| AccessControl / MyPosts / EventsView | Empalme | Sí | ver batch b1 | Verificados intactos |
+| ServiceDetail / CreatePost / HostPicker | Empalme | Sí | ver batch b1 | Verificados intactos |
+| FAQSection / StepUnified / EventPublished | Empalme | Sí | ver batch b1 | Verificados intactos |
+| AddGuest / TicketDetail / FeedHero / SeatLocation | Empalme | Sí | ver batch b1 | Verificados intactos |
+| Batch 1 gaps b2 (20) | Empalme | Sí | ver `decision-log.md` | 20 DONE + 0 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 1 (run 27910611218-b1)
 
 | Regla | Tipo | Implementada | Archivo | Observación |
