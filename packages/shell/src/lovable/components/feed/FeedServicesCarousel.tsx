@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Heart, Star, Briefcase } from 'lucide-react';
+import { Heart, Star, Briefcase, Loader2 } from 'lucide-react';
 import { resolveEventImageUrl } from '@doevents/shared';
 
 export interface FeedServiceCard {
@@ -51,10 +51,9 @@ const FeedServicesCarousel = ({
     return (
       <section className="my-5 px-4">
         <div className="mb-3 h-5 w-48 animate-pulse rounded bg-muted" />
-        <div className="flex gap-3 overflow-hidden">
-          {[1, 2].map((i) => (
-            <div key={i} className="h-64 w-[72%] shrink-0 animate-pulse rounded-2xl bg-muted sm:w-[280px]" />
-          ))}
+        <div className="flex flex-col items-center gap-3 rounded-2xl bg-card py-10 text-center shadow-sm">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-sm text-muted-foreground">Cargando servicios cercanos…</p>
         </div>
       </section>
     );
@@ -101,7 +100,7 @@ const FeedServicesCarousel = ({
           <button
             key={p.id}
             onClick={() => onOpenService?.(p)}
-            className="flex w-[72%] shrink-0 snap-start flex-col overflow-hidden rounded-2xl border border-border/50 bg-card shadow-md sm:w-[280px] text-left active:scale-[0.98] transition-transform"
+            className="flex w-[72%] shrink-0 snap-start flex-col overflow-hidden rounded-2xl border border-border/50 bg-card shadow-sm sm:w-[280px] text-left active:scale-[0.98] transition-transform"
           >
             <div className="relative h-48 w-full overflow-hidden bg-muted">
               <ServiceCardImage src={p.image} alt={p.name} />

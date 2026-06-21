@@ -175,9 +175,9 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
               </div>
 
               {assigned.length === 0 ? (
-                <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-primary/25 bg-secondary/40 py-8 text-center">
-                  <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
-                    <UserPlus className="h-4 w-4" />
+                <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-primary/25 bg-secondary/40 py-8 text-center">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                    <UserPlus className="h-7 w-7 text-primary" />
                   </div>
                   <p className="text-xs text-muted-foreground">Sin personal asignado</p>
                 </div>

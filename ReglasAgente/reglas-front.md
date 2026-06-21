@@ -101,6 +101,34 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+---
+
+## Ejecución 2026-06-21 gap-empalme batch 3 (run 27901296255-b3)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| LocationSection empty map | VISUAL | Sí | `venues/sections/LocationSection.tsx` | bg-card shadow-sm; MapPin h-14 ring |
+| MyTicketsView empty/error | VISUAL | Sí | `tickets/MyTicketsView.tsx` | ring-primary/20 y ring-destructive/20 |
+| StepAccessControl gate empty | VISUAL | Sí | `events/StepAccessControl.tsx` | UserPlus h-14 ring por puerta |
+| MessagesListView search UX | VISUAL | Sí | `chat/MessagesListView.tsx` | Loader2/AlertCircle/Search rings; loading card |
+| CommentsSheet empty/error | VISUAL | Sí | `feed/CommentsSheet.tsx` | MessageSquare/AlertCircle h-14 ring |
+| ProfileView experience bar | VISUAL | Sí | `feed/ProfileView.tsx` | Verificado gradiente primary intacto |
+| EventsView EmptyHint | VISUAL | Sí | `feed/EventsView.tsx` | h-14 ring-primary/20 + shadow-sm |
+| TicketDetailView media fallback | VISUAL | Sí | `tickets/TicketDetailView.tsx` | Ticket h-14 ring sin imagen |
+| AuthLogo gradient ring | VISUAL | Sí | `auth/AuthLogo.tsx` | ring-primary/20 |
+| NotificationsContext isEmpty | Integración | Sí | `contexts/NotificationsContext.tsx` | Verificado loadErrorMessage + isEmpty |
+| SuccessModal icon | VISUAL | Sí | `banking/SuccessModal.tsx` | Verificado CheckCircle2 h-14 ring |
+| CreatePostSheet header | VISUAL | Sí | `feed/CreatePostSheet.tsx` | Verificado PenLine h-10 ring |
+| PreferencesRefundSection cards | VISUAL | Sí | `venues/sections/PreferencesRefundSection.tsx` | Verificado shadow-sm cards |
+| FavoritesView empty/error | VISUAL | Sí | `feed/FavoritesView.tsx` | EmptyTab rings; Places primary tokens |
+| VenueCreator publish | VISUAL | Sí | `venues/VenueCreator.tsx` | Loader2 en publicar |
+| MyInvitationsView empty | VISUAL | Sí | `invitations/MyInvitationsView.tsx` | Ticket/AlertCircle h-14 ring |
+| SeatLocationModal loading | VISUAL | Sí | `tickets/SeatLocationModal.tsx` | Loader2 h-8 card shadow-sm |
+| FeedServicesCarousel loading | VISUAL | Sí | `feed/FeedServicesCarousel.tsx` | Loader2; shadow-sm cards |
+| AIAssistantView entity card | VISUAL | Sí | `ai/AIAssistantView.tsx` | CheckCircle2 ring-success/20 |
+| EventDetailView retry | Integración | Sí | `events/EventDetailView.tsx` | Cards shadow-sm; CalendarDays/AlertCircle rings |
+| Batch 3 gaps (20) | Empalme | Sí | ver `decision-log.md` | 20 DONE + 0 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 2 (run 27901296255-b2)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

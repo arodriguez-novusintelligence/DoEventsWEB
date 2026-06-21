@@ -68,7 +68,7 @@ const LocationSection = () => {
         )}
 
         {!hasCoords && !locating && (
-          <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-border bg-muted/30 py-8 text-center">
+          <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-border bg-card shadow-sm py-8 text-center">
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
               <MapPin className="h-7 w-7 text-primary" />
             </div>

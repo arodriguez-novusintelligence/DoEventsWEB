@@ -14,6 +14,7 @@ import {
   Settings,
   Archive,
   Loader2,
+  AlertCircle,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@lovable/components/ui/avatar';
 import { Badge } from '@lovable/components/ui/badge';
@@ -448,12 +449,6 @@ const MessagesListView = ({
   return (
     <div className="min-h-screen bg-secondary pb-24">
       <div className="mx-auto max-w-lg">
-        {loading && (
-          <div className="mx-4 mt-3 flex items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-xs font-medium text-muted-foreground shadow-sm">
-            <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
-            Actualizando conversaciones…
-          </div>
-        )}
         {/* Brand header row */}
         <div className="bg-card px-4 py-3 border-b border-border">
           <div className="flex items-center justify-between gap-3">
@@ -585,15 +580,30 @@ const MessagesListView = ({
               Usuarios en Do.Events
             </h2>
             {searchingUsers && (
-              <p className="py-2 text-center text-sm text-muted-foreground">Buscando usuarios…</p>
+              <div className="flex flex-col items-center gap-3 rounded-2xl bg-card py-6 text-center shadow-sm">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-sm text-muted-foreground">Buscando usuarios…</p>
+              </div>
             )}
             {userSearchError && (
-              <p className="rounded-xl bg-destructive/10 px-3 py-2 text-xs text-destructive">{userSearchError}</p>
+              <div className="flex flex-col items-center gap-3 rounded-2xl bg-card py-6 text-center shadow-sm">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
+                  <AlertCircle className="h-7 w-7 text-destructive" />
+                </div>
+                <p className="text-sm font-semibold text-foreground">Error en la búsqueda</p>
+                <p className="text-xs text-muted-foreground max-w-[240px]">{userSearchError}</p>
+              </div>
             )}
             {!searchingUsers && !userSearchError && userSearchResults.length === 0 && (
-              <p className="py-2 text-center text-sm text-muted-foreground">
-                No encontramos usuarios con ese nombre. Verifica que estén registrados en la app.
-              </p>
+              <div className="flex flex-col items-center gap-3 rounded-2xl bg-card py-6 text-center shadow-sm">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                  <Search className="h-7 w-7 text-primary" />
+                </div>
+                <p className="text-sm font-semibold text-foreground">Sin resultados</p>
+                <p className="text-xs text-muted-foreground max-w-[240px]">
+                  No encontramos usuarios con ese nombre. Verifica que estén registrados en la app.
+                </p>
+              </div>
             )}
             {userSearchResults.map((user) => renderUserSearchResult(user))}
           </div>
@@ -602,12 +612,12 @@ const MessagesListView = ({
         {/* List */}
         <div className="px-4 pt-2 space-y-2">
           {loading && (
-            <div className="flex flex-col items-center py-8 text-center">
+            <div className="flex flex-col items-center gap-3 rounded-2xl bg-card py-10 text-center shadow-sm">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <p className="mt-3 text-sm text-muted-foreground">Cargando conversaciones…</p>
+              <p className="text-sm text-muted-foreground">Cargando conversaciones…</p>
             </div>
           )}
-          {filter === 'archivados' && (
+          {!loading && filter === 'archivados' && (
             counts.archivados > 0 ? (
               <>
                 {archivedPrivate.map((c) => (
@@ -637,7 +647,7 @@ const MessagesListView = ({
               <EmptyState text="No tienes chats archivados" />
             )
           )}
-          {filter === 'interno' && (
+          {!loading && filter === 'interno' && (
             filteredPrivate.length > 0 ? (
               filteredPrivate.map((c) => withArchive(c.id, renderPrivateChat(c)))
             ) : (
@@ -645,7 +655,7 @@ const MessagesListView = ({
             )
           )}
 
-          {filter === 'no_leidos' && (
+          {!loading && filter === 'no_leidos' && (
             (unreadPrivate.length + unreadEvents.length) > 0 ? (
               <>
                 {unreadPrivate.map((c) => withArchive(c.id, renderPrivateChat(c)))}
@@ -656,7 +666,7 @@ const MessagesListView = ({
             )
           )}
 
-          {filter === 'grupos' && (
+          {!loading && filter === 'grupos' && (
             ((groupChatsProp?.length || 0) + visibleEventRooms.filter(c => c.attendees.length > 2 && notArchived(c.id)).length) > 0 ? (
               <>
                 {(groupChatsProp || []).filter(c => notArchived(c.id)).map((c) => withArchive(c.id, renderPrivateChat(c)))}
@@ -667,7 +677,7 @@ const MessagesListView = ({
             )
           )}
 
-          {filter === 'eventos' && (
+          {!loading && filter === 'eventos' && (
             <>
               {activeRooms.length > 0 && activeRooms.map((r) => withArchive(r.id, renderRoom(r)))}
               {pastRooms.length > 0 && (

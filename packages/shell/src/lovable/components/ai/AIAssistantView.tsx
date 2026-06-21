@@ -542,7 +542,7 @@ const CreatedEntityCard: React.FC<{
     {imageUrl ? (
       <img src={imageUrl} alt="" className="h-16 w-16 shrink-0 rounded-xl object-cover" />
     ) : (
-      <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-success/10">
+      <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-success/10 ring-2 ring-success/20">
         <CheckCircle2 className="h-7 w-7 text-success" />
       </div>
     )}

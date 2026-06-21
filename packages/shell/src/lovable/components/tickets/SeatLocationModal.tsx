@@ -117,9 +117,9 @@ const SeatLocationModal = ({ open, onOpenChange, ticket }: Props) => {
               <p className="text-sm text-muted-foreground">Esta boleta no tiene asiento numerado.</p>
             </div>
           ) : loading ? (
-            <div className="flex h-[320px] flex-col items-center justify-center gap-2 rounded-lg bg-secondary">
-              <Loader2 className="h-6 w-6 animate-spin text-primary" />
-              <p className="text-xs text-muted-foreground">Cargando mapa…</p>
+            <div className="flex h-[320px] flex-col items-center justify-center gap-3 rounded-2xl bg-card shadow-sm">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="text-sm text-muted-foreground">Cargando mapa…</p>
             </div>
           ) : error || !floors.length ? (
             <div className="flex h-[200px] flex-col items-center justify-center gap-3 rounded-2xl bg-secondary px-4 text-center">

@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27901296255-b3`: batch 3 (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED. Patrón Lovable: ring-primary/20 h-14, ring-destructive/20 errores, Loader2, shadow-sm cards, EmptyHint unificado.
+
 Run `gap-empalme-27901296255-b2`: batch 2 (20 gaps) — 16 DONE frontend; 4 BACKEND_REQUIRED (`EditProfileView` password/gustos, `BookingSheet` add-ons, `PublishFlowModal` banking, `PaymentGatewaySheet` PSP). Patrón Lovable: ring-primary/20 h-14, Loader2, AlertCircle/RefreshCw.
 
 Run `gap-empalme-27901296255-b1`: batch 1 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingForm` SWIFT/PayPal). Patrón Lovable: ring-primary/20 h-14, warning tokens, ring-destructive/20 errores.
@@ -82,7 +84,26 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27901296255-b2)
+## Empalme realizado (última ejecución — gap-empalme-27901296255-b3)
+
+- **LocationSection:** empty mapa bg-card shadow-sm; MapPin h-14 ring-primary/20.
+- **MyTicketsView:** empty Ticket ring-primary/20; error AlertCircle ring-destructive/20.
+- **StepAccessControl:** empty por puerta UserPlus h-14 ring-primary/20.
+- **MessagesListView:** loading card único; búsqueda usuarios Loader2/AlertCircle/Search con rings; filtros ocultos durante carga.
+- **CommentsSheet:** empty/error MessageSquare/AlertCircle h-14 ring.
+- **EventsView:** EmptyHint h-14 ring-primary/20 + shadow-sm; filter pills tokens intactos.
+- **TicketDetailView:** fallback media sin imagen Ticket h-14 ring; chips status tokens intactos.
+- **AuthLogo:** ring-primary/20 en card gradiente Sparkles.
+- **FavoritesView:** EmptyTab/error rings; Places tab icono primary/10.
+- **VenueCreator:** Loader2 en botón publicar; MapPinPlus header font-extrabold intacto.
+- **MyInvitationsView:** empty Ticket ring; error AlertCircle ring-destructive/20.
+- **SeatLocationModal:** loading card shadow-sm Loader2 h-8; error/no-seat rings intactos.
+- **FeedServicesCarousel:** loading Loader2 centrado; cards shadow-sm; empty Briefcase ring intacto.
+- **AIAssistantView:** CreatedEntityCard CheckCircle2 ring-success/20; Loader2 chat intacto.
+- **EventDetailView:** loading/error/no-id en cards shadow-sm; CalendarDays empty; AlertCircle error ring.
+- **ProfileView / NotificationsContext / SuccessModal / CreatePostSheet / PreferencesRefundSection:** verificados alineados (sin diff).
+
+## Empalme realizado (ejecución anterior — gap-empalme-27901296255-b2)
 
 - **NotificationsSheet:** empty/error Bell h-14 ring; AlertCircle + RefreshCw retry.
 - **ServiceDetailView:** empty imagen Briefcase ring-primary/20.

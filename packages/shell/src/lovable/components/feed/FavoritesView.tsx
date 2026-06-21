@@ -72,8 +72,8 @@ const FavoriteHeartButton = ({
 );
 
 const EmptyTab = ({ message, icon: Icon }: { message: string; icon: typeof Heart }) => (
-  <div className="flex flex-col items-center gap-3 py-12">
-    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+  <div className="flex flex-col items-center gap-3 rounded-2xl bg-card py-12 text-center shadow-sm">
+    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
       <Icon className="h-7 w-7 text-primary" />
     </div>
     <p className="text-sm text-muted-foreground max-w-[240px] text-center">{message}</p>
@@ -179,7 +179,7 @@ const PlacesTab = ({ places }: { places: FavPlaceItem[] }) => {
       {places.map((place) => (
         <div key={place.id} className="rounded-2xl bg-card border border-border p-4 shadow-sm">
           <div className="flex items-start gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-100 text-sky-600">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
               <MapPin className="h-5 w-5" />
             </div>
             <div className="min-w-0">
@@ -265,7 +265,7 @@ const FavoritesView = ({
         </div>
       ) : loadError ? (
         <div className="flex flex-col items-center gap-3 rounded-2xl bg-card py-16 text-center shadow-sm">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
             <AlertCircle className="h-7 w-7 text-destructive" />
           </div>
           <p className="text-sm font-semibold text-foreground">No se pudieron cargar los favoritos</p>

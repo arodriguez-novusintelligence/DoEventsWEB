@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AlertCircle, Loader2, RefreshCw } from 'lucide-react';
+import { AlertCircle, Loader2, RefreshCw, CalendarDays } from 'lucide-react';
 import {
   extractVenueImageUrls,
   fetchEventDetail,
@@ -96,29 +96,33 @@ const EventDetailView = ({
   if (!resolvedId) {
     return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 px-6 text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
-          <AlertCircle className="h-7 w-7 text-primary" />
+        <div className="flex flex-col items-center gap-3 rounded-2xl bg-card p-10 shadow-sm">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+            <CalendarDays className="h-7 w-7 text-primary" />
+          </div>
+          <p className="text-sm font-semibold text-foreground">Evento no disponible</p>
+          <p className="text-xs text-muted-foreground max-w-[240px]">
+            No se pudo cargar la información del evento.
+          </p>
+          <button
+            type="button"
+            onClick={onBack}
+            className="mt-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground"
+          >
+            Volver
+          </button>
         </div>
-        <p className="text-sm font-semibold text-foreground">Evento no disponible</p>
-        <p className="text-xs text-muted-foreground max-w-[240px]">
-          No se pudo cargar la información del evento.
-        </p>
-        <button
-          type="button"
-          onClick={onBack}
-          className="mt-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground"
-        >
-          Volver
-        </button>
       </div>
     );
   }
 
   if (loading) {
     return (
-      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-sm text-muted-foreground">Cargando evento…</p>
+      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 px-6">
+        <div className="flex flex-col items-center gap-3 rounded-2xl bg-card p-10 shadow-sm">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-sm text-muted-foreground">Cargando evento…</p>
+        </div>
       </div>
     );
   }
@@ -126,28 +130,30 @@ const EventDetailView = ({
   if (error || !invitationEvent) {
     return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 px-6 text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
-          <AlertCircle className="h-7 w-7 text-destructive" />
+        <div className="flex flex-col items-center gap-3 rounded-2xl bg-card p-10 shadow-sm">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
+            <AlertCircle className="h-7 w-7 text-destructive" />
+          </div>
+          <p className="text-sm font-semibold text-foreground">No se pudo cargar el evento</p>
+          <p className="text-xs text-muted-foreground max-w-[260px]">
+            {error || 'Intenta de nuevo más tarde.'}
+          </p>
+          <button
+            type="button"
+            onClick={() => setReloadKey((k) => k + 1)}
+            className="mt-1 flex items-center gap-1.5 rounded-full border border-primary/30 px-4 py-2 text-sm font-semibold text-primary"
+          >
+            <RefreshCw className="h-3.5 w-3.5" />
+            Reintentar
+          </button>
+          <button
+            type="button"
+            onClick={onBack}
+            className="mt-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground"
+          >
+            Volver
+          </button>
         </div>
-        <p className="text-sm font-semibold text-foreground">No se pudo cargar el evento</p>
-        <p className="text-xs text-muted-foreground max-w-[260px]">
-          {error || 'Intenta de nuevo más tarde.'}
-        </p>
-        <button
-          type="button"
-          onClick={() => setReloadKey((k) => k + 1)}
-          className="mt-1 flex items-center gap-1.5 rounded-full border border-primary/30 px-4 py-2 text-sm font-semibold text-primary"
-        >
-          <RefreshCw className="h-3.5 w-3.5" />
-          Reintentar
-        </button>
-        <button
-          type="button"
-          onClick={onBack}
-          className="mt-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground"
-        >
-          Volver
-        </button>
       </div>
     );
   }

@@ -3,7 +3,7 @@ import { Accordion } from '@lovable/components/ui/accordion';
 import { Button } from '@lovable/components/ui/button';
 import {
   FileText, MapPinPlus, CalendarDays, RotateCcw, HelpCircle,
-  ChevronLeft, ChevronUp, Save, Send,
+  ChevronLeft, ChevronUp, Save, Send, Loader2,
 } from 'lucide-react';
 import { toast } from '@lovable/components/ui/sonner';
 import ProgressIndicator from './ProgressIndicator';
@@ -158,7 +158,11 @@ function VenueCreatorBody({
                   void handlePublish();
                 }}
               >
-                <Send className="w-4 h-4 mr-2" />
+                {publishing ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Send className="w-4 h-4 mr-2" />
+                )}
                 {publishing ? 'Publicando…' : (submitLabel || 'Publicar lugar')}
               </Button>
             </div>
