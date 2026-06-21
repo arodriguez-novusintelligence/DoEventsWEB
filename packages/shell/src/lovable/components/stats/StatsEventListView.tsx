@@ -181,7 +181,7 @@ const StatsEventListView = ({ events, onBack, loading = false, loadError = null 
         <div className="mx-auto max-w-lg px-4 pt-4">
 
           {/* Event Header Card */}
-          <div className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3 shadow-sm">
+          <div className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card p-3 shadow-sm">
             {selectedEvent.eventImage ? (
               <img
                 src={selectedEvent.eventImage}
@@ -189,7 +189,7 @@ const StatsEventListView = ({ events, onBack, loading = false, loadError = null 
                 className="h-20 w-20 shrink-0 rounded-xl object-cover"
               />
             ) : (
-              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl bg-muted">
+              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl bg-muted ring-2 ring-primary/20">
                 <MessageSquare className="h-7 w-7 text-muted-foreground" />
               </div>
             )}
@@ -223,7 +223,7 @@ const StatsEventListView = ({ events, onBack, loading = false, loadError = null 
 
           {/* Section Title */}
           <div className="mt-6">
-            <h2 className="text-xl font-bold text-foreground">Opciones de estadísticas</h2>
+            <h2 className="text-xl font-extrabold text-foreground">Opciones de estadísticas</h2>
             <p className="mt-1 text-xs text-muted-foreground">
               Selecciona el tipo de estadística que deseas consultar
             </p>
@@ -278,7 +278,7 @@ const StatsEventListView = ({ events, onBack, loading = false, loadError = null 
           {Object.entries(statusConfig).map(([status, cfg]) => {
             const count = events.filter(e => e.eventStatus === status).length;
             return (
-              <div key={status} className="flex flex-col items-center rounded-xl bg-card p-3 shadow-sm">
+              <div key={status} className="flex flex-col items-center rounded-xl border border-border/60 bg-card p-3 shadow-sm">
                 <span className="text-xl font-bold text-card-foreground">{count}</span>
                 <span className={`mt-1 rounded-full px-2 py-0.5 text-[9px] font-medium ${cfg.className}`}>
                   {cfg.label}
@@ -301,7 +301,7 @@ const StatsEventListView = ({ events, onBack, loading = false, loadError = null 
                 <button
                   key={event.id}
                   onClick={() => setSelectedEvent(event)}
-                  className="flex w-full items-center gap-3 rounded-xl bg-card p-4 shadow-sm transition-colors hover:bg-accent/50"
+                  className="flex w-full items-center gap-3 rounded-xl border border-border/60 bg-card p-4 shadow-sm transition-colors hover:bg-accent/50"
                 >
                   {event.eventImage ? (
                     <Avatar className="h-14 w-14">
@@ -350,7 +350,7 @@ const StatsEventListView = ({ events, onBack, loading = false, loadError = null 
                 <button
                   key={event.id}
                   onClick={() => setSelectedEvent(event)}
-                  className="flex w-full items-center gap-3 rounded-xl bg-card p-4 shadow-sm transition-colors hover:bg-accent/50 opacity-90"
+                  className="flex w-full items-center gap-3 rounded-xl border border-border/60 bg-card p-4 shadow-sm transition-colors hover:bg-accent/50 opacity-90"
                 >
                   {event.eventImage ? (
                     <Avatar className="h-14 w-14">

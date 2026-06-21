@@ -197,7 +197,7 @@ const InvitationEventDetailView = ({
 
       {/* Image carousel */}
       <div className="px-4">
-        <div className="relative rounded-2xl overflow-hidden">
+        <div className="relative rounded-2xl overflow-hidden border border-border/60 shadow-sm ring-2 ring-primary/20">
           {images.length > 0 ? (
             <button
               type="button"
@@ -245,28 +245,28 @@ const InvitationEventDetailView = ({
               if (onLike) onLike();
               else setLikedLocal((v) => !v);
             }}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/40 text-primary"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/40 text-primary shadow-sm ring-2 ring-primary/20 transition-transform active:scale-95"
           >
             <Heart className={`h-5 w-5 ${liked ? 'fill-primary' : ''}`} />
           </button>
           <button
             type="button"
             onClick={onChat}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/40 text-primary"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/40 text-primary shadow-sm ring-2 ring-primary/20 transition-transform active:scale-95"
           >
             <MessageSquare className="h-5 w-5" />
           </button>
           <button
             type="button"
             onClick={onReply}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/40 text-primary"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/40 text-primary shadow-sm ring-2 ring-primary/20 transition-transform active:scale-95"
           >
             <Reply className="h-5 w-5" />
           </button>
           <button
             type="button"
             onClick={onShare}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/40 text-primary"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/40 text-primary shadow-sm ring-2 ring-primary/20 transition-transform active:scale-95"
           >
             <Share2 className="h-5 w-5" />
           </button>
@@ -275,7 +275,7 @@ const InvitationEventDetailView = ({
 
       {/* Summary card */}
       <div className="px-4 mt-3">
-        <div className="rounded-2xl bg-card p-4 shadow-sm space-y-4">
+        <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <div className="flex items-center gap-2 mb-2">

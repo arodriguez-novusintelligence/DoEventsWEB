@@ -13,13 +13,15 @@ const PreferencesRefundSection = () => {
   return (
     <div className="divide-y divide-border space-y-6">
       <div className="flex items-center gap-2 pb-2">
-        <RotateCcw className="h-5 w-5 text-primary" />
+        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
+          <RotateCcw className="h-5 w-5 text-primary" />
+        </span>
         <div>
           <h2 className="text-base font-extrabold text-foreground">Preferencias y reembolsos</h2>
           <p className="text-xs text-muted-foreground">Configura reservas y política de devolución</p>
         </div>
       </div>
-      <div className="rounded-2xl bg-card border border-border p-4 space-y-5 shadow-sm">
+      <div className="rounded-2xl bg-card border border-border/60 p-4 space-y-5 shadow-sm">
         <div className="form-section">
           <Label className="form-label">Preferencias en las reservas</Label>
         <p className="form-sublabel text-sm text-muted-foreground">
@@ -71,7 +73,7 @@ const PreferencesRefundSection = () => {
         </div>
       </div>
 
-      <div className="rounded-2xl bg-card border border-border p-4 shadow-sm">
+      <div className="rounded-2xl bg-card border border-border/60 p-4 shadow-sm">
       <div className="form-section">
         <Label className="form-label">¿Cuándo pueden solicitar reembolsos? *</Label>
         <RadioGroup

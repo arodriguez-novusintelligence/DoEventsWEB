@@ -78,7 +78,7 @@ function VenueCreatorBody({
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border shadow-sm">
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/60 shadow-sm">
         <div className="container max-w-3xl mx-auto px-4 py-3">
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" className="shrink-0 rounded-full" onClick={() => onBack?.(form)}>
@@ -140,7 +140,7 @@ function VenueCreatorBody({
       ) : (
         <div className="fixed bottom-6 right-6 z-50">
           {showActions && (
-            <div className="absolute bottom-16 right-0 bg-card rounded-xl shadow-lg border border-border p-2 space-y-1 min-w-[200px]">
+            <div className="absolute bottom-16 right-0 bg-card rounded-xl shadow-xl border border-border/60 p-2 space-y-1 min-w-[200px]">
               {onSaveDraft && (
                 <Button variant="ghost" className="w-full justify-start" onClick={() => void handleSaveDraft()}>
                   <Save className="w-4 h-4 mr-2" />

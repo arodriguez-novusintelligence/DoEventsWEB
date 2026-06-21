@@ -5,7 +5,7 @@ import {
   DrawerTitle,
 } from '@lovable/components/ui/drawer';
 import { Avatar, AvatarFallback } from '@lovable/components/ui/avatar';
-import { Globe, Lock, ImagePlus, X } from 'lucide-react';
+import { Globe, Lock, ImagePlus, Repeat2, X } from 'lucide-react';
 import { useState, useRef } from 'react';
 import { cn } from '@lovable/lib/utils';
 import type { Post } from '@lovable/data/mockData';
@@ -85,11 +85,14 @@ const RepostSheet = ({ open, onOpenChange, post, onPublishRepost }: RepostSheetP
       <DrawerContent>
         <div className="mx-auto w-full max-w-lg">
           <DrawerHeader className="text-left">
-            <DrawerTitle className="text-2xl font-bold text-primary">
+            <DrawerTitle className="flex items-center gap-2 text-2xl font-extrabold text-primary">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
+                <Repeat2 className="h-5 w-5" />
+              </span>
               Repostear
             </DrawerTitle>
           </DrawerHeader>
-          <div className="max-h-[65vh] overflow-y-auto px-4 pb-6">
+          <div className="max-h-[90dvh] overflow-y-auto px-4 pb-6">
             <div className="space-y-4">
               {/* Image previews */}
               {images.length > 0 && (
@@ -126,7 +129,7 @@ const RepostSheet = ({ open, onOpenChange, post, onPublishRepost }: RepostSheetP
               />
 
               {/* Original post preview */}
-              <div className="rounded-xl border border-border p-3">
+              <div className="rounded-xl border border-border/60 bg-card p-3 shadow-sm">
                 <div className="mb-2 flex items-center gap-2">
                   <Avatar className="h-8 w-8">
                     <AvatarFallback className="bg-accent text-xs font-semibold text-accent-foreground">
@@ -163,7 +166,7 @@ const RepostSheet = ({ open, onOpenChange, post, onPublishRepost }: RepostSheetP
               </div>
 
               {/* Input section */}
-              <div className="space-y-4 rounded-xl border border-border p-4">
+              <div className="space-y-4 rounded-xl border border-border/60 bg-card p-4 shadow-sm">
                 <div>
                   <p className="text-sm font-semibold text-card-foreground">
                     ¡Ponle un título que llame la atención!

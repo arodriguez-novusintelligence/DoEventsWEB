@@ -166,7 +166,7 @@ const ImageCarousel = ({ images, className }: ImageCarouselProps) => {
     <>
       {images.length === 1 ? (
         <div className="px-4">
-          <div className="overflow-hidden rounded-xl border border-border/60 ring-2 ring-primary/20">
+          <div className="overflow-hidden rounded-xl border border-border/60 shadow-sm ring-2 ring-primary/20">
           <MediaItem
             src={images[0]}
             className={cn('rounded-lg', className)}
@@ -176,7 +176,7 @@ const ImageCarousel = ({ images, className }: ImageCarouselProps) => {
         </div>
       ) : (
         <div className="relative px-4">
-          <div className="overflow-hidden rounded-xl border border-border/60 ring-2 ring-primary/20" ref={emblaRef}>
+          <div className="overflow-hidden rounded-xl border border-border/60 shadow-sm ring-2 ring-primary/20" ref={emblaRef}>
             <div className="flex">
               {images.map((src, i) => (
                 <div key={i} className="min-w-0 flex-[0_0_100%]">

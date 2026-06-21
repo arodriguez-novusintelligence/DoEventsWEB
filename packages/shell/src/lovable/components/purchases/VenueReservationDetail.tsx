@@ -93,7 +93,7 @@ export const VenueReservationDetail = () => {
   if (!booking) {
     return (
       <div className="mx-auto max-w-lg px-4 py-16 text-center">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
           <Building2 className="h-7 w-7 text-primary" />
         </div>
         <p className="mt-3 text-sm font-medium text-foreground">Reserva no encontrada</p>
@@ -116,7 +116,7 @@ export const VenueReservationDetail = () => {
           ← Reservas de lugares
         </button>
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-foreground/15">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-foreground/15 ring-2 ring-primary-foreground/20">
             <Building2 className="h-6 w-6" />
           </div>
           <div>
@@ -129,7 +129,7 @@ export const VenueReservationDetail = () => {
       </div>
 
       <div className="px-4 pt-4 space-y-3">
-        <div className="rounded-2xl bg-card p-4 shadow-sm space-y-3">
+        <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm space-y-3">
           <div className="flex items-start gap-3 text-sm">
             <Calendar className="h-4 w-4 text-primary shrink-0 mt-0.5" />
             <span>{formatDates(booking.selectedDates)}</span>
@@ -145,7 +145,7 @@ export const VenueReservationDetail = () => {
         </div>
 
         {booking.services?.length > 0 && (
-          <div className="rounded-2xl bg-card p-4 shadow-sm">
+          <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
             <p className="text-xs font-semibold text-muted-foreground mb-2">Servicios incluidos</p>
             <ul className="space-y-1 text-sm">
               {booking.services.map((svc, i) => (

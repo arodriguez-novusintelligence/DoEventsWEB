@@ -28,7 +28,9 @@ const FAQSection = () => {
   return (
     <div className="form-section">
       <div className="flex items-center gap-2 mb-1">
-        <HelpCircle className="h-5 w-5 text-primary" />
+        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
+          <HelpCircle className="h-5 w-5 text-primary" />
+        </span>
         <Label className="form-label mb-0">Preguntas frecuentes</Label>
       </div>
       <p className="form-sublabel text-sm text-muted-foreground">
@@ -36,7 +38,7 @@ const FAQSection = () => {
       </p>
 
       {form.faqs.length === 0 ? (
-        <div className="mt-4 rounded-xl border border-dashed border-border bg-secondary/20 p-6 text-center">
+        <div className="mt-4 rounded-xl border border-dashed border-primary/25 bg-secondary/20 p-6 text-center shadow-sm">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
             <HelpCircle className="h-7 w-7 text-primary" />
           </div>
@@ -49,7 +51,7 @@ const FAQSection = () => {
       ) : (
         <div className="space-y-4 mt-4">
           {form.faqs.map((faq, index) => (
-            <div key={faq.id} className="p-4 rounded-xl border border-border bg-secondary/20 shadow-sm">
+            <div key={faq.id} className="p-4 rounded-xl border border-border/60 bg-secondary/20 shadow-sm">
               <div className="flex items-start gap-3">
                 <div className="flex-1 space-y-3">
                   <div>

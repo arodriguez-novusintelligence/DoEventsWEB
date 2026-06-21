@@ -399,7 +399,7 @@ const VenueDetailReservation = ({
           <img src={venue.image} alt={venue.name} className="h-full w-full object-cover" />
           <button
             onClick={onBack}
-            className="absolute left-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-card/90 shadow-sm backdrop-blur"
+            className="absolute left-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-card/90 shadow-sm ring-2 ring-primary/20 backdrop-blur"
             aria-label="Volver"
           >
             <ChevronLeft className="h-5 w-5 text-foreground" />
@@ -411,7 +411,7 @@ const VenueDetailReservation = ({
 
         <div className="mx-auto max-w-lg space-y-4 px-4 pt-4">
           {/* Summary card */}
-          <section className="rounded-2xl bg-card p-4 shadow-sm">
+          <section className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
             <h1 className="text-xl font-bold text-foreground">{venue.name}</h1>
             <p className="mt-1 text-sm text-foreground/80">{venue.address}</p>
 
@@ -467,7 +467,7 @@ const VenueDetailReservation = ({
           </section>
 
           {/* Price */}
-          <section className="rounded-2xl bg-card p-4 shadow-sm">
+          <section className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
             <p className="text-sm font-medium text-primary">Valor Reserva</p>
             <p className="mt-1 text-2xl font-bold text-foreground">{fmt(pricePerDay)}</p>
             <p className="text-[11px] text-muted-foreground">IVA incluido / por día</p>
@@ -484,7 +484,7 @@ const VenueDetailReservation = ({
           </section>
 
           {/* Calendar */}
-          <section className="rounded-2xl bg-card p-4 shadow-sm">
+          <section className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
             <div className="flex items-center justify-between">
               <p className="text-sm font-semibold text-foreground">Calendario de reserva</p>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -576,7 +576,7 @@ const VenueDetailReservation = ({
           </section>
 
           {/* Servicios publicados */}
-          <section className="rounded-2xl bg-card p-4 shadow-sm">
+          <section className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
             <div className="flex items-center justify-between">
               <p className="text-sm font-semibold text-foreground">Servicios adicionales</p>
               <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
@@ -650,7 +650,7 @@ const VenueDetailReservation = ({
           </section>
 
           {/* Host */}
-          <section className="rounded-2xl bg-card p-4 shadow-sm">
+          <section className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
             <p className="text-sm font-semibold text-foreground">Datos del Host</p>
             <p className="mt-2 text-[11px] text-muted-foreground">Correo electrónico</p>
             <div className="flex items-center justify-between">
@@ -714,7 +714,7 @@ const VenueDetailReservation = ({
             <p className="mt-1 text-sm font-medium text-primary">{venue.name}</p>
           </div>
 
-          <section className="rounded-2xl bg-card p-4 shadow-sm">
+          <section className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
@@ -744,7 +744,7 @@ const VenueDetailReservation = ({
             </div>
           </section>
 
-          <section className="rounded-2xl bg-card p-4 shadow-sm">
+          <section className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
             <p className="text-sm font-semibold text-foreground">Resumen de pago</p>
             <div className="mt-3 space-y-2 text-sm">
               <div className="flex justify-between">
@@ -774,7 +774,7 @@ const VenueDetailReservation = ({
           </section>
 
 
-          <section className="rounded-2xl bg-card p-4 shadow-sm">
+          <section className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
             <p className="text-sm font-semibold text-foreground">Datos del comprador</p>
             <div className="mt-3 grid grid-cols-2 gap-3">
               <div>

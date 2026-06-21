@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Briefcase, Calendar, CreditCard, Hash, AlertCircle, Loader2 } from 'lucide-react';
+import { Briefcase, Calendar, CreditCard, Hash, AlertCircle, Loader2, RefreshCw } from 'lucide-react';
 import {
   fetchUserServiceBookings,
   RootState,
@@ -59,10 +59,10 @@ export const ServiceReservationDetail = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-secondary">
-        <div className="rounded-2xl bg-card p-8 shadow-sm text-center">
-          <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary" />
-          <p className="mt-3 text-sm text-muted-foreground">Cargando reserva…</p>
+      <div className="mx-auto flex min-h-screen max-w-lg items-center justify-center bg-secondary px-4 pb-24">
+        <div className="flex flex-col items-center gap-3 rounded-2xl bg-card px-8 py-12 shadow-sm">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-sm text-muted-foreground">Cargando reserva…</p>
         </div>
       </div>
     );
@@ -82,6 +82,7 @@ export const ServiceReservationDetail = () => {
           className="mt-4 rounded-full"
           onClick={() => setReloadKey((k) => k + 1)}
         >
+          <RefreshCw className="mr-2 h-4 w-4" />
           Reintentar
         </Button>
       </div>
@@ -114,7 +115,7 @@ export const ServiceReservationDetail = () => {
           ← Reservas de servicios
         </button>
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-foreground/15">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-foreground/15 ring-2 ring-primary-foreground/20">
             <Briefcase className="h-6 w-6" />
           </div>
           <div>
@@ -127,7 +128,7 @@ export const ServiceReservationDetail = () => {
       </div>
 
       <div className="px-4 pt-4 space-y-3">
-        <div className="rounded-2xl bg-card p-4 shadow-sm space-y-3">
+        <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm space-y-3">
           <div className="flex items-center gap-3 text-sm">
             <Calendar className="h-4 w-4 text-primary shrink-0" />
             <span>{formatDateRange(booking.startDate, booking.endDate)}</span>
@@ -143,7 +144,7 @@ export const ServiceReservationDetail = () => {
         </div>
 
         {booking.additionalServices?.length > 0 && (
-          <div className="rounded-2xl bg-card p-4 shadow-sm">
+          <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
             <p className="text-xs font-semibold text-muted-foreground mb-2">Servicios adicionales</p>
             <ul className="space-y-1 text-sm">
               {booking.additionalServices.map((svc, i) => (

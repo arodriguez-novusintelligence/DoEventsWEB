@@ -32,7 +32,7 @@ export function GroupDropZone({ group, guests, isUngrouped = false, onToggleFavo
     <section
       className={`transition-all duration-300 rounded-2xl border border-border/60 bg-card shadow-sm p-4
         ${isDropTarget ? 'border-primary bg-primary/5 shadow-lg scale-[1.02]' : ''}
-        ${guests.length === 0 && draggedGuest ? 'border-dashed border-muted bg-muted/20 min-h-24 flex flex-col items-center justify-center' : ''}`}
+        ${guests.length === 0 && draggedGuest ? 'border-dashed border-primary/25 bg-muted/20 min-h-24 flex flex-col items-center justify-center' : ''}`}
       onDragEnter={(e) => { e.preventDefault(); setCounter(c => c + 1); if (counter === 0) setIsDropTarget(true); }}
       onDragLeave={(e) => { e.preventDefault(); setCounter(c => c - 1); if (counter <= 1) setIsDropTarget(false); }}
       onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; }}
@@ -48,8 +48,8 @@ export function GroupDropZone({ group, guests, isUngrouped = false, onToggleFavo
       }}
     >
       <div className="flex items-center gap-2 mb-3">
-        {isUngrouped ? (<><span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20"><Users className="h-4 w-4 text-primary" /></span><h2 className="text-base font-semibold text-card-foreground">Sin grupo</h2></>)
-          : group ? (<><div className="w-4 h-4 rounded-full" style={{ backgroundColor: group.color }} /><h2 className="text-base font-semibold text-card-foreground">{group.name}</h2></>)
+        {isUngrouped ? (<><span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20"><Users className="h-4 w-4 text-primary" /></span><h2 className="text-base font-extrabold text-card-foreground">Sin grupo</h2></>)
+          : group ? (<><div className="w-4 h-4 rounded-full ring-2 ring-border/40" style={{ backgroundColor: group.color }} /><h2 className="text-base font-extrabold text-card-foreground">{group.name}</h2></>)
           : null}
         <Badge variant="soft" className="text-xs">{guests.length}</Badge>
         {isDropTarget && (<Badge variant="default" className="text-xs animate-pulse">Soltar aquí</Badge>)}

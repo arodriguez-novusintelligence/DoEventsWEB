@@ -218,14 +218,16 @@ const AccessControlView = ({ event, onBack }: AccessControlViewProps) => {
   return (
     <div className="min-h-screen bg-background pt-16 pb-24">
       {/* Top bar */}
-      <div className="fixed top-0 left-0 right-0 z-20 flex items-center gap-3 border-b border-border bg-card px-4 py-3">
+      <div className="fixed top-0 left-0 right-0 z-20 flex items-center gap-3 border-b border-border/60 bg-card px-4 py-3 shadow-sm">
         <button onClick={onBack} className="text-foreground">
           <ChevronLeft className="h-5 w-5" />
         </button>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4 text-primary" />
-            <h1 className="text-base font-bold text-foreground truncate">Control de accesos</h1>
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
+              <ShieldCheck className="h-5 w-5 text-primary" />
+            </span>
+            <h1 className="text-base font-extrabold text-foreground truncate">Control de accesos</h1>
           </div>
           <p className="text-xs text-muted-foreground truncate">{event.eventName}</p>
         </div>
@@ -264,7 +266,7 @@ const AccessControlView = ({ event, onBack }: AccessControlViewProps) => {
             {/* Summary cards row */}
             <section className="grid grid-cols-5 gap-2">
               {summaryCards.map(card => (
-                <div key={card.label} className="flex flex-col items-center rounded-xl border border-border bg-card p-3 text-center">
+                <div key={card.label} className="flex flex-col items-center rounded-xl border border-border/60 bg-card p-3 text-center shadow-sm">
                   {card.icon && <card.icon className="h-4 w-4 text-muted-foreground mb-1" />}
                   <span className="text-[10px] text-muted-foreground whitespace-pre-line leading-tight">{card.label}</span>
                   <span className={`text-lg font-bold mt-0.5 ${card.color || 'text-card-foreground'}`}>{card.value}</span>
@@ -273,8 +275,8 @@ const AccessControlView = ({ event, onBack }: AccessControlViewProps) => {
             </section>
 
             {/* Donut chart */}
-            <section className="rounded-2xl border border-border bg-card p-5">
-              <h2 className="text-base font-bold text-foreground mb-4">Estados de Acceso</h2>
+            <section className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
+              <h2 className="text-base font-extrabold text-foreground mb-4">Estados de Acceso</h2>
               <ResponsiveContainer width="100%" height={240}>
                 <PieChart>
                   <Pie data={pieData} cx="50%" cy="50%" innerRadius={60} outerRadius={95} paddingAngle={2} dataKey="value" strokeWidth={0}>
@@ -289,8 +291,8 @@ const AccessControlView = ({ event, onBack }: AccessControlViewProps) => {
             </section>
 
             {/* Bar chart */}
-            <section className="rounded-2xl border border-border bg-card p-5">
-              <h2 className="text-base font-bold text-foreground mb-4">Tráfico por Tipo de Boleta</h2>
+            <section className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
+              <h2 className="text-base font-extrabold text-foreground mb-4">Tráfico por Tipo de Boleta</h2>
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={barData} barCategoryGap="20%">
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />

@@ -73,7 +73,14 @@ export function EditGuestModal({ guest, open, onOpenChange, onUpdateGuest, group
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent stacked={nested} className="sm:max-w-md rounded-2xl shadow-sm">
-        <DialogHeader><DialogTitle className="text-xl font-semibold text-primary flex items-center gap-2"><UserRound className="h-5 w-5" />Editar invitado</DialogTitle></DialogHeader>
+        <DialogHeader>
+          <DialogTitle className="text-xl font-extrabold text-primary flex items-center gap-2">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
+              <UserRound className="h-5 w-5" />
+            </span>
+            Editar invitado
+          </DialogTitle>
+        </DialogHeader>
         <form onSubmit={submit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2"><Label>Nombre *</Label><Input className="rounded-xl" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></div>

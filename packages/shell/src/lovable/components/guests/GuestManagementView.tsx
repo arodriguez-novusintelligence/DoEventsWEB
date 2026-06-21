@@ -175,8 +175,10 @@ const GuestManagementView = ({ onBack, guestsController, userId, initialEventId,
   if (guestsLoading && !invitationOpen) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-secondary px-4">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="mt-3 text-sm font-medium text-muted-foreground">Cargando invitados…</p>
+        <div className="flex flex-col items-center gap-3 rounded-2xl bg-card px-8 py-10 shadow-sm">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-sm font-medium text-muted-foreground">Cargando invitados…</p>
+        </div>
       </div>
     );
   }
@@ -220,11 +222,11 @@ const GuestManagementView = ({ onBack, guestsController, userId, initialEventId,
             </div>
           </div>
           <div className="mt-2 flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-foreground/15 backdrop-blur">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-foreground/15 ring-2 ring-primary-foreground/20 backdrop-blur">
               <Users className="h-5 w-5 text-primary-foreground" />
             </div>
             <div className="min-w-0">
-              <h1 className="text-lg font-bold text-primary-foreground leading-tight truncate">Gestión de invitados</h1>
+              <h1 className="text-lg font-extrabold text-primary-foreground leading-tight truncate">Gestión de invitados</h1>
               <p className="text-[11px] text-primary-foreground/80">{guests.length} Total · {favoriteGuests.length} Favoritos</p>
             </div>
           </div>

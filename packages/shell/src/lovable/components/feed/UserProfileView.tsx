@@ -636,11 +636,11 @@ const UserProfileView = ({ user, posts, isFollowed, onBack, onFollow, onRequestF
       </button>
 
       {/* Hero Profile Card */}
-      <div className="relative overflow-hidden rounded-2xl bg-card shadow-sm">
+      <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
         <div className="h-24 bg-gradient-to-br from-accent via-primary/60 to-primary" />
         <div className="relative px-5 pb-5">
           <div className="relative -mt-12 mb-3">
-            <Avatar className="h-20 w-20 border-4 border-card shadow-lg">
+            <Avatar className="h-20 w-20 border-4 border-card shadow-lg ring-2 ring-primary/20">
               <AvatarFallback className="bg-primary/10 text-xl font-bold text-primary">{user.initials}</AvatarFallback>
             </Avatar>
           </div>
@@ -648,7 +648,7 @@ const UserProfileView = ({ user, posts, isFollowed, onBack, onFollow, onRequestF
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold text-foreground truncate">{user.name}</h2>
+                <h2 className="text-lg font-extrabold text-foreground truncate">{user.name}</h2>
                 <Shield className="h-4 w-4 text-primary shrink-0" />
               </div>
               <p className="text-sm text-muted-foreground">@{username}</p>
@@ -716,8 +716,8 @@ const UserProfileView = ({ user, posts, isFollowed, onBack, onFollow, onRequestF
       </div>
 
       {!canView ? (
-        <div className="rounded-2xl bg-card p-8 shadow-sm flex flex-col items-center text-center gap-3">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+        <div className="rounded-2xl border border-border/60 bg-card p-8 shadow-sm flex flex-col items-center text-center gap-3">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
             <Lock className="h-7 w-7 text-primary" />
           </div>
           <div>

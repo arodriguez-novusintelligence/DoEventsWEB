@@ -65,7 +65,7 @@ const TopHeader = ({
         <div className="mx-auto flex max-w-lg items-center justify-between px-4 py-3">
           <button
             onClick={() => setMenuOpen(true)}
-            className="relative rounded-xl bg-card p-2.5 text-primary shadow-sm transition-colors hover:bg-accent"
+            className="relative rounded-xl bg-card p-2.5 text-primary shadow-sm ring-2 ring-primary/20 transition-colors hover:bg-accent"
           >
             <SlidersHorizontal className="h-5 w-5" />
             {unreadMessages > 0 && (
@@ -86,9 +86,9 @@ const TopHeader = ({
           <div className="flex items-center gap-2">
             <button
               onClick={() => setNotifOpen(true)}
-              className="relative p-1 text-primary transition-colors hover:opacity-80"
+              className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-card text-primary shadow-sm ring-2 ring-primary/20 transition-colors hover:bg-accent"
             >
-              <Bell className="h-6 w-6" strokeWidth={2} />
+              <Bell className="h-5 w-5" strokeWidth={2} />
               {unreadCount > 0 && (
                 <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground">
                   {unreadCount > 999 ? '999+' : unreadCount}
@@ -98,7 +98,7 @@ const TopHeader = ({
             <button
               type="button"
               onClick={onSearch}
-              className="rounded-xl bg-card p-1.5 text-primary shadow-sm transition-colors hover:bg-accent"
+              className="rounded-xl bg-card p-1.5 text-primary shadow-sm ring-2 ring-primary/20 transition-colors hover:bg-accent"
               aria-label="Buscar"
             >
               <Search className="h-6 w-6" strokeWidth={2} />
