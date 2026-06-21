@@ -6,6 +6,7 @@ interface EventSalesDetailProps {
   onBack: () => void;
 }
 
+/** Empalme Lovable — delega en SalesStatsView con APIs reales (`useLiveEventStats`). */
 export const EventSalesDetail = ({ event, onBack }: EventSalesDetailProps) => (
   <SalesStatsView event={event} onBack={onBack} />
 );

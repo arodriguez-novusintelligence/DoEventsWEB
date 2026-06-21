@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@lovable/components/ui/sheet';
 import { Switch } from '@lovable/components/ui/switch';
-import { Bell, Mail, Eye, CheckCheck, Lock, ShieldAlert, Trash2 } from 'lucide-react';
+import { Bell, Mail, Eye, CheckCheck, Lock, ShieldAlert, Trash2, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface ChatSettings {
@@ -87,10 +87,17 @@ const ChatSettingsSheet = ({ open, onOpenChange, onBlockedClick }: Props) => {
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>Configuración del chat</SheetTitle>
-          <SheetDescription>
-            Administra notificaciones y privacidad de tus conversaciones.
-          </SheetDescription>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
+              <Settings className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <SheetTitle>Configuración del chat</SheetTitle>
+              <SheetDescription>
+                Administra notificaciones y privacidad de tus conversaciones.
+              </SheetDescription>
+            </div>
+          </div>
         </SheetHeader>
 
         <div className="mt-6 space-y-5">

@@ -7,8 +7,11 @@ export const PaymentsPanel = () => (
     title="Pagos y reembolsos"
     description="Consulta transacciones, estados de pago y solicitudes de devolución."
     icon={CreditCard}
+    badge="Finanzas"
   >
-    <AdminPaymentsTab />
+    <div className="rounded-2xl border border-border/60 bg-card shadow-sm">
+      <AdminPaymentsTab />
+    </div>
   </AdminPanelSection>
 );
 

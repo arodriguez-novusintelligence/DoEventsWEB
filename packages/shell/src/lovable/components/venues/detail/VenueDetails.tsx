@@ -63,7 +63,7 @@ const VenueDetails = ({ venue }: VenueDetailsProps) => {
               <MapPin className="w-4 h-4 text-primary" />
               <h4 className="text-sm font-semibold">Ubicación</h4>
             </div>
-            <div className="rounded-xl overflow-hidden border border-border">
+            <div className="rounded-xl overflow-hidden border border-border shadow-sm">
               {venue.coordinates && (
                 <div className="aspect-video bg-secondary/30 relative">
                   <iframe

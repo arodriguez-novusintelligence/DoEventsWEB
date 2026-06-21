@@ -33,7 +33,7 @@ const SalesStatsView = ({ event, onBack }: SalesStatsViewProps) => {
   return (
     <div className="min-h-screen bg-background pt-16 pb-24">
       {/* Top bar */}
-      <div className="fixed top-0 left-0 right-0 z-20 flex items-center gap-3 border-b border-border bg-card px-4 py-3">
+      <div className="fixed top-0 left-0 right-0 z-20 flex items-center gap-3 border-b border-border bg-gradient-to-b from-card to-card/95 px-4 py-3 shadow-sm">
         <button onClick={onBack} className="text-foreground">
           <ChevronLeft className="h-5 w-5" />
         </button>

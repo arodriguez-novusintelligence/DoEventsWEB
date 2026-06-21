@@ -36,7 +36,7 @@ const CreateFAB = ({ open, onOpenChange, onCreatePost, onCreateEvent, onCreateSe
             <span className="text-sm font-semibold text-card-foreground">
               {option.label}
             </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground ring-2 ring-primary/20">
               <option.icon className="h-5 w-5" />
             </div>
           </button>

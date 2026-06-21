@@ -56,9 +56,19 @@ export function GroupDropZone({ group, guests, isUngrouped = false, onToggleFavo
       </div>
       {guests.length === 0 && !draggedGuest ? (
         alwaysShow ? (
-          <p className="py-3 text-center text-xs text-muted-foreground">Sin invitados en este grupo</p>
+          <div className="py-6 text-center">
+            <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+              <Users className="h-7 w-7 text-primary" />
+            </div>
+            <p className="text-xs text-muted-foreground">Sin invitados en este grupo</p>
+          </div>
         ) : (
-          <div className="text-center text-muted-foreground"><Plus className="h-8 w-8 mx-auto mb-2 opacity-50" /><p className="text-sm">Soltar invitado aquí</p></div>
+          <div className="py-6 text-center text-muted-foreground">
+            <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+              <Plus className="h-7 w-7 text-primary" />
+            </div>
+            <p className="text-sm">Soltar invitado aquí</p>
+          </div>
         )
       ) : (
         <div className="space-y-3">

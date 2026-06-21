@@ -9,7 +9,9 @@ export const SupportSearchPanel = () => (
     icon={Search}
     badge="Soporte"
   >
-    <AdminSupportTab />
+    <div className="rounded-2xl border border-border/60 bg-card shadow-sm">
+      <AdminSupportTab />
+    </div>
   </AdminPanelSection>
 );
 

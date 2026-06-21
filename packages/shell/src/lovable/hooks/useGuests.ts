@@ -6,9 +6,13 @@
  * - `onSearchUser` en modales delega matching vía `searchUsers` de `@doevents/shared`.
  * - Export dual `useGuests` / `useApiGuests` para paridad imports Lovable.
  */
+import { useApiGuests } from '../../lovable-bridge/useApiGuests';
+
 export {
   useApiGuests as useGuests,
   useApiGuests,
-} from '../../lovable-bridge/useApiGuests';
+};
 
 export type { Guest, GuestGroup, CreateGuestRequest } from '@lovable/types/guest';
+
+export default useApiGuests;

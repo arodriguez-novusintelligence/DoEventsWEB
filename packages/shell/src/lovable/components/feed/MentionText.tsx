@@ -37,7 +37,7 @@ const MentionText = ({ text, className, onMentionClick }: MentionTextProps) => {
                 onMentionClick?.(mention);
               }}
               className={cn(
-                'inline font-semibold text-primary hover:underline cursor-pointer',
+                'inline font-semibold text-primary hover:text-primary/90 hover:underline cursor-pointer',
               )}
             >
               {part}

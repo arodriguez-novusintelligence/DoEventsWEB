@@ -9,7 +9,9 @@ export const AdminUsersPanel = () => (
     icon={Users}
     badge="Admin"
   >
-    <AdminStaffTab />
+    <div className="rounded-2xl border border-border/60 bg-card shadow-sm">
+      <AdminStaffTab />
+    </div>
   </AdminPanelSection>
 );
 

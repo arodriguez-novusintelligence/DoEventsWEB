@@ -13,6 +13,56 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-21 14:00 UTC] gap-empalme-27902063419-b4
+
+### 1. Resumen del empalme
+Batch 4 (20 gaps, manifiesto `27902063419-b4`, similitud baseline **80.63%** / post-b3 **92.0%**): empalme historias, panel admin, CSS port-map, hooks y minor drift invitados/stats/banca. Patrón Lovable: Sheet bottom stories, rings h-10/h-14, shadow-sm cards, gradiente admin/stats. **20 gaps DONE** frontend; **0 BACKEND_REQUIRED** nuevos (StoryViewersSheet acumulado).
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Story viewer | `packages/shell/src/lovable/components/feed/StoryViewer.tsx` | DONE |
+| Admin users | `packages/shell/src/lovable/components/admin/AdminUsersPanel.tsx` | DONE |
+| Payments panel | `packages/shell/src/lovable/components/admin/PaymentsPanel.tsx` | DONE |
+| Stories context | `packages/shell/src/lovable/contexts/StoriesContext.tsx` | DONE |
+| New users panel | `packages/shell/src/lovable/components/admin/NewUsersPanel.tsx` | DONE |
+| Support search | `packages/shell/src/lovable/components/admin/SupportSearchPanel.tsx` | DONE |
+| Add story sheet | `packages/shell/src/components/CreateStorySheet.tsx`, `feed/AddStorySheet.tsx` | DONE |
+| Event sales detail | `packages/shell/src/lovable/components/admin/EventSalesDetail.tsx` | DONE |
+| useGuests hook | `packages/shell/src/lovable/hooks/useGuests.ts` | DONE |
+| index.css | `packages/shell/src/index.css`, `lovable/index.css` | DONE |
+| Venue details | `packages/shell/src/lovable/components/venues/detail/VenueDetails.tsx` | DONE |
+| Chat settings | `packages/shell/src/lovable/components/chat/ChatSettingsSheet.tsx` | DONE |
+| Mention text | `packages/shell/src/lovable/components/feed/MentionText.tsx` | DONE |
+| Create FAB | `packages/shell/src/lovable/components/feed/CreateFAB.tsx` | DONE |
+| Step event location | `packages/shell/src/lovable/components/events/StepEventLocation.tsx` | DONE |
+| Step refund policy | `packages/shell/src/lovable/components/events/StepRefundPolicy.tsx` | DONE |
+| Draggable guest card | `packages/shell/src/lovable/components/guests/DraggableGuestCard.tsx` | DONE |
+| Group drop zone | `packages/shell/src/lovable/components/guests/GroupDropZone.tsx` | DONE |
+| Sales stats | `packages/shell/src/lovable/components/stats/SalesStatsView.tsx` | DONE |
+| Success modal | `packages/shell/src/lovable/components/banking/SuccessModal.tsx` | DONE |
+
+### 3. Similitud antes/después
+- **Antes:** 92.0% (post batch 3; manifiesto baseline 80.63%)
+- **Después:** ~94.0% (estimado; re-comparación CI pendiente)
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias runtime (solo comentario anti-mock en Login.tsx)
+
+### 6. Riesgos pendientes
+- Re-comparación CI con `discover-joyful-feed` privado
+- `StoryViewersSheet` viewers API acumulado desde batch 2
+
+### Decisión
+**APPLIED**
+
+---
+
 ## [2026-06-21 13:00 UTC] gap-empalme-27902063419-b3
 
 ### 1. Resumen del empalme

@@ -9,7 +9,9 @@ export const NewUsersPanel = () => (
     icon={UserPlus}
     badge="Recientes"
   >
-    <AdminNewUsersTab />
+    <div className="rounded-2xl border border-border/60 bg-card shadow-sm">
+      <AdminNewUsersTab />
+    </div>
   </AdminPanelSection>
 );
 

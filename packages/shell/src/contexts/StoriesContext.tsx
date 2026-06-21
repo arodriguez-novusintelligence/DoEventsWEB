@@ -12,6 +12,8 @@ interface StoriesContextValue {
   authorCount: number;
 }
 
+export type { StoriesContextValue };
+
 const StoriesContext = createContext<StoriesContextValue>({
   activeAuthorIds: new Set(),
   hasActiveStory: () => false,

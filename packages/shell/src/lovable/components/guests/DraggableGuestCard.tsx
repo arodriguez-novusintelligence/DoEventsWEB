@@ -39,7 +39,7 @@ export function DraggableGuestCard({
   const initials = `${guest.name.charAt(0)}${guest.lastName.charAt(0)}`.toUpperCase();
   return (
     <div
-      className={`bg-card rounded-xl px-3 py-2 shadow-sm border transition-all duration-200 hover:shadow-md
+      className={`bg-card rounded-xl px-3 py-2 shadow-sm border ring-1 ring-border/40 transition-all duration-200 hover:shadow-md
         ${isSelected ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/20'}
         ${isDragging ? 'opacity-50 scale-95 rotate-1' : ''}
         ${dragOver ? 'scale-[1.02] shadow-lg' : ''}

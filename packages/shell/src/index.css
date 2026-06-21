@@ -1,5 +1,5 @@
 /**
  * Punto de entrada CSS según `.lovable-port-map.json` (Lovable src/index.css).
- * Re-exporta tokens DSF de lovable/index.css.
+ * Re-exporta tokens DSF de lovable/index.css — incluye animate-fade-in-up, story-progress, floating-action-button.
  */
 @import './lovable/index.css';

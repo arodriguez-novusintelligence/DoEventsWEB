@@ -1,43 +1,31 @@
-# Gap empalme — resumen ejecutivo (batch 3)
+# Gap empalme — resumen ejecutivo (batch 4)
 
-**Run:** `gap-empalme-27902063419-b3`  
+**Run:** `gap-empalme-27902063419-b4`  
 **Fecha:** 2026-06-21  
 **Rama:** `feature/cicd/dev-automation`
 
 ## Resultado
 
-Batch 3 del manifiesto (20 gaps, similitud baseline **80.6%** / post-b2 **87.5%**). Tras empalme **~92.0%** (estimado). **17 gaps DONE** frontend; **3 BACKEND_REQUIRED** documentados.
+Batch 4 del manifiesto (20 gaps, similitud baseline **80.63%** / post-b3 **92.0%**). Tras empalme **~94.0%** (estimado). **20 gaps DONE** frontend; **0 BACKEND_REQUIRED** nuevos en este batch.
 
 ## Empalme realizado
 
 | Área | Cambios principales |
 |------|---------------------|
-| **EventInvitationModal** | Header CalendarDays h-10 ring; RefreshCw Reintentar; empty filtro Users h-14 ring |
-| **VenueDetail / EventsPage** | Shell discover Lovable: gradiente sticky, loading card shadow-sm, pb-24 |
-| **ScanQRSheet** | shadow-sm dialog; feedback success/error rings; API `scanTicketFromQr` |
-| **MapPage** | Loading Loader2 h-14 ring card; delega MapView con empty/error rings |
-| **AIAssistantView** | Header Sparkles h-10 ring; entity cards CheckCircle2 success |
-| **GlobalSearchView** | Header Search ring; tabs shadow-sm; eventos/usuarios API real |
-| **Admin panels** | Gradientes shadow-sm; AdminReportsPanel Loader2 + KPIs reales |
-| **TicketPurchaseFlow** | ShieldCheck checkout copy; redirect pasarela real (RISKY) |
-| **KycContext** | `refreshKyc`, `canSubmitDocuments: false` sin simular envío |
-| **Auth / NotFound / Terms / ProfileComments / EventDetail** | Verificados alineados batch previo |
-
-## Backend pendiente (batch 3)
-
-| Gap | Motivo |
-|-----|--------|
-| `KycCertificationView` | Endpoint `POST /users/{id}/kyc` — botón envío deshabilitado |
-| `PublishFlowModal` | Persistencia banco post-publicación — banner BACKEND_REQUIRED |
-| `GlobalSearchView` (tab posts) | Búsqueda full-text publicaciones — filtra feed reciente |
+| **StoryViewer** | Implementación en ruta Lovable; fullscreen; barras progreso animadas; Loader2; tap prev/next; APIs `fetchUserStories` |
+| **AddStorySheet** | Sheet bottom shadcn; header Sparkles ring; tabs imagen/video/estado/live; `createStory`/`uploadMediaFile` real |
+| **Admin panels** | Users/Payments/NewUsers/Support con AdminPanelSection + card shadow-sm y badges |
+| **StoriesContext / useGuests** | Re-export tipado; hook dual sin mocks |
+| **index.css** | `animate-fade-in-up`, `animate-story-progress`, port-map DSF |
+| **Minor drift** | VenueDetails, ChatSettings, CreateFAB, MentionText, StepRefundPolicy, guest cards, SalesStatsView gradient, SuccessModal |
 
 ## Backend pendiente (acumulado)
 
-Ver `ReglasAgente/impacto-backend.md` — StoryViewersSheet, banking delete, PaymentGateway PSP, EditProfile, Booking add-ons, PULEP.
+Ver `ReglasAgente/impacto-backend.md` — StoryViewersSheet viewers API, banking delete, KYC submit, GlobalSearch posts, PaymentGateway PSP, etc.
 
 ## Gaps restantes
 
-**58** (de 118 totales pendientes; batches 4–6 del manifiesto `27902063419` por ejecutar en CI).
+**38** (de 118 totales pendientes; batches 5–6 del manifiesto `27902063419` por ejecutar en CI).
 
 ## Validación
 

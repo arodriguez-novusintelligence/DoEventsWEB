@@ -9,3 +9,5 @@ export {
   useActiveStoryAuthors,
   useStories,
 } from '../../../contexts/StoriesContext';
+
+export type { StoriesContextValue } from '../../../contexts/StoriesContext';

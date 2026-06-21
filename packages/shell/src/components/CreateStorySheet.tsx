@@ -1,16 +1,23 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-
+import { ImagePlus, Loader2, Radio, Sparkles, Type, Video } from 'lucide-react';
 import {
-  Button,
-  TextField,
   createStory,
   resolveDisplayLocation,
   updateStoryLivePlayback,
   uploadMediaFile,
   useToast,
 } from '@doevents/shared';
-
 import { getStoredUserLocation } from '@doevents/shared';
+import { Button } from '@lovable/components/ui/button';
+import { Textarea } from '@lovable/components/ui/textarea';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@lovable/components/ui/sheet';
+import { cn } from '@lovable/lib/utils';
 
 function storyLocationLabel(location: ReturnType<typeof getStoredUserLocation>): string | undefined {
   if (!location) return undefined;
@@ -132,29 +139,14 @@ export const CreateStorySheet: React.FC<CreateStorySheetProps> = ({ open, onClos
 
   }, [open, stopLiveStream]);
 
-
-
-  if (!open) return null;
-
-
-
   const reset = () => {
-
     setDescription('');
-
     setMediaIds([]);
-
     setMediaPreview(null);
-
     setMode('image');
-
     setMediaKind('image');
-
     stopLiveStream();
-
   };
-
-
 
   const handleMediaChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
 
@@ -436,202 +428,149 @@ export const CreateStorySheet: React.FC<CreateStorySheetProps> = ({ open, onClos
 
 
 
+  const modeOptions: { id: StoryMode; label: string; icon: typeof ImagePlus }[] = [
+    { id: 'image', label: 'Imagen', icon: ImagePlus },
+    { id: 'video', label: 'Video', icon: Video },
+    { id: 'text', label: 'Estado', icon: Type },
+    { id: 'live', label: 'En vivo', icon: Radio },
+  ];
+
   return (
+    <Sheet open={open} onOpenChange={(next) => { if (!next) onClose(); }}>
+      <SheetContent side="bottom" className="max-h-[92vh] overflow-y-auto rounded-t-2xl px-4 pb-8 pt-6">
+        <SheetHeader className="text-left">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
+              <Sparkles className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <SheetTitle>{mode === 'live' && liveActive ? 'En vivo' : 'Nueva historia'}</SheetTitle>
+              <SheetDescription>
+                Comparte momentos que desaparecen en 24 horas. Sin mocks — publicación vía API real.
+              </SheetDescription>
+            </div>
+          </div>
+        </SheetHeader>
 
-    <div className="de-sheet-overlay de-sheet-overlay--above-dock" onClick={onClose} role="presentation">
-
-      <div className="de-sheet de-sheet--story" onClick={(e) => e.stopPropagation()}>
-
-        <header className="de-sheet__header">
-
-          <h2>{mode === 'live' && liveActive ? 'En vivo' : 'Nueva historia'}</h2>
-
-          <button type="button" className="de-sheet__close" onClick={onClose}>×</button>
-
-        </header>
-
-        <div className="de-sheet__body de-form-stack">
-
-          <div className="de-story-mode-tabs">
-
-            {([
-
-              ['image', 'Imagen'],
-
-              ['video', 'Video'],
-
-              ['text', 'Estado'],
-
-              ['live', 'En vivo'],
-
-            ] as const).map(([id, label]) => (
-
+        <div className="mt-5 space-y-4">
+          <div className="flex flex-wrap gap-2">
+            {modeOptions.map(({ id, label, icon: Icon }) => (
               <button
-
                 key={id}
-
                 type="button"
-
-                className={`de-story-mode-tab${mode === id ? ' de-story-mode-tab--active' : ''}`}
-
+                className={cn(
+                  'inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors',
+                  mode === id
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-border bg-card text-muted-foreground hover:bg-accent/50',
+                )}
                 onClick={() => {
-
                   if (liveActive && id !== 'live') return;
-
                   setMode(id);
-
                 }}
-
                 disabled={liveActive && id !== 'live'}
-
               >
-
+                <Icon className="h-3.5 w-3.5" />
                 {label}
-
               </button>
-
             ))}
-
           </div>
 
-
-
           {mode === 'live' && (
-
-            <div className="de-story-live-preview">
-
-              <video ref={videoPreviewRef} className="de-story-preview__media" playsInline muted autoPlay />
-
-              {liveActive && <span className="de-feed-stories__badge de-story-live-preview__badge">Live</span>}
-
+            <div className="relative overflow-hidden rounded-2xl border border-border bg-black shadow-sm">
+              <video ref={videoPreviewRef} className="aspect-video w-full object-cover" playsInline muted autoPlay />
+              {liveActive && (
+                <span className="absolute left-3 top-3 rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold uppercase text-white shadow-sm">
+                  Live
+                </span>
+              )}
             </div>
-
           )}
-
-
 
           {(mode === 'image' || mode === 'video') && (
-
-            <label className="de-form-file">
-
-              <span>
-
+            <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-card p-6 shadow-sm hover:bg-accent/30">
+              {uploading ? (
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              ) : (
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                  {mode === 'video' ? (
+                    <Video className="h-7 w-7 text-primary" />
+                  ) : (
+                    <ImagePlus className="h-7 w-7 text-primary" />
+                  )}
+                </div>
+              )}
+              <span className="text-sm font-medium text-foreground">
                 {uploading
-
                   ? 'Subiendo…'
-
                   : mode === 'video'
-
                     ? 'Adjuntar video'
-
                     : 'Adjuntar imagen'}
-
               </span>
-
               <input
-
                 type="file"
-
                 accept={mode === 'video' ? 'video/*' : 'image/*'}
-
                 onChange={handleMediaChange}
-
                 disabled={uploading}
-
+                className="sr-only"
               />
-
             </label>
-
           )}
-
-
 
           {mediaPreview && mode !== 'live' && (
-
-            <div className="de-story-preview">
-
+            <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
               {mediaKind === 'video' ? (
-
-                <video src={mediaPreview} controls className="de-story-preview__media" />
-
+                <video src={mediaPreview} controls className="max-h-64 w-full object-contain" />
               ) : (
-
-                <img src={mediaPreview} alt="" className="de-story-preview__media" />
-
+                <img src={mediaPreview} alt="" className="max-h-64 w-full object-contain" />
               )}
-
             </div>
-
           )}
 
-
-
-          <TextField
-
-            label={mode === 'text' ? 'Tu estado' : 'Descripción (opcional)'}
-
-            value={description}
-
-            onChange={(e) => setDescription(e.target.value)}
-
-            variant="bordered"
-
-            placeholder={mode === 'text' ? '¿Qué estás haciendo?' : mode === 'live' ? '¿Qué estás transmitiendo?' : 'Añade contexto…'}
-
-          />
-
-
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground">
+              {mode === 'text' ? 'Tu estado' : 'Descripción (opcional)'}
+            </label>
+            <Textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder={
+                mode === 'text'
+                  ? '¿Qué estás haciendo?'
+                  : mode === 'live'
+                    ? '¿Qué estás transmitiendo?'
+                    : 'Añade contexto…'
+              }
+              className="min-h-[88px] resize-none rounded-xl"
+            />
+          </div>
 
           {mode === 'live' && (
-
-            <p className="de-story-live-hint">
-
+            <p className="rounded-xl bg-secondary/60 px-3 py-2 text-xs text-muted-foreground">
               {liveActive
-
                 ? 'Tu transmisión se actualiza cada pocos segundos para quienes te siguen.'
-
                 : 'Comparte conciertos y eventos multitudinarios en directo desde tu cámara.'}
-
             </p>
-
           )}
 
-
-
           <Button
-
-            label={
-
-              submitting
-
-                ? 'Procesando…'
-
-                : mode === 'live'
-
-                  ? liveActive
-
-                    ? 'Finalizar transmisión'
-
-                    : 'Iniciar transmisión en vivo'
-
-                  : 'Compartir historia'
-
-            }
-
-            onClick={handleSubmit}
-
+            className="h-12 w-full rounded-full font-semibold"
+            onClick={() => void handleSubmit()}
             disabled={submitting || uploading || (mode === 'live' && liveActive && !livePublicationId)}
-
-          />
-
+          >
+            {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {submitting
+              ? 'Procesando…'
+              : mode === 'live'
+                ? liveActive
+                  ? 'Finalizar transmisión'
+                  : 'Iniciar transmisión en vivo'
+                : 'Compartir historia'}
+          </Button>
         </div>
-
-      </div>
-
-    </div>
-
+      </SheetContent>
+    </Sheet>
   );
-
 };
 
 

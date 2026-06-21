@@ -49,7 +49,7 @@ const StepRefundPolicy = ({ formData, updateForm, showErrors }: Props) => {
       </div>
 
       {/* Fecha y hora de venta de boletería */}
-      <div className="rounded-2xl bg-card p-5 shadow-sm">
+      <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
         <h3 className="text-base font-bold text-primary">Fecha y hora venta de boletería</h3>
         <p className="mt-1 text-xs text-muted-foreground">
           Por defecto la venta inicia al momento de publicar el evento y finaliza con el cierre del mismo. Puedes ajustarla a tu necesidad.

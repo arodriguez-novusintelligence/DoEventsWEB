@@ -105,6 +105,34 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+---
+
+## Ejecución 2026-06-21 gap-empalme batch 4 (run 27902063419-b4)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| StoryViewer fullscreen | Integración | Sí | `feed/StoryViewer.tsx` | Loader2; progress animate-story-progress; APIs shared |
+| AdminUsersPanel shell | Navegación | Sí | `admin/AdminUsersPanel.tsx` | AdminPanelSection + card shadow-sm |
+| PaymentsPanel shell | Navegación | Sí | `admin/PaymentsPanel.tsx` | Badge Finanzas; card shadow-sm |
+| StoriesContext API | Integración | Sí | `contexts/StoriesContext.tsx` | Export `StoriesContextValue`; sin mocks |
+| NewUsersPanel shell | Navegación | Sí | `admin/NewUsersPanel.tsx` | Card shadow-sm verificado |
+| SupportSearchPanel shell | Navegación | Sí | `admin/SupportSearchPanel.tsx` | Card shadow-sm verificado |
+| AddStorySheet Sheet | FRONTEND_LOGIC | Sí | `CreateStorySheet.tsx`, `feed/AddStorySheet.tsx` | Sheet bottom Lovable; createStory API |
+| EventSalesDetail stats | Integración | Sí | `admin/EventSalesDetail.tsx` | Delega SalesStatsView API real |
+| useGuests bridge | Integración | Sí | `hooks/useGuests.ts` | Dual export useApiGuests documentado |
+| index.css port-map | VISUAL | Sí | `index.css`, `lovable/index.css` | animate-fade-in-up; story-progress |
+| VenueDetails map card | VISUAL | Sí | `venues/detail/VenueDetails.tsx` | shadow-sm ubicación |
+| ChatSettings header | VISUAL | Sí | `chat/ChatSettingsSheet.tsx` | Settings h-10 ring header |
+| MentionText hover | VISUAL | Sí | `feed/MentionText.tsx` | text-primary/90 hover |
+| CreateFAB rings | VISUAL | Sí | `feed/CreateFAB.tsx` | ring-primary/20 iconos |
+| StepEventLocation empty | VISUAL | Sí | `events/StepEventLocation.tsx` | Home h-14 ring verificado batch previo |
+| StepRefundPolicy cards | VISUAL | Sí | `events/StepRefundPolicy.tsx` | border-border/60 shadow-sm |
+| DraggableGuestCard ring | VISUAL | Sí | `guests/DraggableGuestCard.tsx` | ring-border/40 card |
+| GroupDropZone empty | VISUAL | Sí | `guests/GroupDropZone.tsx` | Users/Plus h-14 ring empty |
+| SalesStatsView header | VISUAL | Sí | `stats/SalesStatsView.tsx` | Gradiente shadow-sm top bar |
+| SuccessModal shadow | VISUAL | Sí | `banking/SuccessModal.tsx` | DialogContent shadow-sm |
+| Batch 4 gaps (20) | Empalme | Sí | ver `decision-log.md` | 20 DONE + 0 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 3 (run 27902063419-b3)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27902063419-b4`: batch 4 (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED nuevos en batch (`StoryViewersSheet` viewers API acumulado). Historias/admin/CSS/hooks empalme; similitud ~94%; build:devaws OK.
+
 Run `gap-empalme-27902063419-b3`: batch 3 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`KycCertificationView` submit, `PublishFlowModal` banking, `GlobalSearchView` posts). Discover/map/admin/search polish; similitud ~92%; build:devaws OK.
 
 Run `gap-empalme-27902063419-b2`: batch 2 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`StoryViewersSheet` viewers API). Patrón Lovable: ring h-10/h-14, MapPin sin emoji, RefreshCw retry, badge unread notificaciones; similitud ~87.5%; build:devaws OK.
@@ -376,6 +378,15 @@ Sí (parcial)
 - **FeedServicesCarousel:** badge distancia y estrellas primary.
 - **AIAssistantView:** CreatedEntityCard tokens success.
 - **EventDetailView:** verificado intacto — `fetchEventDetail` + retry + `InvitationEventDetailView`.
+
+## Empalme realizado (última ejecución — gap-empalme-27902063419-b4)
+
+- **StoryViewer:** implementación en ruta Lovable; fullscreen; barras progreso `animate-story-progress`; Loader2 carga; empty Sparkles h-14 ring; tap prev/next; APIs reales.
+- **AddStorySheet / CreateStorySheet:** Sheet bottom Lovable; header Sparkles h-10 ring; tabs imagen/video/estado/live; upload media API real.
+- **Admin panels:** AdminPanelSection + card shadow-sm; badges Admin/Finanzas/Recientes/Soporte.
+- **StoriesContext / useGuests:** re-export tipado; hook dual sin mocks.
+- **index.css:** `animate-fade-in-up`, `animate-story-progress`, port-map DSF.
+- **Minor drift:** VenueDetails, ChatSettings, CreateFAB, MentionText, StepRefundPolicy, guests cards, SalesStatsView gradient, SuccessModal shadow-sm.
 
 ## Backend pendiente para 100%
 
