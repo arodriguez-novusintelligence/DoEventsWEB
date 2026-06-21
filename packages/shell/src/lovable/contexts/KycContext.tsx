@@ -17,6 +17,8 @@ interface KycContextValue {
   loadErrorMessage: string | null;
   isCertified: boolean;
   isEmpty: boolean;
+  isInReview: boolean;
+  isRejected: boolean;
   needsCertification: boolean;
   statusLabel: string;
   refresh: () => void;
@@ -29,6 +31,8 @@ const KycContext = createContext<KycContextValue>({
   loadErrorMessage: null,
   isCertified: false,
   isEmpty: true,
+  isInReview: false,
+  isRejected: false,
   needsCertification: true,
   statusLabel: KYC_STATUS_LABELS.pending,
   refresh: () => undefined,
@@ -103,6 +107,8 @@ export const KycProvider = ({ userId, children }: KycProviderProps) => {
       loadErrorMessage,
       isCertified: status === 'verified',
       isEmpty: !loading && !loadError && status === 'pending',
+      isInReview: status === 'in_review',
+      isRejected: status === 'rejected',
       needsCertification: !loading && !loadError && status !== 'verified',
       statusLabel: KYC_STATUS_LABELS[status],
       refresh,

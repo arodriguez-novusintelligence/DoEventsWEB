@@ -69,8 +69,8 @@ export default function PaymentMethodsDashboard({
       <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
         {/* Processing Banner */}
         {hasPendingMethods && (
-          <div className="flex gap-4 p-5 rounded-xl border border-border bg-card">
-            <div className="w-12 h-12 rounded-full bg-warning/20 flex items-center justify-center flex-shrink-0">
+          <div className="flex gap-4 p-5 rounded-xl border border-border bg-card shadow-sm">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-warning/20 ring-2 ring-warning/30">
               <Clock className="w-6 h-6 text-warning" />
             </div>
             <div className="space-y-1">
@@ -104,9 +104,9 @@ export default function PaymentMethodsDashboard({
 
           {/* Verification Alert */}
           {hasPendingMethods && (
-            <div className="flex gap-3 p-4 rounded-xl bg-destructive/5 border border-destructive/10">
-              <div className="w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center flex-shrink-0">
-                <AlertCircle className="w-5 h-5 text-destructive" />
+            <div className="flex gap-3 p-4 rounded-xl bg-destructive/5 border border-destructive/10 shadow-sm">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
+                <AlertCircle className="w-6 h-6 text-destructive" />
               </div>
               <p className="text-sm text-foreground leading-relaxed">
                 Tardaremos un máximo de 2 días laborables en completar la verificación. Cuando cambiemos el estado para indicar que está lista, te enviaremos el dinero a través de este método de cobro.

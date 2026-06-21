@@ -23,7 +23,9 @@ const MediaUpload = () => {
   return (
     <div className="form-section py-4">
       <div className="flex items-center gap-2 mb-1">
-        <ImageIcon className="h-5 w-5 text-primary" />
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+          <ImageIcon className="h-5 w-5 text-primary" />
+        </div>
         <label className="block text-sm font-medium text-foreground">
           Material publicitario del lugar
         </label>

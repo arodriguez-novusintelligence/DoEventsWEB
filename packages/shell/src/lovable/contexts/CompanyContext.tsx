@@ -17,6 +17,7 @@ interface CompanyContextValue {
   loadErrorMessage: string | null;
   hasCompany: boolean;
   isEmpty: boolean;
+  accountTypeLabel: string;
   refresh: () => void;
 }
 
@@ -27,6 +28,7 @@ const CompanyContext = createContext<CompanyContextValue>({
   loadErrorMessage: null,
   hasCompany: false,
   isEmpty: true,
+  accountTypeLabel: 'Personal',
   refresh: () => undefined,
 });
 
@@ -91,6 +93,7 @@ export const CompanyProvider = ({ userId, children }: CompanyProviderProps) => {
       loadErrorMessage,
       hasCompany: Boolean(company?.companyName || company?.accountType === 'company'),
       isEmpty: !loading && !loadError && !company?.companyName && company?.accountType !== 'company',
+      accountTypeLabel: company?.accountType === 'company' ? 'Empresa' : 'Personal',
       refresh,
     }),
     [company, loading, loadError, loadErrorMessage],

@@ -59,9 +59,11 @@ export const ServiceReservationDetail = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-3">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-sm text-muted-foreground">Cargando reserva…</p>
+      <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-secondary">
+        <div className="rounded-2xl bg-card p-8 shadow-sm text-center">
+          <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary" />
+          <p className="mt-3 text-sm text-muted-foreground">Cargando reserva…</p>
+        </div>
       </div>
     );
   }

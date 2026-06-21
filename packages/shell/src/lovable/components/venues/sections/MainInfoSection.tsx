@@ -91,7 +91,9 @@ const MainInfoSection = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
-        <FileText className="h-5 w-5 text-primary" />
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+          <FileText className="h-5 w-5 text-primary" />
+        </div>
         <div>
           <h2 className="text-base font-extrabold text-foreground">Información principal</h2>
           <p className="text-xs text-muted-foreground">Datos básicos del lugar que verán los organizadores</p>
@@ -174,7 +176,7 @@ const MainInfoSection = () => {
         </div>
       )}
 
-      <div className="flex items-center gap-2 rounded-xl border px-3 py-2">
+      <div className="flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 shadow-sm">
         <Checkbox checked={form.hasParking} onCheckedChange={(v) => update({ hasParking: Boolean(v) })} id="parking" />
         <label htmlFor="parking" className="flex items-center gap-2 text-sm">
           <ParkingCircle className="h-4 w-4 text-primary" />

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { ChevronLeft, Search, UserPlus, Check, MessageCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { ChevronLeft, Search, UserPlus, Check, MessageCircle, AlertCircle, Loader2, RefreshCw } from 'lucide-react';
 import {
   EventSection,
   FeedPublication,
@@ -182,7 +182,7 @@ export const GlobalSearchView = ({
       </div>
 
       <Tabs value={tab} onValueChange={(v) => setTab(v as SearchTab)} className="px-4 pt-3">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-3 rounded-xl shadow-sm">
           {(Object.keys(tabLabel) as SearchTab[]).map((key) => (
             <TabsTrigger key={key} value={key} className="text-xs">
               {tabLabel[key]}
@@ -197,7 +197,9 @@ export const GlobalSearchView = ({
           </div>
         ) : searchError ? (
           <div className="mt-4 rounded-2xl border border-destructive/30 bg-card p-8 text-center shadow-sm">
-            <AlertCircle className="mx-auto h-8 w-8 text-destructive" />
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
+              <AlertCircle className="h-7 w-7 text-destructive" />
+            </div>
             <p className="mt-3 text-sm text-destructive">{searchError}</p>
             <Button
               type="button"
@@ -205,6 +207,7 @@ export const GlobalSearchView = ({
               className="mt-4 rounded-full"
               onClick={() => void runSearch(query, tab)}
             >
+              <RefreshCw className="mr-2 h-4 w-4" />
               Reintentar
             </Button>
           </div>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Calendar, MapPin, DoorOpen, Users, ScanLine, Settings2, Plus, Lock, Shield, AlertCircle, Loader2 } from 'lucide-react';
+import { Calendar, MapPin, DoorOpen, Users, ScanLine, Settings2, Plus, Lock, Shield, AlertCircle, Loader2, RefreshCw } from 'lucide-react';
 import ScanQRSheet from './ScanQRSheet';
 import { toast } from 'sonner';
 import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBanner';
@@ -151,10 +151,13 @@ const AccessControlListView = ({
 
           {!loading && loadError && (
             <div className="rounded-2xl border border-destructive/30 bg-card p-8 text-center shadow-sm">
-              <AlertCircle className="mx-auto h-8 w-8 text-destructive" />
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
+                <AlertCircle className="h-7 w-7 text-destructive" />
+              </div>
               <p className="mt-3 text-sm font-medium text-destructive">{loadError}</p>
               {onRetry && (
                 <Button type="button" variant="outline" className="mt-4 rounded-full" onClick={onRetry}>
+                  <RefreshCw className="mr-2 h-4 w-4" />
                   Reintentar
                 </Button>
               )}

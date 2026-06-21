@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Loader2, Wallet, AlertCircle } from 'lucide-react';
+import { Loader2, Wallet, AlertCircle, RefreshCw } from 'lucide-react';
 import {
   createBankAccount,
   fetchBankAccountsByUser,
@@ -127,11 +127,12 @@ const BankingHub = ({ onBack }: BankingHubProps) => {
         </div>
       ) : loadError ? (
         <div className="flex flex-col items-center justify-center gap-3 py-24 px-6 text-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
             <AlertCircle className="h-7 w-7 text-destructive" />
           </div>
           <p className="text-sm font-semibold text-foreground">{loadError}</p>
           <Button type="button" variant="outline" className="rounded-full" onClick={() => void loadMethods()}>
+            <RefreshCw className="mr-2 h-4 w-4" />
             Reintentar
           </Button>
         </div>

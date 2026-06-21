@@ -66,7 +66,9 @@ export const ReportPostDialog = ({
       <DialogContent className="max-w-lg rounded-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Flag className="h-5 w-5 text-destructive" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
+              <Flag className="h-5 w-5 text-destructive" />
+            </div>
             Reportar publicación
           </DialogTitle>
           <DialogDescription className="flex items-start gap-2">

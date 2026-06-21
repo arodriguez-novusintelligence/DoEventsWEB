@@ -81,7 +81,7 @@ const FeedHero = ({
         <div className="mx-auto max-w-lg">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-foreground/15 backdrop-blur">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-foreground/15 ring-2 ring-primary-foreground/20 backdrop-blur">
                 <MapPin className="h-4 w-4 text-primary-foreground" />
               </div>
               <div className="min-w-0">

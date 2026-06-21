@@ -175,15 +175,19 @@ const ScanQRSheet = ({ open, onOpenChange, eventTitle, eventId }: ScanQRSheetPro
           </div>
 
           {lastResult === 'success' && (
-            <div className="mt-3 flex items-center gap-2 rounded-xl bg-primary/10 px-3 py-2 text-sm text-primary">
-              <CheckCircle2 className="h-4 w-4 shrink-0" />
+            <div className="mt-3 flex items-center gap-3 rounded-xl bg-primary/10 px-3 py-3 text-sm text-primary">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/15 ring-2 ring-primary/20">
+                <CheckCircle2 className="h-5 w-5" />
+              </div>
               Acceso validado correctamente
             </div>
           )}
           {lastResult === 'error' && (
             <div className="mt-3 space-y-2">
-              <div className="flex items-center gap-2 rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">
-                <XCircle className="h-4 w-4 shrink-0" />
+              <div className="flex items-center gap-3 rounded-xl bg-destructive/10 px-3 py-3 text-sm text-destructive">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-destructive/15 ring-2 ring-destructive/20">
+                  <XCircle className="h-5 w-5" />
+                </div>
                 Código inválido — intenta de nuevo
               </div>
               <Button

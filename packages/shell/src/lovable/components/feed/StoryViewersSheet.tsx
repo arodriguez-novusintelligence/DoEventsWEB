@@ -20,7 +20,9 @@ export const StoryViewersSheet = ({
     <SheetContent side="bottom" className="max-w-lg mx-auto rounded-t-2xl">
       <SheetHeader>
         <SheetTitle className="flex items-center gap-2">
-          <Eye className="h-5 w-5 text-primary" />
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+            <Eye className="h-5 w-5 text-primary" />
+          </div>
           Quién vio tu historia
         </SheetTitle>
       </SheetHeader>
@@ -28,8 +30,8 @@ export const StoryViewersSheet = ({
       {loading ? (
         <div className="mt-6 space-y-3">
           {SKELETON_ROWS.map((row) => (
-            <div key={row} className="flex items-center gap-3 animate-pulse">
-              <div className="h-10 w-10 rounded-full bg-muted" />
+            <div key={row} className="flex items-center gap-3 rounded-2xl bg-card p-3 shadow-sm animate-pulse">
+              <div className="h-10 w-10 rounded-full bg-muted ring-2 ring-border/40" />
               <div className="flex-1 space-y-2">
                 <div className="h-3 w-24 rounded bg-muted" />
                 <div className="h-2 w-16 rounded bg-muted" />

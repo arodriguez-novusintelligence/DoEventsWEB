@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Briefcase, ChevronRight, AlertCircle, Loader2 } from 'lucide-react';
+import { Briefcase, ChevronRight, AlertCircle, Loader2, RefreshCw } from 'lucide-react';
 import {
   fetchUserServiceBookings,
   RootState,
@@ -76,7 +76,9 @@ export const MyReservedServicesView = ({ onBack }: MyReservedServicesViewProps) 
           </div>
         ) : loadError ? (
           <div className="rounded-2xl border border-destructive/30 bg-card p-8 text-center shadow-sm">
-            <AlertCircle className="mx-auto h-8 w-8 text-destructive" />
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
+              <AlertCircle className="h-7 w-7 text-destructive" />
+            </div>
             <p className="mt-3 text-sm font-medium text-destructive">{loadError}</p>
             <Button
               type="button"
@@ -84,6 +86,7 @@ export const MyReservedServicesView = ({ onBack }: MyReservedServicesViewProps) 
               className="mt-4 rounded-full"
               onClick={() => setReloadKey((k) => k + 1)}
             >
+              <RefreshCw className="mr-2 h-4 w-4" />
               Reintentar
             </Button>
           </div>

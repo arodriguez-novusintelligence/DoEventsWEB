@@ -51,7 +51,9 @@ export const TermsDialog = ({ open, onClose, onAccept }: TermsDialogProps) => (
     <DialogContent className="max-w-lg rounded-2xl shadow-sm">
       <DialogHeader>
         <DialogTitle className="flex items-center gap-2">
-          <ScrollText className="h-5 w-5 text-primary" />
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+            <ScrollText className="h-5 w-5 text-primary" />
+          </div>
           Términos y Condiciones
         </DialogTitle>
         <DialogDescription>Do.Events — Versión actualizada</DialogDescription>
