@@ -262,7 +262,7 @@ const RefundTicketFlow = ({
           </div>
 
           <div className="px-4 pt-2 flex flex-col items-center">
-            <div className="h-20 w-20 rounded-full bg-primary/15 grid place-items-center">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
               <CircleDollarSign className="h-10 w-10 text-primary" />
             </div>
             <h1 className="mt-4 text-2xl font-extrabold text-foreground">Confirmar reembolso</h1>

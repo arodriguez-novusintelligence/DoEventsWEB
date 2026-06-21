@@ -168,7 +168,7 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
           return (
             <div key={gate.id} className="rounded-2xl bg-card p-4 shadow-sm">
               <div className="mb-3 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20 text-primary">
                   <DoorOpen className="h-5 w-5" />
                 </div>
                 <div className="min-w-0">

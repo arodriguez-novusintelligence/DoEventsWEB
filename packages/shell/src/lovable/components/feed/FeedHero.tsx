@@ -1,4 +1,4 @@
-import { MapPin, Smile, PartyPopper, Gamepad2, Map, Music, Trophy, Plus, Sparkles } from 'lucide-react';
+import { MapPin, Smile, PartyPopper, Gamepad2, Map, Music, Trophy, Plus, Sparkles, Loader2 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { UserAvatar } from '@doevents/shared';
 import dessertFestival from '@lovable/assets/dessert-festival.jpg';
@@ -9,14 +9,30 @@ import { cn } from '@lovable/lib/utils';
 
 type Category = { label: string; icon: LucideIcon; bg: string; color: string };
 
-const categories: Category[] = [
-  { label: 'Comedia en vivo', icon: Smile, bg: 'bg-amber-100', color: 'text-amber-500' },
-  { label: 'Fiesta, Reunión social', icon: PartyPopper, bg: 'bg-pink-100', color: 'text-pink-500' },
-  { label: 'Juego o evento', icon: Gamepad2, bg: 'bg-violet-100', color: 'text-violet-600' },
-  { label: 'Recorrido', icon: Map, bg: 'bg-emerald-100', color: 'text-emerald-600' },
-  { label: 'Concierto', icon: Music, bg: 'bg-indigo-100', color: 'text-indigo-600' },
-  { label: 'Deportes', icon: Trophy, bg: 'bg-blue-100', color: 'text-blue-600' },
+/** Paleta semántica DSF — alineada con EventsView DISCOVER_CHIP_STYLES. */
+const CATEGORY_CHIP_STYLES: Pick<Category, 'bg' | 'color'>[] = [
+  { bg: 'bg-primary/10', color: 'text-primary' },
+  { bg: 'bg-accent', color: 'text-accent-foreground' },
+  { bg: 'bg-secondary', color: 'text-secondary-foreground' },
+  { bg: 'bg-primary/15', color: 'text-primary' },
+  { bg: 'bg-muted', color: 'text-muted-foreground' },
+  { bg: 'bg-accent/80', color: 'text-accent-foreground' },
 ];
+
+const categoryIcons = [Smile, PartyPopper, Gamepad2, Map, Music, Trophy];
+const categoryLabels = [
+  'Comedia en vivo',
+  'Fiesta, Reunión social',
+  'Juego o evento',
+  'Recorrido',
+  'Concierto',
+  'Deportes',
+];
+
+const categories: Category[] = categoryLabels.map((label, index) => {
+  const style = CATEGORY_CHIP_STYLES[index] || CATEGORY_CHIP_STYLES[0];
+  return { label, icon: categoryIcons[index] || Smile, bg: style.bg, color: style.color };
+});
 
 const defaultStories = [
   { id: 's0', name: 'Tu historia', image: dessertFestival, own: true },
@@ -81,7 +97,7 @@ const FeedHero = ({
         <div className="mx-auto max-w-lg">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-foreground/15 ring-2 ring-primary-foreground/20 backdrop-blur">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-foreground/15 ring-2 ring-primary-foreground/20 backdrop-blur">
                 <MapPin className="h-4 w-4 text-primary-foreground" />
               </div>
               <div className="min-w-0">
@@ -169,14 +185,10 @@ const FeedHero = ({
             </div>
             <div className="flex items-start gap-3 overflow-x-auto no-scrollbar pb-1">
               {storiesLoading && (
-                <>
-                  {[0, 1, 2, 3, 4].map((i) => (
-                    <div key={i} className="flex flex-col items-center gap-1 shrink-0 w-16 animate-pulse">
-                      <div className="h-16 w-16 rounded-full bg-muted" />
-                      <div className="h-2 w-10 rounded bg-muted" />
-                    </div>
-                  ))}
-                </>
+                <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border bg-card py-6 px-4 w-full shadow-sm">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  <p className="text-xs font-medium text-muted-foreground">Cargando historias…</p>
+                </div>
               )}
               {!storiesLoading && useApiStories && apiStories!.length === 0 && (
                 <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-border bg-card py-6 px-4 w-full shadow-sm">

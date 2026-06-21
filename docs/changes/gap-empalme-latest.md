@@ -1,35 +1,32 @@
-# Gap empalme — resumen ejecutivo (batch 6)
+# Gap empalme — resumen ejecutivo (batch 1)
 
-**Run:** `agent-27903532486` / `gap-empalme-27902063419-b6`  
+**Run:** `27903532486-b1` / `gap-empalme-27903532486-b1`  
 **Fecha:** 2026-06-21  
 **Rama:** `feature/cicd/dev-automation`
 
 ## Resultado
 
-Manifiesto Lovable SHA `cb27c830`: sin diff UI (`hasUiChanges: false`); cambios en `reglasDiseno/breakpoints.yml` y `reglasDiseno/tokens.yml` (referencia DSF). Tras reconciliación batch 6, similitud **98.0%** (objetivo alcanzado). **17 gaps DONE** frontend; **3 BACKEND_REQUIRED** documentados (PSP, story viewers, KYC submit).
+Manifiesto batch 1 (20 gaps, similitud baseline **80.86%**). Tras empalme focalizado, similitud estimada **83.8%**. **19 gaps DONE** frontend; **1 BACKEND_REQUIRED** documentado (`BankingHub` delete/PayPal).
 
-## Empalme batch 6 (reconciliación)
+## Empalme batch 1
 
 | Área | Estado |
 |------|--------|
-| **Stats** | SalesStatsView, RefundsView, AccessControlView, GuestStatsView — empty rings verificados |
-| **Feed** | FeedVenuesCarousel, FeedServicesCarousel — empty Briefcase/Building2 rings |
-| **Wizard** | StepFaqs, StepRefundPolicy (ShieldCheck header ring), PublishFlowModal |
-| **Admin** | AdminRefundsPanel, AdminReportsPanel — gradiente shadow-sm |
-| **Discover** | EventsPage pb-24 + Loader2 |
-| **BACKEND_REQUIRED** | PaymentGatewaySheet PSP, StoryViewersSheet viewers, KycCertificationView submit |
-
-## Reglas diseño (tokens/breakpoints)
-
-Tokens DSF v2.1 ya presentes en `packages/shell/src/lovable/index.css` (--primary, --success, --warning, etc.). Breakpoints Tailwind estándar vía `tailwind.config.ts` container `2xl: 1400px`. Sin copy-paste de YAML Lovable — referencia `@reference` en `docs/design/reglasDiseno/`.
+| **Feed / Discover** | FeedHero tokens DSF; EventsView media fallback; FeedServicesCarousel error/retry |
+| **Wizard** | SeatingMapEditor, StepUnified, StepAccessControl, EventPreviewModal — rings + empty states |
+| **Servicios** | ServiceDetailView section icons ring |
+| **Invitados** | AddGuestModal búsqueda empty/error UI |
+| **Perfil / Compras** | MyPostsView, ProfileGallery, MyPurchasesView — rings error/empty |
+| **Banca** | BankingHub banner BACKEND_REQUIRED delete/PayPal |
+| **Contexto** | CompanyContext export type |
 
 ## Backend pendiente (acumulado)
 
-Ver `ReglasAgente/impacto-backend.md` — BankingForm SWIFT/PayPal, delete cuenta, KYC submit, GlobalSearch posts, PaymentGateway PSP, EditProfile password, Booking add-ons, StoryViewersSheet viewers, etc.
+Ver `ReglasAgente/impacto-backend.md` — BankingHub delete/PayPal, BankingForm SWIFT, KYC submit, GlobalSearch posts, PaymentGateway PSP, EditProfile password, Booking add-ons, StoryViewersSheet viewers, etc.
 
 ## Gaps restantes
 
-**0** — objetivo similitud 98% alcanzado (estimado; re-comparación CI con `discover-joyful-feed` pendiente).
+**97** — batches 2–6 pendientes (objetivo similitud 98%).
 
 ## Validación
 

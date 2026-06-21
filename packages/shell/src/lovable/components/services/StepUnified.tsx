@@ -311,7 +311,7 @@ const StepUnified = ({
       onClick={() => toggleSection(sectionKey)}
       aria-expanded={openSections[sectionKey]}
     >
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
         <Icon className="h-5 w-5 text-primary" />
       </div>
       <span className="flex-1 text-left text-sm font-semibold text-foreground">{title}</span>
@@ -339,7 +339,9 @@ const StepUnified = ({
 
       <div className="rounded-2xl bg-card p-4 shadow-sm border border-border/50">
         <div className="flex items-center gap-2 mb-3">
-          <Camera className="h-5 w-5 text-primary" />
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
+            <Camera className="h-5 w-5 text-primary" />
+          </span>
           <h3 className="text-sm font-bold text-foreground">Foto del servicio <span className="text-destructive">*</span></h3>
         </div>
         <p className="text-xs text-muted-foreground mb-3">
@@ -350,7 +352,9 @@ const StepUnified = ({
             <img src={coverPreview} alt="Vista previa" className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full flex-col items-center justify-center gap-2 text-muted-foreground">
-              <Camera className="h-10 w-10 opacity-40" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                <Camera className="h-7 w-7 text-primary" />
+              </div>
               <span className="text-xs">Sin foto</span>
             </div>
           )}
@@ -541,9 +545,12 @@ const StepUnified = ({
         <SectionHeader icon={DollarSign} title="Precio por Servicio y actividad" sectionKey="pricing" />
         <CollapsibleContent className="mt-2 space-y-3 px-1">
           {allActivities.length === 0 ? (
-            <p className="rounded-2xl bg-card p-4 text-sm text-muted-foreground shadow-sm">
-              Selecciona servicios y actividades primero.
-            </p>
+            <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-primary/25 bg-card p-6 text-center shadow-sm">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                <DollarSign className="h-7 w-7 text-primary" />
+              </div>
+              <p className="text-sm text-muted-foreground">Selecciona servicios y actividades primero.</p>
+            </div>
           ) : (
             formData.sectors.map((sector) => {
               const activities = formData.activities[sector] || [];

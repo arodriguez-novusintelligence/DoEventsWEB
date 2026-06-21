@@ -85,7 +85,9 @@ function VenueCreatorBody({
               <ChevronLeft className="w-5 h-5" />
             </Button>
             <div className="flex-1 min-w-0 flex items-center gap-2">
-              <MapPinPlus className="h-5 w-5 shrink-0 text-primary" />
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
+                <MapPinPlus className="h-5 w-5 text-primary" />
+              </span>
               <h1 className="text-lg font-extrabold text-primary truncate">
                 {headerTitle || (mode === 'edit' ? 'Editar lugar' : 'Mi Lugar de Eventos')}
               </h1>

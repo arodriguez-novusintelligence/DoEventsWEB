@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { UserPlus, Search, Download, Loader2, X, UserCheck } from "lucide-react";
+import { UserPlus, Search, Download, Loader2, X, UserCheck, AlertCircle, RefreshCw } from "lucide-react";
 import { fetchAllGuestContacts, searchUsers } from "@doevents/shared";
 import { Guest, CreateGuestRequest, GuestGroup } from "@lovable/types/guest";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@lovable/components/ui/dialog";
@@ -97,6 +97,8 @@ export function AddGuestModal({
   const [searchResults, setSearchResults] = useState<Guest[]>([]);
   const [selectedSearchIds, setSelectedSearchIds] = useState<Set<string>>(new Set());
   const [isSearching, setIsSearching] = useState(false);
+  const [searchAttempted, setSearchAttempted] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [contactsOpen, setContactsOpen] = useState(false);
   const [matchedExisting, setMatchedExisting] = useState<Guest | null>(null);
@@ -312,6 +314,8 @@ export function AddGuestModal({
       return;
     }
     setIsSearching(true);
+    setSearchError(null);
+    setSearchAttempted(true);
     try {
       const matched = await onSearchUser(searchUsername.trim());
       const results = matched
@@ -328,9 +332,11 @@ export function AddGuestModal({
         });
       }
     } catch (err) {
+      const message = guestErrorMessage(err);
+      setSearchError(message);
       toast({
         title: "Error",
-        description: guestErrorMessage(err),
+        description: message,
         variant: "destructive",
       });
       setSearchResults([]);
@@ -649,6 +655,27 @@ export function AddGuestModal({
               </div>
               <p className="text-xs text-muted-foreground">Usuarios reales registrados en DoEvents (mín. 2 caracteres).</p>
             </div>
+            {searchError && (
+              <div className="flex flex-col items-center gap-3 rounded-2xl border border-destructive/30 bg-card py-8 text-center shadow-sm">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
+                  <AlertCircle className="h-7 w-7 text-destructive" />
+                </div>
+                <p className="text-sm font-medium text-destructive px-4">{searchError}</p>
+                <Button type="button" variant="outline" size="sm" className="rounded-full gap-1.5" onClick={() => void search()}>
+                  <RefreshCw className="h-4 w-4" />
+                  Reintentar
+                </Button>
+              </div>
+            )}
+            {!searchError && searchAttempted && !isSearching && searchResults.length === 0 && (
+              <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border bg-card py-8 text-center shadow-sm">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                  <Search className="h-7 w-7 text-primary" />
+                </div>
+                <p className="text-sm font-medium text-foreground">Sin resultados</p>
+                <p className="text-xs text-muted-foreground px-4">Prueba con otro nombre de usuario</p>
+              </div>
+            )}
             {searchResults.length > 0 && (
               <div className="space-y-2 max-h-52 overflow-y-auto">
                 {searchResults.map((u) => {

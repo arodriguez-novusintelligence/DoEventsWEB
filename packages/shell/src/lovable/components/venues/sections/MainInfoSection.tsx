@@ -91,7 +91,7 @@ const MainInfoSection = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
           <FileText className="h-5 w-5 text-primary" />
         </div>
         <div>

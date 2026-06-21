@@ -106,28 +106,26 @@ const ProfileGallery = ({
 
         <div className="rounded-2xl bg-card p-5 shadow-sm">
           {loadError && (
-            <div className="mb-4 flex gap-3 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
-              <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
-              <div className="min-w-0 flex-1">
-                <p>{loadError}</p>
-                {onRetry && (
-                  <button
-                    type="button"
-                    onClick={onRetry}
-                    className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-primary"
-                  >
-                    <RefreshCw className="h-3.5 w-3.5" />
-                    Reintentar
-                  </button>
-                )}
+            <div className="mb-4 flex flex-col items-center gap-3 rounded-2xl border border-destructive/30 bg-card py-8 text-center shadow-sm">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
+                <AlertCircle className="h-7 w-7 text-destructive" />
               </div>
+              <p className="text-sm font-medium text-destructive px-4">{loadError}</p>
+              {onRetry && (
+                <Button type="button" variant="outline" size="sm" className="rounded-full gap-1.5" onClick={onRetry}>
+                  <RefreshCw className="h-4 w-4" />
+                  Reintentar
+                </Button>
+              )}
             </div>
           )}
 
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="flex items-center gap-2 text-lg font-bold text-foreground">
-                <ImagePlus className="h-5 w-5 text-primary" />
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
+                  <ImagePlus className="h-5 w-5 text-primary" />
+                </span>
                 Mi Galería de Fotos
               </h2>
               <p className="text-xs text-muted-foreground mt-0.5">

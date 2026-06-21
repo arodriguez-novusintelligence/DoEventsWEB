@@ -107,6 +107,33 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+---
+
+## Ejecución 2026-06-21 gap-empalme batch 1 (run 27903532486-b1)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| FeedHero tokens DSF | VISUAL | Sí | `feed/FeedHero.tsx` | CATEGORY_CHIP_STYLES semánticos; Loader2 stories; MapPin h-10 ring |
+| EventsView media fallback | VISUAL | Sí | `feed/EventsView.tsx` | CalendarDays h-14 ring sin imagen |
+| FeedServicesCarousel error | FRONTEND_LOGIC | Sí | `feed/FeedServicesCarousel.tsx` | loadError/onRetry AlertCircle + RefreshCw |
+| SeatingMapEditor header | VISUAL | Sí | `events/SeatingMapEditor.tsx` | Header pills ring; canvas vacío LayoutGrid h-14 |
+| VenueCreator header | VISUAL | Sí | `venues/VenueCreator.tsx` | MapPinPlus pill ring-primary/20 |
+| ServiceDetail sections | VISUAL | Sí | `services/ServiceDetailView.tsx` | SectionIcon ring en cards resumen |
+| StepUnified empty/pricing | VISUAL | Sí | `services/StepUnified.tsx` | SectionHeader ring; cover/pricing h-14 empty |
+| StepAccessControl gates | VISUAL | Sí | `events/StepAccessControl.tsx` | Gate card DoorOpen ring-primary/20 |
+| RefundTicketFlow confirm | VISUAL | Sí | `tickets/RefundTicketFlow.tsx` | Confirm hero h-14 ring-primary/20 |
+| EventPreviewModal shell | VISUAL | Sí | `events/EventPreviewModal.tsx` | Top bar pills; venue HomeIcon ring |
+| AddGuestModal search UX | FRONTEND_LOGIC | Sí | `guests/AddGuestModal.tsx` | Empty Search h-14 ring; error AlertCircle + RefreshCw |
+| MyPostsView rings | VISUAL | Sí | `feed/MyPostsView.tsx` | Error ring-2; empty FileText ring-primary/20 |
+| ProfileGallery header/error | VISUAL | Sí | `feed/ProfileGallery.tsx` | ImagePlus pill; error block h-14 centrado |
+| MyPurchasesView rows | VISUAL | Sí | `purchases/MyPurchasesView.tsx` | List row icons ring-primary/20 |
+| MainInfoSection header | VISUAL | Sí | `venues/sections/MainInfoSection.tsx` | FileText rounded-xl ring pill |
+| SeatLocationModal header | VISUAL | Sí | `tickets/SeatLocationModal.tsx` | MapPin pill en DialogTitle gradiente |
+| CompanyContext export | Integración | Sí | `contexts/CompanyContext.tsx` | Export type CompanyContextValue |
+| BankingHub delete/PayPal | Bloqueo | Parcial | `banking/BankingHub.tsx` | BACKEND_REQUIRED banner explícito dashboard |
+| FeedBanner / HostPickerModal | Empalme | Sí | ver empalmes previos | Verificados alineados batch previo |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 5 (run 27902063419-b5)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

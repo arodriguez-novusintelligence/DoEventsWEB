@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27903532486-b1`: batch 1 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). FeedHero tokens DSF; SeatingMapEditor/StepUnified/ServiceDetail rings; AddGuestModal search empty/error; similitud ~83.8%; build:devaws OK.
+
 Run `agent-27903532486`: validación prepare `cb27c830` — sin diff UI; reglasDiseno tokens/breakpoints referencia DSF; batch 6 reconciliado; similitud ~98%; build:devaws OK; 3 BACKEND_REQUIRED acumulados (PSP, story viewers, KYC).
 
 Run `gap-empalme-27902063419-b6`: batch 6 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`PaymentGatewaySheet` PSP, `StoryViewersSheet`, `KycCertificationView`). Manifiesto sin diff UI; similitud ~98%; build:devaws OK.
@@ -104,7 +106,24 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27902063419-b5)
+## Empalme realizado (última ejecución — gap-empalme-27903532486-b1)
+
+- **FeedHero:** categorías con tokens DSF semánticos (sin amber/pink hardcoded); ubicación h-10 ring; stories loading Loader2 card.
+- **EventsView:** fallback media sin imagen CalendarDays h-14 ring-primary/20.
+- **FeedServicesCarousel:** props `loadError`/`onRetry`; empty/error rings Briefcase/AlertCircle.
+- **SeatingMapEditor:** header pills ring-primary/20; canvas vacío LayoutGrid h-14 ring.
+- **VenueCreator / MainInfoSection:** header MapPinPlus/FileText pills ring.
+- **ServiceDetailView:** SectionIcon ring en actividades/horario/disponibilidad/reembolso.
+- **StepUnified:** SectionHeader ring; cover/pricing empty h-14 ring; Camera header pill.
+- **StepAccessControl / RefundTicketFlow / EventPreviewModal:** gate/confirm/venue icons ring-primary/20; preview top bar pills.
+- **AddGuestModal:** búsqueda empty Search h-14 ring; error AlertCircle + RefreshCw.
+- **MyPostsView / ProfileGallery / MyPurchasesView:** error ring-2; empty rings; galería header ImagePlus pill.
+- **SeatLocationModal:** DialogTitle MapPin pill ring en gradiente header.
+- **CompanyContext:** export type `CompanyContextValue` para paridad Lovable.
+- **BankingHub:** banner BACKEND_REQUIRED delete/PayPal explícito en dashboard.
+- **FeedBanner / HostPickerModal:** verificados alineados empalmes previos.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27902063419-b5)
 
 - **BankingForm:** banner BACKEND ring-primary/20; cards método pago shadow-sm + ring iconos; PayPal banner intacto.
 - **PostCard:** card ring-primary/10; repost embed shadow-sm.

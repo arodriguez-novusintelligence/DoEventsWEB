@@ -43,11 +43,14 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
     <div className="fixed inset-0 z-[250] bg-black/50 overflow-y-auto">
       <div className="mx-auto min-h-screen max-w-lg bg-secondary">
         {/* Top bar */}
-        <div className="sticky top-0 z-10 flex items-center justify-between bg-secondary px-4 pt-4 pb-3">
-          <button onClick={onClose} className="flex items-center gap-1 text-sm font-medium text-primary">
-            <ChevronLeft className="h-4 w-4" /> Atrás
+        <div className="sticky top-0 z-10 flex items-center justify-between bg-secondary px-4 pt-4 pb-3 shadow-sm">
+          <button onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20 text-primary">
+            <ChevronLeft className="h-5 w-5" />
           </button>
-          <button onClick={onClose} className="rounded-full bg-card p-1.5 text-muted-foreground shadow-sm">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
+            <Eye className="h-5 w-5 text-primary" />
+          </span>
+          <button onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-xl bg-card ring-2 ring-border/40 text-muted-foreground shadow-sm">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -68,7 +71,9 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
           </div>
 
           <div className="mt-4 flex items-start gap-2">
-            <Eye className="mt-1 h-5 w-5 shrink-0 text-primary" />
+            <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
+              <Eye className="h-5 w-5 text-primary" />
+            </span>
             <h1 className="text-2xl font-extrabold text-primary leading-tight">{data.name || 'Sin nombre'}</h1>
           </div>
           <div className="mt-2">
@@ -145,8 +150,8 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
               {/* Lugar */}
               <div className="mt-6 rounded-2xl bg-card p-4 shadow-sm">
                 <div className="flex items-start gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                    <HomeIcon className="h-4 w-4" />
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20 text-primary">
+                    <HomeIcon className="h-5 w-5" />
                   </div>
                   <div className="flex-1">
                     <div className="font-bold text-foreground">{data.location.customName || '—'}</div>

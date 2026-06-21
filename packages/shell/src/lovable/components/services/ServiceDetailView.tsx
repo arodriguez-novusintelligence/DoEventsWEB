@@ -92,6 +92,12 @@ const ServiceDetailView = ({
     null
   );
 
+  const SectionIcon = ({ icon: Icon }: { icon: React.ElementType }) => (
+    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
+      <Icon className="h-5 w-5 text-primary" />
+    </span>
+  );
+
   const days = service.selectedDays
     .map((sel, i) => (sel ? DAYS_FULL[i] : null))
     .filter(Boolean) as string[];
@@ -185,7 +191,7 @@ const ServiceDetailView = ({
       <div className="px-4 mt-4 space-y-4">
         <div className="rounded-2xl bg-card p-4 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
-            <Briefcase className="h-5 w-5 text-primary" />
+            <SectionIcon icon={Briefcase} />
             <h3 className="font-bold">Actividades y tarifas</h3>
           </div>
           <ul className="space-y-2.5">
@@ -207,7 +213,7 @@ const ServiceDetailView = ({
 
         <div className="rounded-2xl bg-card p-4 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
-            <Clock className="h-5 w-5 text-primary" />
+            <SectionIcon icon={Clock} />
             <h3 className="font-bold">Horario</h3>
           </div>
           <p className="text-sm">
@@ -220,7 +226,7 @@ const ServiceDetailView = ({
 
         <div className="rounded-2xl bg-card p-4 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
-            <CalendarDays className="h-5 w-5 text-primary" />
+            <SectionIcon icon={CalendarDays} />
             <h3 className="font-bold">Disponibilidad</h3>
           </div>
           <p className="text-sm">
@@ -231,7 +237,7 @@ const ServiceDetailView = ({
 
         <div className="rounded-2xl bg-card p-4 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
-            <ShieldCheck className="h-5 w-5 text-primary" />
+            <SectionIcon icon={ShieldCheck} />
             <h3 className="font-bold">Política de reembolso</h3>
           </div>
           <p className="text-sm">{service.refundPolicy}</p>

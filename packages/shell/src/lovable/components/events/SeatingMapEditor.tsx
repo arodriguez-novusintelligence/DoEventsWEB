@@ -766,10 +766,10 @@ const SeatingMapEditor = ({
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-border bg-card px-4 py-3">
+      <div className="flex items-center justify-between border-b border-border bg-card px-4 py-3 shadow-sm">
         <button
           onClick={onClose}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground"
+          className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20 text-foreground"
         >
           <ArrowLeft className="h-5 w-5" />
         </button>
@@ -781,7 +781,7 @@ const SeatingMapEditor = ({
         </div>
         <button
           onClick={() => setShowLegend(true)}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground"
+          className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20 text-foreground"
         >
           <MoreVertical className="h-5 w-5" />
         </button>
@@ -1049,7 +1049,10 @@ const SeatingMapEditor = ({
             })}
 
             {figures.length === 0 && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                  <LayoutGrid className={`h-7 w-7 ${dark ? 'text-primary-foreground' : 'text-primary'}`} />
+                </div>
                 <p className={`px-6 text-sm ${dark ? 'text-zinc-400' : 'text-muted-foreground'}`}>
                   Toca una figura abajo para agregarla y configurarla como{' '}
                   <span className="font-semibold">Categoría</span> o{' '}

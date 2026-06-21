@@ -21,6 +21,8 @@ interface CompanyContextValue {
   refresh: () => void;
 }
 
+export type { CompanyContextValue };
+
 const CompanyContext = createContext<CompanyContextValue>({
   company: null,
   loading: false,
@@ -31,6 +33,8 @@ const CompanyContext = createContext<CompanyContextValue>({
   accountTypeLabel: 'Personal',
   refresh: () => undefined,
 });
+
+export { CompanyContext };
 
 export const useCompany = () => useContext(CompanyContext);
 
