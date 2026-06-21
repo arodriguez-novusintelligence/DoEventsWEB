@@ -5,7 +5,7 @@ import {
   DrawerTitle,
 } from '@lovable/components/ui/drawer';
 import { Avatar, AvatarFallback } from '@lovable/components/ui/avatar';
-import { ImagePlus, Video, X, Globe, Lock, Loader2, PenLine } from 'lucide-react';
+import { ImagePlus, Video, X, Globe, Lock, Loader2, PenLine, MapPin } from 'lucide-react';
 import { useState, useRef, useMemo } from 'react';
 import { cn } from '@lovable/lib/utils';
 import type { Post } from '@doevents/shared';
@@ -187,14 +187,17 @@ const CreatePostSheet = ({
               </div>
 
               {/* Location */}
-              <input
-                type="text"
-                placeholder="📍 Agregar ubicación"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                maxLength={100}
-                className="w-full rounded-lg border border-border bg-muted/50 px-3 py-2.5 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary"
-              />
+              <div className="relative">
+                <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary" />
+                <input
+                  type="text"
+                  placeholder="Agregar ubicación"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  maxLength={100}
+                  className="w-full rounded-lg border border-border bg-muted/50 py-2.5 pl-9 pr-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+                />
+              </div>
 
               {/* Visibility selector */}
               <div className="space-y-2">

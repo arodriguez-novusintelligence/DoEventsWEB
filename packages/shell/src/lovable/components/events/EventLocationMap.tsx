@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Loader2, AlertCircle, RefreshCw } from 'lucide-react';
+import { Loader2, AlertCircle, RefreshCw, MapPin } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
 
 interface Props {
@@ -94,7 +94,10 @@ const EventLocationMap = ({ lat, lng, onPick }: Props) => {
     <div className="relative h-48 w-full overflow-hidden rounded-2xl border border-border bg-muted">
       {!ready && !loadError && (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 animate-pulse bg-muted/80">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+            <MapPin className="h-5 w-5 text-primary" />
+          </div>
+          <Loader2 className="h-5 w-5 animate-spin text-primary" />
           <span className="text-xs text-muted-foreground">Cargando mapa…</span>
         </div>
       )}

@@ -30,8 +30,10 @@ const LocationSection = () => {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center gap-2">
-        <MapPin className="h-5 w-5 text-primary" />
+      <div className="flex items-center gap-2 mb-1">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+          <MapPin className="h-5 w-5 text-primary" />
+        </div>
         <h3 className="text-base font-semibold text-foreground">Ubicación del lugar</h3>
       </div>
       <div className="rounded-2xl bg-card border border-border shadow-sm p-4 space-y-5">

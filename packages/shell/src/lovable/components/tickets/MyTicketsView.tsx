@@ -68,7 +68,13 @@ const TicketCardMedia = ({ ticket }: { ticket: Ticket }) => {
   if (hasImage) {
     return <img src={ticket.eventImage} alt={ticket.eventTitle} className="h-full w-full object-cover" />;
   }
-  return <div className="h-full w-full bg-muted" />;
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-muted">
+      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+        <TicketIcon className="h-7 w-7 text-primary" />
+      </div>
+    </div>
+  );
 };
 
 const MyTicketsView = ({
@@ -162,7 +168,8 @@ const MyTicketsView = ({
               <p className="text-sm font-semibold text-foreground">No se pudieron cargar tus boletas</p>
               <p className="text-xs text-muted-foreground max-w-[240px]">{loadError}</p>
               {onRetry && (
-                <Button type="button" variant="outline" size="sm" className="rounded-xl" onClick={onRetry}>
+                <Button type="button" variant="outline" size="sm" className="rounded-xl gap-1.5" onClick={onRetry}>
+                  <RefreshCw className="h-3.5 w-3.5" />
                   Reintentar
                 </Button>
               )}

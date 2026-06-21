@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Heart, Ticket, Loader2, AlertCircle } from 'lucide-react';
+import { Heart, Ticket, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
 import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBanner';
 import type { InvitationEvent } from '@lovable/data/invitationsData';
@@ -58,7 +58,8 @@ const MyInvitationsView = ({
             <p className="text-sm font-semibold text-foreground">No se pudieron cargar las invitaciones</p>
             <p className="text-xs text-muted-foreground max-w-[240px]">{loadError}</p>
             {onRetry && (
-              <Button type="button" variant="outline" size="sm" className="rounded-xl" onClick={onRetry}>
+              <Button type="button" variant="outline" size="sm" className="rounded-xl gap-1.5" onClick={onRetry}>
+                <RefreshCw className="h-3.5 w-3.5" />
                 Reintentar
               </Button>
             )}

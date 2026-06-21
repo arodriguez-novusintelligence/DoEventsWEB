@@ -377,8 +377,15 @@ const NotificationsSheet = ({
       <DrawerContent className="max-h-[85vh]">
         <DrawerHeader className="flex items-center justify-between pb-0">
           <DrawerTitle className="flex items-center gap-2 text-base font-bold text-foreground">
-            <Bell className="h-5 w-5 text-primary" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+              <Bell className="h-5 w-5 text-primary" />
+            </div>
             Notificaciones
+            {unreadCount > 0 && (
+              <span className="inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </span>
+            )}
           </DrawerTitle>
           <div className="flex items-center gap-3">
             {unreadCount > 0 && (

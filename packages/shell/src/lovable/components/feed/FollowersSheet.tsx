@@ -232,7 +232,9 @@ const FollowersSheet = ({
       <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl p-0">
         <SheetHeader className="px-5 pt-5 pb-3">
           <SheetTitle className="flex items-center gap-2 text-left text-base font-bold">
-            <Users className="h-5 w-5 text-primary" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+              <Users className="h-5 w-5 text-primary" />
+            </div>
             Seguidores y seguidos
           </SheetTitle>
         </SheetHeader>

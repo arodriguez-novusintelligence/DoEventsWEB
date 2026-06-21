@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@lovable/components/ui/dropdown-menu';
 import { Popover, PopoverContent, PopoverTrigger } from '@lovable/components/ui/popover';
-import { Heart, ImagePlus, MessageSquare, MoreHorizontal, Send, Smile, X, Flag, Loader2, AlertCircle } from 'lucide-react';
+import { Heart, ImagePlus, MessageSquare, MoreHorizontal, Send, Smile, X, Flag, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
 import { useState, useRef } from 'react';
 import type { Comment } from '@doevents/shared';
@@ -249,7 +249,8 @@ const CommentsSheet = ({
                 <p className="text-sm font-semibold text-foreground">No se pudieron cargar los comentarios</p>
                 <p className="text-xs text-muted-foreground max-w-[220px]">{loadError}</p>
                 {onRetry && (
-                  <Button type="button" variant="outline" size="sm" className="rounded-xl" onClick={onRetry}>
+                  <Button type="button" variant="outline" size="sm" className="rounded-xl gap-1.5" onClick={onRetry}>
+                    <RefreshCw className="h-3.5 w-3.5" />
                     Reintentar
                   </Button>
                 )}

@@ -236,7 +236,7 @@ const MessagesListView = ({
       <button
         key={room.id}
         onClick={() => onOpenChat(room.id)}
-        className="flex w-full items-center gap-3 rounded-2xl bg-card p-3 transition-colors hover:bg-accent/40 border border-border/40"
+        className="flex w-full items-center gap-3 rounded-2xl bg-card p-3 shadow-sm transition-colors hover:bg-accent/40 border border-border/40"
       >
         {imageSrc ? (
           <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl">

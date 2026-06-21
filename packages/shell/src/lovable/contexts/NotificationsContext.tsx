@@ -67,6 +67,7 @@ export interface Notification {
 interface NotificationsContextType {
   notifications: Notification[];
   unreadCount: number;
+  hasUnread: boolean;
   loading: boolean;
   loadError: string | null;
   loadErrorMessage: string | null;
@@ -83,6 +84,7 @@ interface NotificationsContextType {
 const fallbackContext: NotificationsContextType = {
   notifications: [],
   unreadCount: 0,
+  hasUnread: false,
   loading: false,
   loadError: null,
   loadErrorMessage: null,
@@ -236,6 +238,7 @@ export const NotificationsProvider = ({
       value={{
         notifications,
         unreadCount,
+        hasUnread: unreadCount > 0,
         loading,
         loadError,
         loadErrorMessage: loadError,
