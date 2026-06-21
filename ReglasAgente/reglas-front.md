@@ -115,6 +115,27 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b11)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| AccessControlListView DSF | VISUAL | Sí | `access/AccessControlListView.tsx` | font-extrabold transversal; border-border/60; rounded-full CTAs; stat icon rings |
+| SeatingMapEditor border fix | VISUAL | Sí | `events/SeatingMapEditor.tsx` | border-border/60/60→/60 ×31; seat ring-primary/20; footer rounded-full |
+| NotificationsContext count | Integración | Sí | `contexts/NotificationsContext.tsx` | aliases count/notificationCount/totalCount |
+| MyPurchasesView empty | VISUAL | Sí | `purchases/MyPurchasesView.tsx` | dashed border-primary/25; retry gap-1.5; API real |
+| SeatLocationModal dashed | VISUAL | Sí | `tickets/SeatLocationModal.tsx` | empty/error border-dashed border-primary/25 |
+| EventPreviewModal fields | VISUAL | Sí | `events/EventPreviewModal.tsx` | Field values + refund label font-extrabold |
+| StepUnified preferences | VISUAL | Sí | `services/StepUnified.tsx` | selected cards ring-primary/20; refund labels extrabold |
+| MyPostsView delete ring | VISUAL | Sí | `feed/MyPostsView.tsx` | delete FAB ring-destructive/20 |
+| AddGuestModal selection | VISUAL | Sí | `guests/AddGuestModal.tsx` | selected row ring-primary/20; retry extrabold |
+| ReportPostDialog textarea | VISUAL | Sí | `feed/ReportPostDialog.tsx` | Textarea + error font-extrabold |
+| MainInfoSection stepper | VISUAL | Sí | `venues/sections/MainInfoSection.tsx` | minus ring-primary/20; parking label extrabold |
+| EventPublished body | VISUAL | Sí | `pages/EventPublished.tsx` | body copy font-extrabold; fetchEventById intacto |
+| StepAccessControl / FAQ / HostPicker | Empalme | Sí | ver batch previo | Verificados intactos |
+| ServiceDetailView / EventsView | Empalme | Sí | ver batch previo | Verificados intactos |
+| MyReservedServices / CreatePost / TicketDetail | Empalme | Sí | ver batch previo | Verificados intactos |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 20 DONE + 0 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b10)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

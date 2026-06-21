@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27905180836-b11`: batch 1 undécima pasada (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED en batch. AccessControlListView empalme DSF completo; SeatingMapEditor border-border/60/60 fix ×31 + footer rounded-full; NotificationsContext count/notificationCount/totalCount aliases; MyPurchasesView/SeatLocationModal empty dashed; EventPreviewModal/StepUnified polish; similitud ~98.85%; 97 gaps restantes; build:devaws OK.
+
 Run `gap-empalme-27905180836-b10`: batch 1 décima pasada (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`StoryViewersSheet` viewers API). FeedHero font-extrabold transversal + category card border-border/60; StoryViewersSheet SheetContent shadow-sm; CompanyContext organizationName/displayName/isCompany aliases; NotificationsContext refresh alias; EventPublished body copy weight; similitud ~98.7%; 97 gaps restantes; build:devaws OK.
 
 Run `gap-empalme-27905180836-b9`: batch 1 novena pasada (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). ContactImportModal DSF completo (Dialog shadow-sm, font-extrabold, rounded-full CTAs); SeatingMapEditor border-border/60 transversal + shadow-sm modales; RefundTicketFlow/TicketDetailView/EventsView/HostPickerModal/StepUnified/AddGuestModal/CreatePostSheet/ReportPostDialog polish; BankingHub retry/back extrabold + PayPal banner icon ring; similitud ~98.6%; 97 gaps restantes; build:devaws OK.
@@ -140,7 +142,23 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27905180836-b10)
+## Empalme realizado (última ejecución — gap-empalme-27905180836-b11)
+
+- **AccessControlListView:** empalme DSF completo — `border-border/60`, font-extrabold transversal (tabs, badges, CTAs, stat labels), rounded-full Escanear/Configurar/Asignar, stat icon wells ring-primary/20, loading h-14 ring-primary/20; APIs reales intactas.
+- **SeatingMapEditor:** fix typo `border-border/60/60`→`border-border/60` (31 ocurrencias); seat selected `ring-primary/20`; FooterActions Cancelar/Guardar `rounded-full`; zoom FABs `ring-primary/20`.
+- **NotificationsContext:** aliases `count`, `notificationCount`, `totalCount` (= `notifications.length`); `fetchUserNotifications` sin mocks.
+- **MyPurchasesView:** empty state `border-dashed border-primary/25`; retry `gap-1.5`; APIs aggregate intactas.
+- **SeatLocationModal:** empty/error panels `border-dashed border-primary/25`; API `fetchAvailableSeats` intacta.
+- **EventPreviewModal:** Field values + refund label font-extrabold.
+- **StepUnified:** preference cards `ring-primary/20` cuando selected; refund policy labels font-extrabold.
+- **MyPostsView:** delete FAB `ring-destructive/20`.
+- **AddGuestModal:** selected search row `ring-primary/20`; retry font-extrabold.
+- **ReportPostDialog:** Textarea + error banner font-extrabold.
+- **MainInfoSection:** minus stepper `ring-primary/20`; parking label font-extrabold.
+- **EventPublished:** body copy font-extrabold; `fetchEventById` + share intactos.
+- **Verificados intactos:** StepAccessControl, FAQSection, HostPickerModal, ServiceDetailView, EventsView, MyReservedServicesView, CreatePostSheet, TicketDetailView.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27905180836-b10)
 
 - **FeedHero:** font-extrabold transversal (ubicación, Cambiar, Ver todas, Cerca de ti, categorías, historias, LIVE badge); category card `border-border/60`; Cambiar CTA shadow-sm; empty/loading states extrabold; `showBuiltInStories` solo DEV sin mocks prod.
 - **StoryViewersSheet:** SheetContent `border-border/60 shadow-sm`; badge BACKEND_REQUIRED font-extrabold shadow-sm; skeleton rows border-border/60; sin endpoint viewers inventado.
