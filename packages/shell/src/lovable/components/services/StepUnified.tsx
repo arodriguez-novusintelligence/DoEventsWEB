@@ -681,7 +681,7 @@ const StepUnified = ({
                   onClick={() => updateForm({ bookingPreference: 'instant' })}
                   className={cn(
                     'w-full rounded-xl border p-4 text-left transition-colors flex items-start gap-3',
-                    formData.bookingPreference === 'instant' ? 'border-primary bg-primary/5' : 'border-border hover:border-muted-foreground'
+                    formData.bookingPreference === 'instant' ? 'border-primary bg-primary/5' : 'border-border/60 hover:border-muted-foreground'
                   )}
                 >
                   <Zap className="h-5 w-5 text-primary mt-0.5 shrink-0" />
@@ -698,7 +698,7 @@ const StepUnified = ({
                   onClick={() => updateForm({ bookingPreference: 'approval' })}
                   className={cn(
                     'w-full rounded-xl border p-4 text-left transition-colors flex items-start gap-3',
-                    formData.bookingPreference === 'approval' ? 'border-primary bg-primary/5' : 'border-border hover:border-muted-foreground'
+                    formData.bookingPreference === 'approval' ? 'border-primary bg-primary/5' : 'border-border/60 hover:border-muted-foreground'
                   )}
                 >
                   <ClipboardCheck className="h-5 w-5 text-primary mt-0.5 shrink-0" />

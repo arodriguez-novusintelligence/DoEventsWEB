@@ -788,7 +788,7 @@ const SeatingMapEditor = ({
       </div>
 
       {/* Toolbar icons */}
-      <div className="flex items-center gap-2 overflow-x-auto border-b border-border bg-card px-3 py-2">
+      <div className="flex items-center gap-2 overflow-x-auto border-b border-border/60 bg-card px-3 py-2">
         <ToolbarIcon
           onClick={undo}
           icon={<Undo2 className="h-4 w-4" />}
@@ -1629,15 +1629,15 @@ const CategoryFormSheet = ({
           </div>
 
           <div
-            className={`mb-4 rounded-xl border-l-4 p-3 ${
+            className={`mb-4 rounded-xl border border-border/60 border-l-4 p-3 shadow-sm ${
               withinCapacity
-                ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30'
-                : 'border-destructive bg-destructive/10'
+                ? 'border-l-success bg-success/10'
+                : 'border-l-destructive bg-destructive/10'
             }`}
           >
             <p
-              className={`mb-1 text-sm font-bold ${
-                withinCapacity ? 'text-emerald-700' : 'text-destructive'
+              className={`mb-1 text-sm font-extrabold ${
+                withinCapacity ? 'text-success' : 'text-destructive'
               }`}
             >
               {withinCapacity
@@ -1647,7 +1647,7 @@ const CategoryFormSheet = ({
             <p className="mb-1 text-[11px] text-muted-foreground">Capacidad utilizada</p>
             <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
               <div
-                className={withinCapacity ? 'h-full bg-emerald-500' : 'h-full bg-destructive'}
+                className={withinCapacity ? 'h-full bg-success' : 'h-full bg-destructive'}
                 style={{ width: `${usedPct}%` }}
               />
             </div>
@@ -1655,13 +1655,13 @@ const CategoryFormSheet = ({
               <span className="text-muted-foreground">
                 {usedSeats} de {totalCapacity} sillas
               </span>
-              <span className={withinCapacity ? 'font-bold text-emerald-700' : 'font-bold text-destructive'}>
+              <span className={withinCapacity ? 'font-extrabold text-success' : 'font-extrabold text-destructive'}>
                 {usedPct}%
               </span>
             </div>
             <p
               className={`mt-1 text-[11px] font-semibold ${
-                withinCapacity ? 'text-emerald-700' : 'text-destructive'
+                withinCapacity ? 'text-success' : 'text-destructive'
               }`}
             >
               {Math.max(0, totalCapacity - usedSeats)} sillas disponibles

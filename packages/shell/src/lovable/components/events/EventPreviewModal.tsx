@@ -12,7 +12,7 @@ const Field = ({ icon: Icon, label, value }: { icon: any; label: string; value: 
   <div>
     <div className="flex items-center gap-1.5 text-sm text-foreground">
       <Icon className="h-4 w-4 text-primary" />
-      <span className="font-semibold">{label}</span>
+      <span className="font-extrabold">{label}</span>
     </div>
     <div className="mt-1 text-sm text-foreground">{value || '—'}</div>
   </div>
@@ -93,7 +93,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
               <Field icon={Calendar} label="Fecha" value={`Inicio\n${formatDate(data.startDate)}\n\nFin\n${formatDate(data.endDate)}`} />
               <Field icon={Clock} label="Hora" value={`Inicio\n${data.startTime || '—'}\n\nFin\n${data.endTime || '—'}`} />
             </div>
-            <div className="my-4 border-t border-border" />
+            <div className="my-4 border-t border-border/60" />
             <div className="grid grid-cols-2 gap-4">
               <Field icon={Tag} label="Categoría" value={data.category} />
               <Field icon={Tag} label="Clase de evento" value={data.eventClass === 'public' ? 'Público' : 'Privado'} />
@@ -202,7 +202,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
                 <h3 className="text-sm font-extrabold text-foreground">Organizador del evento</h3>
                 <div className="mt-2 rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/15 ring-2 ring-primary/20 text-base font-bold text-primary">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/15 ring-2 ring-primary/20 text-base font-extrabold text-primary">
                       {(data.hosts[0]?.initials || 'TU').slice(0, 2)}
                     </div>
                     <div className="flex-1">
@@ -222,7 +222,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
                   {data.hosts.map((h) => (
                     <div key={h.id} className="mt-2 rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/15 ring-2 ring-primary/20 text-base font-bold text-primary">{h.initials || h.name?.slice(0,2).toUpperCase()}</div>
+                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/15 ring-2 ring-primary/20 text-base font-extrabold text-primary">{h.initials || h.name?.slice(0,2).toUpperCase()}</div>
                         <div className="flex-1">
                           <div className="font-extrabold text-foreground">{h.name}</div>
                           {h.role && <div className="text-xs text-muted-foreground">{h.role}</div>}
@@ -236,7 +236,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
               {/* FAQs */}
               {data.faqs.length > 0 && (
                 <div className="mt-6 rounded-2xl border border-border/60 bg-card p-4 shadow-sm flex items-center justify-between">
-                  <span className="font-semibold text-foreground">Preguntas frecuentes</span>
+                  <span className="font-extrabold text-foreground">Preguntas frecuentes</span>
                   <ArrowRight className="h-4 w-4 text-primary" />
                 </div>
               )}

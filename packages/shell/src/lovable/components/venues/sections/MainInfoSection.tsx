@@ -164,7 +164,7 @@ const MainInfoSection = () => {
               <span className="text-sm">Número de personas</span>
             </div>
             <div className="flex items-center gap-3">
-              <button type="button" onClick={() => update({ capacity: String(Math.max(1, capacity - 1)) })} className="w-8 h-8 rounded-full border border-primary/30 flex items-center justify-center hover:bg-primary/5">
+              <button type="button" onClick={() => update({ capacity: String(Math.max(1, capacity - 1)) })} className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center hover:bg-primary/5">
                 <Minus className="w-4 h-4 text-primary" />
               </button>
               <span className="w-8 text-center font-bold text-primary">{capacity}</span>

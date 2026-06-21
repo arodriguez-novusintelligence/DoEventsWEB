@@ -144,12 +144,12 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
 
       {/* Banner */}
       {allAssigned ? (
-        <div className="flex items-center gap-2 rounded-xl bg-success/10 px-4 py-3 text-sm font-semibold text-success">
+        <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-success/10 px-4 py-3 text-sm font-semibold text-success shadow-sm">
           <CheckCircle2 className="h-5 w-5" />
           Asignación completa
         </div>
       ) : (
-        <div className="flex items-center gap-2 rounded-xl bg-primary/10 px-4 py-3 text-sm font-semibold text-primary">
+        <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-primary/10 px-4 py-3 text-sm font-semibold text-primary shadow-sm">
           <HelpCircle className="h-5 w-5" />
           Asigna al menos una persona por puerta
         </div>
@@ -182,7 +182,8 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
                   <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                     <UserPlus className="h-7 w-7 text-primary" />
                   </div>
-                  <p className="text-xs text-muted-foreground">Sin personal asignado</p>
+                  <p className="text-sm font-extrabold text-foreground">Sin personal asignado</p>
+                  <p className="text-xs text-muted-foreground">Asigna usuarios de la plataforma a esta puerta</p>
                 </div>
               ) : (
                 <div className="space-y-2">

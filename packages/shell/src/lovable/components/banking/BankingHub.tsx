@@ -133,8 +133,10 @@ const BankingHub = ({ onBack }: BankingHubProps) => {
         <BankingForm onComplete={handleFormComplete} editingMethod={editingMethod} />
       ) : loading ? (
         <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-card py-24 shadow-sm mx-4">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-sm text-muted-foreground">Cargando métodos de cobro…</p>
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+            <Loader2 className="h-7 w-7 animate-spin text-primary" />
+          </div>
+          <p className="text-sm font-extrabold text-foreground">Cargando métodos de cobro…</p>
         </div>
       ) : loadError ? (
         <div className="mx-4 flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-card py-24 px-6 text-center shadow-sm">

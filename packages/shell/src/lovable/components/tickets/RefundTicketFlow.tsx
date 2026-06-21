@@ -203,7 +203,7 @@ const RefundTicketFlow = ({
                       <div className="h-full w-full bg-muted" />
                     )}
                     <div className={`absolute top-3 right-3 h-8 w-8 rounded-full grid place-items-center ${
-                      isSel ? 'bg-primary' : 'bg-card/80 border border-border'
+                      isSel ? 'bg-primary' : 'bg-card/80 border border-border/60'
                     }`}>
                       {isSel && <Check className="h-5 w-5 text-primary-foreground" />}
                     </div>
@@ -262,7 +262,7 @@ const RefundTicketFlow = ({
           </div>
 
           <div className="px-4 pt-2 flex flex-col items-center">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
               <CircleDollarSign className="h-10 w-10 text-primary" />
             </div>
             <h1 className="mt-4 text-2xl font-extrabold text-foreground">Confirmar reembolso</h1>
@@ -323,7 +323,7 @@ const RefundTicketFlow = ({
                   <span className="text-muted-foreground">Comisión plataforma (no reembolsable)</span>
                   <span className="font-semibold text-foreground">- {formatCOP(platformFee)}</span>
                 </div>
-                <div className="border-t border-border pt-2 flex justify-between">
+                <div className="border-t border-border/60 pt-2 flex justify-between">
                   <span className="font-bold text-foreground">Monto a reembolsar</span>
                   <span className="text-xl font-extrabold text-primary">{formatCOP(refundTotal)}</span>
                 </div>
@@ -359,7 +359,7 @@ const RefundTicketFlow = ({
             <button type="button" onClick={() => setStep('confirm')} className="flex items-center gap-1 text-primary font-medium">
               <ChevronLeft className="h-5 w-5" /> Volver
             </button>
-            <button type="button" onClick={() => setStep('confirm')} className="h-9 w-9 rounded-full bg-card border border-border grid place-items-center">
+            <button type="button" onClick={() => setStep('confirm')} className="h-9 w-9 rounded-full bg-card border border-border/60 grid place-items-center">
               <X className="h-4 w-4" />
             </button>
           </div>

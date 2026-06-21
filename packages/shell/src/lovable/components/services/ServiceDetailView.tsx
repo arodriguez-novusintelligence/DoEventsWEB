@@ -272,11 +272,11 @@ const ServiceDetailView = ({
       {/* Sticky CTA */}
       {canReserve && (
       <div className="fixed bottom-20 left-0 right-0 px-4 z-20">
-        <div className="mx-auto max-w-lg flex items-center gap-3 rounded-full bg-primary px-5 py-3 shadow-lg">
+        <div className="mx-auto max-w-lg flex items-center gap-3 rounded-full bg-primary px-5 py-3 shadow-sm">
           {cheapest && (
             <div className="text-primary-foreground text-sm">
               <p className="text-[10px] uppercase opacity-80">Desde</p>
-              <p className="font-bold">
+              <p className="font-extrabold">
                 {cheapest.currency} {cheapest.cost.toLocaleString()}
               </p>
             </div>

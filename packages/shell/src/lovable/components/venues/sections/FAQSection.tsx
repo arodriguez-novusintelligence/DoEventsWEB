@@ -55,7 +55,7 @@ const FAQSection = () => {
               <div className="flex items-start gap-3">
                 <div className="flex-1 space-y-3">
                   <div>
-                    <Label className="text-xs text-muted-foreground">Pregunta {index + 1}</Label>
+                    <Label className="text-xs font-extrabold text-muted-foreground">Pregunta {index + 1}</Label>
                     <Input
                       placeholder="Ej: ¿Cuál es el horario de check-in?"
                       value={faq.question}

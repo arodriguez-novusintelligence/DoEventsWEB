@@ -81,6 +81,8 @@ export interface NotificationsContextValue {
   loadError: string | null;
   loadErrorMessage: string | null;
   isEmpty: boolean;
+  /** Alias Lovable — derivado de `!loading && unreadCount === 0`. */
+  isLoading: boolean;
   reload: () => Promise<void>;
   refreshNotifications: () => Promise<void>;
   addNotification: (n: Omit<Notification, 'id' | 'timeAgo' | 'read'>) => void;
@@ -99,6 +101,7 @@ const fallbackContext: NotificationsContextValue = {
   loadError: null,
   loadErrorMessage: null,
   isEmpty: true,
+  isLoading: false,
   reload: async () => undefined,
   refreshNotifications: async () => undefined,
   addNotification: () => undefined,
@@ -259,6 +262,7 @@ export const NotificationsProvider = ({
         loadError,
         loadErrorMessage: loadError,
         isEmpty: !loading && !loadError && notifications.length === 0,
+        isLoading: loading,
         reload: reloadFromApi,
         refreshNotifications: reloadFromApi,
         addNotification,

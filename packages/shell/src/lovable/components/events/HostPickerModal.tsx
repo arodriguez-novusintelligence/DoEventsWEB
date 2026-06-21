@@ -191,7 +191,7 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
           </button>
         </div>
 
-        <div className="flex border-b border-border px-2">
+        <div className="flex border-b border-border/60 px-2">
           {TABS.map((t) => {
             const active = tab === t.key;
             return (
@@ -225,7 +225,7 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="@usuario, nombre o email"
-                  className={`${inputCls} pl-9 pr-9 ring-2 ring-primary/40 border-primary`}
+                  className={`${inputCls} pl-9 pr-9 ring-2 ring-primary/20 border-primary/40`}
                   autoFocus
                 />
                 {query && (

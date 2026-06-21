@@ -52,15 +52,17 @@ const MyPostsView = ({
       <div className="px-4 pt-4 space-y-4">
         {loading ? (
           <div className="flex flex-col items-center gap-3 rounded-2xl border border-border/60 bg-card py-16 text-center shadow-sm">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <p className="text-sm text-muted-foreground">Cargando publicaciones…</p>
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+              <Loader2 className="h-7 w-7 animate-spin text-primary" />
+            </div>
+            <p className="text-sm font-extrabold text-foreground">Cargando publicaciones…</p>
           </div>
         ) : loadError ? (
           <div className="flex flex-col items-center gap-3 rounded-2xl border border-destructive/30 bg-card py-12 text-center shadow-sm">
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
               <AlertCircle className="h-7 w-7 text-destructive" />
             </div>
-            <p className="text-sm font-medium text-destructive">{loadError}</p>
+            <p className="text-sm font-extrabold text-destructive">{loadError}</p>
             {onRetry && (
               <Button type="button" variant="outline" className="rounded-full" onClick={onRetry}>
                 <RefreshCw className="mr-2 h-4 w-4" />

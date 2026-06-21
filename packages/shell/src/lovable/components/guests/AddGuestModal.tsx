@@ -668,7 +668,7 @@ export function AddGuestModal({
               </div>
             )}
             {!searchError && searchAttempted && !isSearching && searchResults.length === 0 && (
-              <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border bg-card py-8 text-center shadow-sm">
+              <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-primary/25 bg-card py-8 text-center shadow-sm">
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                   <Search className="h-7 w-7 text-primary" />
                 </div>
@@ -718,15 +718,15 @@ export function AddGuestModal({
               </div>
             )}
             {foundUser && searchResults.length === 1 && (
-              <div className="bg-muted/50 rounded-xl p-4 space-y-3">
+              <div className="rounded-xl border border-border/60 bg-muted/50 p-4 space-y-3 shadow-sm">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-semibold text-primary">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                    <span className="text-sm font-extrabold text-primary">
                       {foundUser.name.charAt(0)}{foundUser.lastName.charAt(0)}
                     </span>
                   </div>
                   <div>
-                    <p className="font-medium">{foundUser.name} {foundUser.lastName}</p>
+                    <p className="font-extrabold">{foundUser.name} {foundUser.lastName}</p>
                     {foundUser.username && <p className="text-sm text-muted-foreground">@{foundUser.username.replace(/^@/, '')}</p>}
                   </div>
                 </div>

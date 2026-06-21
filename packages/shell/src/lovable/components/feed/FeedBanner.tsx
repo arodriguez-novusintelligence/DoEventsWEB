@@ -34,7 +34,7 @@ export const FeedBanner = ({
   return (
     <div
       className={cn(
-        'relative mx-4 rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10 p-4 shadow-sm ring-1 ring-primary/10',
+        'relative mx-4 rounded-2xl border border-border/60 border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10 p-4 shadow-sm ring-2 ring-primary/20',
         className,
       )}
     >
@@ -42,7 +42,7 @@ export const FeedBanner = ({
         <button
           type="button"
           onClick={handleDismiss}
-          className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-background/60 text-muted-foreground ring-1 ring-border/60 hover:text-foreground"
+          className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-background/60 text-muted-foreground ring-2 ring-border/60 hover:text-foreground"
           aria-label="Cerrar banner"
         >
           <X className="h-4 w-4" />

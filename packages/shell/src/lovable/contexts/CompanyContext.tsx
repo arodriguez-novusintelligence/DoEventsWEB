@@ -13,12 +13,16 @@ interface CompanyInfo {
 interface CompanyContextValue {
   company: CompanyInfo | null;
   loading: boolean;
+  /** Alias Lovable — mismo valor que `loading`. */
+  isLoading: boolean;
   loadError: boolean;
   loadErrorMessage: string | null;
   hasCompany: boolean;
   isEmpty: boolean;
   accountTypeLabel: string;
   refresh: () => void;
+  /** Alias Lovable — mismo handler que `refresh`. */
+  refreshCompany: () => void;
 }
 
 export type { CompanyContextValue };
@@ -26,12 +30,14 @@ export type { CompanyContextValue };
 const CompanyContext = createContext<CompanyContextValue>({
   company: null,
   loading: false,
+  isLoading: false,
   loadError: false,
   loadErrorMessage: null,
   hasCompany: false,
   isEmpty: true,
   accountTypeLabel: 'Personal',
   refresh: () => undefined,
+  refreshCompany: () => undefined,
 });
 
 export { CompanyContext };
@@ -96,12 +102,14 @@ export const CompanyProvider = ({ userId, children }: CompanyProviderProps) => {
     () => ({
       company,
       loading,
+      isLoading: loading,
       loadError,
       loadErrorMessage,
       hasCompany: Boolean(company?.companyName || company?.accountType === 'company'),
       isEmpty: !loading && !loadError && !company?.companyName && company?.accountType !== 'company',
       accountTypeLabel: company?.accountType === 'company' ? 'Empresa' : 'Personal',
       refresh,
+      refreshCompany: refresh,
     }),
     [company, loading, loadError, loadErrorMessage],
   );
