@@ -115,6 +115,27 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b12)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| FeedHero gradients DSF | VISUAL | Sí | `feed/FeedHero.tsx` | gradientes primary/accent/destructive; category ring-primary/20; subtitle extrabold |
+| NotificationsContext API | Integración | Sí | `contexts/NotificationsContext.tsx` | markAsRead/removeNotification/reloadNotifications/fetchNotifications aliases |
+| StepAccessControl stats | VISUAL | Sí | `events/StepAccessControl.tsx` | stat icon wells ring-primary/20; muted extrabold |
+| SeatingMapEditor CTAs | VISUAL | Sí | `events/SeatingMapEditor.tsx` | convert/image/save rounded-full shadow-sm |
+| EventsView heart ring | VISUAL | Sí | `feed/EventsView.tsx` | FavoriteHeart ring-primary/20; location extrabold |
+| AddGuestModal tabs | VISUAL | Sí | `guests/AddGuestModal.tsx` | TabsTrigger rounded-full active ring-primary/20 |
+| ReportPostDialog Shield | VISUAL | Sí | `feed/ReportPostDialog.tsx` | Shield icon ring; DialogDescription extrabold |
+| AccessControlListView Lock | VISUAL | Sí | `access/AccessControlListView.tsx` | Lock ring; section counts extrabold |
+| CreatePostSheet location | VISUAL | Sí | `feed/CreatePostSheet.tsx` | input rounded-xl font-extrabold; visibility helper |
+| TicketDetailView labels | VISUAL | Sí | `tickets/TicketDetailView.tsx` | categoría/puerta/fecha extrabold |
+| EventPublished card ring | VISUAL | Sí | `pages/EventPublished.tsx` | ring-primary/10; outline border-border/60; fetchEventById intacto |
+| MyPurchasesView chevron | VISUAL | Sí | `purchases/MyPurchasesView.tsx` | dashed border-border/60; ChevronRight primary/70 |
+| SeatLocationModal legend | VISUAL | Sí | `tickets/SeatLocationModal.tsx` | legend/empty extrabold; dashed border-border/60 |
+| FAQSection / HostPicker / ServiceDetail | Empalme | Sí | ver batch previo | sublabel/hints extrabold |
+| MyPostsView / MyReservedServices / StepUnified / MainInfoSection | Empalme | Sí | ver batch previo | polish extrabold transversal |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 20 DONE + 0 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b11)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

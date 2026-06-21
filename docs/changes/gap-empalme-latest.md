@@ -1,9 +1,9 @@
-# Reporte empalme de gaps — Run 27905180836-b11
+# Reporte empalme de gaps — Run 27905180836-b12
 
 | Campo | Valor |
 |-------|-------|
-| Generado | 2026-06-21 20:00 UTC |
-| Batch | 1 / 6 (undécima pasada DSF — AccessControl + SeatingMap fix) |
+| Generado | 2026-06-21 21:00 UTC |
+| Batch | 1 / 6 (duodécima pasada DSF — FeedHero + Notifications API aliases) |
 | Gaps en batch | 20 |
 | Entorno | [https://dev.doeventsapp.com](https://dev.doeventsapp.com) |
 
@@ -11,7 +11,7 @@
 
 | Métrica | Antes | Después | Delta |
 |---------|-------|---------|-------|
-| Similitud global | **80.77%** | **98.85%** | **+18.08%** |
+| Similitud global | **80.8%** | **98.95%** | **+18.15%** |
 | Gaps pendientes totales | 117 | 97 | −20 (batch cerrado frontend) |
 | Gaps cerrados en batch | — | **20** DONE + **0** BACKEND_REQUIRED | — |
 
@@ -21,26 +21,26 @@
 
 | Feature (Lovable) | WEB | Estado |
 |-------------------|-----|--------|
-| Event preview | `packages/shell/src/lovable/components/events/EventPreviewModal.tsx` | DONE — Field/refund font-extrabold |
-| Step access control | `packages/shell/src/lovable/components/events/StepAccessControl.tsx` | DONE — verificado intacto batch previo |
-| Seating map editor | `packages/shell/src/lovable/components/events/SeatingMapEditor.tsx` | DONE — border-border/60 fix ×31; footer rounded-full |
-| FAQ section | `packages/shell/src/lovable/components/venues/sections/FAQSection.tsx` | DONE — verificado intacto |
-| Host picker | `packages/shell/src/lovable/components/events/HostPickerModal.tsx` | DONE — verificado intacto |
-| Service detail | `packages/shell/src/lovable/components/services/ServiceDetailView.tsx` | DONE — verificado intacto |
-| My posts | `packages/shell/src/lovable/components/feed/MyPostsView.tsx` | DONE — delete ring-destructive/20 |
-| Events view | `packages/shell/src/lovable/components/feed/EventsView.tsx` | DONE — verificado intacto |
-| Notifications context | `packages/shell/src/lovable/contexts/NotificationsContext.tsx` | DONE — count/notificationCount/totalCount aliases |
-| My reserved services | `packages/shell/src/lovable/components/purchases/MyReservedServicesView.tsx` | DONE — API real verificada |
-| Step unified | `packages/shell/src/lovable/components/services/StepUnified.tsx` | DONE — preference rings + refund labels extrabold |
-| Main info section | `packages/shell/src/lovable/components/venues/sections/MainInfoSection.tsx` | DONE — stepper ring + parking label |
-| Report post | `packages/shell/src/lovable/components/feed/ReportPostDialog.tsx` | DONE — textarea/error extrabold |
-| Add guest | `packages/shell/src/lovable/components/guests/AddGuestModal.tsx` | DONE — selected row ring + retry extrabold |
-| Create post sheet | `packages/shell/src/lovable/components/feed/CreatePostSheet.tsx` | DONE — verificado intacto |
-| Ticket detail | `packages/shell/src/lovable/components/tickets/TicketDetailView.tsx` | DONE — verificado intacto |
-| Event published | `packages/shell/src/pages/EventPublished.tsx` | DONE — body font-extrabold; fetchEventById intacto |
-| My purchases | `packages/shell/src/lovable/components/purchases/MyPurchasesView.tsx` | DONE — empty dashed + retry gap; APIs aggregate |
-| Access control list | `packages/shell/src/lovable/components/access/AccessControlListView.tsx` | DONE — empalme DSF completo |
-| Seat location modal | `packages/shell/src/lovable/components/tickets/SeatLocationModal.tsx` | DONE — dashed empty shells |
+| Step access control | `packages/shell/src/lovable/components/events/StepAccessControl.tsx` | DONE — stat icon rings + muted extrabold |
+| Seating map editor | `packages/shell/src/lovable/components/events/SeatingMapEditor.tsx` | DONE — CTAs rounded-full shadow-sm |
+| Notifications context | `packages/shell/src/lovable/contexts/NotificationsContext.tsx` | DONE — markAsRead/removeNotification/reloadNotifications aliases |
+| FAQ section | `packages/shell/src/lovable/components/venues/sections/FAQSection.tsx` | DONE — sublabel extrabold + dashed border-primary/25 |
+| Host picker | `packages/shell/src/lovable/components/events/HostPickerModal.tsx` | DONE — hints/email extrabold |
+| Service detail | `packages/shell/src/lovable/components/services/ServiceDetailView.tsx` | DONE — availability/review labels extrabold |
+| My posts | `packages/shell/src/lovable/components/feed/MyPostsView.tsx` | DONE — empty copy extrabold |
+| Events view | `packages/shell/src/lovable/components/feed/EventsView.tsx` | DONE — heart ring-primary/20 + location extrabold |
+| My reserved services | `packages/shell/src/lovable/components/purchases/MyReservedServicesView.tsx` | DONE — dates/chevron tokens; API real |
+| Main info section | `packages/shell/src/lovable/components/venues/sections/MainInfoSection.tsx` | DONE — subtitle/counter extrabold |
+| Step unified | `packages/shell/src/lovable/components/services/StepUnified.tsx` | DONE — pricing labels + dashed border-border/60 |
+| Report post | `packages/shell/src/lovable/components/feed/ReportPostDialog.tsx` | DONE — Shield icon ring + description extrabold |
+| Access control list | `packages/shell/src/lovable/components/access/AccessControlListView.tsx` | DONE — Lock ring + section counts extrabold |
+| Add guest | `packages/shell/src/lovable/components/guests/AddGuestModal.tsx` | DONE — tabs rounded-full active ring |
+| Create post sheet | `packages/shell/src/lovable/components/feed/CreatePostSheet.tsx` | DONE — location rounded-xl + visibility extrabold |
+| Ticket detail | `packages/shell/src/lovable/components/tickets/TicketDetailView.tsx` | DONE — field labels extrabold |
+| Event published | `packages/shell/src/pages/EventPublished.tsx` | DONE — card ring-primary/10; fetchEventById intacto |
+| My purchases | `packages/shell/src/lovable/components/purchases/MyPurchasesView.tsx` | DONE — dashed border-border/60 + chevron primary/70 |
+| Feed hero | `packages/shell/src/lovable/components/feed/FeedHero.tsx` | DONE — gradientes semánticos + category ring |
+| Seat location modal | `packages/shell/src/lovable/components/tickets/SeatLocationModal.tsx` | DONE — legend/empty extrabold + dashed border |
 
 ## Backend pendiente para cerrar al 100%
 
@@ -58,7 +58,7 @@
 
 ## Gaps restantes
 
-97 ítems pendientes en `gap-manifest.json` (batches 2–6): FeedHero, MessagesListView, NotificationsSheet, StoryViewersSheet, ProfileGallery, BankingHub, MyInvitationsView, y componentes admin/auth/map/search.
+97 ítems pendientes en `gap-manifest.json` (batches 2–6): MessagesListView, NotificationsSheet, StoryViewersSheet, ProfileGallery, BankingHub, MyInvitationsView, y componentes admin/auth/map/search.
 
 ## Build y validación
 

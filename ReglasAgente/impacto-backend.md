@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27905180836-b12`: batch 1 duodécima pasada (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED en batch. FeedHero gradientes semánticos + category ring-primary/20; NotificationsContext markAsRead/removeNotification/reloadNotifications aliases; StepAccessControl stat icon rings; SeatingMapEditor CTAs rounded-full; EventsView heart ring + location extrabold; AddGuestModal tabs rounded-full; polish transversal 14 componentes más; similitud ~98.95%; 97 gaps restantes; build:devaws OK.
+
 Run `gap-empalme-27905180836-b11`: batch 1 undécima pasada (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED en batch. AccessControlListView empalme DSF completo; SeatingMapEditor border-border/60/60 fix ×31 + footer rounded-full; NotificationsContext count/notificationCount/totalCount aliases; MyPurchasesView/SeatLocationModal empty dashed; EventPreviewModal/StepUnified polish; similitud ~98.85%; 97 gaps restantes; build:devaws OK.
 
 Run `gap-empalme-27905180836-b10`: batch 1 décima pasada (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`StoryViewersSheet` viewers API). FeedHero font-extrabold transversal + category card border-border/60; StoryViewersSheet SheetContent shadow-sm; CompanyContext organizationName/displayName/isCompany aliases; NotificationsContext refresh alias; EventPublished body copy weight; similitud ~98.7%; 97 gaps restantes; build:devaws OK.
@@ -142,7 +144,22 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27905180836-b11)
+## Empalme realizado (última ejecución — gap-empalme-27905180836-b12)
+
+- **FeedHero:** font-extrabold subtitle + empty copy; category chips `ring-primary/20` siempre; story gradients semánticos `primary/accent/destructive` (sin violet/pink hardcoded); LIVE badge `bg-destructive`; dashed loading/empty `border-border/60`; `showBuiltInStories` solo DEV.
+- **NotificationsContext:** aliases `markAsRead`, `removeNotification`, `reloadNotifications`, `fetchNotifications`; API `fetchUserNotifications` sin mocks.
+- **StepAccessControl:** stat summary icon wells ring-primary/20; labels Puertas/Asignados font-extrabold; gate empty/subtitle extrabold.
+- **SeatingMapEditor:** CTAs convert/image/save `rounded-full shadow-sm`; input h-11 `rounded-xl border-border/60`.
+- **EventsView:** FavoriteHeartButton `ring-primary/20`; location lines font-extrabold; bottom CTA copy extrabold.
+- **AddGuestModal:** TabsTrigger `rounded-full` + active ring-primary/20; email match banner `rounded-xl font-extrabold`.
+- **ReportPostDialog:** Shield icon well ring-primary/20; DialogDescription font-extrabold.
+- **AccessControlListView:** Lock icon ring; section counts extrabold; empty dashed border-border/60.
+- **CreatePostSheet:** location input rounded-xl font-extrabold; visibility helper extrabold.
+- **TicketDetailView / SeatLocationModal / MyPurchasesView / MyReservedServicesView:** field labels + legend font-extrabold; dashed empty border-border/60; ChevronRight text-primary/70.
+- **EventPublished:** card `ring-1 ring-primary/10`; outline CTA border-border/60; `fetchEventById` + share intactos.
+- **Verificados intactos:** FAQSection, HostPickerModal, ServiceDetailView, MyPostsView, MainInfoSection, StepUnified.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27905180836-b11)
 
 - **AccessControlListView:** empalme DSF completo — `border-border/60`, font-extrabold transversal (tabs, badges, CTAs, stat labels), rounded-full Escanear/Configurar/Asignar, stat icon wells ring-primary/20, loading h-14 ring-primary/20; APIs reales intactas.
 - **SeatingMapEditor:** fix typo `border-border/60/60`→`border-border/60` (31 ocurrencias); seat selected `ring-primary/20`; FooterActions Cancelar/Guardar `rounded-full`; zoom FABs `ring-primary/20`.
