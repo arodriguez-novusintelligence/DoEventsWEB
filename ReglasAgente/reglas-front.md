@@ -101,6 +101,27 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 6 (run 27901296255-b6)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| SalesStatsView empty | VISUAL | Sí | `stats/SalesStatsView.tsx` | Ticket h-14 ring-primary/20 |
+| FeedVenuesCarousel empty | VISUAL | Sí | `feed/FeedVenuesCarousel.tsx` | Building2 ring-primary/20 |
+| StepFaqs empty | VISUAL | Sí | `events/StepFaqs.tsx` | HelpCircle h-14 ring |
+| AdminRefundsPanel shell | Navegación | Sí | `admin/AdminRefundsPanel.tsx` | Header gradiente Lovable |
+| AdminReportsPanel shell | Navegación | Sí | `admin/AdminReportsPanel.tsx` | Loader2 + gradiente |
+| RefundsView tokens | VISUAL | Sí | `stats/RefundsView.tsx` | pending secondary; empty ring |
+| AccessControlView loading | Integración | Sí | `stats/AccessControlView.tsx` | Loader2; ShieldCheck; empty |
+| PublishFlowModal icon | VISUAL | Sí | `events/PublishFlowModal.tsx` | Megaphone ring-primary/20 |
+| FeedServicesCarousel empty | VISUAL | Sí | `feed/FeedServicesCarousel.tsx` | Briefcase ring-primary/20 |
+| GuestStatsView empty | VISUAL | Sí | `stats/GuestStatsView.tsx` | Users ring-primary/20 |
+| StepRefundPolicy header | VISUAL | Sí | `events/StepRefundPolicy.tsx` | ShieldCheck título |
+| PaymentGateway PSP | Bloqueo | Parcial | `services/PaymentGatewaySheet.tsx` | BACKEND_REQUIRED AlertCircle |
+| EventsPage discover shell | Navegación | Sí | `pages/EventsPage.tsx` | pb-24 + Loader2 lucide |
+| StoryViewersSheet API | Bloqueo | Parcial | `feed/StoryViewersSheet.tsx` | BACKEND_REQUIRED viewers |
+| KYC submit | Bloqueo | Parcial | `feed/KycCertificationView.tsx` | BACKEND_REQUIRED documentado |
+| Batch 6 gaps (20) | Empalme | Sí | ver `decision-log.md` | 17 DONE + 3 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 5 (run 27883333029-b5)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

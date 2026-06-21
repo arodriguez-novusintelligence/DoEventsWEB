@@ -13,32 +13,85 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-21 12:00 UTC] gap-empalme-27901296255-b6
+
+### 1. Resumen del empalme
+Batch 6 (20 gaps, manifiesto `27901296255` / SHA `38e2c759`, similitud baseline manifiesto **56.95%** / post-b5 **95.0%**): cierre de gaps stats/admin/discover. Patrón Lovable: `h-14 ring-primary/20`, headers gradiente admin, `Loader2`, tokens secondary. **17 gaps DONE** frontend; **3 BACKEND_REQUIRED** (`PaymentGatewaySheet`, `StoryViewersSheet`, `KycCertificationView`).
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Sales stats | `packages/shell/src/lovable/components/stats/SalesStatsView.tsx` | DONE |
+| Feed venues carousel | `packages/shell/src/lovable/components/feed/FeedVenuesCarousel.tsx` | DONE |
+| Step FAQs | `packages/shell/src/lovable/components/events/StepFaqs.tsx` | DONE |
+| Admin refunds | `packages/shell/src/lovable/components/admin/AdminRefundsPanel.tsx` | DONE |
+| Admin reports | `packages/shell/src/lovable/components/admin/AdminReportsPanel.tsx` | DONE |
+| Refunds stats | `packages/shell/src/lovable/components/stats/RefundsView.tsx` | DONE |
+| Access control stats | `packages/shell/src/lovable/components/stats/AccessControlView.tsx` | DONE |
+| Publish flow | `packages/shell/src/lovable/components/events/PublishFlowModal.tsx` | DONE |
+| Feed services carousel | `packages/shell/src/lovable/components/feed/FeedServicesCarousel.tsx` | DONE |
+| Guest stats | `packages/shell/src/lovable/components/stats/GuestStatsView.tsx` | DONE |
+| Step refund policy | `packages/shell/src/lovable/components/events/StepRefundPolicy.tsx` | DONE |
+| Payment gateway | `packages/shell/src/lovable/components/services/PaymentGatewaySheet.tsx` | BACKEND_REQUIRED |
+| Index / discover | `packages/shell/src/pages/EventsPage.tsx` | DONE |
+| Story viewers | `packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx` | BACKEND_REQUIRED |
+| Add story | `packages/shell/src/lovable/components/feed/AddStorySheet.tsx` | DONE* |
+| Bottom nav | `packages/shell/src/lovable/components/feed/BottomNav.tsx` | DONE* |
+| Sign up | `packages/shell/src/lovable/components/auth/SignUpView.tsx` | DONE* |
+| Seating map editor | `packages/shell/src/lovable/components/events/SeatingMapEditor.tsx` | DONE* |
+| KYC certification | `packages/shell/src/lovable/components/feed/KycCertificationView.tsx` | BACKEND_REQUIRED |
+| Login / forgot | `packages/shell/src/lovable/components/auth/LoginView.tsx` | DONE* |
+
+\* Sin diff adicional — ya alineado en empalmes previos.
+
+### 3. Similitud antes/después
+- **Antes:** 95.0% (post batch 5)
+- **Después:** ~98.0% (estimado; re-comparación CI pendiente)
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias
+
+### 6. Riesgos pendientes
+- Re-comparación CI con `discover-joyful-feed` privado
+- Brechas BACKEND_REQUIRED acumuladas (KYC, PSP, story viewers, banking delete)
+
+### Decisión
+**APPLIED**
+
+---
+
 ## [2026-06-21 10:21 UTC] prepare-fbcc9b52
 
 ### 1. Resumen del cambio detectado
-Manifiesto: UI=False, reglas=False, 0 archivo(s); similitud diseño=56.95%
+Manifiesto: UI=False, reglas=False, 0 archivo(s); similitud diseño=56.95%. Completado por agente `gap-empalme-27901296255-b6`.
 
-### 2. Tipo de cambio (preliminar)
+### 2. Tipo de cambio
 - [x] VISUAL
-- [ ] FRONT_LOGIC
-- [ ] BACKEND_REQUIRED
-- [ ] RISKY
+- [x] FRONT_LOGIC
+- [x] BACKEND_REQUIRED (documentado)
 
 ### 3. Archivos modificados en DoEventsWEB
-- Pendiente — el agente adapta sin copia literal
+- Ver entrada `gap-empalme-27901296255-b6`
 
-### 4. Archivos modificados en DoEventsBack (si aplica)
-- Pendiente evaluacion agente
+### 4. Archivos modificados en DoEventsBack
+- Ninguno
 
 ### 5. Evidencia de que no se usaron mocks
-- Sin port deterministico de componentes en esta fase.
-- El agente debe usar `lovable-bridge/*` + `@doevents/shared`.
+- `mocksUsed: false`
 
 ### 6. Resultado build/test
-- `npm run build:devaws`: pending
+- `npm run build:devaws`: **SUCCESS**
 
 ### 7. Riesgos pendientes
-- Agente debe completar adaptacion y actualizar esta entrada.
+- Ver entrada `gap-empalme-27901296255-b6`
+
+### Decisión
+**APPLIED**
 
 ---
 

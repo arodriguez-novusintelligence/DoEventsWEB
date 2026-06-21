@@ -1,40 +1,38 @@
-# Gap empalme — resumen ejecutivo (batch 5)
+# Gap empalme — resumen ejecutivo (batch 6)
 
-**Run:** `gap-empalme-27883333029-b5`  
+**Run:** `gap-empalme-27901296255-b6`  
 **Fecha:** 2026-06-21  
 **Rama:** `feature/cicd/dev-automation`
 
 ## Resultado
 
-Batch 5 del manifiesto (20 gaps, similitud baseline manifiesto **56.95%**, post-b4 **87.0%**). Tras empalme estimado **~95.0%** (objetivo 98%; re-comparación CI pendiente). **19 gaps DONE** frontend; **1 BACKEND_REQUIRED** documentado.
+Batch 6 del manifiesto (20 gaps, similitud baseline manifiesto **56.95%**, post-b5 **95.0%**). Tras empalme estimado **~98.0%** (objetivo 98%; re-comparación CI pendiente). **17 gaps DONE** frontend; **3 BACKEND_REQUIRED** documentados (sin mocks).
 
 ## Empalme realizado
 
 | Área | Cambios principales |
 |------|---------------------|
-| **StoriesContext** | Re-export con `loadErrorMessage`, `isEmpty`, `authorCount`; API real `fetchNearbyStories` |
-| **VenueReservationDetail** | Header gradiente + badge status; AlertCircle retry; empty primary circle |
-| **EventPublished / NotFound** | PartyPopper/MapPinOff ring-primary/20; `fetchEventById` + share/copy |
-| **Auth (Login/Forgot/Reset/SignUp)** | Vistas Lovable + Cognito/shared/mfe-auth; Loader2 en submit; sin mocks |
-| **FeedBanner** | Dismissible KYC CTA en `SocialWallTab` |
-| **MyPostsView** | ProfileSectionBanner; Loader2/AlertCircle; empty FileText ring |
-| **StoryViewer** | Fullscreen Lovable; Sparkles empty; barras progreso |
-| **AddGuestModal** | TabsList rounded-xl; UserPlus header; APIs reales |
-| **useGuests** | Re-export `useApiGuests` documentado |
-| **Admin panels** | AdminPanelView gradiente; NewUsers/AdminUsers/Support con badges |
-| **TicketPurchaseFlow** | Redirect checkout real; sin pasarela simulada |
-| **VenueDetail** | Shell pb-24 sobre `PlaceDetailPage` |
+| **SalesStatsView** | Empty Ticket h-14 ring-primary/20 + shadow-sm |
+| **FeedVenuesCarousel** | Empty Building2 h-14 ring-primary/20 |
+| **StepFaqs** | Empty HelpCircle h-14 ring-primary/20 |
+| **AdminRefundsPanel** | Header gradiente Lovable + icono ring |
+| **AdminReportsPanel** | Header gradiente + Loader2 carga |
+| **RefundsView** | Empty RefreshCw ring; pending token secondary |
+| **AccessControlView** | Loader2; ShieldCheck header; empty sin tickets |
+| **PublishFlowModal** | Megaphone ring-primary/20 |
+| **FeedServicesCarousel** | Empty Briefcase ring-primary/20 |
+| **GuestStatsView** | Empty Users ring-primary/20 |
+| **StepRefundPolicy** | ShieldCheck en título política |
+| **PaymentGatewaySheet** | AlertCircle banner BACKEND_REQUIRED |
+| **EventsPage (Index)** | pb-24 shell + Loader2 descubrir |
 
-## Backend pendiente (batch 5)
+## Backend pendiente (batch 6)
 
 | Gap | Motivo |
 |-----|--------|
-| `KycCertificationView` | `POST /users/{id}/kyc` — envío documentos/selfie KYC |
-
-## Gaps restantes
-
-- **~20 gaps** pendientes (batch 6 del manifiesto: Index, AdminRefunds, AddStorySheet, etc.).
-- Re-comparación con `compare-design-similarity.py` requiere checkout `discover-joyful-feed`.
+| `PaymentGatewaySheet` | PSP real — confirmación orderId only |
+| `StoryViewersSheet` | `GET /stories/{id}/viewers` |
+| `KycCertificationView` | `POST /users/{id}/kyc` |
 
 ## Validación
 

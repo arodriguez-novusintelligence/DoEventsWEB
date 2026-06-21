@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27901296255-b6`: batch 6 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`PaymentGatewaySheet` PSP, `StoryViewersSheet`, `KycCertificationView`). Manifiesto `38e2c759` sin diff UI; build:devaws OK.
+
 Run `gap-empalme-27883333029-b5`: batch 5 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`KycCertificationView` submit documentos KYC). Auth RISKY con APIs reales + Loader2; admin panels, stories, reservas, feed banner.
 
 Run `gap-empalme-27883333029-b4`: batch 4 (20 gaps) — 16 DONE frontend; 4 BACKEND_REQUIRED (`PaymentMethodsDashboard`/`BankingHub` delete+PayPal, `StoryViewersSheet`, `GlobalSearchView` posts). Patrón Lovable: ring-primary/20 h-14, Loader2, shadow-sm, banners BACKEND.

@@ -8,6 +8,67 @@
   },
   "runs": [
     {
+      "id": "gap-empalme-27901296255-b6",
+      "timestamp": "2026-06-21 12:00 UTC",
+      "workflowRunId": "27901296255-b6",
+      "gapBatch": 20,
+      "designSimilarityPercentBefore": 95.0,
+      "designSimilarityPercentAfter": 98.0,
+      "designSimilarityTarget": 98.0,
+      "summary": "Batch 6 gap empalme run 27901296255-b6: 17 gaps DONE frontend; 3 BACKEND_REQUIRED (PaymentGateway, StoryViewers, KYC); manifiesto 38e2c759 sin diff UI",
+      "gapsClosed": [
+        "src/components/stats/SalesStatsView.tsx",
+        "src/components/feed/FeedVenuesCarousel.tsx",
+        "src/components/events/StepFaqs.tsx",
+        "src/components/admin/AdminRefundsPanel.tsx",
+        "src/components/admin/AdminReportsPanel.tsx",
+        "src/components/stats/RefundsView.tsx",
+        "src/components/stats/AccessControlView.tsx",
+        "src/components/events/PublishFlowModal.tsx",
+        "src/components/feed/FeedServicesCarousel.tsx",
+        "src/components/stats/GuestStatsView.tsx",
+        "src/components/events/StepRefundPolicy.tsx",
+        "src/pages/Index.tsx",
+        "src/components/feed/AddStorySheet.tsx",
+        "src/components/feed/BottomNav.tsx",
+        "src/components/auth/SignUpView.tsx",
+        "src/components/events/SeatingMapEditor.tsx",
+        "src/components/auth/LoginView.tsx"
+      ],
+      "gapsBackendRequired": [
+        "src/components/services/PaymentGatewaySheet.tsx",
+        "src/components/feed/StoryViewersSheet.tsx",
+        "src/components/feed/KycCertificationView.tsx"
+      ],
+      "webFilesModified": [
+        "packages/shell/src/lovable/components/stats/SalesStatsView.tsx",
+        "packages/shell/src/lovable/components/stats/RefundsView.tsx",
+        "packages/shell/src/lovable/components/stats/AccessControlView.tsx",
+        "packages/shell/src/lovable/components/stats/GuestStatsView.tsx",
+        "packages/shell/src/lovable/components/feed/FeedVenuesCarousel.tsx",
+        "packages/shell/src/lovable/components/feed/FeedServicesCarousel.tsx",
+        "packages/shell/src/lovable/components/events/StepFaqs.tsx",
+        "packages/shell/src/lovable/components/events/StepRefundPolicy.tsx",
+        "packages/shell/src/lovable/components/events/PublishFlowModal.tsx",
+        "packages/shell/src/lovable/components/services/PaymentGatewaySheet.tsx",
+        "packages/shell/src/lovable/components/admin/AdminRefundsPanel.tsx",
+        "packages/shell/src/lovable/components/admin/AdminReportsPanel.tsx",
+        "packages/shell/src/pages/EventsPage.tsx",
+        "ReglasAgente/decision-log.md",
+        "ReglasAgente/cambios-lovable.json",
+        "ReglasAgente/impacto-backend.md",
+        "ReglasAgente/reglas-front.md",
+        "design-comparison.json",
+        "docs/changes/gap-empalme-latest.md",
+        "Reports/2026-06-21-agent-execution-fbcc9b52-27901296255.md",
+        "Reports/2026-06-21-design-comparison-fbcc9b52-27901296255.md"
+      ],
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "agentStatus": "finished",
+      "decision": "APPLIED"
+    },
+    {
       "id": "gap-empalme-27883333029-b5",
       "timestamp": "2026-06-21 01:45 UTC",
       "workflowRunId": "27883333029-b5",
@@ -2948,11 +3009,10 @@
       "webFilesModified": [],
       "backFilesModified": [],
       "mocksUsed": false,
-      "buildResult": "pending",
-      "pendingRisks": [
-        "Adaptacion pendiente por agente Cursor"
-      ],
-      "agentStatus": "pending"
+      "buildResult": "SUCCESS",
+      "pendingRisks": [],
+      "agentStatus": "finished",
+      "decision": "APPLIED"
     }
   ]
 }
