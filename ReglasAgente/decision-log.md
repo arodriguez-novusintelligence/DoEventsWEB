@@ -13,6 +13,56 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-21 20:15 UTC] gap-empalme-27903532486-b4
+
+### 1. Resumen del empalme
+Batch 4 (20 gaps, manifiesto `27903532486-b4`, similitud baseline **80.79%**): empalme focalizado admin panels, historias/contexts/hooks, CSS port-map y minor drift wizard/chat/stats/banca. Patrón Lovable: AdminPanelSection + info bar secondary, cards `overflow-hidden shadow-sm`, gradient headers sales, tokens success/warning en stats, rings h-10/h-14. **20 gaps DONE** frontend; **0 BACKEND_REQUIRED** nuevos (`BankingForm` persistencia SWIFT/PayPal acumulado documentado).
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Admin users panel | `packages/shell/src/lovable/components/admin/AdminUsersPanel.tsx` | DONE |
+| Payments panel | `packages/shell/src/lovable/components/admin/PaymentsPanel.tsx` | DONE |
+| New users panel | `packages/shell/src/lovable/components/admin/NewUsersPanel.tsx` | DONE |
+| Support search panel | `packages/shell/src/lovable/components/admin/SupportSearchPanel.tsx` | DONE |
+| Stories context | `packages/shell/src/lovable/contexts/StoriesContext.tsx` | DONE |
+| Add story sheet | `packages/shell/src/lovable/components/feed/AddStorySheet.tsx` | DONE |
+| Use guests hook | `packages/shell/src/lovable/hooks/useGuests.ts` | DONE |
+| Event sales detail | `packages/shell/src/lovable/components/admin/EventSalesDetail.tsx` | DONE |
+| Index CSS port-map | `packages/shell/src/index.css` | DONE |
+| Step event location | `packages/shell/src/lovable/components/events/StepEventLocation.tsx` | DONE |
+| Create FAB | `packages/shell/src/lovable/components/feed/CreateFAB.tsx` | DONE |
+| Mention text | `packages/shell/src/lovable/components/feed/MentionText.tsx` | DONE |
+| Step refund policy | `packages/shell/src/lovable/components/events/StepRefundPolicy.tsx` | DONE |
+| Sales stats | `packages/shell/src/lovable/components/stats/SalesStatsView.tsx` | DONE |
+| Draggable guest card | `packages/shell/src/lovable/components/guests/DraggableGuestCard.tsx` | DONE |
+| Success modal | `packages/shell/src/lovable/components/banking/SuccessModal.tsx` | DONE |
+| Private chat | `packages/shell/src/lovable/components/chat/PrivateChatView.tsx` | DONE |
+| Chat settings | `packages/shell/src/lovable/components/chat/ChatSettingsSheet.tsx` | DONE |
+| Category buyer list | `packages/shell/src/lovable/components/stats/CategoryBuyerList.tsx` | DONE |
+| Banking form | `packages/shell/src/lovable/components/banking/BankingForm.tsx` | DONE |
+
+### 3. Similitud antes/después
+- **Antes:** 80.79%
+- **Después:** 93.5% (estimado post batch 4; 37 gaps restantes)
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias runtime (solo comentario anti-mock en Login.tsx)
+
+### 6. Riesgos pendientes
+- 37 gaps pendientes en manifiesto (batches 5–6)
+- Brechas BACKEND_REQUIRED acumuladas: BankingForm SWIFT/PayPal, KYC submit, PublishFlow banking, GlobalSearch posts, StoryViewersSheet
+
+### Decisión
+**APPLIED**
+
+---
+
 ## [2026-06-21 18:45 UTC] gap-empalme-27903532486-b3
 
 ### 1. Resumen del empalme

@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27903532486-b4`: batch 4 (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED nuevos (BankingForm persistencia acumulada). Admin/historias/CSS/hooks empalme; similitud ~93.5%; build:devaws OK.
+
 Run `gap-empalme-27903532486-b3`: batch 3 (20 gaps) — 17 DONE frontend; 3 BACKEND_REQUIRED (`KycCertificationView` submit, `PublishFlowModal` banking, `GlobalSearchView` posts). Auth/discover/admin/map/search polish; similitud ~90.5%; build:devaws OK.
 
 Run `gap-empalme-27903532486-b2`: batch 2 (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED nuevos. Feed/reservas/chat/wizard polish rings+shadow-sm; similitud ~87%; build:devaws OK.
@@ -110,7 +112,26 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27903532486-b3)
+## Empalme realizado (última ejecución — gap-empalme-27903532486-b4)
+
+- **AdminUsersPanel / PaymentsPanel / NewUsersPanel / SupportSearchPanel:** AdminPanelSection + card `overflow-hidden shadow-sm`; info bar secondary sin mocks; tabs admin API real intactos.
+- **StoriesContext:** re-export tipado + alias `useStoriesContext`; API `loadErrorMessage`/`isEmpty`/`authorCount` documentada.
+- **AddStorySheet:** wrapper Lovable sobre `CreateStorySheet`; Sheet bottom + API `createStory`/`uploadMediaFile` intacta.
+- **useGuests:** hook dual `useGuests`/`useApiGuests` documentado; sin mocks; tipos `@lovable/types/guest`.
+- **EventSalesDetail:** delega `SalesStatsView` + `useLiveEventStats`; export `EventSalesDetailProps`.
+- **index.css:** port-map DSF v2.1; `@import lovable/index.css`; aliases traceability story-progress/fade-in-up.
+- **StepEventLocation:** empty venues card shadow-sm + Home h-14 ring verificado.
+- **CreateFAB / MentionText:** shadow-xl options; transition-colors mentions hover primary/90.
+- **StepRefundPolicy:** font-extrabold header; policy cards border-border/60 shadow-sm.
+- **SalesStatsView:** top bar gradiente primary/accent shadow-sm; empty Ticket h-14 ring.
+- **DraggableGuestCard:** ring-2 ring-border/40 card hover shadow-md.
+- **SuccessModal:** DialogContent border-border/60 shadow-sm; CheckCircle2 h-14 ring.
+- **PrivateChatView:** avatar header ring-primary/20; empty MessageSquare h-14 ring.
+- **ChatSettingsSheet:** Row cards shadow-sm border-border/60; Settings h-10 ring header.
+- **CategoryBuyerList:** tokens success/warning; empty Users h-14 ring; border-border/60 shell.
+- **BankingForm:** banner BACKEND_REQUIRED intacto; method cards border-border/60 shadow-sm.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27903532486-b3)
 
 - **ScanQRSheet:** ScanLine pill ring en título; feedback success/error h-10 rings; retry rounded-full; `scanTicketFromQr` API intacta.
 - **LocationSection:** Loader2 overlay al geolocalizar; mapa shadow-sm; empty dashed border-primary/30.

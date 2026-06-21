@@ -41,7 +41,7 @@ const StepRefundPolicy = ({ formData, updateForm, showErrors }: Props) => {
           <ShieldCheck className="h-5 w-5 text-primary" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-primary">Reembolsos y fecha de venta</h2>
+          <h2 className="text-xl font-extrabold text-primary">Reembolsos y fecha de venta</h2>
           <p className="mt-1 text-sm text-foreground">
             Define la política de reembolsos y la ventana de venta de boletería de tu evento.
           </p>
@@ -104,7 +104,7 @@ const StepRefundPolicy = ({ formData, updateForm, showErrors }: Props) => {
       </div>
 
       {/* Política de reembolso */}
-      <div className="rounded-2xl bg-card p-5 shadow-sm">
+      <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
         <div className="mb-4 flex items-center gap-2">
           <ShieldCheck className="h-5 w-5 text-primary" />
           <p className="text-base font-bold text-foreground">

@@ -97,7 +97,7 @@ const PrivateChatView = ({
             <ChevronLeft className="h-5 w-5" />
             Volver
           </button>
-          <Avatar className="h-10 w-10 shrink-0">
+          <Avatar className="h-10 w-10 shrink-0 ring-2 ring-primary/20">
             {chat.user.avatar ? (
               <AvatarImage src={chat.user.avatar} alt={chat.user.name} className="object-cover" />
             ) : null}

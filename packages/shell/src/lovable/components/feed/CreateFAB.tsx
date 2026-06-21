@@ -29,7 +29,7 @@ const CreateFAB = ({ open, onOpenChange, onCreatePost, onCreateEvent, onCreateSe
         {options.map((option, i) => (
           <button
             key={option.label}
-            className="flex animate-fade-in-up items-center gap-3 rounded-full border border-border bg-card/95 py-2.5 pl-5 pr-3 shadow-lg backdrop-blur-md transition-transform hover:scale-105"
+            className="flex animate-fade-in-up items-center gap-3 rounded-full border border-border/60 bg-card/95 py-2.5 pl-5 pr-3 shadow-xl backdrop-blur-md transition-transform hover:scale-105"
             style={{ animationDelay: `${i * 60}ms` }}
             onClick={option.action}
           >

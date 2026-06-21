@@ -53,8 +53,8 @@ const Row = ({
   onChange: (v: boolean) => void;
   tone?: 'default' | 'warning';
 }) => (
-  <div className="flex items-start gap-3 rounded-2xl border border-border bg-card p-3">
-    <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${tone === 'warning' ? 'bg-amber-100 text-amber-600' : 'bg-primary/10 text-primary'}`}>
+  <div className="flex items-start gap-3 rounded-2xl border border-border/60 bg-card p-3 shadow-sm">
+    <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ring-2 ring-primary/20 ${tone === 'warning' ? 'bg-amber-100 text-amber-600' : 'bg-primary/10 text-primary'}`}>
       <Icon className="h-4 w-4" />
     </div>
     <div className="flex-1 min-w-0">

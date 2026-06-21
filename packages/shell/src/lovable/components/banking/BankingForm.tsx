@@ -554,7 +554,7 @@ export default function BankingForm({ onComplete, editingMethod }: BankingFormPr
             </div>
           </div>
 
-          <div className="mb-6 flex items-start gap-3 rounded-2xl border border-border bg-card p-4 shadow-sm">
+          <div className="mb-6 flex items-start gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
               <AlertCircle className="h-4 w-4 text-primary" />
             </div>
@@ -575,7 +575,7 @@ export default function BankingForm({ onComplete, editingMethod }: BankingFormPr
                 <button
                   type="button"
                   onClick={() => setPaymentMethod("local")}
-                  className="w-full flex items-center gap-4 p-4 rounded-xl border border-border hover:border-primary/50 shadow-sm transition-all group"
+                  className="w-full flex items-center gap-4 p-4 rounded-xl border border-border/60 hover:border-primary/50 shadow-sm transition-all group"
                 >
                   <div className="w-12 h-12 rounded-lg bg-bancolombia/10 flex items-center justify-center ring-1 ring-primary/10">
                     <Building2 className="w-6 h-6 text-bancolombia" />
@@ -590,7 +590,7 @@ export default function BankingForm({ onComplete, editingMethod }: BankingFormPr
                 <button
                   type="button"
                   onClick={() => setPaymentMethod("international")}
-                  className="w-full flex items-center gap-4 p-4 rounded-xl border border-border hover:border-primary/50 shadow-sm transition-all group"
+                  className="w-full flex items-center gap-4 p-4 rounded-xl border border-border/60 hover:border-primary/50 shadow-sm transition-all group"
                 >
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center ring-1 ring-primary/10">
                     <Globe className="w-6 h-6 text-primary" />
@@ -607,7 +607,7 @@ export default function BankingForm({ onComplete, editingMethod }: BankingFormPr
                 <button
                   type="button"
                   onClick={() => setPaymentMethod("paypal")}
-                  className="w-full flex items-center gap-4 p-4 rounded-xl border border-border hover:border-paypal/50 shadow-sm transition-all group"
+                  className="w-full flex items-center gap-4 p-4 rounded-xl border border-border/60 hover:border-paypal/50 shadow-sm transition-all group"
                 >
                   <div className="w-12 h-12 rounded-lg bg-paypal/10 flex items-center justify-center ring-1 ring-primary/10">
                     <Wallet className="w-6 h-6 text-paypal" />

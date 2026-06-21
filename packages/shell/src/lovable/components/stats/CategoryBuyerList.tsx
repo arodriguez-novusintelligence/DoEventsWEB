@@ -44,7 +44,7 @@ const CategoryBuyerList = ({ category, allCategories, currency, onBack, onExport
   const colorHex = category?.colorHex ?? '#6366f1';
 
   return (
-    <div className="rounded-2xl bg-card p-4 shadow-sm">
+    <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <button onClick={onBack} className="flex items-center gap-2">
@@ -75,13 +75,13 @@ const CategoryBuyerList = ({ category, allCategories, currency, onBack, onExport
               <span className="text-xs font-bold text-foreground">{formatCurrency(totalSale, currency)}</span>
               <span className="text-[10px] text-muted-foreground">Total venta ({buyers.length})</span>
             </div>
-            <div className="flex flex-col items-center rounded-xl bg-emerald-500/10 p-2.5">
-              <span className="text-xs font-bold text-emerald-600">{formatCurrency(sumTotal(prePaid), currency)}</span>
-              <span className="text-[10px] text-emerald-600">Pre-evento pagado ({prePaid.length})</span>
+            <div className="flex flex-col items-center rounded-xl bg-success/10 p-2.5">
+              <span className="text-xs font-bold text-success">{formatCurrency(sumTotal(prePaid), currency)}</span>
+              <span className="text-[10px] text-success">Pre-evento pagado ({prePaid.length})</span>
             </div>
-            <div className="flex flex-col items-center rounded-xl bg-amber-500/10 p-2.5">
-              <span className="text-xs font-bold text-amber-600">{formatCurrency(sumTotal(prePending), currency)}</span>
-              <span className="text-[10px] text-amber-600">Pre-evento pendiente ({prePending.length})</span>
+            <div className="flex flex-col items-center rounded-xl bg-warning/10 p-2.5">
+              <span className="text-xs font-bold text-warning">{formatCurrency(sumTotal(prePending), currency)}</span>
+              <span className="text-[10px] text-warning">Pre-evento pendiente ({prePending.length})</span>
             </div>
             <div className="flex flex-col items-center rounded-xl border border-border p-2.5">
               <span className="text-xs font-bold text-muted-foreground">{formatCurrency(sumTotal(postPending), currency)}</span>
@@ -137,8 +137,8 @@ const CategoryBuyerList = ({ category, allCategories, currency, onBack, onExport
                   {isPre ? (
                     <span className={`inline-flex items-center gap-1 mt-0.5 rounded-full px-2 py-0.5 text-[9px] font-semibold ${
                       paid
-                        ? 'bg-emerald-500/15 text-emerald-600'
-                        : 'bg-amber-500/15 text-amber-600'
+                        ? 'bg-success/15 text-success'
+                        : 'bg-warning/15 text-warning'
                     }`}>
                       {paid ? <CheckCircle2 className="h-2.5 w-2.5" /> : <Clock className="h-2.5 w-2.5" />}
                       {statusLabel}
@@ -173,11 +173,11 @@ const CategoryBuyerList = ({ category, allCategories, currency, onBack, onExport
                   {isPre && (
                     <div className="flex items-center gap-2 text-xs">
                       {paid ? (
-                        <span className="flex items-center gap-1 text-emerald-600">
+                        <span className="flex items-center gap-1 text-success">
                           <CheckCircle2 className="h-3.5 w-3.5" /> Pago procesado (3 días hábiles cumplidos)
                         </span>
                       ) : (
-                        <span className="flex items-center gap-1 text-amber-600">
+                        <span className="flex items-center gap-1 text-warning">
                           <Clock className="h-3.5 w-3.5" /> Pago pendiente (se procesa 3 días hábiles después de la compra)
                         </span>
                       )}
@@ -191,7 +191,12 @@ const CategoryBuyerList = ({ category, allCategories, currency, onBack, onExport
       </div>
 
       {buyers.length === 0 && (
-        <p className="text-center text-sm text-muted-foreground py-8">No hay compradores en esta categoría</p>
+        <div className="flex flex-col items-center py-8 text-center">
+          <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+            <Users className="h-7 w-7 text-primary" />
+          </div>
+          <p className="text-sm font-semibold text-foreground">No hay compradores en esta categoría</p>
+        </div>
       )}
     </div>
   );

@@ -5,6 +5,9 @@
  * - Usar en páginas bridge (`GuestsHubPage`, modales de invitados).
  * - `onSearchUser` en modales delega matching vía `searchUsers` de `@doevents/shared`.
  * - Export dual `useGuests` / `useApiGuests` para paridad imports Lovable.
+ *
+ * Retorno típico: `guests`, `groups`, `loading`, `loadError`, `refresh`, `createGuest`,
+ * `updateGuest`, `deleteGuest`, `moveToGroup`, `searchUsers`.
  */
 import { useApiGuests } from '../../lovable-bridge/useApiGuests';
 

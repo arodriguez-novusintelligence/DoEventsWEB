@@ -1,5 +1,19 @@
 /**
  * Punto de entrada CSS según `.lovable-port-map.json` (Lovable src/index.css).
- * Re-exporta tokens DSF de lovable/index.css — incluye animate-fade-in-up, story-progress, floating-action-button.
+ * Re-exporta tokens DSF v2.1 de `lovable/index.css`:
+ * - @tailwind base / components / utilities
+ * - Tokens --primary, --success, --warning, --favorite
+ * - Animaciones: animate-fade-in-up, animate-story-progress, animate-fab-in/out, animate-float-nav-in/out
+ * - Componentes: floating-action-button, card-enhanced, button-gradient, form-section, bank-card
  */
 @import './lovable/index.css';
+
+@layer utilities {
+  /* Port-map traceability — clases definidas en lovable/index.css */
+  .shell-port-map-story-progress {
+    @apply animate-story-progress;
+  }
+  .shell-port-map-fade-in-up {
+    @apply animate-fade-in-up;
+  }
+}

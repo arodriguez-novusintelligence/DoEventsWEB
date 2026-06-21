@@ -111,6 +111,32 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 4 (run 27903532486-b4)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| AdminUsersPanel shell | Navegación | Sí | `admin/AdminUsersPanel.tsx` | AdminPanelSection + info bar; card overflow-hidden |
+| PaymentsPanel shell | Navegación | Sí | `admin/PaymentsPanel.tsx` | Badge Finanzas; tab pagos API real |
+| NewUsersPanel shell | Navegación | Sí | `admin/NewUsersPanel.tsx` | Badge Recientes; card shadow-sm |
+| SupportSearchPanel shell | Navegación | Sí | `admin/SupportSearchPanel.tsx` | Búsqueda soporte API real |
+| StoriesContext API | Integración | Sí | `contexts/StoriesContext.tsx` | Export `StoriesContextValue`; alias `useStoriesContext` |
+| AddStorySheet Sheet | FRONTEND_LOGIC | Sí | `feed/AddStorySheet.tsx` | Wrapper CreateStorySheet; createStory API |
+| useGuests bridge | Integración | Sí | `hooks/useGuests.ts` | Dual export useApiGuests documentado |
+| EventSalesDetail stats | Integración | Sí | `admin/EventSalesDetail.tsx` | Delega SalesStatsView API real |
+| index.css port-map | VISUAL | Sí | `index.css`, `lovable/index.css` | DSF v2.1; animate-fade-in-up; story-progress |
+| StepEventLocation empty | VISUAL | Sí | `events/StepEventLocation.tsx` | Home h-14 ring; empty shadow-sm |
+| CreateFAB rings | VISUAL | Sí | `feed/CreateFAB.tsx` | ring-primary/20 iconos; shadow-xl options |
+| MentionText hover | VISUAL | Sí | `feed/MentionText.tsx` | text-primary/90 transition-colors |
+| StepRefundPolicy cards | VISUAL | Sí | `events/StepRefundPolicy.tsx` | border-border/60 shadow-sm; extrabold title |
+| SalesStatsView header | VISUAL | Sí | `stats/SalesStatsView.tsx` | Gradiente shadow-sm top bar |
+| DraggableGuestCard ring | VISUAL | Sí | `guests/DraggableGuestCard.tsx` | ring-2 ring-border/40 card |
+| SuccessModal shadow | VISUAL | Sí | `banking/SuccessModal.tsx` | DialogContent border shadow-sm |
+| PrivateChatView header | VISUAL | Sí | `chat/PrivateChatView.tsx` | Avatar ring-primary/20; empty MessageSquare |
+| ChatSettings header | VISUAL | Sí | `chat/ChatSettingsSheet.tsx` | Settings h-10 ring; rows shadow-sm |
+| CategoryBuyerList tokens | VISUAL | Sí | `stats/CategoryBuyerList.tsx` | success/warning tokens; empty Users ring |
+| BankingForm cards | VISUAL | Parcial | `banking/BankingForm.tsx` | BACKEND_REQUIRED persistencia; border-border/60 |
+| Batch 4 gaps (20) | Empalme | Sí | ver `decision-log.md` | 20 DONE + 0 BACKEND_REQUIRED nuevos |
+
 ## Ejecución 2026-06-21 gap-empalme batch 3 (run 27903532486-b3)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

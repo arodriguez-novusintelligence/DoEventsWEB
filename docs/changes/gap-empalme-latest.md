@@ -1,40 +1,41 @@
-# Gap empalme — resumen ejecutivo (batch 3)
+# Gap empalme — resumen ejecutivo (batch 4)
 
-**Run:** `27903532486-b3` / `gap-empalme-27903532486-b3`  
+**Run:** `27903532486-b4` / `gap-empalme-27903532486-b4`  
 **Fecha:** 2026-06-21  
 **Rama:** `feature/cicd/dev-automation`
 
 ## Resultado
 
-Manifiesto batch 3 (20 gaps, similitud baseline **80.74%**). Tras empalme focalizado, similitud estimada **90.5%**. **17 gaps DONE** frontend; **3 BACKEND_REQUIRED** documentados.
+Manifiesto batch 4 (20 gaps, similitud baseline **80.79%**). Tras empalme focalizado, similitud estimada **93.5%**. **20 gaps DONE** frontend; **0 BACKEND_REQUIRED** nuevos en este batch.
 
-## Empalme batch 3
+## Empalme batch 4
 
 | Área | Estado |
 |------|--------|
-| **Acceso / Auth** | ScanQRSheet, AuthLogo, TermsDialog |
-| **Discover / Mapa** | EventsPage (Index), MapPage, ChangeLocationSheet |
-| **Admin** | AdminRefundsPanel, AdminReportsPanel, AdminPanelView |
-| **Eventos / Tickets** | EventDetailView, PublishFlowModal (BACKEND), TicketPurchaseFlow |
-| **Feed / Perfil** | StoryViewer, ProfileCommentsView, KycCertificationView (BACKEND) |
-| **Búsqueda / IA** | GlobalSearchView (BACKEND posts), SearchEventsPage, AIAssistantView |
-| **Contextos / Otros** | KycContext, LocationSection, NotFound |
+| **Admin** | AdminUsersPanel, PaymentsPanel, NewUsersPanel, SupportSearchPanel |
+| **Historias / Contextos** | StoriesContext, AddStorySheet, useGuests |
+| **Stats / Ventas** | EventSalesDetail, SalesStatsView, CategoryBuyerList |
+| **CSS / Wizard** | index.css port-map, StepEventLocation, StepRefundPolicy |
+| **Feed / Chat** | CreateFAB, MentionText, PrivateChatView, ChatSettingsSheet |
+| **Invitados / Banca** | DraggableGuestCard, SuccessModal, BankingForm (banner BACKEND intacto) |
 
-Patrón aplicado: sticky headers gradiente + Compass/Shield, cards `shadow-sm`, rings h-10/h-14, step indicator checkout, empty states unificados h-14 ring-primary/20. APIs `@doevents/shared` intactas; sin mocks en runtime.
+Patrón aplicado: AdminPanelSection + info bar secondary, cards `overflow-hidden shadow-sm`, gradient headers sales, tokens success/warning en CategoryBuyerList, rings h-10/h-14. APIs `@doevents/shared` intactas; sin mocks en runtime.
 
-## Backend pendiente (este batch)
+## Backend pendiente (acumulado)
 
 | Gap | Motivo |
 |-----|--------|
+| **BankingForm** | Persistencia SWIFT/PayPal — `POST /bank-accounts` |
 | **KycCertificationView** | Envío documentos KYC — `POST /users/{id}/kyc` |
-| **PublishFlowModal** | Persistencia banco post-publicación — `POST /events/{id}/bank-link` |
-| **GlobalSearchView posts** | Búsqueda full-text publicaciones — `GET /publications/search?q=` |
+| **PublishFlowModal** | Persistencia banco post-publicación |
+| **GlobalSearchView posts** | Búsqueda full-text publicaciones |
+| **StoryViewersSheet** | Lista visualizaciones — `GET /stories/{id}/viewers` |
 
 Ver tabla completa en `ReglasAgente/impacto-backend.md`.
 
 ## Gaps restantes
 
-**57** — batches 4–6 pendientes (objetivo similitud 98%).
+**37** — batches 5–6 pendientes (objetivo similitud 98%).
 
 ## Validación
 

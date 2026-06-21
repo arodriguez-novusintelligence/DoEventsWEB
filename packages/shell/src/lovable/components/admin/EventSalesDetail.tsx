@@ -1,12 +1,15 @@
 import type { EventChatRoom } from '@lovable/data/chatData';
 import SalesStatsView from '@lovable/components/stats/SalesStatsView';
 
-interface EventSalesDetailProps {
+export interface EventSalesDetailProps {
   event: EventChatRoom;
   onBack: () => void;
 }
 
-/** Empalme Lovable — delega en SalesStatsView con APIs reales (`useLiveEventStats`). */
+/**
+ * Detalle de ventas por evento — empalme Lovable.
+ * Delega en `SalesStatsView` con APIs reales (`useLiveEventStats`, export Excel).
+ */
 export const EventSalesDetail = ({ event, onBack }: EventSalesDetailProps) => (
   <SalesStatsView event={event} onBack={onBack} />
 );
