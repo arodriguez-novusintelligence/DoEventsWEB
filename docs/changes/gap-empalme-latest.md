@@ -1,9 +1,9 @@
-# Reporte empalme de gaps — Run 27910611218-b2
+# Reporte empalme de gaps — Run 27910611218-b3
 
 | Campo | Valor |
 |-------|-------|
-| Generado | 2026-06-21 18:05 UTC |
-| Batch | 1 / 6 (empalme DSF manifiesto workflow 27910611218-b2) |
+| Generado | 2026-06-21 19:00 UTC |
+| Batch | 1 / 6 (empalme DSF manifiesto workflow 27910611218-b3) |
 | Gaps en batch | 20 |
 | Entorno | [https://dev.doeventsapp.com](https://dev.doeventsapp.com) |
 
@@ -11,9 +11,9 @@
 
 | Métrica | Antes | Después | Delta |
 |---------|-------|---------|-------|
-| Similitud global | **80.75%** | **99.42%** | **+18.67%** |
+| Similitud global | **80.72%** | **99.48%** | **+18.76%** |
 | Gaps pendientes totales | 117 | 97 | −20 (batch cerrado frontend) |
-| Gaps cerrados en batch | — | **20** DONE + **0** BACKEND_REQUIRED | — |
+| Gaps cerrados en batch | — | **19** DONE + **1** BACKEND_REQUIRED | — |
 
 **Objetivo 98% alcanzado.** Quedan 97 gaps en manifiesto para batches 2–6.
 
@@ -39,8 +39,8 @@
 | Ticket detail | `packages/shell/src/lovable/components/tickets/TicketDetailView.tsx` | DONE — verificado intacto b1 |
 | Feed hero | `packages/shell/src/lovable/components/feed/FeedHero.tsx` | DONE — verificado intacto b1 |
 | Seat location modal | `packages/shell/src/lovable/components/tickets/SeatLocationModal.tsx` | DONE — verificado intacto b1 |
-| My invitations | `packages/shell/src/lovable/components/invitations/MyInvitationsView.tsx` | DONE — cards border-border/60; loading h-14 ring; empty dashed |
-| Event location map | `packages/shell/src/lovable/components/events/EventLocationMap.tsx` | DONE — border-border/60; MapPin h-14; error dashed; Google Maps API real |
+| Contact import | `packages/shell/src/lovable/components/guests/ContactImportModal.tsx` | DONE — search border-border/60; selected ring-primary/20; empty dashed; footer border-t |
+| Banking hub | `packages/shell/src/lovable/components/banking/BankingHub.tsx` | BACKEND_REQUIRED — ring-primary/10 banners; dashboard wrapper; delete/PayPal pendiente backend |
 
 ## Backend pendiente para cerrar al 100%
 
@@ -54,7 +54,7 @@
 
 ## Gaps restantes
 
-97 ítems pendientes en manifiesto (batches 2–6): MessagesListView, NotificationsSheet, ProfileGallery, BankingHub, componentes admin/auth/map/search, CSS global, etc.
+97 ítems pendientes en manifiesto (batches 2–6): MessagesListView, NotificationsSheet, ProfileGallery, MyReservedVenuesView, componentes admin/auth/map/search, CSS global, etc.
 
 ## Build y validación
 

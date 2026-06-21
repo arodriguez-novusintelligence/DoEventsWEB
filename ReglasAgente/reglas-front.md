@@ -117,6 +117,23 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+---
+
+## Ejecución 2026-06-21 gap-empalme batch 1 (run 27910611218-b3)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| ContactImportModal DSF | VISUAL | Sí | `guests/ContactImportModal.tsx` | search border-border/60; selected ring-primary/20; empty dashed; footer border-t; device pick API real |
+| BankingHub delete/PayPal | Bloqueo | Parcial | `banking/BankingHub.tsx` | BACKEND_REQUIRED; ring-primary/10 banners; dashboard wrapper; fetchBankAccountsByUser intacto |
+| SeatingMapEditor / NotificationsContext | Empalme | Sí | ver batch b1/b2 | Verificados intactos |
+| MyReservedServices / ReportPostDialog | Empalme | Sí | ver batch b1/b2 | Verificados intactos |
+| MainInfoSection / AccessControlListView | Empalme | Sí | ver batch b1/b2 | Verificados intactos |
+| MyPostsView / EventsView / ServiceDetailView | Empalme | Sí | ver batch b1/b2 | Verificados intactos |
+| CreatePostSheet / HostPickerModal / FAQSection | Empalme | Sí | ver batch b1/b2 | Verificados intactos |
+| StepUnified / EventPublished / AddGuestModal | Empalme | Sí | ver batch b1/b2 | Verificados intactos |
+| TicketDetailView / FeedHero / SeatLocationModal | Empalme | Sí | ver batch b1/b2 | Verificados intactos |
+| Batch 1 gaps b3 (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 1 (run 27910611218-b2)
 
 | Regla | Tipo | Implementada | Archivo | Observación |
