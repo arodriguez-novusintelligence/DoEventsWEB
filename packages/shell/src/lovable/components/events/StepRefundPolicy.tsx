@@ -36,11 +36,16 @@ const StepRefundPolicy = ({ formData, updateForm, showErrors }: Props) => {
 
   return (
     <div className="space-y-4">
-      <div>
-        <h2 className="text-xl font-bold text-primary">Reembolsos y fecha de venta</h2>
-        <p className="mt-1 text-sm text-foreground">
-          Define la política de reembolsos y la ventana de venta de boletería de tu evento.
-        </p>
+      <div className="flex items-start gap-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+          <ShieldCheck className="h-5 w-5 text-primary" />
+        </div>
+        <div>
+          <h2 className="text-xl font-bold text-primary">Reembolsos y fecha de venta</h2>
+          <p className="mt-1 text-sm text-foreground">
+            Define la política de reembolsos y la ventana de venta de boletería de tu evento.
+          </p>
+        </div>
       </div>
 
       {/* Fecha y hora de venta de boletería */}
