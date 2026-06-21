@@ -49,7 +49,7 @@ export const FeedBanner = ({
         </button>
       )}
       <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/15">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 ring-2 ring-primary/20">
           <Megaphone className="h-5 w-5 text-primary" />
         </div>
         <div className="min-w-0 flex-1 pr-6">

@@ -748,7 +748,9 @@ export function AddGuestModal({
         <DialogContent stacked={isNested} className="sm:max-w-md rounded-2xl max-h-[92vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-xl font-extrabold text-foreground">
-              <UserPlus className="h-5 w-5 text-primary" />
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
+                <UserPlus className="h-5 w-5 text-primary" />
+              </span>
               Agregar invitado
             </DialogTitle>
           </DialogHeader>

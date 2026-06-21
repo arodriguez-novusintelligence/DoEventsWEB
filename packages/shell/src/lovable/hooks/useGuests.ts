@@ -4,6 +4,7 @@
  * - Sin datos mock; grupos por defecto se crean vía backend cuando aplica.
  * - Usar en páginas bridge (`GuestsHubPage`, modales de invitados).
  * - `onSearchUser` en modales delega matching vía `searchUsers` de `@doevents/shared`.
+ * - Export dual `useGuests` / `useApiGuests` para paridad imports Lovable.
  */
 export {
   useApiGuests as useGuests,

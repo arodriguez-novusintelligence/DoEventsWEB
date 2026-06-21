@@ -142,8 +142,16 @@ export const LoginView = () => {
       <AuthLogo />
 
       <div className="rounded-2xl bg-card p-6 shadow-md border border-border/60">
-        <h1 className="text-xl font-extrabold text-foreground">Iniciar sesión</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
+            <Lock className="h-5 w-5 text-primary" />
+          </span>
+          <div>
+            <h1 className="text-xl font-extrabold text-foreground">Iniciar sesión</h1>
+            <p className="text-xs text-muted-foreground">Correo o redes sociales</p>
+          </div>
+        </div>
+        <p className="mt-3 text-sm text-muted-foreground">
           Accede con tu correo o continúa con tus redes sociales.
         </p>
 

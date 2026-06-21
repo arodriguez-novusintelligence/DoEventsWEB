@@ -40,8 +40,8 @@ const TicketPurchaseFlow = ({ event, onBack }: Props) => {
           </button>
         </div>
         <div className="flex flex-1 flex-col items-center justify-center px-6 pb-16 text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-            <CreditCard className="h-8 w-8 text-primary" />
+          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-4 ring-primary/20">
+            <CreditCard className="h-7 w-7 text-primary" />
           </div>
           <h2 className="text-lg font-bold text-foreground">Compra no disponible</h2>
           <p className="mt-2 max-w-sm text-sm text-muted-foreground">
@@ -71,9 +71,9 @@ const TicketPurchaseFlow = ({ event, onBack }: Props) => {
       <div className="mx-auto flex w-full max-w-lg flex-1 flex-col px-4 pb-16 pt-6">
         <div className="rounded-2xl bg-card p-6 shadow-sm border border-border/60">
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
+            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
               <Ticket className="h-6 w-6 text-primary" />
-            </div>
+            </span>
             <div className="min-w-0">
               <h2 className="text-lg font-extrabold text-foreground">Comprar boletas</h2>
               <p className="text-xs text-muted-foreground">Resumen antes del checkout</p>

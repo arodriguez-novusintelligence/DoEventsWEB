@@ -58,7 +58,9 @@ export const ResetPasswordView = () => {
       <div className="rounded-2xl bg-card p-6 shadow-md border border-border/60">
         {!linkValid ? (
           <div className="space-y-4 text-center">
-            <ShieldAlert className="mx-auto h-12 w-12 text-destructive" />
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-4 ring-destructive/20">
+              <ShieldAlert className="h-7 w-7 text-destructive" />
+            </div>
             <h1 className="text-xl font-extrabold text-foreground">Enlace inválido</h1>
             <p className="text-sm text-muted-foreground">
               El enlace de recuperación expiró o no es válido. Solicita uno nuevo.
@@ -69,7 +71,9 @@ export const ResetPasswordView = () => {
           </div>
         ) : success ? (
           <div className="space-y-4 text-center">
-            <CheckCircle2 className="mx-auto h-12 w-12 text-primary" />
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-4 ring-primary/20">
+              <CheckCircle2 className="h-7 w-7 text-primary" />
+            </div>
             <h1 className="text-xl font-extrabold text-foreground">Contraseña actualizada</h1>
             <p className="text-sm text-muted-foreground">
               Ya puedes iniciar sesión con tu nueva contraseña.

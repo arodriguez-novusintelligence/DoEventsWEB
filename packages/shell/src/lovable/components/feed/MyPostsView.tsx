@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AlertCircle, FileText, Loader2, Trash2 } from 'lucide-react';
+import { AlertCircle, FileText, Loader2, RefreshCw, Trash2 } from 'lucide-react';
 import PostCard from './PostCard';
 import type { FeedUiPost as Post } from '@doevents/shared';
 import { toast } from 'sonner';
@@ -57,10 +57,13 @@ const MyPostsView = ({
           </div>
         ) : loadError ? (
           <div className="flex flex-col items-center gap-3 rounded-2xl border border-destructive/30 bg-card py-12 text-center shadow-sm">
-            <AlertCircle className="h-8 w-8 text-destructive" />
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-4 ring-destructive/20">
+              <AlertCircle className="h-7 w-7 text-destructive" />
+            </div>
             <p className="text-sm font-medium text-destructive">{loadError}</p>
             {onRetry && (
               <Button type="button" variant="outline" className="rounded-full" onClick={onRetry}>
+                <RefreshCw className="mr-2 h-4 w-4" />
                 Reintentar
               </Button>
             )}

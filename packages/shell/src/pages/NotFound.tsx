@@ -4,10 +4,10 @@ import { Button } from '@lovable/components/ui/button';
 
 export const NotFound = () => (
   <div className="mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center bg-secondary px-6 text-center pb-24">
-    <div className="rounded-full bg-primary/10 p-6 ring-4 ring-primary/20">
-      <MapPinOff className="mx-auto h-10 w-10 text-primary" />
-      <p className="mt-3 text-3xl font-extrabold text-primary">404</p>
+    <div className="flex h-14 w-14 flex-col items-center justify-center rounded-full bg-primary/10 ring-4 ring-primary/20">
+      <MapPinOff className="h-7 w-7 text-primary" />
     </div>
+    <p className="mt-3 text-3xl font-extrabold text-primary">404</p>
     <h1 className="mt-6 text-xl font-extrabold text-foreground">Página no encontrada</h1>
     <p className="mt-2 text-sm text-muted-foreground max-w-sm">
       La ruta que buscas no existe o fue movida. Vuelve al inicio o explora eventos cercanos.

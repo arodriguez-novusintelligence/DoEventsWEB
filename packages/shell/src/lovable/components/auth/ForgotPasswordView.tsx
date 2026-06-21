@@ -62,7 +62,9 @@ export const ForgotPasswordView = () => {
 
         {sent ? (
           <div className="mt-6 space-y-4 text-center">
-            <CheckCircle2 className="mx-auto h-12 w-12 text-primary" />
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-4 ring-primary/20">
+              <CheckCircle2 className="h-7 w-7 text-primary" />
+            </div>
             <p className="text-sm text-foreground">
               Revisa tu correo. Te enviamos un enlace válido por 60 minutos.
             </p>

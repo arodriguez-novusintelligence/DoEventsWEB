@@ -70,7 +70,9 @@ export const KycCertificationView = ({ onBack }: KycCertificationViewProps) => {
           </div>
         ) : loadError ? (
           <div className="rounded-2xl border border-destructive/30 bg-card p-8 text-center shadow-sm">
-            <AlertCircle className="mx-auto h-8 w-8 text-destructive" />
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-4 ring-destructive/20">
+              <AlertCircle className="h-7 w-7 text-destructive" />
+            </div>
             <p className="mt-3 text-sm font-medium text-destructive">
               {loadErrorMessage || 'No se pudo cargar el estado KYC'}
             </p>
@@ -81,7 +83,9 @@ export const KycCertificationView = ({ onBack }: KycCertificationViewProps) => {
         ) : (
           <>
             <div className="rounded-2xl bg-card p-6 text-center shadow-sm">
-              <StatusIcon className={`mx-auto h-12 w-12 ${STATUS_COLORS[status]}`} />
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-4 ring-primary/20">
+                <StatusIcon className={`h-7 w-7 ${STATUS_COLORS[status]}`} />
+              </div>
               <h2 className="mt-4 text-base font-bold text-foreground">{statusLabel}</h2>
               <p className="mt-2 text-sm text-muted-foreground">
                 {isCertified

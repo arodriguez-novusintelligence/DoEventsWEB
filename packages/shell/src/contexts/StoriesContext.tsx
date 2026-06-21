@@ -100,3 +100,6 @@ export const StoriesProvider: React.FC<StoriesProviderProps> = ({ children, curr
 export function useActiveStoryAuthors(): StoriesContextValue {
   return useContext(StoriesContext);
 }
+
+/** Alias Lovable — misma API que `useActiveStoryAuthors`. */
+export const useStories = useActiveStoryAuthors;

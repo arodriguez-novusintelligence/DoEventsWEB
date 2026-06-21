@@ -201,8 +201,8 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
 
       {!loading && !stories.length && (
         <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
-          <div className="rounded-full bg-white/10 p-4">
-            <Sparkles className="h-8 w-8 text-white/80" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/10 ring-4 ring-white/20">
+            <Sparkles className="h-7 w-7 text-white/80" />
           </div>
           <p className="text-sm text-white/80">No hay historias activas de este usuario.</p>
           <button

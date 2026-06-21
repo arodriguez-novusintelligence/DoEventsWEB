@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { CheckCircle2, Copy, PartyPopper, Share2 } from 'lucide-react';
-import { fetchEventById, Loader, useToast } from '@doevents/shared';
+import { CheckCircle2, Copy, Loader2, PartyPopper, Share2 } from 'lucide-react';
+import { fetchEventById, useToast } from '@doevents/shared';
 import { Button } from '@lovable/components/ui/button';
 
 export const EventPublished = () => {
@@ -46,16 +46,16 @@ export const EventPublished = () => {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center bg-secondary px-6 text-center pb-24">
-      <div className="rounded-full bg-primary/10 p-6 ring-4 ring-primary/20">
-        <PartyPopper className="h-12 w-12 text-primary" />
+      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-4 ring-primary/20">
+        <PartyPopper className="h-7 w-7 text-primary" />
       </div>
       <p className="mt-4 inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
         Publicación exitosa
       </p>
       <h1 className="mt-6 text-2xl font-extrabold text-foreground">¡Evento publicado!</h1>
       {loadingName ? (
-        <div className="mt-4">
-          <Loader />
+        <div className="mt-4 flex justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : eventName ? (
         <p className="mt-3 text-base font-semibold text-primary">{eventName}</p>
