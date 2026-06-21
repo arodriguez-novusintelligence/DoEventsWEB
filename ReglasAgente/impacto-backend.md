@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27903532486-b6`: batch 6 final (17 gaps) — 17 DONE frontend; 0 BACKEND_REQUIRED nuevos (brechas acumuladas documentadas). Reservas/invitados/stats/feed/venues/IA polish DSF; similitud ~98.4%; manifiesto agotado; build:devaws OK.
+
 Run `gap-empalme-27903532486-b5`: batch 5 (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED nuevos (brechas acumuladas documentadas). Feed/wizard/perfil/servicios/stats/chat polish DSF; similitud ~96.2%; build:devaws OK.
 
 Run `gap-empalme-27903532486-b4`: batch 4 (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED nuevos (BankingForm persistencia acumulada). Admin/historias/CSS/hooks empalme; similitud ~93.5%; build:devaws OK.
@@ -114,7 +116,25 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27903532486-b5)
+## Empalme realizado (última ejecución — gap-empalme-27903532486-b6)
+
+- **RepostSheet:** Repeat2 pill ring header; Drawer max-h-[90dvh]; preview/input cards border-border/60 shadow-sm.
+- **ServiceReservationDetail / VenueReservationDetail:** loading card shadow-sm pb-24; RefreshCw retry; header icon ring; detail cards border-border/60.
+- **ImageCarousel:** media frame shadow-sm ring-primary/20 border-border/60.
+- **GroupDropZone:** títulos extrabold; drop target dashed border-primary/25; section border-border/60.
+- **UserProfileView:** hero border-border/60; avatar ring-primary/20; display name extrabold; private lock ring.
+- **InvitationEventDetailView:** hero carousel ring shadow-sm; summary card border-border/60; social actions ring shadow-sm.
+- **EditGuestModal:** UserRound h-10 ring pill; DialogTitle extrabold.
+- **TopHeader:** menu/search/bell buttons ring-primary/20 shadow-sm cards.
+- **PreferencesRefundSection / FAQSection:** icon pills ring; cards border-border/60; FAQ empty dashed border-primary/25.
+- **VenueDetailReservation:** all sections border-border/60; back button ring-primary/20.
+- **StatsEventListView:** event list cards border-border/60; KPI tiles border; h2 extrabold; empty fallback ring.
+- **GuestManagementView:** header Users ring; title extrabold; loading card shadow-sm.
+- **AccessControlView:** top bar shadow-sm; ShieldCheck h-10 ring header; summary/chart sections border-border/60 shadow-sm.
+- **VenueCreator:** header border-border/60; FAB actions menu shadow-xl border-border/60.
+- **AIAssistantFAB:** shadow-xl hover ring-primary/20; PRO badge intacto.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27903532486-b5)
 
 - **PostCard:** card `ring-2 ring-primary/20`; repost embed `border-border/60 shadow-sm`.
 - **MyVenuesView / MyEventsView:** grid cards `border-border/60`; CTA dashed `shadow-sm`; empty `border-primary/25`.

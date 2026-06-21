@@ -645,7 +645,7 @@ const VenueDetailReservation = ({
           </section>
 
           {/* Información adicional del lugar (acordeón con todo el detalle) */}
-          <section className="rounded-2xl bg-card px-4 shadow-sm">
+          <section className="rounded-2xl border border-border/60 bg-card px-4 shadow-sm">
             <VenueDetails venue={venueFull} />
           </section>
 
@@ -858,7 +858,7 @@ const VenueDetailReservation = ({
           )}
         </div>
 
-        <section className="rounded-2xl bg-card p-4 shadow-sm">
+        <section className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
           <p className="text-center text-base font-semibold text-primary">{venue.name}</p>
           <div className="mt-3 grid grid-cols-2 gap-3">
             <div>
@@ -915,7 +915,7 @@ const VenueDetailReservation = ({
         </section>
 
 
-        <section className="rounded-2xl bg-card p-4 shadow-sm">
+        <section className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
           <p className="text-sm font-semibold text-foreground">Datos del comprador</p>
           <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
             <div>
@@ -931,7 +931,7 @@ const VenueDetailReservation = ({
           <p className="text-sm font-medium text-primary">{buyer.email}</p>
         </section>
 
-        <section className="rounded-2xl bg-card p-4 shadow-sm">
+        <section className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
           <p className="text-sm font-semibold text-foreground">Próximos pasos</p>
           {[
             'Recibirás un correo con todos los detalles de tu reserva',

@@ -13,6 +13,50 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-21 22:45 UTC] gap-empalme-27903532486-b6
+
+### 1. Resumen del empalme
+Batch 6 final (17 gaps, manifiesto `27903532486-b6`, similitud baseline **80.89%** / post-b5 **96.2%**): empalme focalizado en últimos minor drift — feed/repost/perfil/reservas/invitados/stats/venues/IA. Patrón DSF v2.1: `ring-2 ring-primary/20`, `border-border/60`, `shadow-sm`, títulos `font-extrabold`, pills icono h-10, retry `RefreshCw`. **17 gaps DONE** frontend; **0 BACKEND_REQUIRED** nuevos. Manifiesto agotado (`remainingAfterBatch: 0`).
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Repost sheet | `packages/shell/src/lovable/components/feed/RepostSheet.tsx` | DONE |
+| Service reservation detail | `packages/shell/src/lovable/components/purchases/ServiceReservationDetail.tsx` | DONE |
+| Image carousel | `packages/shell/src/lovable/components/feed/ImageCarousel.tsx` | DONE |
+| Group drop zone | `packages/shell/src/lovable/components/guests/GroupDropZone.tsx` | DONE |
+| User profile view | `packages/shell/src/lovable/components/feed/UserProfileView.tsx` | DONE |
+| Invitation event detail | `packages/shell/src/lovable/components/invitations/InvitationEventDetailView.tsx` | DONE |
+| Venue reservation detail | `packages/shell/src/lovable/components/purchases/VenueReservationDetail.tsx` | DONE |
+| Edit guest modal | `packages/shell/src/lovable/components/guests/EditGuestModal.tsx` | DONE |
+| Top header | `packages/shell/src/lovable/components/feed/TopHeader.tsx` | DONE |
+| Preferences refund section | `packages/shell/src/lovable/components/venues/sections/PreferencesRefundSection.tsx` | DONE |
+| Venue detail reservation | `packages/shell/src/lovable/components/venues/VenueDetailReservation.tsx` | DONE |
+| Stats event list | `packages/shell/src/lovable/components/stats/StatsEventListView.tsx` | DONE |
+| FAQ section | `packages/shell/src/lovable/components/venues/sections/FAQSection.tsx` | DONE |
+| Guest management | `packages/shell/src/lovable/components/guests/GuestManagementView.tsx` | DONE |
+| Access control view | `packages/shell/src/lovable/components/stats/AccessControlView.tsx` | DONE |
+| Venue creator | `packages/shell/src/lovable/components/venues/VenueCreator.tsx` | DONE |
+| AI assistant FAB | `packages/shell/src/lovable/components/ai/AIAssistantFAB.tsx` | DONE |
+
+### 3. Similitud antes/después
+- **Antes:** 80.89% (manifiesto) / 96.2% (post batch 5)
+- **Después:** 98.4% (estimado post batch 6; manifiesto agotado)
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias runtime (solo comentario anti-mock en Login.tsx)
+
+### 6. Riesgos pendientes
+- Brechas BACKEND_REQUIRED acumuladas sin cambios: PaymentMethods delete, PaymentGateway PSP, EditProfile password/gustos, Booking add-ons, KYC submit, PublishFlow banking, GlobalSearch posts, StoryViewersSheet, BankingForm SWIFT/PayPal
+- `UserProfileView` conserva datos derivados de props Lovable (sin mocks runtime en pages); revisión humana si se expone perfil ajeno en producción
+
+---
+
 ## [2026-06-21 21:30 UTC] gap-empalme-27903532486-b5
 
 ### 1. Resumen del empalme

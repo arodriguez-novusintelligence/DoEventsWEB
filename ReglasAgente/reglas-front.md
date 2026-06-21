@@ -111,6 +111,29 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 6 (run 27903532486-b6)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| RepostSheet header | VISUAL | Sí | `feed/RepostSheet.tsx` | Repeat2 pill ring; max-h-[90dvh]; cards border-border/60 |
+| ServiceReservationDetail | VISUAL | Sí | `purchases/ServiceReservationDetail.tsx` | RefreshCw retry; header ring; cards border-border/60 |
+| ImageCarousel frame | VISUAL | Sí | `feed/ImageCarousel.tsx` | shadow-sm en frame ring-primary/20 |
+| GroupDropZone shell | VISUAL | Sí | `guests/GroupDropZone.tsx` | títulos extrabold; drop target border-primary/25 |
+| UserProfileView hero | VISUAL | Sí | `feed/UserProfileView.tsx` | hero border-border/60; avatar ring; name extrabold |
+| InvitationEventDetail hero | VISUAL | Sí | `invitations/InvitationEventDetailView.tsx` | carousel ring; action buttons ring shadow-sm |
+| VenueReservationDetail | VISUAL | Sí | `purchases/VenueReservationDetail.tsx` | empty Building2 ring; cards border-border/60 |
+| EditGuestModal header | VISUAL | Sí | `guests/EditGuestModal.tsx` | UserRound h-10 ring pill; título extrabold |
+| TopHeader chrome | VISUAL | Sí | `feed/TopHeader.tsx` | menu/search/bell ring-primary/20 shadow-sm |
+| PreferencesRefundSection | VISUAL | Sí | `venues/sections/PreferencesRefundSection.tsx` | RotateCcw pill ring; cards border-border/60 |
+| VenueDetailReservation | VISUAL | Sí | `venues/VenueDetailReservation.tsx` | sections border-border/60; back button ring |
+| StatsEventListView | VISUAL | Sí | `stats/StatsEventListView.tsx` | event cards border-border/60; h2 extrabold |
+| FAQSection empty | VISUAL | Sí | `venues/sections/FAQSection.tsx` | HelpCircle pill ring; dashed border-primary/25 |
+| GuestManagementView header | VISUAL | Sí | `guests/GuestManagementView.tsx` | Users ring header; loading card shadow-sm |
+| AccessControlView shell | VISUAL | Sí | `stats/AccessControlView.tsx` | ShieldCheck pill header; summary cards shadow-sm |
+| VenueCreator header | VISUAL | Sí | `venues/VenueCreator.tsx` | border-border/60; FAB menu shadow-xl |
+| AIAssistantFAB polish | VISUAL | Sí | `ai/AIAssistantFAB.tsx` | shadow-xl hover ring-primary/20 |
+| Batch 6 gaps (17) | Empalme | Sí | ver `decision-log.md` | 17 DONE + 0 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 5 (run 27903532486-b5)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

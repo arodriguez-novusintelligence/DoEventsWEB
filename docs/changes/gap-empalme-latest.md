@@ -1,24 +1,25 @@
-# Gap empalme — resumen ejecutivo (batch 5)
+# Gap empalme — resumen ejecutivo (batch 6)
 
-**Run:** `27903532486-b5` / `gap-empalme-27903532486-b5`  
+**Run:** `27903532486-b6` / `gap-empalme-27903532486-b6`  
 **Fecha:** 2026-06-21  
 **Rama:** `feature/cicd/dev-automation`
 
 ## Resultado
 
-Manifiesto batch 5 (20 gaps, similitud baseline **80.9%** / post batch 4 **93.5%**). Tras empalme focalizado, similitud estimada **96.2%**. **20 gaps DONE** frontend; **0 BACKEND_REQUIRED** nuevos en este batch.
+Manifiesto batch 6 (17 gaps, similitud baseline **80.89%** / post batch 5 **96.2%**). Tras empalme focalizado, similitud estimada **98.4%**. **17 gaps DONE** frontend; **0 BACKEND_REQUIRED** nuevos. Manifiesto de gaps agotado (`remainingAfterBatch: 0`).
 
-## Empalme batch 5
+## Empalme batch 6
 
 | Área | Componentes |
 |------|-------------|
-| **Feed / Perfil** | PostCard, ProfileView, EditProfileView, FavoritesView, MyEventsView, ImageCarousel |
-| **Wizard eventos** | CreateEventView, StepAgenda, StepEventSummary, StepEventDetails, StepFaqs |
-| **Servicios / Reservas** | BookingSheet, PaymentGatewaySheet, MyServicesView |
-| **Lugares / Stats** | MyVenuesView, SeatingCategoryDialog, CategoryBuyerList, GuestStatsView |
-| **Pagos / Chat** | PaymentMethodsDashboard, ChatRoomView |
+| **Feed / Perfil** | RepostSheet, ImageCarousel, UserProfileView, TopHeader |
+| **Reservas / Compras** | ServiceReservationDetail, VenueReservationDetail, VenueDetailReservation |
+| **Invitados** | GroupDropZone, EditGuestModal, GuestManagementView |
+| **Invitaciones / Stats** | InvitationEventDetailView, StatsEventListView, AccessControlView |
+| **Lugares / Wizard** | PreferencesRefundSection, FAQSection, VenueCreator |
+| **IA** | AIAssistantFAB |
 
-Patrón aplicado: `ring-2 ring-primary/20`, `border-border/60`, `shadow-sm`, títulos `font-extrabold`, empty states h-14, retry `RefreshCw rounded-full`. APIs `@doevents/shared` intactas; sin mocks en runtime.
+Patrón aplicado: `ring-2 ring-primary/20`, `border-border/60`, `shadow-sm`, títulos `font-extrabold`, pills icono h-10, retry `RefreshCw rounded-full`. APIs `@doevents/shared` intactas; sin mocks en runtime de `pages/`.
 
 ## Backend pendiente (acumulado)
 
@@ -38,7 +39,7 @@ Ver tabla completa en `ReglasAgente/impacto-backend.md`.
 
 ## Gaps restantes
 
-**17** — batch 6 pendiente (objetivo similitud 98%).
+**0** en manifiesto batch 6 — objetivo similitud ≥98% alcanzado en frontend.
 
 ## Validación
 
