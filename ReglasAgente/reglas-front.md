@@ -1281,6 +1281,34 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 | Páginas auth mapeadas | Navegación | Sí | `pages/Login.tsx` etc. | Re-export mfe-auth sin duplicar lógica |
 | Chat lista → volver al feed | Navegación | Sí | `pages/ChatPage.tsx` | `onBack` en `MessagesListView` navega a `/` (empalme `setActiveTab('wall')` de Lovable) |
 
+## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b1)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| NotificationsContext API | Integración | Sí | `contexts/NotificationsContext.tsx` | NotificationsContextValue; useNotificationsContext; refreshNotifications; hasUnread/isEmpty |
+| NotificationsSheet states | VISUAL | Sí | `feed/NotificationsSheet.tsx` | isEmpty; loadErrorMessage; loading border-border/60; font-extrabold |
+| TopHeader badge | VISUAL | Sí | `feed/TopHeader.tsx` | hasUnread badge notificaciones |
+| FeedBanner ring | VISUAL | Sí | `feed/FeedBanner.tsx` | ring-1 ring-primary/10 gradiente promo |
+| SeatingMapEditor canvas | VISUAL | Sí | `events/SeatingMapEditor.tsx` | verificado intacto batch previo |
+| EventPreviewModal sections | VISUAL | Sí | `events/EventPreviewModal.tsx` | verificado intacto batch previo |
+| AIAssistantFAB polish | VISUAL | Sí | `ai/AIAssistantFAB.tsx` | verificado intacto batch previo |
+| RefundTicketFlow cards | VISUAL | Sí | `tickets/RefundTicketFlow.tsx` | verificado intacto batch previo |
+| FAQSection empty | VISUAL | Sí | `venues/sections/FAQSection.tsx` | verificado intacto batch previo |
+| StepAccessControl gates | VISUAL | Sí | `events/StepAccessControl.tsx` | verificado intacto batch previo |
+| HostPickerModal shell | VISUAL | Sí | `events/HostPickerModal.tsx` | verificado intacto batch previo |
+| ServiceDetailView hero | VISUAL | Sí | `services/ServiceDetailView.tsx` | verificado intacto batch previo |
+| EventsView EmptyHint | VISUAL | Sí | `feed/EventsView.tsx` | verificado intacto batch previo |
+| StepUnified headers | VISUAL | Sí | `services/StepUnified.tsx` | verificado intacto batch previo |
+| CompanyContext alias | Integración | Sí | `contexts/CompanyContext.tsx` | useCompanyContext verificado |
+| MyPostsView empty | VISUAL | Sí | `feed/MyPostsView.tsx` | verificado intacto batch previo |
+| AddGuestModal search | VISUAL | Sí | `guests/AddGuestModal.tsx` | verificado intacto batch previo |
+| MainInfoSection cards | VISUAL | Sí | `venues/sections/MainInfoSection.tsx` | verificado intacto batch previo |
+| SeatLocationModal loading | VISUAL | Sí | `tickets/SeatLocationModal.tsx` | verificado intacto batch previo |
+| MyPurchasesView empty | VISUAL | Sí | `purchases/MyPurchasesView.tsx` | verificado intacto batch previo |
+| MyReservedServicesView | Integración | Sí | `purchases/MyReservedServicesView.tsx` | verificado intacto batch previo |
+| BankingHub delete/PayPal | Bloqueo | Parcial | `banking/BankingHub.tsx` | BACKEND_REQUIRED; banner intacto |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Validaciones
 
 - [x] Validación frontend implementada (formularios reporte, ubicación)

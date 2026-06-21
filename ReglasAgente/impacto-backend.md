@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27905180836-b1`: batch 1 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). NotificationsContext API parity Lovable; TopHeader/NotificationsSheet hasUnread/isEmpty; FeedBanner ring polish; similitud ~86.2%; 97 gaps restantes; build:devaws OK.
+
 Run `gap-empalme-27904918660`: batch 1 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). IA/feed/eventos/servicios/banca/tickets/invitados/compras DSF polish; incluye `MyReservedServicesView`; similitud ~85.6%; 97 gaps restantes; build:devaws OK.
 
 Run `gap-empalme-27904436890`: batch 1 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). IA/feed/eventos/servicios/banca/tickets/invitados DSF polish; similitud ~83.8%; 97 gaps restantes; build:devaws OK.
@@ -120,30 +122,15 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27904918660)
+## Empalme realizado (última ejecución — gap-empalme-27905180836-b1)
 
-- **FeedBanner:** verificado intacto — font-extrabold; dismiss ring-border/60; gradient promo border-primary/20.
-- **SeatingMapEditor:** canvas empty card shell border-border/60 shadow-sm; zoom controls border-border/60; header font-extrabold.
-- **AIAssistantFAB:** verificado intacto — ring-primary/20; shadow-xl; PRO badge font-extrabold shadow-sm.
-- **EventPreviewModal:** preview notice border-border/60; agenda/organizer font-extrabold; FAQ/refund cards border-border/60 shadow-sm.
-- **RefundTicketFlow:** counter card border-border/60; footer border-border/60; ticket rows shadow-sm.
-- **FAQSection:** empty title font-extrabold; cards border-border/60 intactos.
-- **HostPickerModal:** sheet border-border/60; inputs border-border/60; título extrabold.
-- **StepAccessControl:** empty gates border-border/60; stat tiles border-border/60 shadow-sm; font-extrabold.
-- **ServiceDetailView:** hero border-border/60 shadow-sm; empty font-extrabold dashed border-primary/25.
-- **EventsView:** EmptyHint border-border/60; section headers font-extrabold.
-- **StepUnified:** SectionHeader border-border/60; progress card border-border/60; font-extrabold titles.
-- **CompanyContext:** alias `useCompanyContext`; API `fetchUserById` sin mocks — verificado.
-- **AddGuestModal:** empty search font-extrabold; result rows border-border/60.
-- **BankingHub:** error card border-border/60 shadow-sm; font-extrabold; BACKEND_REQUIRED banner delete/PayPal intacto.
-- **MyPostsView:** empty card border-border/60; font-extrabold.
-- **SeatLocationModal:** DialogTitle font-extrabold; loading border-border/60.
-- **MainInfoSection:** verificado intacto — border-border/60; header font-extrabold.
-- **MyPurchasesView:** empty aggregate border-border/60; nav rows font-extrabold.
-- **MyReservedServicesView:** loading/empty/login cards border-border/60; rows border-border/60; titles font-extrabold; API `fetchUserServiceBookings`.
-- **TicketDetailView:** single-order chip border-border/60 shadow-sm.
+- **NotificationsContext:** export `NotificationsContextValue`; alias `useNotificationsContext`; `refreshNotifications`; `hasUnread`/`isEmpty`/`loadErrorMessage`; API `fetchUserNotifications` sin mocks.
+- **TopHeader / NotificationsSheet:** badge vía `hasUnread`; empty/error/loading cards border-border/60; retry `refreshNotifications`; títulos font-extrabold.
+- **FeedBanner:** ring-1 ring-primary/10 sobre gradiente promo; dismiss ring-border/60 intacto.
+- **SeatingMapEditor / EventPreviewModal / AIAssistantFAB / RefundTicketFlow / FAQSection / StepAccessControl / HostPickerModal / ServiceDetailView / EventsView / StepUnified / CompanyContext / MyPostsView / AddGuestModal / MainInfoSection / SeatLocationModal / MyPurchasesView / MyReservedServicesView:** verificados intactos batch previo — DSF border-border/60, font-extrabold, rings h-14.
+- **BankingHub:** BACKEND_REQUIRED banner delete/PayPal intacto; error card border-border/60.
 
-## Empalme realizado (ejecución anterior — gap-empalme-27904436890)
+## Empalme realizado (ejecución anterior — gap-empalme-27904918660)
 
 ## Empalme realizado (ejecución anterior — gap-empalme-27903532486-b6)
 

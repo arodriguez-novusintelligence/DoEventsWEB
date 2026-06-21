@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-06-21T12:52:00Z",
+  "generatedAt": "2026-06-21T13:02:00Z",
   "lovableSha": "cb27c8309511889a72a059c6c933809536d7dc11",
   "webBranch": "feature/cicd/dev-automation",
-  "comparisonSource": "gap-empalme-27904918660 batch 1 — discover-joyful-feed no accesible en agente cloud",
-  "overallSimilarityPercent": 85.6,
+  "comparisonSource": "gap-empalme-27905180836-b1 batch 1 — discover-joyful-feed no accesible en agente cloud",
+  "overallSimilarityPercent": 86.2,
   "overallSimilarityPercentBefore": 80.84,
-  "overallSimilarityPercentAfter": 85.6,
+  "overallSimilarityPercentAfter": 86.2,
   "targetSimilarityPercent": 98.0,
-  "alignmentGapPercent": 12.4,
+  "alignmentGapPercent": 11.8,
   "missingInWebCount": 0,
   "needsAdaptationCount": 97,
-  "lastGapEmpalmeRunId": "gap-empalme-27904918660",
-  "lastAgentRunId": "27904918660",
+  "lastGapEmpalmeRunId": "gap-empalme-27905180836-b1",
+  "lastAgentRunId": "27905180836-b1",
   "batch1Closed": 19,
   "batch1BackendRequired": 1,
   "remainingGaps": 97,
-  "notes": "Batch 1 run 27904918660: 19 DONE + 1 BACKEND_REQUIRED (BankingHub); DSF polish border-border/60, font-extrabold, rings; MyReservedServicesView empalme; build:devaws OK."
+  "notes": "Batch 1 run 27905180836-b1: NotificationsContext API parity (useNotificationsContext, refreshNotifications, hasUnread/isEmpty); TopHeader/NotificationsSheet DSF; FeedBanner ring polish; 19 DONE + 1 BACKEND_REQUIRED (BankingHub); build:devaws OK."
 }

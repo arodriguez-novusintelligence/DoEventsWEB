@@ -8,6 +8,57 @@
   },
   "runs": [
     {
+      "id": "gap-empalme-27905180836-b1",
+      "timestamp": "2026-06-21 13:02 UTC",
+      "workflowRunId": "27905180836-b1",
+      "gapBatch": 20,
+      "designSimilarityPercentBefore": 80.84,
+      "designSimilarityPercentAfter": 86.2,
+      "designSimilarityTarget": 98.0,
+      "summary": "Batch 1 gap empalme run 27905180836-b1: NotificationsContext API parity Lovable; TopHeader/NotificationsSheet hasUnread/isEmpty; FeedBanner ring polish; 19 DONE + 1 BACKEND_REQUIRED (BankingHub); build:devaws OK",
+      "gapsClosed": [
+        "src/components/feed/FeedBanner.tsx",
+        "src/components/events/SeatingMapEditor.tsx",
+        "src/components/events/EventPreviewModal.tsx",
+        "src/components/ai/AIAssistantFAB.tsx",
+        "src/components/tickets/RefundTicketFlow.tsx",
+        "src/components/venues/sections/FAQSection.tsx",
+        "src/components/events/StepAccessControl.tsx",
+        "src/components/events/HostPickerModal.tsx",
+        "src/components/services/ServiceDetailView.tsx",
+        "src/components/feed/EventsView.tsx",
+        "src/components/services/StepUnified.tsx",
+        "src/contexts/CompanyContext.tsx",
+        "src/components/feed/MyPostsView.tsx",
+        "src/components/guests/AddGuestModal.tsx",
+        "src/components/venues/sections/MainInfoSection.tsx",
+        "src/components/tickets/SeatLocationModal.tsx",
+        "src/components/purchases/MyReservedServicesView.tsx",
+        "src/components/purchases/MyPurchasesView.tsx",
+        "src/contexts/NotificationsContext.tsx"
+      ],
+      "gapsBackendRequired": [
+        "src/components/banking/BankingHub.tsx"
+      ],
+      "webFilesModified": [
+        "packages/shell/src/lovable/contexts/NotificationsContext.tsx",
+        "packages/shell/src/lovable/components/feed/FeedBanner.tsx",
+        "packages/shell/src/lovable/components/feed/TopHeader.tsx",
+        "packages/shell/src/lovable/components/feed/NotificationsSheet.tsx",
+        "ReglasAgente/decision-log.md",
+        "ReglasAgente/cambios-lovable.json",
+        "ReglasAgente/impacto-backend.md",
+        "ReglasAgente/reglas-front.md",
+        "docs/changes/gap-empalme-latest.md",
+        "design-comparison.json"
+      ],
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "agentStatus": "finished",
+      "tipoCambio": "VISUAL",
+      "decision": "APPLIED"
+    },
+    {
       "id": "gap-empalme-27904918660",
       "timestamp": "2026-06-21 12:52 UTC",
       "workflowRunId": "27904918660",
