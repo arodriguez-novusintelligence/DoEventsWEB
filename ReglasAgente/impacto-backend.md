@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27905180836-b3`: batch 1 tercera pasada (20 gaps) — 18 DONE frontend; 2 BACKEND_REQUIRED (`BankingHub` delete/PayPal, `StoryViewersSheet` viewers API). CreatePostSheet/ReportPostDialog/TicketDetailView DSF; StoryViewersSheet skeleton; similitud ~91.8%; 97 gaps restantes; build:devaws OK.
+
 Run `gap-empalme-27905180836-b2`: batch 1 segunda pasada (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). DSF polish loading h-14 rings, font-extrabold, border-border/60, success tokens SeatingMapEditor; contextos isLoading/refreshCompany; similitud ~89.5%; 97 gaps restantes; build:devaws OK.
 
 Run `gap-empalme-27905180836-b1`: batch 1 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). NotificationsContext API parity Lovable; TopHeader/NotificationsSheet hasUnread/isEmpty; FeedBanner ring polish; similitud ~86.2%; 97 gaps restantes; build:devaws OK.
@@ -124,7 +126,17 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27905180836-b2)
+## Empalme realizado (última ejecución — gap-empalme-27905180836-b3)
+
+- **CreatePostSheet:** Drawer max-h-[90dvh]; PenLine header ring; avatar ring-primary/20; location border-border/60 shadow-sm; visibility inactive border-border/60; media ring-primary/20; add-media dashed border-primary/25.
+- **ReportPostDialog:** DialogTitle font-extrabold; DialogContent border-border/60; radio rows border-border/60 inactive; `reportPublication` API real intacta.
+- **TicketDetailView:** order label font-extrabold; entry tabs shadow-sm border-border/60; seat-map CTA border-border/60 shadow-sm.
+- **StoryViewersSheet:** BACKEND_REQUIRED banner intacto; SheetTitle font-extrabold; skeleton border-border/60; empty dashed border-primary/25 h-14 ring.
+- **RefundTicketFlow / SeatingMapEditor / EventsView:** order card border-border/60; mapa silletería font-extrabold; category chips font-extrabold active.
+- **NotificationsContext:** JSDoc `isLoading` alias corregido (= `loading`).
+- **Verificados intactos batch previo:** EventPreviewModal, StepAccessControl, FAQSection, HostPickerModal, ServiceDetailView, StepUnified, MyPostsView, MyReservedServicesView, AddGuestModal, CompanyContext, MainInfoSection, BankingHub (BACKEND_REQUIRED).
+
+## Empalme realizado (ejecución anterior — gap-empalme-27905180836-b2)
 
 - **FeedBanner:** ring-2 ring-primary/20 + border-border/60; dismiss ring-2 ring-border/60.
 - **AIAssistantFAB:** bg-primary flat; shadow-sm hover ring-primary/30 (sin gradiente custom).

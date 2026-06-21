@@ -111,6 +111,32 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b3)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| CreatePostSheet drawer | VISUAL | Sí | `feed/CreatePostSheet.tsx` | max-h-[90dvh]; PenLine ring; avatar ring-primary/20 |
+| ReportPostDialog header | VISUAL | Sí | `feed/ReportPostDialog.tsx` | Flag destructive ring; font-extrabold; border-border/60 |
+| TicketDetailView order | VISUAL | Sí | `tickets/TicketDetailView.tsx` | order extrabold; tabs shadow-sm; seat CTA border-border/60 |
+| StoryViewersSheet skeleton | Bloqueo | Parcial | `feed/StoryViewersSheet.tsx` | BACKEND_REQUIRED viewers API; empty border-primary/25 |
+| RefundTicketFlow order | VISUAL | Sí | `tickets/RefundTicketFlow.tsx` | order card border-border/60 shadow-sm |
+| SeatingMapEditor capacity | VISUAL | Sí | `events/SeatingMapEditor.tsx` | mapa silletería font-extrabold |
+| EventsView chips | VISUAL | Sí | `feed/EventsView.tsx` | categoría activa font-extrabold |
+| NotificationsContext isLoading | Integración | Sí | `contexts/NotificationsContext.tsx` | JSDoc alias = loading |
+| EventPreviewModal sections | VISUAL | Sí | `events/EventPreviewModal.tsx` | verificado intacto batch previo |
+| StepAccessControl gates | VISUAL | Sí | `events/StepAccessControl.tsx` | verificado intacto batch previo |
+| FAQSection empty | VISUAL | Sí | `venues/sections/FAQSection.tsx` | verificado intacto batch previo |
+| HostPickerModal shell | VISUAL | Sí | `events/HostPickerModal.tsx` | verificado intacto batch previo |
+| ServiceDetailView hero | VISUAL | Sí | `services/ServiceDetailView.tsx` | verificado intacto batch previo |
+| StepUnified headers | VISUAL | Sí | `services/StepUnified.tsx` | verificado intacto batch previo |
+| MyPostsView loading | VISUAL | Sí | `feed/MyPostsView.tsx` | verificado intacto batch previo |
+| MyReservedServicesView | Integración | Sí | `purchases/MyReservedServicesView.tsx` | verificado intacto batch previo |
+| AddGuestModal search | VISUAL | Sí | `guests/AddGuestModal.tsx` | verificado intacto batch previo |
+| CompanyContext alias | Integración | Sí | `contexts/CompanyContext.tsx` | verificado intacto batch previo |
+| MainInfoSection cards | VISUAL | Sí | `venues/sections/MainInfoSection.tsx` | verificado intacto batch previo |
+| BankingHub delete/PayPal | Bloqueo | Parcial | `banking/BankingHub.tsx` | BACKEND_REQUIRED banner intacto |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 18 DONE + 2 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 1 (run 27904918660)
 
 | Regla | Tipo | Implementada | Archivo | Observación |
