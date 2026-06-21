@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27905180836-b2`: batch 1 segunda pasada (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). DSF polish loading h-14 rings, font-extrabold, border-border/60, success tokens SeatingMapEditor; contextos isLoading/refreshCompany; similitud ~89.5%; 97 gaps restantes; build:devaws OK.
+
 Run `gap-empalme-27905180836-b1`: batch 1 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). NotificationsContext API parity Lovable; TopHeader/NotificationsSheet hasUnread/isEmpty; FeedBanner ring polish; similitud ~86.2%; 97 gaps restantes; build:devaws OK.
 
 Run `gap-empalme-27904918660`: batch 1 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`BankingHub` delete/PayPal). IA/feed/eventos/servicios/banca/tickets/invitados/compras DSF polish; incluye `MyReservedServicesView`; similitud ~85.6%; 97 gaps restantes; build:devaws OK.
@@ -122,15 +124,27 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27905180836-b1)
+## Empalme realizado (última ejecución — gap-empalme-27905180836-b2)
 
-- **NotificationsContext:** export `NotificationsContextValue`; alias `useNotificationsContext`; `refreshNotifications`; `hasUnread`/`isEmpty`/`loadErrorMessage`; API `fetchUserNotifications` sin mocks.
-- **TopHeader / NotificationsSheet:** badge vía `hasUnread`; empty/error/loading cards border-border/60; retry `refreshNotifications`; títulos font-extrabold.
-- **FeedBanner:** ring-1 ring-primary/10 sobre gradiente promo; dismiss ring-border/60 intacto.
-- **SeatingMapEditor / EventPreviewModal / AIAssistantFAB / RefundTicketFlow / FAQSection / StepAccessControl / HostPickerModal / ServiceDetailView / EventsView / StepUnified / CompanyContext / MyPostsView / AddGuestModal / MainInfoSection / SeatLocationModal / MyPurchasesView / MyReservedServicesView:** verificados intactos batch previo — DSF border-border/60, font-extrabold, rings h-14.
-- **BankingHub:** BACKEND_REQUIRED banner delete/PayPal intacto; error card border-border/60.
+- **FeedBanner:** ring-2 ring-primary/20 + border-border/60; dismiss ring-2 ring-border/60.
+- **AIAssistantFAB:** bg-primary flat; shadow-sm hover ring-primary/30 (sin gradiente custom).
+- **SeatingMapEditor:** capacity banner tokens `success`/`destructive`; header border-border/60.
+- **EventPreviewModal:** Field labels font-extrabold; divider border-border/60; avatar initials extrabold.
+- **RefundTicketFlow:** confirm hero h-14 ring; ticket rows border-border/60; policy footer border-border/60.
+- **StepAccessControl:** gate empty font-extrabold + subtitle; alert banners border-border/60 shadow-sm.
+- **HostPickerModal:** tab bar border-border/60; search focus ring-primary/20.
+- **EventsView:** card titles font-extrabold; filter bar border-border/60; CTA dashed border-primary/25 shadow-sm.
+- **ServiceDetailView:** sticky bar shadow-sm; price font-extrabold.
+- **StepUnified:** preference cards border-border/60 inactive.
+- **CompanyContext:** alias `isLoading`, `refreshCompany` API parity Lovable.
+- **NotificationsContext:** alias `isLoading` expuesto en provider.
+- **MyPostsView / MyPurchasesView / MyReservedServicesView / BankingHub / SeatLocationModal:** loading h-14 ring-primary/20; error font-extrabold; hub icons h-10.
+- **AddGuestModal:** empty dashed border-primary/25; foundUser card ring-primary/20 extrabold.
+- **MainInfoSection:** capacity stepper border-border/60.
+- **FAQSection:** pregunta index font-extrabold.
+- **BankingHub:** BACKEND_REQUIRED banner delete/PayPal intacto; loading h-14 ring.
 
-## Empalme realizado (ejecución anterior — gap-empalme-27904918660)
+## Empalme realizado (ejecución anterior — gap-empalme-27905180836-b1)
 
 ## Empalme realizado (ejecución anterior — gap-empalme-27903532486-b6)
 

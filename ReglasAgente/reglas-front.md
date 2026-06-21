@@ -1281,6 +1281,32 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 | Páginas auth mapeadas | Navegación | Sí | `pages/Login.tsx` etc. | Re-export mfe-auth sin duplicar lógica |
 | Chat lista → volver al feed | Navegación | Sí | `pages/ChatPage.tsx` | `onBack` en `MessagesListView` navega a `/` (empalme `setActiveTab('wall')` de Lovable) |
 
+## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b2)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| FeedBanner ring DSF | VISUAL | Sí | `feed/FeedBanner.tsx` | ring-2 ring-primary/20; border-border/60 |
+| AIAssistantFAB flat | VISUAL | Sí | `ai/AIAssistantFAB.tsx` | bg-primary shadow-sm hover ring-primary/30 |
+| SeatingMapEditor capacity | VISUAL | Sí | `events/SeatingMapEditor.tsx` | success/destructive tokens; header border-border/60 |
+| EventPreviewModal labels | VISUAL | Sí | `events/EventPreviewModal.tsx` | font-extrabold Field; border-border/60 |
+| RefundTicketFlow confirm | VISUAL | Sí | `tickets/RefundTicketFlow.tsx` | h-14 ring; rows border-border/60 |
+| StepAccessControl alerts | VISUAL | Sí | `events/StepAccessControl.tsx` | gate empty extrabold; alerts border-border/60 |
+| HostPickerModal tabs | VISUAL | Sí | `events/HostPickerModal.tsx` | border-border/60; focus ring-primary/20 |
+| EventsView titles | VISUAL | Sí | `feed/EventsView.tsx` | font-extrabold cards; CTA border-primary/25 |
+| ServiceDetailView sticky | VISUAL | Sí | `services/ServiceDetailView.tsx` | shadow-sm; price extrabold |
+| StepUnified preferences | VISUAL | Sí | `services/StepUnified.tsx` | inactive border-border/60 |
+| CompanyContext aliases | Integración | Sí | `contexts/CompanyContext.tsx` | isLoading; refreshCompany |
+| NotificationsContext isLoading | Integración | Sí | `contexts/NotificationsContext.tsx` | alias isLoading en provider |
+| MyPostsView loading | VISUAL | Sí | `feed/MyPostsView.tsx` | h-14 ring loading/error extrabold |
+| AddGuestModal foundUser | VISUAL | Sí | `guests/AddGuestModal.tsx` | dashed border-primary/25; avatar ring |
+| MainInfoSection stepper | VISUAL | Sí | `venues/sections/MainInfoSection.tsx` | border-border/60 capacity |
+| FAQSection index | VISUAL | Sí | `venues/sections/FAQSection.tsx` | pregunta font-extrabold |
+| SeatLocationModal loading | VISUAL | Sí | `tickets/SeatLocationModal.tsx` | h-14 ring; no-seat title extrabold |
+| MyPurchasesView hub | VISUAL | Sí | `purchases/MyPurchasesView.tsx` | icons h-10; loading h-14 ring |
+| MyReservedServices loading | VISUAL | Sí | `purchases/MyReservedServicesView.tsx` | loading h-14 ring; error extrabold |
+| BankingHub delete/PayPal | Bloqueo | Parcial | `banking/BankingHub.tsx` | BACKEND_REQUIRED; loading h-14 ring |
+| Batch 1 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 1 (run 27905180836-b1)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

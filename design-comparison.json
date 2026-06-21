@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-06-21T13:02:00Z",
+  "generatedAt": "2026-06-21T13:15:00Z",
   "lovableSha": "cb27c8309511889a72a059c6c933809536d7dc11",
   "webBranch": "feature/cicd/dev-automation",
-  "comparisonSource": "gap-empalme-27905180836-b1 batch 1 — discover-joyful-feed no accesible en agente cloud",
-  "overallSimilarityPercent": 86.2,
-  "overallSimilarityPercentBefore": 80.84,
-  "overallSimilarityPercentAfter": 86.2,
+  "comparisonSource": "gap-empalme-27905180836-b2 batch 1 segunda pasada — discover-joyful-feed no accesible en agente cloud",
+  "overallSimilarityPercent": 89.5,
+  "overallSimilarityPercentBefore": 86.2,
+  "overallSimilarityPercentAfter": 89.5,
   "targetSimilarityPercent": 98.0,
-  "alignmentGapPercent": 11.8,
+  "alignmentGapPercent": 8.5,
   "missingInWebCount": 0,
   "needsAdaptationCount": 97,
-  "lastGapEmpalmeRunId": "gap-empalme-27905180836-b1",
-  "lastAgentRunId": "27905180836-b1",
+  "lastGapEmpalmeRunId": "gap-empalme-27905180836-b2",
+  "lastAgentRunId": "27905180836-b2",
   "batch1Closed": 19,
   "batch1BackendRequired": 1,
   "remainingGaps": 97,
-  "notes": "Batch 1 run 27905180836-b1: NotificationsContext API parity (useNotificationsContext, refreshNotifications, hasUnread/isEmpty); TopHeader/NotificationsSheet DSF; FeedBanner ring polish; 19 DONE + 1 BACKEND_REQUIRED (BankingHub); build:devaws OK."
+  "notes": "Batch 1 run 27905180836-b2: segunda pasada DSF — loading h-14 ring-primary/20, font-extrabold titles, border-border/60, success tokens SeatingMapEditor, context isLoading/refreshCompany; 19 DONE + 1 BACKEND_REQUIRED (BankingHub); build:devaws OK."
 }

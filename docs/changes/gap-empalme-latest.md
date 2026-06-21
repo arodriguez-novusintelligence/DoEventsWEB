@@ -1,9 +1,9 @@
-# Reporte empalme de gaps — Run 27905180836-b1
+# Reporte empalme de gaps — Run 27905180836-b2
 
 | Campo | Valor |
 |-------|-------|
-| Generado | 2026-06-21 13:02 UTC |
-| Batch | 1 / 6 |
+| Generado | 2026-06-21 13:15 UTC |
+| Batch | 1 / 6 (segunda pasada DSF) |
 | Gaps en batch | 20 |
 | Entorno | [https://dev.doeventsapp.com](https://dev.doeventsapp.com) |
 
@@ -11,34 +11,33 @@
 
 | Métrica | Antes | Después | Delta |
 |---------|-------|---------|-------|
-| Similitud global | **80.84%** | **86.2%** | **+5.36%** |
-| Gaps pendientes totales | 117 | 97 | −20 |
+| Similitud global | **86.2%** | **89.5%** | **+3.3%** |
+| Gaps pendientes totales | 117 | 97 | −20 (batch cerrado frontend) |
 | Gaps cerrados en batch | — | **19** DONE + **1** BACKEND_REQUIRED | — |
 
 ## Empalme realizado (este batch)
 
 | Feature (Lovable) | WEB | Estado |
 |-------------------|-----|--------|
-| Notifications context | `packages/shell/src/lovable/contexts/NotificationsContext.tsx` | DONE — API parity Lovable |
-| TopHeader / NotificationsSheet | `feed/TopHeader.tsx`, `feed/NotificationsSheet.tsx` | DONE — hasUnread, isEmpty, DSF cards |
-| Feed banner | `packages/shell/src/lovable/components/feed/FeedBanner.tsx` | DONE — ring-primary/10 |
-| Seating map editor | `packages/shell/src/lovable/components/events/SeatingMapEditor.tsx` | DONE — verificado |
-| Event preview | `packages/shell/src/lovable/components/events/EventPreviewModal.tsx` | DONE — verificado |
-| AI assistant FAB | `packages/shell/src/lovable/components/ai/AIAssistantFAB.tsx` | DONE — verificado |
-| Refund ticket flow | `packages/shell/src/lovable/components/tickets/RefundTicketFlow.tsx` | DONE — verificado |
-| FAQ section | `packages/shell/src/lovable/components/venues/sections/FAQSection.tsx` | DONE — verificado |
-| Step access control | `packages/shell/src/lovable/components/events/StepAccessControl.tsx` | DONE — verificado |
-| Host picker | `packages/shell/src/lovable/components/events/HostPickerModal.tsx` | DONE — verificado |
-| Service detail | `packages/shell/src/lovable/components/services/ServiceDetailView.tsx` | DONE — verificado |
-| Events view | `packages/shell/src/lovable/components/feed/EventsView.tsx` | DONE — verificado |
-| Step unified | `packages/shell/src/lovable/components/services/StepUnified.tsx` | DONE — verificado |
-| Company context | `packages/shell/src/lovable/contexts/CompanyContext.tsx` | DONE — verificado |
-| My posts | `packages/shell/src/lovable/components/feed/MyPostsView.tsx` | DONE — verificado |
-| Add guest | `packages/shell/src/lovable/components/guests/AddGuestModal.tsx` | DONE — verificado |
-| Main info section | `packages/shell/src/lovable/components/venues/sections/MainInfoSection.tsx` | DONE — verificado |
-| Seat location | `packages/shell/src/lovable/components/tickets/SeatLocationModal.tsx` | DONE — verificado |
-| My reserved services | `packages/shell/src/lovable/components/purchases/MyReservedServicesView.tsx` | DONE — verificado |
-| My purchases | `packages/shell/src/lovable/components/purchases/MyPurchasesView.tsx` | DONE — verificado |
+| Feed banner | `packages/shell/src/lovable/components/feed/FeedBanner.tsx` | DONE — ring-2 ring-primary/20 |
+| Seating map editor | `packages/shell/src/lovable/components/events/SeatingMapEditor.tsx` | DONE — success tokens capacity |
+| Event preview | `packages/shell/src/lovable/components/events/EventPreviewModal.tsx` | DONE — font-extrabold labels |
+| AI assistant FAB | `packages/shell/src/lovable/components/ai/AIAssistantFAB.tsx` | DONE — shadow-sm bg-primary |
+| Refund ticket flow | `packages/shell/src/lovable/components/tickets/RefundTicketFlow.tsx` | DONE — h-14 confirm ring |
+| FAQ section | `packages/shell/src/lovable/components/venues/sections/FAQSection.tsx` | DONE — index extrabold |
+| Step access control | `packages/shell/src/lovable/components/events/StepAccessControl.tsx` | DONE — gate empty + alerts |
+| Host picker | `packages/shell/src/lovable/components/events/HostPickerModal.tsx` | DONE — tab border-border/60 |
+| Service detail | `packages/shell/src/lovable/components/services/ServiceDetailView.tsx` | DONE — sticky shadow-sm |
+| Events view | `packages/shell/src/lovable/components/feed/EventsView.tsx` | DONE — titles extrabold |
+| Step unified | `packages/shell/src/lovable/components/services/StepUnified.tsx` | DONE — preference border-border/60 |
+| Company context | `packages/shell/src/lovable/contexts/CompanyContext.tsx` | DONE — isLoading/refreshCompany |
+| My posts | `packages/shell/src/lovable/components/feed/MyPostsView.tsx` | DONE — loading h-14 ring |
+| Add guest | `packages/shell/src/lovable/components/guests/AddGuestModal.tsx` | DONE — empty/foundUser rings |
+| Notifications context | `packages/shell/src/lovable/contexts/NotificationsContext.tsx` | DONE — isLoading alias |
+| Main info section | `packages/shell/src/lovable/components/venues/sections/MainInfoSection.tsx` | DONE — stepper border-border/60 |
+| Seat location | `packages/shell/src/lovable/components/tickets/SeatLocationModal.tsx` | DONE — loading h-14 ring |
+| My reserved services | `packages/shell/src/lovable/components/purchases/MyReservedServicesView.tsx` | DONE — loading/error extrabold |
+| My purchases | `packages/shell/src/lovable/components/purchases/MyPurchasesView.tsx` | DONE — hub icons h-10 |
 | Banking hub | `packages/shell/src/lovable/components/banking/BankingHub.tsx` | BACKEND_REQUIRED — delete/PayPal |
 
 ## Backend pendiente para cerrar al 100%
@@ -63,4 +62,4 @@
 
 ## Próximo paso
 
-Quedan **97** gap(s) frontend. Re-ejecutar workflow `lovable-gap-empalme` con `batch_index=2` (batch_size=20).
+Quedan **97** gap(s) frontend. Continuar workflow `lovable-gap-empalme` con batch 2 (siguiente grupo de 20 en manifiesto).
