@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Loader2 } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import {
   EVENTS_CACHE_INVALIDATED_EVENT,
@@ -26,7 +27,6 @@ import {
   likeVenue,
   likeService,
   resolveUserLocation,
-  Loader2,
   RootState,
   useToast,
   EVENT_FAVORITE_CHANGED_EVENT,
