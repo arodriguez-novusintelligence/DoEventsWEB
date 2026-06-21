@@ -103,6 +103,30 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-21 gap-empalme batch 5 (run 27901296255-b5)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| StoriesContext loadError | Integración | Sí | `contexts/StoriesContext.tsx` | `useStories` alias; loadErrorMessage/isEmpty/authorCount |
+| VenueReservationDetail badge | VISUAL | Sí | `purchases/VenueReservationDetail.tsx` | Loader2 card; error h-14 ring + RefreshCw |
+| KYC certification submit | Bloqueo | Parcial | `feed/KycCertificationView.tsx` | BACKEND_REQUIRED envío documentos; status rings h-14 |
+| EventPublished share API | Integración | Sí | `pages/EventPublished.tsx` | fetchEventById + PartyPopper h-14 ring |
+| NotFound 404 icon | VISUAL | Sí | `pages/NotFound.tsx` | MapPinOff h-14 ring-primary/20 |
+| ForgotPassword APIs | RISKY | Sí | `auth/ForgotPasswordView.tsx`, `pages/ForgotPassword.tsx` | Loader2; CheckCircle2 ring éxito; APIs shared |
+| ResetPassword Cognito | RISKY | Sí | `auth/ResetPasswordView.tsx`, `pages/ResetPassword.tsx` | ShieldAlert/CheckCircle2 rings; token real shared |
+| FeedBanner dismissible | VISUAL | Sí | `feed/FeedBanner.tsx` | Megaphone h-10 ring-primary/20 |
+| AdminPanelView shell | Navegación | Sí | `admin/AdminPanelView.tsx` | Shield header gradiente + AdminPanelPage |
+| MyPosts loading/retry | Integración | Sí | `feed/MyPostsView.tsx` | Loader2 + error h-14 ring + RefreshCw |
+| StoryViewer fullscreen | VISUAL | Sí | `components/StoryViewer.tsx` | Sparkles empty h-14 ring + barras progreso |
+| AddGuestModal tabs | VISUAL | Sí | `guests/AddGuestModal.tsx` | UserPlus header h-10 ring; TabsList rounded-xl |
+| useGuests bridge | Integración | Sí | `hooks/useGuests.ts` | Re-export useApiGuests dual export documentado |
+| LoginView Cognito | RISKY | Sí | `auth/LoginView.tsx`, `pages/Login.tsx` | Lock header ring; APIs shared sin mocks |
+| TicketPurchaseFlow checkout | FRONTEND_LOGIC | Sí | `invitations/TicketPurchaseFlow.tsx` | Redirect checkout + Ticket ring + Loader2 |
+| Admin panels badges | VISUAL | Sí | `admin/*Panel.tsx`, `AdminPanelSection.tsx` | Headers h-10 ring-primary/20 |
+| SignUpView shell | Navegación | Sí | `auth/SignUpView.tsx`, `pages/SignUp.tsx` | UserPlus ring + card mfe-auth + link login |
+| VenueDetail shell | Navegación | Sí | `pages/VenueDetail.tsx` | Sticky Building2 header + pb-24 PlaceDetailPage |
+| Batch 5 gaps (20) | Empalme | Sí | ver `decision-log.md` | 19 DONE + 1 BACKEND_REQUIRED |
+
 ## Ejecución 2026-06-21 gap-empalme batch 4 (run 27901296255-b4)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

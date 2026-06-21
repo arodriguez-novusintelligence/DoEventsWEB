@@ -13,6 +13,58 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-21 22:00 UTC] gap-empalme-27901296255-b5
+
+### 1. Resumen del empalme
+Batch 5 (20 gaps, manifiesto `27901296255`, similitud baseline manifiesto **56.49%** / post batch 4 **93.5%**): empalme visual en contexts, purchases, feed, auth RISKY, admin, pages e invitations. Patrón Lovable: `h-14 ring-primary/20`, `ring-destructive/20`, `RefreshCw` retry, headers auth con icon rings. **19 gaps DONE** frontend; **1 BACKEND_REQUIRED** (`KycCertificationView` submit documentos).
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Stories context | `packages/shell/src/lovable/contexts/StoriesContext.tsx` | DONE |
+| Venue reservation detail | `packages/shell/src/lovable/components/purchases/VenueReservationDetail.tsx` | DONE |
+| KYC certification | `packages/shell/src/lovable/components/feed/KycCertificationView.tsx` | BACKEND_REQUIRED |
+| Event published | `packages/shell/src/pages/EventPublished.tsx` | DONE |
+| Not found | `packages/shell/src/pages/NotFound.tsx` | DONE |
+| Forgot password | `packages/shell/src/pages/ForgotPassword.tsx` | DONE |
+| Story viewer | `packages/shell/src/components/StoryViewer.tsx` | DONE |
+| Reset password | `packages/shell/src/pages/ResetPassword.tsx` | DONE |
+| Feed banner | `packages/shell/src/lovable/components/feed/FeedBanner.tsx` | DONE |
+| My posts | `packages/shell/src/lovable/components/feed/MyPostsView.tsx` | DONE |
+| Add guest | `packages/shell/src/lovable/components/guests/AddGuestModal.tsx` | DONE |
+| Venue detail | `packages/shell/src/pages/VenueDetail.tsx` | DONE |
+| Use guests | `packages/shell/src/lovable/hooks/useGuests.ts` | DONE |
+| Admin panel | `packages/shell/src/lovable/components/admin/AdminPanelView.tsx` | DONE |
+| Login | `packages/shell/src/pages/Login.tsx` | DONE |
+| Ticket purchase flow | `packages/shell/src/lovable/components/invitations/TicketPurchaseFlow.tsx` | DONE |
+| New users panel | `packages/shell/src/lovable/components/admin/NewUsersPanel.tsx` | DONE |
+| Admin users panel | `packages/shell/src/lovable/components/admin/AdminUsersPanel.tsx` | DONE |
+| Support search panel | `packages/shell/src/lovable/components/admin/SupportSearchPanel.tsx` | DONE |
+| Sign up | `packages/shell/src/pages/SignUp.tsx` | DONE |
+
+### 3. Similitud antes/después
+- **Antes:** 93.5% (post batch 4)
+- **Después:** ~96.5% (estimado post batch 5; re-comparación CI pendiente)
+
+### 4. Build
+- `npm run build:devaws`: **SUCCESS**
+
+### 5. Evidencia anti-mock
+- `mocksUsed: false`
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages`: sin coincidencias runtime (solo comentario anti-mock en Login.tsx)
+
+### 6. Riesgos pendientes
+- Auth RISKY (Login/Forgot/Reset): revisión humana antes de merge
+- KYC submit BACKEND_REQUIRED acumulado
+- Re-comparación CI con `discover-joyful-feed` privado
+- 20 gaps restantes en manifiesto (batch 6)
+
+### Decisión
+**APPLIED**
+
+---
+
 ## [2026-06-21 20:00 UTC] gap-empalme-27901296255-b4
 
 ### 1. Resumen del empalme

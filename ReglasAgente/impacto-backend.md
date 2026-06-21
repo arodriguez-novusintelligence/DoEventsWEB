@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-27901296255-b5`: batch 5 (20 gaps) — 19 DONE frontend; 1 BACKEND_REQUIRED (`KycCertificationView` submit documentos KYC). Patrón Lovable: h-14 ring-primary/20, ring-destructive/20, RefreshCw retry, auth RISKY APIs reales, admin panels rings.
+
 Run `gap-empalme-27901296255-b4`: batch 4 (20 gaps) — 16 DONE frontend; 4 BACKEND_REQUIRED (`PaymentMethodsDashboard`/`BankingHub` delete+PayPal, `StoryViewersSheet`, `GlobalSearchView` posts). Patrón Lovable: ring-primary/20 h-14, ring-destructive/20 errores, RefreshCw retry, shadow-sm cards.
 
 Run `gap-empalme-27901296255-b3`: batch 3 (20 gaps) — 20 DONE frontend; 0 BACKEND_REQUIRED. Patrón Lovable: ring-primary/20 h-14, ring-destructive/20 errores, Loader2, shadow-sm cards, EmptyHint unificado.
@@ -86,7 +88,26 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27901296255-b4)
+## Empalme realizado (última ejecución — gap-empalme-27901296255-b5)
+
+- **StoriesContext:** alias `useStories`; re-export API (`loadErrorMessage`, `isEmpty`, `authorCount`, `refreshStories`); `fetchNearbyStories` + `fetchUserStories` sin mocks.
+- **VenueReservationDetail:** Loader2 card shadow-sm; error h-14 ring-destructive/20 + RefreshCw; empty Building2 ring intacto.
+- **KycCertificationView:** status/error h-14 rings; pasos upload documentados; botón envío BACKEND_REQUIRED deshabilitado.
+- **EventPublished:** PartyPopper h-14 ring-primary/20; `fetchEventById` + share/copy intactos; Loader2 carga nombre.
+- **NotFound:** MapPinOff h-14 ring-primary/20; CTAs Home/Search intactos.
+- **ForgotPassword / ResetPassword:** éxito/error h-14 rings; APIs shared/Cognito reales; Loader2 submit.
+- **StoryViewer:** empty Sparkles h-14 ring fullscreen; barras progreso + tap siguiente intactos.
+- **FeedBanner:** Megaphone h-10 ring-primary/20; dismissible CTA KYC en SocialWallTab.
+- **MyPostsView:** error h-14 ring-destructive/20 + RefreshCw; empty FileText ring; delete API real.
+- **AddGuestModal:** UserPlus header h-10 ring; tabs rounded-xl; `searchUsers` API real.
+- **VenueDetail:** sticky header Building2 gradiente; shell pb-24 sobre PlaceDetailPage.
+- **useGuests:** re-export dual `useGuests`/`useApiGuests` documentado; sin mocks.
+- **AdminPanelView / AdminPanelSection:** Shield header gradiente; iconos h-10 ring-primary/20 en paneles NewUsers/AdminUsers/SupportSearch.
+- **LoginView / pages auth:** Lock header ring; re-exports Login/Forgot/Reset/SignUp con APIs reales RISKY.
+- **TicketPurchaseFlow:** Ticket h-12 ring; redirect checkout real; Loader2 navegación.
+- **SignUpView:** UserPlus header ring; CreateAccountPage mfe-auth real.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27901296255-b4)
 
 - **MainInfoSection:** FileText header h-10 ring-primary/20; card parqueadero shadow-sm border-border.
 - **StoryViewersSheet:** skeleton cards shadow-sm; header Eye ring; badge BACKEND_REQUIRED viewers intacto.
