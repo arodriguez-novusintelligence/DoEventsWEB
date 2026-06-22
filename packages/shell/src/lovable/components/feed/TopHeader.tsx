@@ -1,4 +1,4 @@
-import { SlidersHorizontal, Search, Bell } from 'lucide-react';
+import { SlidersHorizontal, Bell } from 'lucide-react';
 import { useState } from 'react';
 import SideMenu from './SideMenu';
 import NotificationsSheet from './NotificationsSheet';
@@ -61,11 +61,11 @@ const TopHeader = ({
 
   return (
     <>
-      <header className="bg-secondary shadow-sm">
+      <header className="bg-emerald-600 shadow-sm">
         <div className="mx-auto flex max-w-lg items-center justify-between px-4 py-3">
           <button
             onClick={() => setMenuOpen(true)}
-            className="relative rounded-xl bg-card p-2.5 text-primary shadow-sm ring-2 ring-primary/20 transition-colors hover:bg-accent"
+            className="relative rounded-xl bg-card p-2.5 text-emerald-700 shadow-sm ring-2 ring-emerald-200/40 transition-colors hover:bg-accent"
           >
             <SlidersHorizontal className="h-5 w-5" />
             {unreadMessages > 0 && (
@@ -78,15 +78,15 @@ const TopHeader = ({
             className="relative text-2xl tracking-tight text-foreground"
             aria-label="Ir al inicio"
           >
-            <span className="font-extrabold text-primary">Do</span>
-            <span className="mx-0.5 text-foreground">·</span>
-            <span className="font-light">events</span>
-            <span className="absolute -bottom-1 left-1/2 h-[2px] w-20 -translate-x-1/2 bg-foreground" />
+            <span className="font-extrabold text-emerald-100">Do</span>
+            <span className="mx-0.5 text-white">·</span>
+            <span className="font-light text-white">events</span>
+            <span className="absolute -bottom-1 left-1/2 h-[2px] w-20 -translate-x-1/2 bg-white" />
           </button>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setNotifOpen(true)}
-              className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-card text-primary shadow-sm ring-2 ring-primary/20 transition-colors hover:bg-accent"
+              className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-card text-emerald-700 shadow-sm ring-2 ring-emerald-200/40 transition-colors hover:bg-accent"
             >
               <Bell className="h-5 w-5" strokeWidth={2} />
               {hasUnread && (
@@ -94,14 +94,6 @@ const TopHeader = ({
                   {unreadCount > 999 ? '999+' : unreadCount}
                 </span>
               )}
-            </button>
-            <button
-              type="button"
-              onClick={onSearch}
-              className="rounded-xl bg-card p-1.5 text-primary shadow-sm ring-2 ring-primary/20 transition-colors hover:bg-accent"
-              aria-label="Buscar"
-            >
-              <Search className="h-6 w-6" strokeWidth={2} />
             </button>
             {profileAvatar && (
               <button
