@@ -91,7 +91,7 @@ const FeedHero = ({
         className="px-4 pt-5 pb-16 rounded-b-3xl"
         style={{
           background:
-            'linear-gradient(135deg, hsl(var(--primary-deep)) 0%, hsl(var(--primary)) 65%, hsl(232 60% 40%) 100%)',
+            'linear-gradient(135deg, hsl(160 84% 20%) 0%, hsl(152 72% 32%) 60%, hsl(150 60% 45%) 100%)',
         }}
       >
         <div className="mx-auto max-w-lg">
