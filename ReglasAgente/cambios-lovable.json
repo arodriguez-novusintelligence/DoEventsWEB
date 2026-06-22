@@ -119,17 +119,17 @@
       "id": "prepare-224c5982",
       "lovableSha": "224c5982a75fd9d7e28af0d74dd8c893decb9269",
       "before": "HEAD~1",
-      "timestamp": "2026-06-22 11:54 UTC",
-      "workflowRunId": "27950701585",
+      "timestamp": "2026-06-22 12:03 UTC",
+      "workflowRunId": "27951184540",
       "changeTypes": [
         "VISUAL",
         "FRONT_LOGIC"
       ],
-      "designSimilarityPercent": 79.71,
+      "designSimilarityPercent": 80.22,
       "designSimilarityTarget": 98.0,
-      "designGapPercent": 18.29,
+      "designGapPercent": 17.78,
       "requiresDesignAlignment": true,
-      "summary": "Manifiesto: UI=True, reglas=True, 3 archivo(s); similitud diseño=79.71%",
+      "summary": "Manifiesto: UI=True, reglas=True, 3 archivo(s); similitud diseño=80.22%",
       "changedFilesLovable": [
         "reglasActuacion/publicaciones/feed-principal.yml",
         "src/components/feed/FeedHero.tsx",
