@@ -10,17 +10,17 @@
       "id": "prepare-fe68c578",
       "lovableSha": "fe68c578765c47da31da33e0ae7fd01553735228",
       "before": "HEAD~1",
-      "timestamp": "2026-06-21 17:32 UTC",
-      "workflowRunId": "27912122238",
+      "timestamp": "2026-06-22 01:51 UTC",
+      "workflowRunId": "27924677144",
       "changeTypes": [
         "VISUAL",
         "FRONT_LOGIC"
       ],
-      "designSimilarityPercent": 80.21,
+      "designSimilarityPercent": 80.24,
       "designSimilarityTarget": 98.0,
-      "designGapPercent": 17.79,
+      "designGapPercent": 17.76,
       "requiresDesignAlignment": true,
-      "summary": "Manifiesto: UI=True, reglas=True, 2 archivo(s); similitud diseño=80.21%",
+      "summary": "Manifiesto: UI=True, reglas=True, 2 archivo(s); similitud diseño=80.24%",
       "changedFilesLovable": [
         "reglasActuacion/publicaciones/feed-principal.yml",
         "src/components/feed/PostCard.tsx"
