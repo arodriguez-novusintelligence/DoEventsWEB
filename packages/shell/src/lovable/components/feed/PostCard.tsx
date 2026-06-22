@@ -1,11 +1,11 @@
-import { Avatar, AvatarFallback } from '@lovable/components/ui/avatar';
 import { cn } from '@lovable/lib/utils';
-import type { Post, User } from '@lovable/data/';
+import type { FeedUiPost as Post, FeedUiUser as User } from '@doevents/shared';
 import ImageCarousel from './ImageCarousel';
 import PostActions from './PostActions';
 import PostMenu from './PostMenu';
 import MentionText from './MentionText';
-import type { FeedUiPost as Post, FeedUiUser as User } from '@doevents/shared';
+import { StoryAvatar } from '../../../components/StoryAvatar';
+import { useActiveStoryAuthors } from '../../../contexts/StoriesContext';
 
 interface PostCardProps {
   post: Post;
@@ -28,6 +28,7 @@ interface PostCardProps {
   onViewProfile?: (user: User) => void;
   onMentionClick?: (mention: string) => void;
   onOpenDetail?: (post: Post) => void;
+  onOpenStory?: (userId: string) => void;
 }
 
 const typeLabel = (type: Post['type']) => {
@@ -38,6 +39,8 @@ const typeLabel = (type: Post['type']) => {
       return 'Servicio';
     case 'lugar':
       return 'Lugar';
+    case 'publicacion':
+      return 'Publicación';
     default:
       return 'Publicación';
   }
@@ -64,23 +67,32 @@ const PostCard = ({
   onViewProfile,
   onMentionClick,
   onOpenDetail,
+  onOpenStory,
 }: PostCardProps) => {
+  const { hasActiveStory } = useActiveStoryAuthors();
   const isRepost = !!post.repostOf;
-  const badge = isRepost ? 'Publicación' : typeLabel(post.type);
-  const canOpen = !isRepost && !!onOpenDetail && (post.type === 'evento' || post.type === 'lugar' || post.type === 'servicio');
+  const contentType = isRepost ? (post.repostOf!.type ?? 'publicacion') : post.type;
+  const badge = typeLabel(contentType);
+  const canOpen = !!onOpenDetail;
 
   return (
     <article className="mx-4 my-5" aria-label="Tarjeta de publicación">
       {/* Header (outside the white card) */}
       <div className="flex items-center justify-between px-1 pb-2.5">
         <div className="flex items-center gap-2.5">
-          <button onClick={() => onViewProfile?.(post.user)} className="shrink-0">
-            <Avatar className="h-9 w-9">
-              <AvatarFallback className="bg-accent text-sm font-semibold text-accent-foreground">
-                {post.user.initials}
-              </AvatarFallback>
-            </Avatar>
-          </button>
+          <StoryAvatar
+            userId={post.user.id}
+            name={post.user.name}
+            imageUrl={post.user.avatarUrl}
+            size={36}
+            onClick={() => {
+              if (post.user.id && hasActiveStory(post.user.id) && onOpenStory) {
+                onOpenStory(post.user.id);
+                return;
+              }
+              onViewProfile?.(post.user);
+            }}
+          />
           <div className="leading-tight">
             <button
               onClick={() => onViewProfile?.(post.user)}
@@ -92,6 +104,7 @@ const PostCard = ({
           </div>
         </div>
         <div className="flex items-center gap-1">
+          {!isOwner && (
           <button
             onClick={onFollow}
             className={cn(
@@ -103,6 +116,7 @@ const PostCard = ({
           >
             {followed ? 'Siguiendo' : 'Seguir'}
           </button>
+          )}
           <PostMenu
             isOwner={isOwner}
             onEdit={onEdit}
@@ -116,10 +130,10 @@ const PostCard = ({
       </div>
 
       {/* White card */}
-      <div className="overflow-hidden rounded-2xl bg-card shadow-sm">
+      <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm ring-2 ring-primary/20">
         {/* Type badge */}
         <div className="px-4 pt-3">
-          <span className="inline-block rounded-full bg-secondary px-3 py-1 text-xs font-medium text-primary">
+          <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
             {badge}
           </span>
         </div>
@@ -141,23 +155,19 @@ const PostCard = ({
               </div>
             )}
 
-            {/* Repost's own images */}
-            {post.images && post.images.length > 0 && (
-              <div className="px-4 pt-3">
-                <ImageCarousel images={post.images} className="aspect-[16/10] rounded-xl" />
-              </div>
-            )}
-
-
-
             {/* Embedded original post */}
-            <div className="mx-4 my-3 overflow-hidden rounded-xl border border-border">
+            <div
+              className={`mx-4 my-3 overflow-hidden rounded-xl border border-border/60 shadow-sm ${canOpen ? 'cursor-pointer' : ''}`}
+              onClick={canOpen ? () => onOpenDetail!(post) : undefined}
+            >
               <div className="flex items-center gap-2 px-3 py-2.5">
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback className="bg-accent text-xs font-semibold text-accent-foreground">
-                    {post.repostOf!.user.initials}
-                  </AvatarFallback>
-                </Avatar>
+                <StoryAvatar
+                  userId={post.repostOf!.user.id}
+                  name={post.repostOf!.user.name}
+                  imageUrl={post.repostOf!.user.avatarUrl}
+                  size={32}
+                  onClick={() => onViewProfile?.(post.repostOf!.user)}
+                />
                 <div className="leading-tight">
                   <p className="text-sm font-semibold text-card-foreground">
                     {post.repostOf!.user.name}
@@ -172,6 +182,12 @@ const PostCard = ({
                 <h3 className="text-sm font-bold text-card-foreground">
                   {post.repostOf!.title}
                 </h3>
+                {post.repostOf!.date ? (
+                  <p className="mt-1 text-xs font-semibold text-card-foreground">{post.repostOf!.date}</p>
+                ) : null}
+                {post.repostOf!.location ? (
+                  <p className="mt-0.5 text-xs text-muted-foreground">{post.repostOf!.location}</p>
+                ) : null}
                 <MentionText
                   text={post.repostOf!.description}
                   onMentionClick={onMentionClick}
@@ -224,8 +240,8 @@ const PostCard = ({
         {/* Actions */}
         <PostActions
           liked={liked}
-          likesCount={post.likes + (liked ? 1 : 0)}
-          commentsCount={post.comments.length}
+          likesCount={post.likes}
+          commentsCount={post.commentsCount ?? post.comments.length}
           repostsCount={post.reposts}
           onLike={onLike}
           onComment={onComment}
