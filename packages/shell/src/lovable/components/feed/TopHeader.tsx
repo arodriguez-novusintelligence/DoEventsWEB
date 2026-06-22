@@ -61,7 +61,7 @@ const TopHeader = ({
 
   return (
     <>
-      <header className="bg-[hsl(152_72%_32%)] shadow-sm">
+      <header className="bg-[hsl(330_81%_60%)] shadow-sm">
         <div className="mx-auto flex max-w-lg items-center justify-between px-4 py-3">
           <button
             onClick={() => setMenuOpen(true)}
