@@ -193,6 +193,32 @@
         "Adaptacion pendiente por agente Cursor"
       ],
       "agentStatus": "pending"
+    },
+    {
+      "id": "prepare-95154a0c",
+      "lovableSha": "95154a0caa07e2be2419d7ef670aa962bf74edac",
+      "before": "40696be19bc4c41470e1579d20f5c322f10e9a38",
+      "timestamp": "2026-06-22 12:52 UTC",
+      "workflowRunId": "27954027700",
+      "changeTypes": [
+        "VISUAL"
+      ],
+      "designSimilarityPercent": 80.22,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 17.78,
+      "requiresDesignAlignment": true,
+      "summary": "Manifiesto: UI=True, reglas=False, 1 archivo(s); similitud diseño=80.22%",
+      "changedFilesLovable": [
+        "src/components/feed/TopHeader.tsx"
+      ],
+      "webFilesModified": [],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "pending",
+      "pendingRisks": [
+        "Adaptacion pendiente por agente Cursor"
+      ],
+      "agentStatus": "pending"
     }
   ]
 }
