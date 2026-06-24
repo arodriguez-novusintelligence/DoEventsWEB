@@ -1,85 +1,65 @@
-import { useRef, useState } from 'react';
-import {
-  ImagePlus,
-  X,
-  Expand,
-  ChevronLeft,
-  ChevronRight,
-  ArrowLeft,
-  Trash2,
-  Save,
-  Loader2,
-  RefreshCw,
-  AlertCircle,
-} from 'lucide-react';
+import { useState, useRef } from 'react';
+import { ImagePlus, X, Expand, ChevronLeft, ChevronRight, ArrowLeft, Trash2, Save } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@lovable/components/ui/button';
+import { cn } from '@lovable/lib/utils';
+import galleryPhoto1 from '@lovable/assets/gallery/photo-1.jpg';
+import galleryPhoto2 from '@lovable/assets/gallery/photo-2.jpg';
+import galleryPhoto3 from '@lovable/assets/gallery/photo-3.jpg';
+import galleryPhoto4 from '@lovable/assets/gallery/photo-4.jpg';
+import galleryPhoto5 from '@lovable/assets/gallery/photo-5.jpg';
+import galleryPhoto6 from '@lovable/assets/gallery/photo-6.jpg';
 
-export const MAX_GALLERY_PHOTOS = 15;
+const MAX_PHOTOS = 15;
 
-export interface GalleryPhotoItem {
-  id: string;
-  url: string;
-}
 
 interface ProfileGalleryProps {
   onBack: () => void;
-  photos: GalleryPhotoItem[];
-  loading?: boolean;
-  loadError?: string | null;
-  onRetry?: () => void;
-  saving?: boolean;
-  hasChanges?: boolean;
-  onAddFiles: (files: File[]) => void;
-  onRemove: (photoId: string) => void;
-  onSave: () => void;
 }
 
-const ProfileGallery = ({
-  onBack,
-  photos,
-  loading = false,
-  loadError = null,
-  onRetry,
-  saving = false,
-  hasChanges = false,
-  onAddFiles,
-  onRemove,
-  onSave,
-}: ProfileGalleryProps) => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
+const ProfileGallery = ({ onBack }: ProfileGalleryProps) => {
+  const [photos, setPhotos] = useState<string[]>(PHOTOS);
   const [viewingIndex, setViewingIndex] = useState<number | null>(null);
+  const [hasChanges, setHasChanges] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleAddPhotos = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (!files?.length) return;
+    if (!files) return;
 
-    const remaining = MAX_GALLERY_PHOTOS - photos.length;
+    const remaining = MAX_PHOTOS - photos.length;
     if (remaining <= 0) {
-      toast.error(`Máximo ${MAX_GALLERY_PHOTOS} fotos permitidas`);
-      e.target.value = '';
+      toast.error(`Máximo ${MAX_PHOTOS} fotos permitidas`);
       return;
     }
 
-    const picked = Array.from(files).filter((file) => file.type.startsWith('image/'));
-    if (!picked.length) {
-      toast.error('Solo se permiten imágenes');
-      e.target.value = '';
-      return;
+    const filesToAdd = Array.from(files).slice(0, remaining);
+    const newPhotos: string[] = [];
+
+    filesToAdd.forEach(file => {
+      if (!file.type.startsWith('image/')) return;
+      newPhotos.push(URL.createObjectURL(file));
+    });
+
+    if (Array.from(files).length > remaining) {
+      toast.info(`Solo se agregaron ${remaining} fotos (máximo ${MAX_PHOTOS})`);
     }
 
-    const filesToAdd = picked.slice(0, remaining);
-    if (picked.length > remaining) {
-      toast.info(`Solo se agregaron ${remaining} fotos (máximo ${MAX_GALLERY_PHOTOS})`);
-    }
-
-    onAddFiles(filesToAdd);
-    if (filesToAdd.length) toast.success(`${filesToAdd.length} foto(s) agregada(s)`);
+    setPhotos(prev => [...prev, ...newPhotos]);
+    setHasChanges(true);
+    if (newPhotos.length) toast.success(`${newPhotos.length} foto(s) agregada(s)`);
     e.target.value = '';
   };
 
-  const handleRemove = (photoId: string) => {
-    onRemove(photoId);
+  const handleRemove = (index: number) => {
+    setPhotos(prev => {
+      const updated = [...prev];
+      const url = updated[index];
+      if (url.startsWith('blob:')) URL.revokeObjectURL(url);
+      updated.splice(index, 1);
+      return updated;
+    });
+    setHasChanges(true);
     setViewingIndex(null);
     toast('Foto eliminada');
   };
@@ -90,54 +70,30 @@ const ProfileGallery = ({
     if (dir === 'next' && viewingIndex < photos.length - 1) setViewingIndex(viewingIndex + 1);
   };
 
-  const currentViewerPhoto = viewingIndex !== null ? photos[viewingIndex] : null;
-
   return (
     <div className="min-h-screen bg-secondary pt-16">
       <div className="mx-auto max-w-lg px-4 pt-4 pb-24">
+        {/* Header */}
         <button
-          type="button"
           onClick={onBack}
-          className="mb-4 flex items-center gap-2 text-sm font-extrabold text-primary"
+          className="flex items-center gap-2 text-sm font-semibold text-primary mb-4"
         >
           <ArrowLeft className="h-4 w-4" />
           Volver al perfil
         </button>
 
-        <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm ring-1 ring-primary/10">
-          {loadError && (
-            <div className="mb-4 flex flex-col items-center gap-3 rounded-2xl border border-destructive/30 bg-card py-8 text-center shadow-sm">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
-                <AlertCircle className="h-7 w-7 text-destructive" />
-              </div>
-              <p className="px-4 text-sm font-extrabold text-destructive">{loadError}</p>
-              {onRetry && (
-                <Button type="button" variant="outline" size="sm" className="gap-1.5 rounded-full font-extrabold shadow-sm" onClick={onRetry}>
-                  <RefreshCw className="h-4 w-4" />
-                  Reintentar
-                </Button>
-              )}
-            </div>
-          )}
-
+        <div className="rounded-2xl bg-card p-5 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="flex items-center gap-2 text-lg font-extrabold text-foreground">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
-                  <ImagePlus className="h-5 w-5 text-primary" />
-                </span>
-                Mi Galería de Fotos
-              </h2>
-              <p className="text-xs font-extrabold text-muted-foreground mt-0.5">
-                {photos.length} de {MAX_GALLERY_PHOTOS} fotos
+              <h2 className="text-lg font-bold text-foreground">📸 Mi Galería de Fotos</h2>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {photos.length} de {MAX_PHOTOS} fotos
               </p>
             </div>
-            {photos.length < MAX_GALLERY_PHOTOS && (
+            {photos.length < MAX_PHOTOS && (
               <button
-                type="button"
-                disabled={loading || saving}
                 onClick={() => fileInputRef.current?.click()}
-                className="flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-extrabold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 disabled:opacity-60"
+                className="flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-md hover:bg-primary/90 transition-colors"
               >
                 <ImagePlus className="h-4 w-4" />
                 Agregar
@@ -145,80 +101,60 @@ const ProfileGallery = ({
             )}
           </div>
 
+          {/* Progress bar */}
           <div className="mb-5">
-            <div className="mb-1.5 flex items-center justify-between text-xs font-extrabold text-muted-foreground">
-              <span>Progreso</span>
-              <span>{Math.round((photos.length / MAX_GALLERY_PHOTOS) * 100)}%</span>
-            </div>
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted ring-1 ring-primary/10">
+            <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
               <div
                 className="h-full rounded-full bg-primary transition-all duration-300"
-                style={{ width: `${(photos.length / MAX_GALLERY_PHOTOS) * 100}%` }}
+                style={{ width: `${(photos.length / MAX_PHOTOS) * 100}%` }}
               />
             </div>
           </div>
 
-          {loading ? (
-            <div className="flex flex-col items-center rounded-2xl border border-border/60 bg-card py-10 shadow-sm">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
-                <Loader2 className="h-7 w-7 animate-spin text-primary" />
-              </div>
-              <p className="mt-3 text-sm font-extrabold text-muted-foreground">Cargando galería…</p>
-              <div className="mt-6 grid w-full grid-cols-3 gap-2 animate-pulse">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="aspect-square rounded-xl bg-muted" />
-                ))}
-              </div>
-            </div>
-          ) : photos.length === 0 ? (
+          {photos.length === 0 ? (
             <button
-              type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex w-full flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-primary/25 border-border/60 py-16 text-muted-foreground shadow-sm transition-colors hover:border-primary/50 hover:bg-accent/30"
+              className="flex w-full flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-primary/25 py-16 text-muted-foreground hover:border-primary/50 hover:bg-accent/30 transition-colors"
             >
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
-                <ImagePlus className="h-7 w-7 text-primary" />
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+                <ImagePlus className="h-8 w-8 text-primary" />
               </div>
               <div className="text-center">
-                <p className="text-sm font-extrabold text-foreground">Agrega tus mejores fotos</p>
+                <p className="text-sm font-semibold text-foreground">Agrega tus mejores fotos</p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Hasta {MAX_GALLERY_PHOTOS} fotos · JPG, PNG, WEBP
+                  Hasta {MAX_PHOTOS} fotos · JPG, PNG, WEBP
                 </p>
               </div>
             </button>
           ) : (
             <div className="grid grid-cols-3 gap-2">
               {photos.map((photo, i) => (
-                <div key={photo.id} className="group relative aspect-square overflow-hidden rounded-xl shadow-sm ring-2 ring-primary/20">
+                <div key={i} className="group relative aspect-square overflow-hidden rounded-xl">
                   <img
-                    src={photo.url}
+                    src={photo}
                     alt={`Foto ${i + 1}`}
                     className="h-full w-full object-cover transition-transform group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
+                  <div className="absolute inset-0 bg-background/0 group-hover:bg-background/40 transition-colors flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
                     <button
-                      type="button"
                       onClick={() => setViewingIndex(i)}
-                      className="flex h-9 w-9 items-center justify-center rounded-full bg-card/90 text-foreground shadow-sm"
+                      className="flex h-9 w-9 items-center justify-center rounded-full bg-card/90 text-foreground shadow"
                     >
                       <Expand className="h-4 w-4" />
                     </button>
                     <button
-                      type="button"
-                      onClick={() => handleRemove(photo.id)}
-                      className="flex h-9 w-9 items-center justify-center rounded-full bg-destructive/90 text-destructive-foreground shadow-sm"
+                      onClick={() => handleRemove(i)}
+                      className="flex h-9 w-9 items-center justify-center rounded-full bg-destructive/90 text-destructive-foreground shadow"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
                 </div>
               ))}
-              {photos.length < MAX_GALLERY_PHOTOS && (
+              {photos.length < MAX_PHOTOS && (
                 <button
-                  type="button"
-                  disabled={saving}
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex aspect-square items-center justify-center rounded-xl border-2 border-dashed border-primary/25 bg-card shadow-sm hover:border-primary/50 hover:bg-accent/30 transition-colors disabled:opacity-60"
+                  className="flex aspect-square items-center justify-center rounded-xl border-2 border-dashed border-primary/25 hover:border-primary/50 hover:bg-accent/30 transition-colors"
                 >
                   <ImagePlus className="h-7 w-7 text-primary/40" />
                 </button>
@@ -226,16 +162,18 @@ const ProfileGallery = ({
             </div>
           )}
 
+          {/* Save button */}
           {hasChanges && photos.length > 0 && (
-            <div className="mt-5 border-t border-border/60 pt-5">
+            <div className="mt-5">
               <Button
-                type="button"
-                disabled={saving}
-                onClick={onSave}
-                className="w-full gap-2 rounded-full font-extrabold shadow-sm"
+                onClick={() => {
+                  setHasChanges(false);
+                  toast.success('¡Galería guardada exitosamente!');
+                }}
+                className="w-full rounded-full gap-2"
               >
-                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                {saving ? 'Guardando…' : 'Guardar galería'}
+                <Save className="h-4 w-4" />
+                Guardar galería
               </Button>
             </div>
           )}
@@ -251,25 +189,20 @@ const ProfileGallery = ({
         </div>
       </div>
 
-      {viewingIndex !== null && currentViewerPhoto && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
-          onClick={() => setViewingIndex(null)}
-          role="presentation"
-        >
+      {/* Fullscreen viewer */}
+      {viewingIndex !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/90" onClick={() => setViewingIndex(null)}>
           <button
-            type="button"
             onClick={(e) => { e.stopPropagation(); setViewingIndex(null); }}
-            className="absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-background/20 text-background z-10 backdrop-blur-sm shadow-sm ring-2 ring-primary-foreground/20"
+            className="absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-primary-foreground z-10"
           >
             <X className="h-5 w-5" />
           </button>
 
           {viewingIndex > 0 && (
             <button
-              type="button"
               onClick={(e) => { e.stopPropagation(); navigateViewer('prev'); }}
-              className="absolute left-3 flex h-10 w-10 items-center justify-center rounded-full bg-background/20 text-background z-10 backdrop-blur-sm shadow-sm ring-2 ring-primary-foreground/20"
+              className="absolute left-3 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-primary-foreground z-10"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -277,27 +210,25 @@ const ProfileGallery = ({
 
           {viewingIndex < photos.length - 1 && (
             <button
-              type="button"
               onClick={(e) => { e.stopPropagation(); navigateViewer('next'); }}
-              className="absolute right-3 flex h-10 w-10 items-center justify-center rounded-full bg-background/20 text-background z-10 backdrop-blur-sm shadow-sm ring-2 ring-primary-foreground/20"
+              className="absolute right-3 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-primary-foreground z-10"
             >
               <ChevronRight className="h-5 w-5" />
             </button>
           )}
 
           <img
-            src={currentViewerPhoto.url}
+            src={photos[viewingIndex]}
             alt=""
-            className="max-h-[85vh] max-w-[90vw] rounded-lg object-contain shadow-sm ring-2 ring-primary-foreground/20"
+            className="max-h-[85vh] max-w-[90vw] rounded-lg object-contain"
             onClick={(e) => e.stopPropagation()}
           />
 
           <div className="absolute bottom-6 flex items-center gap-3">
-            <span className="text-sm font-extrabold text-white/70">{viewingIndex + 1} / {photos.length}</span>
+            <span className="text-sm text-primary-foreground/70">{viewingIndex + 1} / {photos.length}</span>
             <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); handleRemove(currentViewerPhoto.id); }}
-              className="flex items-center gap-1.5 rounded-full bg-destructive/80 px-3 py-1.5 text-xs font-extrabold text-destructive-foreground shadow-sm"
+              onClick={(e) => { e.stopPropagation(); handleRemove(viewingIndex); }}
+              className="flex items-center gap-1.5 rounded-full bg-destructive/80 px-3 py-1.5 text-xs font-medium text-destructive-foreground"
             >
               <Trash2 className="h-3 w-3" /> Eliminar
             </button>
@@ -308,4 +239,9 @@ const ProfileGallery = ({
   );
 };
 
+export const MAX_GALLERY_PHOTOS = 15;
+export interface GalleryPhotoItem {
+  id: string;
+  url: string;
+}
 export default ProfileGallery;

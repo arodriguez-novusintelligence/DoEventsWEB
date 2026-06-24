@@ -1,144 +1,88 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Ticket as TicketIcon, Eye, Calendar, Clock, Loader2, RefreshCw, AlertCircle } from 'lucide-react';
-import { Button } from '@lovable/components/ui/button';
-import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBanner';
-import type { Ticket, TicketStatus } from '@lovable/data/ticketsData';
+import { useState } from 'react';
+import { ChevronLeft, Ticket as TicketIcon, Eye, Calendar } from 'lucide-react';
+import { useTickets, Ticket, TicketStatus } from '@lovable/data/ticketsData';
+import TicketDetailView from './TicketDetailView';
+
 import { groupTicketsForListView } from '../../../lovable-bridge/ticketsAdapter';
 import { useReservationTimer, isPlaceholderEventImage } from '@doevents/shared';
-
 interface MyTicketsViewProps {
   onBack: () => void;
   onViewEventDetail?: (eventId: string, ticket: Ticket) => void;
-  onOpenTicketDetail?: (ticket: Ticket) => void;
-  onExploreEvents?: () => void;
-  onRefresh?: () => void;
-  tickets?: Ticket[];
-  loading?: boolean;
-  loadError?: string | null;
-  onRetry?: () => void;
-  initialTab?: TicketStatus;
+  initialSelectedTicketId?: string | null;
+  onSelectedTicketChange?: (ticketId: string | null) => void;
 }
 
 const TABS: { key: TicketStatus; label: string; dot: string }[] = [
-  { key: 'aprobada', label: 'Aprobadas', dot: 'bg-success' },
-  { key: 'pendiente', label: 'Pendientes', dot: 'bg-secondary-foreground/60' },
+  { key: 'aprobada', label: 'Aprobadas', dot: 'bg-emerald-500' },
+  { key: 'pendiente', label: 'Pendientes', dot: 'bg-amber-500' },
   { key: 'cancelada', label: 'Canceladas', dot: 'bg-destructive' },
   { key: 'finalizada', label: 'Finalizadas', dot: 'bg-muted-foreground' },
 ];
 
-const TAB_PRIORITY: TicketStatus[] = ['aprobada', 'pendiente', 'finalizada', 'cancelada'];
+const MyTicketsView = ({ onBack, onViewEventDetail, initialSelectedTicketId, onSelectedTicketChange }: MyTicketsViewProps) => {
+  const [activeTab, setActiveTab] = useState<TicketStatus>('aprobada');
+  const allTicketsForInit = useTickets();
+  const [selected, setSelected] = useState<Ticket | null>(() => {
+    if (!initialSelectedTicketId) return null;
+    return allTicketsForInit.find((t) => t.id === initialSelectedTicketId) ?? null;
+  });
 
-function pickInitialTab(tickets: Ticket[], preferred?: TicketStatus): TicketStatus {
-  if (preferred && tickets.some((t) => t.status === preferred)) return preferred;
-  return TAB_PRIORITY.find((tab) => tickets.some((t) => t.status === tab)) || 'aprobada';
-}
+  const setSelectedAndNotify = (t: Ticket | null) => {
+    setSelected(t);
+    onSelectedTicketChange?.(t ? t.id : null);
+  };
+  
+  const allTickets = useTickets();
 
-const PendingCountdown = ({ expiresAtTs }: { expiresAtTs?: number }) => {
-  const { isExpired, label } = useReservationTimer(expiresAtTs ?? null);
-  if (!expiresAtTs) return null;
-  return (
-    <div className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold ${isExpired ? 'bg-destructive/10 text-destructive' : 'bg-secondary text-secondary-foreground'}`}>
-      <Clock className="h-3.5 w-3.5" />
-      {isExpired ? 'Reserva expirada' : `Paga en ${label} para conservar tus boletas`}
-    </div>
-  );
-};
-
-const TicketCardMedia = ({ ticket }: { ticket: Ticket }) => {
-  const [videoFailed, setVideoFailed] = useState(false);
-  useEffect(() => {
-    setVideoFailed(false);
-  }, [ticket.eventVideo, ticket.eventImage, ticket.eventId]);
-  const hasVideo = Boolean(ticket.eventVideo) && !videoFailed;
-  const hasImage = Boolean(ticket.eventImage) && !isPlaceholderEventImage(ticket.eventImage);
-
-  if (hasVideo) {
+  if (selected) {
     return (
-      <video
-        src={ticket.eventVideo}
-        className="h-full w-full object-cover"
-        muted
-        playsInline
-        loop
-        autoPlay
-        onError={() => setVideoFailed(true)}
+      <TicketDetailView
+        ticket={selected}
+        onBack={() => setSelected(null)}
+        onViewEventDetail={() => {
+          if (onViewEventDetail) onViewEventDetail(selected.eventId || selected.id, selected);
+        }}
       />
     );
   }
-  if (hasImage) {
-    return <img src={ticket.eventImage} alt={ticket.eventTitle} className="h-full w-full object-cover" />;
-  }
-  return (
-    <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-muted">
-      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
-        <TicketIcon className="h-7 w-7 text-primary" />
-      </div>
-    </div>
-  );
-};
-
-const MyTicketsView = ({
-  onBack,
-  onViewEventDetail,
-  onOpenTicketDetail,
-  onExploreEvents,
-  onRefresh,
-  tickets: ticketsProp = [],
-  loading = false,
-  loadError = null,
-  onRetry,
-  initialTab,
-}: MyTicketsViewProps) => {
-  const [activeTab, setActiveTab] = useState<TicketStatus>(() => pickInitialTab(ticketsProp, initialTab));
-
-  useEffect(() => {
-    if (loading) return;
-    setActiveTab((current) => {
-      if (ticketsProp.some((t) => t.status === current)) return current;
-      return pickInitialTab(ticketsProp, initialTab);
-    });
-  }, [ticketsProp, loading, initialTab]);
 
   const counts: Record<TicketStatus, number> = {
-    aprobada: ticketsProp.filter((t) => t.status === 'aprobada').length,
-    pendiente: ticketsProp.filter((t) => t.status === 'pendiente').length,
-    cancelada: ticketsProp.filter((t) => t.status === 'cancelada').length,
-    finalizada: ticketsProp.filter((t) => t.status === 'finalizada').length,
+    aprobada: allTickets.filter((t) => t.status === 'aprobada').length,
+    pendiente: 0,
+    cancelada: 2,
+    finalizada: 32,
   };
 
-  const tickets = useMemo(
-    () => groupTicketsForListView(ticketsProp.filter((t) => t.status === activeTab)),
-    [ticketsProp, activeTab],
-  );
+  const tickets = allTickets.filter((t) => t.status === activeTab);
 
   return (
-    <div className="mx-auto min-h-screen max-w-lg bg-secondary pb-24">
-      <ProfileSectionBanner
-        title="Mis boletas"
-        subtitle={`${ticketsProp.length} boleta${ticketsProp.length === 1 ? '' : 's'} en total`}
-        icon={TicketIcon}
-        onBack={onBack}
-        rightAction={onRefresh ? (
-          <button
-            type="button"
-            onClick={onRefresh}
-            disabled={loading}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-card/80 text-primary shadow-sm"
-            aria-label="Actualizar boletas"
-          >
-            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+    <div className="min-h-screen bg-secondary pb-36">
+      {/* Header */}
+      <div className="bg-gradient-to-br from-primary via-primary to-accent px-4 pt-5 pb-10 rounded-b-3xl">
+        <div className="mx-auto max-w-lg">
+          <button onClick={onBack} className="flex items-center gap-1 text-primary-foreground/90 font-medium mb-3 text-sm">
+            <ChevronLeft className="h-5 w-5" /> Atrás
           </button>
-        ) : undefined}
-      />
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-foreground/15 backdrop-blur">
+              <TicketIcon className="h-6 w-6 text-primary-foreground" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-extrabold text-primary-foreground leading-tight">Mis boletas</h1>
+              <p className="text-xs text-primary-foreground/80">{allTickets.length} boletas en total</p>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div className="mx-auto max-w-lg px-4 -mt-6">
-        <div className="rounded-2xl bg-card p-2 shadow-sm grid grid-cols-4 gap-1">
+        {/* Tabs card */}
+        <div className="rounded-2xl bg-card p-2 shadow-md grid grid-cols-4 gap-1">
           {TABS.map((tab) => {
             const active = tab.key === activeTab;
             return (
               <button
                 key={tab.key}
-                type="button"
                 onClick={() => setActiveTab(tab.key)}
                 className={`flex flex-col items-center gap-0.5 rounded-xl py-2 text-[11px] font-semibold transition-all ${
                   active ? 'bg-primary text-primary-foreground shadow' : 'text-muted-foreground hover:bg-accent/40'
@@ -152,93 +96,45 @@ const MyTicketsView = ({
           })}
         </div>
 
+        {/* List */}
         <div className="mt-5 space-y-4">
-          {loading && tickets.length === 0 && !loadError && (
-            <div className="flex flex-col items-center gap-3 rounded-2xl bg-card p-10 text-center shadow-sm">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <p className="text-sm text-muted-foreground">Cargando tus boletas…</p>
+          {tickets.length === 0 ? (
+            <div className="rounded-2xl bg-card p-10 text-center text-sm text-muted-foreground shadow-sm">
+              No tienes boletas en esta categoría.
             </div>
-          )}
-
-          {loadError && (
-            <div className="flex flex-col items-center gap-3 rounded-2xl bg-card p-10 text-center shadow-sm">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
-                <AlertCircle className="h-7 w-7 text-destructive" />
-              </div>
-              <p className="text-sm font-semibold text-foreground">No se pudieron cargar tus boletas</p>
-              <p className="text-xs text-muted-foreground max-w-[240px]">{loadError}</p>
-              {onRetry && (
-                <Button type="button" variant="outline" size="sm" className="rounded-full gap-1.5" onClick={onRetry}>
-                  <RefreshCw className="h-3.5 w-3.5" />
-                  Reintentar
-                </Button>
-              )}
-            </div>
-          )}
-
-          {!loading && !loadError && tickets.length === 0 && (
-            <div className="flex flex-col items-center gap-3 rounded-2xl bg-card p-10 text-center shadow-sm">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
-                <TicketIcon className="h-7 w-7 text-primary" />
-              </div>
-              <p className="text-sm font-semibold text-foreground">
-                {ticketsProp.length > 0 ? 'Sin boletas en esta pestaña' : 'Aún no tienes boletas'}
-              </p>
-              <p className="text-xs text-muted-foreground max-w-[240px]">
-                {ticketsProp.length > 0
-                  ? 'Revisa las otras categorías para ver tus entradas.'
-                  : 'Compra entradas en un evento para verlas aquí.'}
-              </p>
-              {ticketsProp.length === 0 && onExploreEvents && (
-                <Button type="button" className="mt-4 rounded-full px-5" onClick={onExploreEvents}>
-                  Explorar eventos
-                </Button>
-              )}
-            </div>
-          )}
-
-          {tickets.map((ticket) => (
-            <article
-              key={`${ticket.eventId || ticket.eventTitle}-${ticket.status}`}
-              className={`overflow-hidden rounded-2xl bg-card shadow-sm border border-border/40 ${ticket.status === 'pendiente' ? 'opacity-75 grayscale-[0.35]' : ''}`}
-            >
-              <button
-                type="button"
-                onClick={() => ticket.eventId && onViewEventDetail?.(ticket.eventId, ticket)}
-                className="relative h-32 w-full overflow-hidden text-left"
+          ) : (
+            tickets.map((t) => (
+              <article
+                key={t.id}
+                className="overflow-hidden rounded-2xl bg-card shadow-md border border-border/40"
               >
-                <TicketCardMedia ticket={ticket} />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-3">
-                  <span className="inline-block rounded-full bg-primary/90 px-2 py-0.5 text-[10px] font-bold text-primary-foreground mb-1">
-                    {ticket.category}
-                  </span>
-                  <h3 className="text-base font-extrabold text-white leading-tight line-clamp-2">{ticket.eventTitle}</h3>
+                <div className="relative h-32 w-full overflow-hidden">
+                  <img src={t.eventImage} alt={t.eventTitle} className="h-full w-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-3">
+                    <span className="inline-block rounded-full bg-primary/90 px-2 py-0.5 text-[10px] font-bold text-primary-foreground mb-1">
+                      {t.category}
+                    </span>
+                    <h3 className="text-base font-extrabold text-primary-foreground leading-tight line-clamp-2">{t.eventTitle}</h3>
+                  </div>
                 </div>
-              </button>
-              <div className="p-4 space-y-3">
-                {ticket.status === 'pendiente' && (
-                  <PendingCountdown expiresAtTs={ticket.paymentExpiresAtTs} />
-                )}
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Calendar className="h-3.5 w-3.5 text-primary" />
-                  <span className="font-medium text-foreground">{ticket.eventDate}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  {onOpenTicketDetail && (
+                <div className="p-4 space-y-3">
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <Calendar className="h-3.5 w-3.5 text-primary" />
+                    <span className="font-medium text-foreground">{t.eventDate}</span>
+                  </div>
+                  <div className="pt-1">
                     <button
-                      type="button"
-                      onClick={() => onOpenTicketDetail(ticket)}
-                      className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-primary px-3 py-2.5 text-xs font-bold text-primary-foreground shadow hover:bg-primary/90"
+                      onClick={() => setSelected(t)}
+                      className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary px-3 py-2.5 text-xs font-bold text-primary-foreground shadow hover:bg-primary/90"
                     >
                       <Eye className="h-3.5 w-3.5" /> Ver boletos
-                      {(ticket.eventTicketCount || 0) > 1 ? ` (${ticket.eventTicketCount})` : ''}
                     </button>
-                  )}
+                  </div>
                 </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            ))
+          )}
         </div>
       </div>
     </div>
