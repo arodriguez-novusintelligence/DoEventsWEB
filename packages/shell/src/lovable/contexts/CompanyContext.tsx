@@ -1,157 +1,88 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode } from 'react';
 import { fetchUserById, type UserProfile } from '@doevents/shared';
 
-/**
- * Company context — empalme Lovable sobre API real `@doevents/shared`.
- *
- * API expuesta (paridad Lovable):
- * - `company`, `companyName`, `organizationName`, `displayName`, `accountTypeLabel`
- * - `loading` / `isLoading`, `loadError`, `loadErrorMessage`, `hasError`, `error`
- * - `hasCompany`, `isEmpty`, `isCompany`
- * - `refresh` / `refreshCompany`
- *
- * Datos vía `fetchUserById` — sin mocks.
- */
+export type VerificationStatus = 'none' | 'pending' | 'verified' | 'rejected';
+export type BusinessPlan = 'free-business' | 'pro-business';
 
-interface CompanyInfo {
-  accountType?: UserProfile['accountType'];
-  companyName?: string;
-  companyWebsite?: string;
-  companyIndustry?: string;
-  companyDescription?: string;
-  organizerName?: string;
+export interface CompanyData {
+  legalName: string;
+  nit: string;
+  sector: string;
+  foundedYear: string;
+  size: string;
+  website: string;
+  city: string;
+  description: string;
 }
 
-interface CompanyContextValue {
-  company: CompanyInfo | null;
-  /** Alias Lovable — nombre comercial derivado de `company`. */
-  companyName: string | null;
-  /** Alias Lovable — nombre organización (companyName o organizerName). */
-  organizationName: string | null;
-  /** Alias Lovable — nombre visible del perfil/organizador. */
-  displayName: string | null;
-  loading: boolean;
-  /** Alias Lovable — mismo valor que `loading`. */
-  isLoading: boolean;
-  loadError: boolean;
-  loadErrorMessage: string | null;
-  /** Alias Lovable — flag derivado de error de carga. */
-  hasError: boolean;
-  /** Alias Lovable — mensaje de error (mismo que `loadErrorMessage`). */
-  error: string | null;
-  hasCompany: boolean;
-  /** Alias Lovable — cuenta tipo empresa. */
+interface CompanyContextType {
   isCompany: boolean;
-  isEmpty: boolean;
-  accountTypeLabel: string;
-  refresh: () => void;
-  /** Alias Lovable — mismo handler que `refresh`. */
-  refreshCompany: () => void;
+  setIsCompany: (v: boolean) => void;
+  company: CompanyData;
+  setCompany: (data: Partial<CompanyData>) => void;
+  verification: VerificationStatus;
+  requestVerification: () => void;
+  approveVerificationMock: () => void;
+  businessPlan: BusinessPlan;
+  setBusinessPlan: (p: BusinessPlan) => void;
 }
 
-export type { CompanyContextValue };
+const defaultCompany: CompanyData = {
+  legalName: 'Global Eventos S.A.S',
+  nit: '900.123.456-7',
+  sector: 'Producción de eventos',
+  foundedYear: '2018',
+  size: '11-50 empleados',
+  website: 'www.globaleventos.com',
+  city: 'Medellín, Colombia',
+  description: 'Productora especializada en eventos corporativos, festivales y experiencias culturales.',
+};
 
-const CompanyContext = createContext<CompanyContextValue>({
-  company: null,
-  companyName: null,
-  organizationName: null,
-  displayName: null,
-  loading: false,
-  isLoading: false,
-  loadError: false,
-  loadErrorMessage: null,
-  hasError: false,
-  error: null,
-  hasCompany: false,
+const CompanyContext = createContext<CompanyContextType>({
   isCompany: false,
-  isEmpty: true,
-  accountTypeLabel: 'Personal',
-  refresh: () => undefined,
-  refreshCompany: () => undefined,
+  setIsCompany: () => undefined,
+  company: defaultCompany,
+  setCompany: () => undefined,
+  verification: 'none',
+  requestVerification: () => undefined,
+  approveVerificationMock: () => undefined,
+  businessPlan: 'free-business',
+  setBusinessPlan: () => undefined,
 });
-
-export { CompanyContext };
 
 export const useCompany = () => useContext(CompanyContext);
 
-/** Alias Lovable — misma API que `useCompany`. */
-export const useCompanyContext = useCompany;
+export const CompanyProvider = ({ children }: { children: ReactNode }) => {
+  const [isCompany, setIsCompany] = useState(false);
+  const [company, setCompanyState] = useState<CompanyData>(defaultCompany);
+  const [verification, setVerification] = useState<VerificationStatus>('none');
+  const [businessPlan, setBusinessPlan] = useState<BusinessPlan>('free-business');
 
-interface CompanyProviderProps {
-  userId?: string | null;
-  children: ReactNode;
-}
+  const setCompany = (data: Partial<CompanyData>) =>
+    setCompanyState((prev) => ({ ...prev, ...data }));
 
-export const CompanyProvider = ({ userId, children }: CompanyProviderProps) => {
-  const [company, setCompany] = useState<CompanyInfo | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [loadError, setLoadError] = useState(false);
-  const [loadErrorMessage, setLoadErrorMessage] = useState<string | null>(null);
-  const [refreshKey, setRefreshKey] = useState(0);
+  const requestVerification = () => {
+    setVerification('pending');
+    // Simulated review process: auto-approve after 6s
+    setTimeout(() => setVerification('verified'), 6000);
+  };
 
-  const refresh = () => setRefreshKey((k) => k + 1);
-
-  useEffect(() => {
-    if (!userId) {
-      setCompany(null);
-      setLoadError(false);
-      setLoadErrorMessage(null);
-      return;
-    }
-    let cancelled = false;
-    setLoading(true);
-    setLoadError(false);
-    setLoadErrorMessage(null);
-    void fetchUserById(userId)
-      .then((profile) => {
-        if (cancelled || !profile) return;
-        const organizerName = [profile.nombre, profile.apellido].filter(Boolean).join(' ').trim();
-        setCompany({
-          accountType: profile.accountType,
-          companyName: profile.companyName,
-          companyWebsite: profile.companyWebsite,
-          companyIndustry: profile.companyIndustry,
-          companyDescription: profile.companyDescription,
-          organizerName: organizerName || profile.username || profile.email,
-        });
-      })
-      .catch((err) => {
-        if (!cancelled) {
-          setCompany(null);
-          setLoadError(true);
-          setLoadErrorMessage(err instanceof Error ? err.message : 'No se pudieron cargar los datos de empresa');
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => { cancelled = true; };
-  }, [userId, refreshKey]);
-
-  const value = useMemo(
-    () => ({
-      company,
-      companyName: company?.companyName ?? null,
-      organizationName: company?.companyName ?? company?.organizerName ?? null,
-      displayName: company?.organizerName ?? company?.companyName ?? null,
-      loading,
-      isLoading: loading,
-      loadError,
-      loadErrorMessage,
-      hasError: loadError,
-      error: loadErrorMessage,
-      hasCompany: Boolean(company?.companyName || company?.accountType === 'company'),
-      isCompany: company?.accountType === 'company',
-      isEmpty: !loading && !loadError && !company?.companyName && company?.accountType !== 'company',
-      accountTypeLabel: company?.accountType === 'company' ? 'Empresa' : 'Personal',
-      refresh,
-      refreshCompany: refresh,
-    }),
-    [company, loading, loadError, loadErrorMessage],
-  );
+  const approveVerificationMock = () => setVerification('verified');
 
   return (
-    <CompanyContext.Provider value={value}>
+    <CompanyContext.Provider
+      value={{
+        isCompany,
+        setIsCompany,
+        company,
+        setCompany,
+        verification,
+        requestVerification,
+        approveVerificationMock,
+        businessPlan,
+        setBusinessPlan,
+      }}
+    >
       {children}
     </CompanyContext.Provider>
   );

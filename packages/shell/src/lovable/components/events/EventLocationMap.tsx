@@ -1,6 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { Loader2, AlertCircle, RefreshCw, MapPin } from 'lucide-react';
-import { Button } from '@lovable/components/ui/button';
 
 interface Props {
   lat: number;
@@ -25,8 +23,7 @@ const loadGoogleMaps = () => {
 
   scriptPromise = new Promise<void>((resolve, reject) => {
     window[GOOGLE_MAPS_CALLBACK] = () => resolve();
-    const key = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-      || import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY;
+    const key = import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY;
     const channel = import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_TRACKING_ID;
     const script = document.createElement('script');
     script.src = `https://maps.googleapis.com/maps/api/js?key=${key}&loading=async&callback=${GOOGLE_MAPS_CALLBACK}&channel=${channel}`;
@@ -43,13 +40,9 @@ const EventLocationMap = ({ lat, lng, onPick }: Props) => {
   const mapRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
   const [ready, setReady] = useState(false);
-  const [loadError, setLoadError] = useState(false);
-  const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
-    setLoadError(false);
-    setReady(false);
     loadGoogleMaps()
       .then(() => {
         if (cancelled || !containerRef.current || !window.google?.maps) return;
@@ -75,13 +68,12 @@ const EventLocationMap = ({ lat, lng, onPick }: Props) => {
       })
       .catch((err) => {
         console.error(err);
-        if (!cancelled) setLoadError(true);
       });
     return () => {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [retryKey]);
+  }, []);
 
   useEffect(() => {
     if (!ready || !mapRef.current || !markerRef.current) return;
@@ -91,42 +83,10 @@ const EventLocationMap = ({ lat, lng, onPick }: Props) => {
   }, [lat, lng, ready]);
 
   return (
-    <div className="relative h-48 w-full overflow-hidden rounded-2xl border border-border/60 bg-muted shadow-sm ring-1 ring-primary/10">
-      {!ready && !loadError && (
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 animate-pulse bg-muted/80">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
-            <MapPin className="h-7 w-7 text-primary" />
-          </div>
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <span className="text-xs font-extrabold text-muted-foreground">Cargando mapa…</span>
-        </div>
-      )}
-      {loadError && (
-        <div className="absolute inset-0 z-10 mx-2 flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-primary/25 bg-card/95 px-4 text-center shadow-sm ring-1 ring-destructive/20">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
-            <AlertCircle className="h-7 w-7 text-destructive" />
-          </div>
-          <p className="text-xs font-extrabold text-foreground">No se pudo cargar el mapa</p>
-          <p className="text-[10px] font-extrabold text-muted-foreground">
-            Verifica la clave de Google Maps o ingresa la dirección manualmente.
-          </p>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="mt-1 gap-1.5 rounded-full font-extrabold shadow-sm"
-            onClick={() => {
-              scriptPromise = null;
-              setRetryKey((k) => k + 1);
-            }}
-          >
-            <RefreshCw className="h-3.5 w-3.5" />
-            Reintentar
-          </Button>
-        </div>
-      )}
-      <div ref={containerRef} className="h-full w-full" />
-    </div>
+    <div
+      ref={containerRef}
+      className="h-48 w-full overflow-hidden rounded-xl border border-border bg-muted"
+    />
   );
 };
 
