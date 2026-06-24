@@ -1,58 +1,305 @@
-import { useState } from 'react';
-import { Minus, Plus, Users, X, ParkingCircle, FileText } from 'lucide-react';
-import { Input } from '@lovable/components/ui/input';
-import { Textarea } from '@lovable/components/ui/textarea';
-import { Label } from '@lovable/components/ui/label';
-import { Checkbox } from '@lovable/components/ui/checkbox';
-import { RadioGroup, RadioGroupItem } from '@lovable/components/ui/radio-group';
+import { useState } from "react";
+import { Minus, Plus, Users, X } from "lucide-react";
+import { Input } from "@lovable/components/ui/input";
+import { Textarea } from "@lovable/components/ui/textarea";
+import { Label } from "@lovable/components/ui/label";
+import { Checkbox } from "@lovable/components/ui/checkbox";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from '@lovable/components/ui/select';
-import MediaUpload from '../MediaUpload';
-import FacilitiesPicker from '../FacilitiesPicker';
-import EventsPicker from '../EventsPicker';
-import { accesibilidad, seguridad } from '@lovable/data/venueOptions';
-import { PLACE_TYPES } from '@lovable/data/placeData';
-import { usePlaceForm } from '@lovable/components/places/placeFormContext';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@lovable/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@lovable/components/ui/dialog";
+import { Button } from "@lovable/components/ui/button";
+import MediaUpload from "../MediaUpload";
+import FacilitiesPicker, {
+  type FacilidadSelected,
+} from "../FacilitiesPicker";
+import EventsPicker from "../EventsPicker";
+import {
+  tiposLugar,
+  servicios,
+  accesibilidad,
+  seguridad,
+} from "@lovable/data/venueOptions";
 
-const SelectWithExtras = ({
-  options, selected, onChange, placeholder, addAnotherLabel,
-}: {
+/* ---------- Reusable: dashed picker card with dialog ---------- */
+interface PickerCardProps {
+  title: string;
+  emptyText: string;
+  options: string[];
+  selected: string[];
+  onChange: (next: string[]) => void;
+}
+
+const PickerCard = ({
+  title,
+  emptyText,
+  options,
+  selected,
+  onChange,
+}: PickerCardProps) => {
+  const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState<string[]>(selected);
+  const [customValue, setCustomValue] = useState("");
+
+  const toggle = (item: string) => {
+    setDraft((prev) =>
+      prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
+    );
+  };
+
+  return (
+    <div className="rounded-2xl border border-dashed border-primary/40 bg-secondary/40 p-4">
+      {selected.length === 0 ? (
+        <>
+          <p className="text-center text-sm text-muted-foreground mb-3 leading-snug">
+            {emptyText}
+          </p>
+          <div className="flex justify-center">
+            <Dialog
+              open={open}
+              onOpenChange={(o) => {
+                setOpen(o);
+                if (o) setDraft(selected);
+              }}
+            >
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="rounded-full border-primary text-primary hover:bg-primary/5 px-8"
+                >
+                  Agregar
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>{title}</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-2 py-2">
+                  {options.map((opt) => (
+                    <label
+                      key={opt}
+                      className="flex items-center gap-3 py-1.5 cursor-pointer"
+                    >
+                      <Checkbox
+                        checked={draft.includes(opt)}
+                        onCheckedChange={() => toggle(opt)}
+                      />
+                      <span className="text-sm">{opt}</span>
+                    </label>
+                  ))}
+                  <div className="flex gap-2 pt-2 border-t mt-2">
+                    <Input
+                      placeholder="Agregar otro..."
+                      value={customValue}
+                      onChange={(e) => setCustomValue(e.target.value)}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        const v = customValue.trim();
+                        if (v && !draft.includes(v)) {
+                          setDraft([...draft, v]);
+                          setCustomValue("");
+                        }
+                      }}
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button
+                    onClick={() => {
+                      onChange(draft);
+                      setOpen(false);
+                    }}
+                  >
+                    Guardar
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="flex flex-wrap gap-2 mb-3">
+            {selected.map((item) => (
+              <span
+                key={item}
+                className="inline-flex items-center gap-1.5 bg-primary text-primary-foreground text-xs px-3 py-1.5 rounded-full"
+              >
+                {item}
+                <button
+                  type="button"
+                  onClick={() => onChange(selected.filter((i) => i !== item))}
+                  className="hover:opacity-80"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            ))}
+          </div>
+          <div className="flex justify-center">
+            <Dialog
+              open={open}
+              onOpenChange={(o) => {
+                setOpen(o);
+                if (o) setDraft(selected);
+              }}
+            >
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="rounded-full border-primary text-primary hover:bg-primary/5"
+                >
+                  <Plus className="w-3.5 h-3.5 mr-1" /> Editar
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>{title}</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-2 py-2">
+                  {options.map((opt) => (
+                    <label
+                      key={opt}
+                      className="flex items-center gap-3 py-1.5 cursor-pointer"
+                    >
+                      <Checkbox
+                        checked={draft.includes(opt)}
+                        onCheckedChange={() => toggle(opt)}
+                      />
+                      <span className="text-sm">{opt}</span>
+                    </label>
+                  ))}
+                  {draft
+                    .filter((d) => !options.includes(d))
+                    .map((opt) => (
+                      <label
+                        key={opt}
+                        className="flex items-center gap-3 py-1.5 cursor-pointer"
+                      >
+                        <Checkbox
+                          checked
+                          onCheckedChange={() => toggle(opt)}
+                        />
+                        <span className="text-sm">{opt}</span>
+                      </label>
+                    ))}
+                  <div className="flex gap-2 pt-2 border-t mt-2">
+                    <Input
+                      placeholder="Agregar otro..."
+                      value={customValue}
+                      onChange={(e) => setCustomValue(e.target.value)}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        const v = customValue.trim();
+                        if (v && !draft.includes(v)) {
+                          setDraft([...draft, v]);
+                          setCustomValue("");
+                        }
+                      }}
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button
+                    onClick={() => {
+                      onChange(draft);
+                      setOpen(false);
+                    }}
+                  >
+                    Guardar
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+/* ---------- Reusable: select + chips + "Agregar otro" link ---------- */
+interface SelectWithExtrasProps {
   options: string[];
   selected: string[];
   onChange: (next: string[]) => void;
   placeholder: string;
   addAnotherLabel: string;
-}) => {
+}
+
+const SelectWithExtras = ({
+  options,
+  selected,
+  onChange,
+  placeholder,
+  addAnotherLabel,
+}: SelectWithExtrasProps) => {
   const [customOpen, setCustomOpen] = useState(false);
-  const [customValue, setCustomValue] = useState('');
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const _ = addAnotherLabel;
+  const [customValue, setCustomValue] = useState("");
 
   return (
     <div>
-      <Select value="" onValueChange={(v) => { if (v && !selected.includes(v)) onChange([...selected, v]); }}>
-        <SelectTrigger className="border-0 border-b border-border/60 rounded-none px-0 focus:ring-0 shadow-none font-extrabold">
+      <Select
+        value=""
+        onValueChange={(v) => {
+          if (v && !selected.includes(v)) onChange([...selected, v]);
+        }}
+      >
+        <SelectTrigger className="border-0 border-b rounded-none px-0 focus:ring-0 shadow-none">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent className="max-h-[300px] bg-popover">
-          {options.filter((o) => !selected.includes(o)).map((o) => (
-            <SelectItem key={o} value={o}>{o}</SelectItem>
-          ))}
+          {options
+            .filter((o) => !selected.includes(o))
+            .map((o) => (
+              <SelectItem key={o} value={o}>
+                {o}
+              </SelectItem>
+            ))}
         </SelectContent>
       </Select>
+
       {selected.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-3">
           {selected.map((item) => (
-            <span key={item} className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-extrabold text-primary-foreground shadow-sm">
+            <span
+              key={item}
+              className="inline-flex items-center gap-1.5 bg-primary text-primary-foreground text-xs px-3 py-1.5 rounded-full"
+            >
               {item}
-              <button type="button" onClick={() => onChange(selected.filter((i) => i !== item))}>
+              <button
+                type="button"
+                onClick={() => onChange(selected.filter((i) => i !== item))}
+              >
                 <X className="w-3 h-3" />
               </button>
             </span>
           ))}
         </div>
       )}
+
       <div className="flex justify-end mt-2">
         {customOpen ? (
           <div className="flex gap-2 w-full">
@@ -61,21 +308,43 @@ const SelectWithExtras = ({
               value={customValue}
               onChange={(e) => setCustomValue(e.target.value)}
               placeholder={addAnotherLabel}
-              className="h-9 border border-border/60 rounded-lg shadow-sm font-extrabold"
+              className="h-9"
               onKeyDown={(e) => {
-                if (e.key === 'Enter') {
+                if (e.key === "Enter") {
                   e.preventDefault();
                   const v = customValue.trim();
-                  if (v && !selected.includes(v)) onChange([...selected, v]);
-                  setCustomValue('');
-                  setCustomOpen(false);
+                  if (v && !selected.includes(v)) {
+                    onChange([...selected, v]);
+                    setCustomValue("");
+                    setCustomOpen(false);
+                  }
                 }
               }}
             />
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                const v = customValue.trim();
+                if (v && !selected.includes(v)) {
+                  onChange([...selected, v]);
+                  setCustomValue("");
+                  setCustomOpen(false);
+                } else {
+                  setCustomOpen(false);
+                }
+              }}
+            >
+              OK
+            </Button>
           </div>
         ) : (
-          <button type="button" onClick={() => setCustomOpen(true)} className="text-sm font-extrabold text-primary hover:underline">
-            {addAnotherLabel} <Plus className="w-3.5 h-3.5 inline" />
+          <button
+            type="button"
+            onClick={() => setCustomOpen(true)}
+            className="inline-flex items-center gap-1 text-sm text-primary font-medium hover:underline"
+          >
+            {addAnotherLabel} <Plus className="w-3.5 h-3.5" />
           </button>
         )}
       </div>
@@ -83,176 +352,192 @@ const SelectWithExtras = ({
   );
 };
 
+/* ---------- Main Section ---------- */
 const MainInfoSection = () => {
-  const { form, update } = usePlaceForm();
-  const capacity = Number(form.capacity) || 0;
-  const MAX_DESC = 500;
+  const [nombre, setNombre] = useState("");
+  const [tipoLugar, setTipoLugar] = useState<string>("");
+  const [aforo, setAforo] = useState(0);
+  const [facilidadesSel, setFacilidadesSel] = useState<FacilidadSelected[]>([]);
+  const [eventosSel, setEventosSel] = useState<string[]>([]);
+  const [serviciosSel, setServiciosSel] = useState<string[]>([]);
+  const [accesibilidadSel, setAccesibilidadSel] = useState<string[]>([]);
+  const [seguridadSel, setSeguridadSel] = useState<string[]>([]);
+  const [rol, setRol] = useState<"dueno" | "admin" | "">("");
+  const [descripcion, setDescripcion] = useState("");
+
+  const MAX_DESC = 140;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-2">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
-          <FileText className="h-5 w-5 text-primary" />
-        </div>
-        <div>
-          <h2 className="text-base font-extrabold text-foreground">Información principal</h2>
-          <p className="text-xs font-extrabold text-muted-foreground">Datos básicos del lugar que verán los organizadores</p>
-        </div>
-      </div>
-      <div className="rounded-2xl bg-card border border-border/60 shadow-sm ring-1 ring-primary/10 p-4 space-y-6">
+    <div className="space-y-5">
+      {/* Material publicitario */}
       <MediaUpload />
 
+      {/* Nombre del lugar */}
       <div>
-        <Label className="text-sm font-extrabold">Nombre del lugar *</Label>
+        <Label className="text-sm font-medium">Nombre del lugar</Label>
         <Input
-          value={form.name}
-          onChange={(e) => update({ name: e.target.value })}
-          placeholder="Ej: Salón Las Palmas"
-          className="border-0 border-b border-border/60 rounded-none px-0 focus-visible:ring-0 shadow-none mt-1 font-extrabold"
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+          placeholder="Ej: Finca Corralejas"
+          className="border-0 border-b rounded-none px-0 focus-visible:ring-0 shadow-none mt-1"
         />
       </div>
 
+      {/* Tipo de lugar */}
       <div>
-        <Label className="text-sm font-extrabold">Tipo de lugar *</Label>
-        <Select
-          value={form.placeType || ''}
-          onValueChange={(v) => update({ placeType: v })}
-        >
-          <SelectTrigger className="border-0 border-b border-border/60 rounded-none px-0 focus:ring-0 shadow-none mt-1 font-extrabold">
+        <Label className="text-sm font-medium">Tipo de lugar</Label>
+        <Select value={tipoLugar} onValueChange={setTipoLugar}>
+          <SelectTrigger className="border-0 border-b rounded-none px-0 focus:ring-0 shadow-none mt-1">
             <SelectValue placeholder="Selecciona el tipo de lugar" />
           </SelectTrigger>
           <SelectContent className="max-h-[300px] bg-popover">
-            {PLACE_TYPES.map((t) => (
-              <SelectItem key={t} value={t}>{t}</SelectItem>
+            {tiposLugar.map((t) => (
+              <SelectItem key={t} value={t}>
+                {t}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
-        {form.placeType === 'Otro' && (
-          <Input
-            className="mt-2 border-0 border-b border-border/60 rounded-none px-0 focus-visible:ring-0 shadow-none font-extrabold"
-            placeholder="¿Qué tipo de lugar es?"
-            value={form.placeTypeOther}
-            onChange={(e) => update({ placeTypeOther: e.target.value })}
+      </div>
+
+      {/* Aforo */}
+      <div>
+        <Label className="text-sm font-medium">Aforo del lugar</Label>
+        <div className="flex items-center justify-between mt-2">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Users className="w-5 h-5 text-primary" />
+            <span className="text-sm">Número de personas</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setAforo(Math.max(0, aforo - 1))}
+              className="w-8 h-8 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:bg-secondary"
+            >
+              <Minus className="w-4 h-4" />
+            </button>
+            <span className="w-8 text-center font-medium">{aforo}</span>
+            <button
+              type="button"
+              onClick={() => setAforo(aforo + 1)}
+              className="w-8 h-8 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:bg-secondary"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Servicios y facilidades del lugar */}
+      <div>
+        <Label className="text-sm font-medium">Servicios y facilidades del lugar</Label>
+        <div className="mt-2">
+          <FacilitiesPicker
+            selected={facilidadesSel}
+            onChange={setFacilidadesSel}
           />
-        )}
-      </div>
-
-      <div>
-        <Label className="text-sm font-extrabold">¿El lugar tiene silletería asignada?</Label>
-        <RadioGroup
-          value={form.hasSeating ? 'yes' : 'no'}
-          onValueChange={(v) => update({ hasSeating: v === 'yes' })}
-          className="flex gap-4 mt-2"
-        >
-          <div className="flex items-center gap-2">
-            <RadioGroupItem value="yes" id="seat-yes" />
-            <label htmlFor="seat-yes" className="text-sm font-extrabold">Sí (teatro, estadio…)</label>
-          </div>
-          <div className="flex items-center gap-2">
-            <RadioGroupItem value="no" id="seat-no" />
-            <label htmlFor="seat-no" className="text-sm font-extrabold">No</label>
-          </div>
-        </RadioGroup>
-      </div>
-
-      {!form.hasSeating && (
-        <div>
-          <Label className="text-sm font-extrabold">Aforo del lugar</Label>
-          <div className="flex items-center justify-between mt-2">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Users className="w-5 h-5 text-primary" />
-              <span className="text-sm font-extrabold">Número de personas</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <button type="button" onClick={() => update({ capacity: String(Math.max(1, capacity - 1)) })} className="flex h-8 w-8 items-center justify-center rounded-full border border-border/60 shadow-sm ring-2 ring-primary/20 hover:bg-primary/5">
-                <Minus className="w-4 h-4 text-primary" />
-              </button>
-              <span className="w-8 text-center font-extrabold text-primary">{capacity}</span>
-              <button type="button" onClick={() => update({ capacity: String(capacity + 1) })} className="flex h-8 w-8 items-center justify-center rounded-full border border-primary bg-primary text-primary-foreground shadow-sm ring-2 ring-primary/20">
-                <Plus className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
         </div>
-      )}
-
-      <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-card px-3 py-2 shadow-sm">
-        <Checkbox checked={form.hasParking} onCheckedChange={(v) => update({ hasParking: Boolean(v) })} id="parking" />
-        <label htmlFor="parking" className="flex items-center gap-2 text-sm font-extrabold">
-          <ParkingCircle className="h-4 w-4 text-primary" />
-          Incluye parqueadero
-        </label>
       </div>
 
+      {/* Eventos que se pueden realizar */}
       <div>
-        <Label className="text-sm font-extrabold">Servicios y facilidades del lugar</Label>
+        <Label className="text-sm font-medium">
+          Eventos que se pueden realizar en el lugar
+        </Label>
         <div className="mt-2">
-          <FacilitiesPicker selected={form.facilities} onChange={(facilities) => update({ facilities })} />
+          <EventsPicker selected={eventosSel} onChange={setEventosSel} />
         </div>
       </div>
 
+      {/* Servicios adicionales con costo */}
       <div>
-        <Label className="text-sm font-extrabold">Eventos que se pueden realizar en el lugar</Label>
-        <div className="mt-2">
-          <EventsPicker selected={form.allowedEventTypes} onChange={(allowedEventTypes) => update({ allowedEventTypes })} />
+        <Label className="text-sm font-medium">Servicios adicionales con costo</Label>
+        <div className="mt-1">
+          <SelectWithExtras
+            options={servicios}
+            selected={serviciosSel}
+            onChange={setServiciosSel}
+            placeholder="Selecciona el servicio"
+            addAnotherLabel="Agregar otro servicio"
+          />
         </div>
       </div>
 
+      {/* Accesibilidad */}
       <div>
-        <Label className="text-sm font-extrabold">Accesibilidad</Label>
+        <Label className="text-sm font-medium">Accesibilidad</Label>
         <div className="mt-1">
           <SelectWithExtras
             options={accesibilidad}
-            selected={form.accessibility}
-            onChange={(accessibility) => update({ accessibility })}
+            selected={accesibilidadSel}
+            onChange={setAccesibilidadSel}
             placeholder="Selecciona una opción"
             addAnotherLabel="Agregar otra opción"
           />
         </div>
       </div>
 
+      {/* Seguridad */}
       <div>
-        <Label className="text-sm font-extrabold">Seguridad</Label>
+        <Label className="text-sm font-medium">Seguridad</Label>
         <div className="mt-1">
           <SelectWithExtras
             options={seguridad}
-            selected={form.security}
-            onChange={(security) => update({ security })}
+            selected={seguridadSel}
+            onChange={setSeguridadSel}
             placeholder="Selecciona una opción de seguridad"
             addAnotherLabel="Agregar otra opción"
           />
         </div>
       </div>
 
+      {/* Dueño/Administrador */}
       <div>
-        <Label className="text-sm font-extrabold">¿Eres dueño/administrador del lugar?</Label>
+        <Label className="text-sm font-medium">
+          ¿Eres dueño/administrador del lugar?
+        </Label>
         <div className="flex gap-6 mt-3">
-          {(['dueno', 'admin'] as const).map((rol) => (
-            <label key={rol} className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="rol"
-                checked={form.hostRole === rol}
-                onChange={() => update({ hostRole: rol })}
-                className="w-4 h-4 accent-primary"
-              />
-              <span className="text-sm font-extrabold">{rol === 'dueno' ? 'Dueño' : 'Administrador'}</span>
-            </label>
-          ))}
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="radio"
+              name="rol"
+              checked={rol === "dueno"}
+              onChange={() => setRol("dueno")}
+              className="w-4 h-4 accent-primary"
+            />
+            <span className="text-sm">Dueño</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="radio"
+              name="rol"
+              checked={rol === "admin"}
+              onChange={() => setRol("admin")}
+              className="w-4 h-4 accent-primary"
+            />
+            <span className="text-sm">Administrador</span>
+          </label>
         </div>
       </div>
 
+      {/* Descripción y condiciones (Opcional) */}
       <div>
-        <Label className="text-sm font-extrabold">Descripción y condiciones del lugar</Label>
+        <Label className="text-sm font-medium">
+          Descripción y condiciones del lugar{" "}
+          <span className="text-muted-foreground font-normal">(Opcional)</span>
+        </Label>
         <Textarea
-          value={form.description}
-          onChange={(e) => update({ description: e.target.value.slice(0, MAX_DESC) })}
+          value={descripcion}
+          onChange={(e) =>
+            setDescripcion(e.target.value.slice(0, MAX_DESC))
+          }
           placeholder="Describe tu espacio con las características principales..."
-          rows={4}
-          className="mt-1 border-border/60 shadow-sm font-extrabold focus-visible:ring-2 focus-visible:ring-primary/20"
+          rows={3}
+          className="mt-1 border-0 border-b rounded-none px-0 focus-visible:ring-0 shadow-none resize-none"
         />
-        <p className="text-xs font-extrabold text-muted-foreground mt-1">{form.description.length}/{MAX_DESC}</p>
-      </div>
+        <p className="text-xs text-muted-foreground mt-1">
+          {MAX_DESC} caracteres máximo
+        </p>
       </div>
     </div>
   );
