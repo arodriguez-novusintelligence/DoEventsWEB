@@ -1,17 +1,13 @@
-import { useEffect, useState } from "react";
-import { Search, Smartphone, Loader2, UserPlus } from "lucide-react";
+import { useState } from "react";
+import { Search, X } from "lucide-react";
 import { CreateGuestRequest } from "@lovable/types/guest";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@lovable/components/ui/dialog";
 import { Button } from "@lovable/components/ui/button";
 import { Input } from "@lovable/components/ui/input";
 import { Checkbox } from "@lovable/components/ui/checkbox";
 import { useToast } from "@lovable/hooks/use-toast";
-import { guestErrorMessage } from "@lovable/utils/guestErrorMessage";
-import {
-  type DeviceContact,
-  isDeviceContactsSupported,
-  pickDeviceContacts,
-} from "@lovable/utils/deviceContacts";
+
+interface Contact { id: string; name: string; phone: string; }
 
 interface Props {
   open: boolean;
@@ -22,152 +18,62 @@ interface Props {
 export function ContactImportModal({ open, onOpenChange, onImportContacts }: Props) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [contacts, setContacts] = useState<DeviceContact[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [selectAll, setSelectAll] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (!open) {
-      setSearchTerm("");
-      setSelected(new Set());
-      setContacts([]);
-    }
-  }, [open]);
-
-  const filtered = contacts.filter(
-    (c) => c.name.toLowerCase().includes(searchTerm.toLowerCase()) || c.phone.includes(searchTerm),
-  );
-  const allSelected = filtered.length > 0 && filtered.every((c) => selected.has(c.id));
+  const filtered = mockContacts.filter(c => c.name.toLowerCase().includes(searchTerm.toLowerCase()) || c.phone.includes(searchTerm));
 
   const toggleAll = (checked: boolean) => {
-    if (checked) setSelected(new Set(filtered.map((c) => c.id)));
-    else setSelected(new Set());
+    setSelectAll(checked);
+    setSelected(checked ? new Set(filtered.map(c => c.id)) : new Set());
   };
-
   const toggleOne = (id: string, checked: boolean) => {
     const next = new Set(selected);
-    if (checked) next.add(id);
-    else next.delete(id);
+    if (checked) next.add(id); else { next.delete(id); setSelectAll(false); }
     setSelected(next);
   };
 
-  const loadFromDevice = async () => {
-    setLoading(true);
-    try {
-      const picked = await pickDeviceContacts();
-      setContacts(picked);
-      setSelected(new Set(picked.map((c) => c.id)));
-    } catch (err) {
-      toast({
-        title: "No se pudieron cargar contactos",
-        description: guestErrorMessage(err),
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleImport = () => {
-    const list = contacts.filter((c) => selected.has(c.id)).map((c) => {
-      const parts = c.name.trim().split(/\s+/).filter(Boolean);
-      const name = parts[0] || c.name.trim();
-      const lastName = parts.slice(1).join(' ');
-      return {
-        name,
-        lastName: lastName || '',
-        username: "",
-        email: "",
-        phone: c.phone,
-        isFavorite: false,
-      } satisfies CreateGuestRequest;
+    const list = mockContacts.filter(c => selected.has(c.id)).map(c => {
+      const [name, ...rest] = c.name.split(" ");
+      return { name, lastName: rest.join(" ") || "", username: "", email: "", phone: c.phone, isFavorite: false };
     });
-    if (!list.length) {
-      toast({ title: "Selecciona contactos", description: "Selecciona al menos un contacto.", variant: "destructive" });
-      return;
-    }
+    if (!list.length) { toast({ title: "Selecciona contactos", description: "Selecciona al menos un contacto.", variant: "destructive" }); return; }
     onImportContacts(list);
     onOpenChange(false);
-    toast({ title: "Contactos importados", description: `Se importaron ${list.length} contacto(s).` });
+    setSelected(new Set()); setSelectAll(false); setSearchTerm("");
+    toast({ title: "Contactos importados", description: `Se importaron ${list.length} contactos.` });
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md rounded-2xl h-[80vh] flex flex-col border border-border/60 shadow-sm">
+      <DialogContent className="sm:max-w-md rounded-2xl h-[80vh] flex flex-col">
         <DialogHeader className="space-y-3">
           <div className="flex items-center justify-between">
-            <DialogTitle className="flex items-center gap-3 text-lg font-extrabold text-foreground">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
-                <UserPlus className="h-5 w-5 text-primary" />
-              </span>
-              Importa contactos como invitados
-            </DialogTitle>
+            <DialogTitle className="text-lg font-semibold text-foreground">Importa contactos como invitados</DialogTitle>
+            <Button variant="ghost" size="sm" onClick={() => onOpenChange(false)} className="h-8 w-8 p-0"><X className="h-4 w-4" /></Button>
           </div>
-          <p className="text-xs text-muted-foreground">Importa contactos del dispositivo como invitados.</p>
-          {!isDeviceContactsSupported() && (
-            <div className="rounded-xl border border-dashed border-primary/25 border-border/60 bg-primary/5 px-3 py-2 text-left text-xs font-extrabold text-muted-foreground shadow-sm">
-              La importación de contactos no está disponible en este navegador. Usa un dispositivo móvil compatible.
-            </div>
-          )}
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full gap-2 rounded-full border-border/60 font-extrabold shadow-sm"
-            onClick={() => void loadFromDevice()}
-            disabled={loading || !isDeviceContactsSupported()}
-          >
-            {loading ? (
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
-                <Loader2 className="h-4 w-4 animate-spin text-primary" />
-              </span>
-            ) : (
-              <Smartphone className="h-4 w-4" />
-            )}
-            {isDeviceContactsSupported() ? 'Seleccionar del dispositivo' : 'Contactos no disponibles en este navegador'}
-          </Button>
-          {contacts.length > 0 && (
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Buscar por nombre o teléfono" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10 rounded-xl border-border/60 bg-muted/50 font-extrabold shadow-sm focus-visible:ring-2 focus-visible:ring-primary/20" />
-            </div>
-          )}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input placeholder="Buscar" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10 bg-muted/50 border-0 rounded-xl" />
+          </div>
         </DialogHeader>
         <div className="flex-1 overflow-hidden flex flex-col space-y-4">
-          {contacts.length > 0 ? (
-            <>
-              <div className="flex items-center space-x-3 py-2">
-                <Checkbox id="select-all" checked={allSelected} onCheckedChange={(c) => toggleAll(!!c)} />
-                <label htmlFor="select-all" className="text-sm font-extrabold">Seleccionar todos ({filtered.length})</label>
+          <div className="flex items-center space-x-3 py-2">
+            <Checkbox id="select-all" checked={selectAll} onCheckedChange={(c) => toggleAll(!!c)} />
+            <label htmlFor="select-all" className="text-sm font-medium">Todos</label>
+          </div>
+          <div className="flex-1 overflow-y-auto space-y-3">
+            {filtered.map(c => (
+              <div key={c.id} className="flex items-center space-x-3 p-3 bg-muted/30 rounded-xl">
+                <Checkbox id={c.id} checked={selected.has(c.id)} onCheckedChange={(ch) => toggleOne(c.id, !!ch)} />
+                <div className="flex-1"><p className="font-medium text-foreground">{c.name}</p><p className="text-sm text-muted-foreground">{c.phone}</p></div>
               </div>
-              <div className="flex-1 overflow-y-auto space-y-2">
-                {filtered.map((c) => (
-                  <label key={c.id} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer shadow-sm ${selected.has(c.id) ? 'bg-primary/5 border-primary ring-2 ring-primary/20' : 'bg-muted/30 border-border/60'}`}>
-                    <Checkbox checked={selected.has(c.id)} onCheckedChange={(ch) => toggleOne(c.id, !!ch)} />
-                    <div className="w-9 h-9 rounded-full bg-primary/10 ring-2 ring-primary/20 flex items-center justify-center shrink-0">
-                      <Smartphone className="h-4 w-4 text-primary" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-extrabold text-foreground truncate">{c.name}</p>
-                      <p className="text-sm text-muted-foreground truncate">{c.phone}</p>
-                    </div>
-                  </label>
-                ))}
-              </div>
-            </>
-          ) : (
-            <div className="flex flex-1 flex-col items-center justify-center rounded-2xl border border-dashed border-primary/25 border-border/60 py-8 text-center px-4 shadow-sm">
-              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
-                <UserPlus className="h-7 w-7 text-primary" />
-              </div>
-              <p className="text-sm font-extrabold text-foreground">Importar desde tu dispositivo</p>
-              <p className="mt-1 text-xs font-extrabold text-muted-foreground">
-                Pulsa el botón superior para elegir contactos de tu teléfono o agenda.
-              </p>
-            </div>
-          )}
+            ))}
+          </div>
         </div>
-        <div className="border-t border-border/60 pt-4">
-          <Button onClick={handleImport} className="w-full rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-extrabold shadow-sm" disabled={!selected.size}>
+        <div className="pt-4">
+          <Button onClick={handleImport} className="w-full rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground" disabled={!selected.size}>
             Agregar contactos ({selected.size})
           </Button>
         </div>
