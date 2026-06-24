@@ -363,3 +363,4 @@ export const EVENT_CATEGORIES = [
   'Cultural',
   'Otro',
 ];
+export const mockCompleteEvent: EventFormData = initialEventFormData;

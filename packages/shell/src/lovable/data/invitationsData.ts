@@ -50,3 +50,4 @@ export interface InvitationEvent {
   host: InvitationPerson;
   refundPolicy: string;
 }
+export const mockInvitations: InvitationEvent[] = [];

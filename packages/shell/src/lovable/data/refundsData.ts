@@ -54,3 +54,17 @@ export interface EventRefundsData {
   policyType: RefundPolicyType;
   requests: RefundRequest[];
 }
+import type { EventChatRoom } from './chatData';
+
+export const generateMockRefundsData = (
+  event: EventChatRoom,
+  policyType: RefundPolicyType = 'days_1',
+): EventRefundsData => ({
+  eventId: event.id,
+  eventName: event.eventName,
+  currency: 'COP',
+  policyLabel: '',
+  policyLimitDays: 0,
+  policyType,
+  requests: [],
+});

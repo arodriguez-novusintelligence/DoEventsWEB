@@ -25,3 +25,25 @@ export interface Ticket {
   paymentExpiresAtTs?: number;
   eventTicketCount?: number;
 }
+import { useSyncExternalStore } from 'react';
+
+let tickets: Ticket[] = [];
+const listeners = new Set<() => void>();
+const emit = () => listeners.forEach((l) => l());
+
+export const getTickets = () => tickets;
+
+export const addTickets = (newTickets: Ticket[]) => {
+  tickets = [...newTickets, ...tickets];
+  emit();
+};
+
+export const useTickets = () =>
+  useSyncExternalStore(
+    (cb) => {
+      listeners.add(cb);
+      return () => listeners.delete(cb);
+    },
+    () => tickets,
+    () => tickets,
+  );

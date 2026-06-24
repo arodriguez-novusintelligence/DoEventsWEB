@@ -73,3 +73,5 @@ export interface PrivateChat {
   unreadCount: number;
   messages: ChatMessage[];
 }
+export const mockPrivateChats: PrivateChat[] = [];
+export const mockChatRooms: EventChatRoom[] = [];

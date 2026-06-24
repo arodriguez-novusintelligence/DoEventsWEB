@@ -31,3 +31,12 @@ export interface EventSalesData {
   currency: string;
   categories: CategorySales[];
 }
+import type { EventChatRoom } from './chatData';
+
+export const generateMockSalesData = (event: EventChatRoom): EventSalesData => ({
+  eventId: event.id,
+  eventName: event.eventName,
+  venueName: '',
+  currency: 'COP',
+  categories: [],
+});

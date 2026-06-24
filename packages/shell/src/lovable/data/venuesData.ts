@@ -24,3 +24,4 @@ export const VENUE_TYPES = [
   'Coworking',
   'Otro',
 ];
+export const MOCK_VENUES: Venue[] = [];
