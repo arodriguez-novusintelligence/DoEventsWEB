@@ -1,91 +1,112 @@
-import { Input } from '@lovable/components/ui/input';
-import { Textarea } from '@lovable/components/ui/textarea';
-import { Label } from '@lovable/components/ui/label';
-import { Button } from '@lovable/components/ui/button';
-import { Plus, Trash2, HelpCircle } from 'lucide-react';
+import { useState } from "react";
+import { Input } from "@lovable/components/ui/input";
+import { Textarea } from "@lovable/components/ui/textarea";
+import { Label } from "@lovable/components/ui/label";
+import { Button } from "@lovable/components/ui/button";
+import { Plus, Trash2, GripVertical } from "lucide-react";
+
 import { newWizardId } from '@doevents/shared';
-import { usePlaceForm } from '@lovable/components/places/placeFormContext';
+interface FAQ {
+  id: string;
+  question: string;
+  answer: string;
+}
 
 const FAQSection = () => {
-  const { form, update } = usePlaceForm();
+  const [faqs, setFaqs] = useState<FAQ[]>([
+    { id: "1", question: "", answer: "" },
+  ]);
 
   const addFAQ = () => {
-    update({
-      faqs: [...form.faqs, { id: newWizardId(), question: '', answer: '' }],
-    });
+    setFaqs([
+      ...faqs,
+      { id: `faq-${Date.now()}`, question: "", answer: "" },
+    ]);
   };
 
   const removeFAQ = (id: string) => {
-    update({ faqs: form.faqs.filter((faq) => faq.id !== id) });
+    if (faqs.length > 1) {
+      setFaqs(faqs.filter((faq) => faq.id !== id));
+    }
   };
 
-  const updateFAQ = (id: string, field: 'question' | 'answer', value: string) => {
-    update({
-      faqs: form.faqs.map((faq) => (faq.id === id ? { ...faq, [field]: value } : faq)),
-    });
+  const updateFAQ = (id: string, field: "question" | "answer", value: string) => {
+    setFaqs(
+      faqs.map((faq) =>
+        faq.id === id ? { ...faq, [field]: value } : faq
+      )
+    );
   };
 
   return (
     <div className="form-section">
-      <div className="flex items-center gap-2 mb-1">
-        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
-          <HelpCircle className="h-5 w-5 text-primary" />
-        </span>
-        <Label className="form-label mb-0 font-extrabold">Preguntas frecuentes</Label>
-      </div>
-      <p className="form-sublabel text-sm font-extrabold text-muted-foreground">
-        Opcional: agrega preguntas que los clientes suelen hacer sobre tu lugar.
-      </p>
+      <div className="form-group">
+        <Label className="form-label">Preguntas frecuentes</Label>
+        <p className="form-sublabel">
+          Agrega preguntas y respuestas que los clientes suelen hacer sobre tu
+          lugar
+        </p>
 
-      {form.faqs.length === 0 ? (
-        <div className="mt-4 rounded-xl border border-dashed border-primary/25 border-border/60 bg-secondary/20 p-6 text-center shadow-sm">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
-            <HelpCircle className="h-7 w-7 text-primary" />
-          </div>
-          <p className="mt-3 text-sm font-extrabold text-foreground">Sin preguntas frecuentes aún</p>
-          <Button type="button" variant="outline" className="mt-4 w-full rounded-full border-dashed border-primary/25 font-extrabold shadow-sm" onClick={addFAQ}>
-            <Plus className="w-4 h-4 mr-2" />
-            Agregar pregunta
-          </Button>
-        </div>
-      ) : (
         <div className="space-y-4 mt-4">
-          {form.faqs.map((faq, index) => (
-            <div key={faq.id} className="p-4 rounded-xl border border-border/60 bg-secondary/20 shadow-sm ring-1 ring-primary/10">
+          {faqs.map((faq, index) => (
+            <div
+              key={faq.id}
+              className="p-4 rounded-xl border border-border bg-secondary/20 animate-fade-in"
+            >
               <div className="flex items-start gap-3">
+                <div className="pt-2 text-muted-foreground cursor-move">
+                  <GripVertical className="w-4 h-4" />
+                </div>
                 <div className="flex-1 space-y-3">
                   <div>
-                    <Label className="text-xs font-extrabold text-muted-foreground">Pregunta {index + 1}</Label>
+                    <Label className="form-sublabel">
+                      Pregunta {index + 1}
+                    </Label>
                     <Input
                       placeholder="Ej: ¿Cuál es el horario de check-in?"
                       value={faq.question}
-                      onChange={(e) => updateFAQ(faq.id, 'question', e.target.value)}
-                      className="mt-1 border-border/60 shadow-sm font-extrabold"
+                      onChange={(e) =>
+                        updateFAQ(faq.id, "question", e.target.value)
+                      }
+                      className="mt-1"
                     />
                   </div>
                   <div>
-                    <Label className="text-xs font-extrabold text-muted-foreground">Respuesta</Label>
+                    <Label className="form-sublabel">Respuesta</Label>
                     <Textarea
                       placeholder="Escribe la respuesta aquí..."
                       value={faq.answer}
-                      onChange={(e) => updateFAQ(faq.id, 'answer', e.target.value)}
+                      onChange={(e) =>
+                        updateFAQ(faq.id, "answer", e.target.value)
+                      }
                       rows={2}
-                      className="mt-1 border-border/60 shadow-sm font-extrabold"
+                      className="mt-1"
                     />
                   </div>
                 </div>
-                <Button variant="ghost" size="icon" className="rounded-full text-destructive hover:bg-destructive/10 hover:text-destructive ring-2 ring-destructive/20" onClick={() => removeFAQ(faq.id)}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-muted-foreground hover:text-destructive"
+                  onClick={() => removeFAQ(faq.id)}
+                  disabled={faqs.length === 1}
+                >
                   <Trash2 className="w-4 h-4" />
                 </Button>
               </div>
             </div>
           ))}
-          <Button type="button" variant="outline" className="w-full rounded-full border-dashed border-primary/25 font-extrabold shadow-sm" onClick={addFAQ}>
-            <Plus className="w-4 h-4 mr-2" />
-            Agregar otra pregunta
-          </Button>
         </div>
-      )}
+
+        <Button
+          variant="outline"
+          onClick={addFAQ}
+          className="mt-4 w-full border-dashed"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Agregar pregunta
+        </Button>
+      </div>
     </div>
   );
 };

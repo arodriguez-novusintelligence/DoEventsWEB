@@ -11,9 +11,9 @@ export {
   StoriesProvider,
   useActiveStoryAuthors,
   useStories,
-} from '../../../contexts/StoriesContext';
+} from '../../contexts/StoriesContext';
 
-export type { StoriesContextValue } from '../../../contexts/StoriesContext';
+export type { StoriesContextValue } from '../../contexts/StoriesContext';
 
 /** Alias Lovable — mismo hook que `useStories`. */
-export { useActiveStoryAuthors as useStoriesContext } from '../../../contexts/StoriesContext';
+export { useActiveStoryAuthors as useStoriesContext } from '../../contexts/StoriesContext';

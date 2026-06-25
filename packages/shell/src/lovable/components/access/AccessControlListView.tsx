@@ -2,9 +2,9 @@ import { useMemo, useState } from 'react';
 import { ChevronLeft, Calendar, MapPin, DoorOpen, Users, ScanLine, Settings2, Plus, Eye, CheckCircle2 } from 'lucide-react';
 import ScanQRSheet from './ScanQRSheet';
 import { toast } from 'sonner';
+
 import type { AccessEventView } from '../../../lovable-bridge/accessAdapter';
 import { isAccessControlEnabled } from '../../../lovable-bridge/accessAdapter';
-
 type EventStatus = 'activo' | 'inactivo' | 'proximo' | 'finalizado' | 'cancelado' | 'en-curso';
 
 interface Organizer {

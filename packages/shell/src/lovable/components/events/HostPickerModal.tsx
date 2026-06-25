@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Search, X, UserPlus, BookUser, ChevronDown, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
-import { Button } from '@lovable/components/ui/button';
-import { searchUsers } from '@doevents/shared';
+import { useMemo, useState } from 'react';
+import { Search, X, UserPlus, BookUser, Pencil, ChevronDown } from 'lucide-react';
 import { EventHost } from '@lovable/data/eventFormData';
+import { platformUsers, searchPlatformUsers, PlatformUser } from '@lovable/data/platformUsers';
 
+import { searchUsers } from '@doevents/shared';
 interface HostPickerModalProps {
   open: boolean;
   onClose: () => void;
@@ -11,24 +11,16 @@ interface HostPickerModalProps {
   existingIds: string[];
 }
 
-type TabKey = 'search' | 'manual';
+type TabKey = 'search' | 'manual' | 'contacts';
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'search', label: 'Buscar contacto' },
   { key: 'manual', label: 'Manual' },
+  { key: 'contacts', label: 'Contactos' },
 ];
 
-type SearchUserRow = {
-  id: string;
-  name: string;
-  username?: string;
-  email?: string;
-  avatar?: string;
-  initials: string;
-};
-
-const Avatar = ({ user }: { user: SearchUserRow }) => (
-  <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/15 ring-2 ring-primary/20 text-sm font-extrabold text-primary">
+const Avatar = ({ user }: { user: PlatformUser }) => (
+  <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/15 text-sm font-bold text-primary">
     {user.avatar ? (
       <img src={user.avatar} alt={user.name} className="h-full w-full object-cover" />
     ) : (
@@ -42,45 +34,31 @@ const UserRow = ({
   added,
   onAdd,
 }: {
-  user: SearchUserRow;
+  user: PlatformUser;
   added: boolean;
   onAdd: () => void;
 }) => (
-  <div className="flex items-center gap-3 rounded-2xl border border-border/60 bg-secondary px-3 py-2.5 shadow-sm">
+  <div className="flex items-center gap-3 rounded-2xl bg-secondary px-3 py-2.5">
     <Avatar user={user} />
     <div className="min-w-0 flex-1">
-      <p className="truncate text-sm font-extrabold text-foreground">{user.name}</p>
-      {user.username && <p className="truncate text-xs font-extrabold text-primary">@{user.username.replace(/^@/, '')}</p>}
-      {user.email && <p className="truncate text-xs font-extrabold text-muted-foreground">{user.email}</p>}
+      <p className="truncate text-sm font-bold text-foreground">{user.name}</p>
+      <p className="truncate text-xs text-primary">{user.username}</p>
+      <p className="truncate text-xs text-muted-foreground">{user.email}</p>
     </div>
     <button
       type="button"
       onClick={onAdd}
       disabled={added}
-      className="shrink-0 rounded-full bg-primary px-4 py-1.5 text-xs font-extrabold text-primary-foreground shadow-sm transition-opacity disabled:opacity-50"
+      className="shrink-0 rounded-full bg-primary px-4 py-1.5 text-xs font-bold text-primary-foreground transition-opacity disabled:opacity-50"
     >
       {added ? 'Agregado' : 'Agregar'}
     </button>
   </div>
 );
 
-function initialsFromName(name: string): string {
-  return name
-    .split(' ')
-    .filter(Boolean)
-    .map((part) => part[0])
-    .join('')
-    .slice(0, 2)
-    .toUpperCase() || 'DE';
-}
-
 const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalProps) => {
   const [tab, setTab] = useState<TabKey>('search');
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<SearchUserRow[]>([]);
-  const [searching, setSearching] = useState(false);
-  const [searched, setSearched] = useState(false);
-  const [searchError, setSearchError] = useState(false);
   const [manual, setManual] = useState({
     name: '',
     email: '',
@@ -89,63 +67,26 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
     role: '',
   });
 
-  const runSearch = useCallback(async (q: string) => {
-    const trimmed = q.trim();
-    if (trimmed.length < 2) {
-      setResults([]);
-      setSearched(false);
-      return;
-    }
-    setSearching(true);
-    setSearched(true);
-    setSearchError(false);
-    try {
-      const users = await searchUsers(trimmed);
-      setResults(
-        users
-          .map((u) => ({
-            id: String(u.id || '').trim(),
-            name: u.name || u.username || 'Usuario',
-            username: u.username,
-            email: u.email,
-            avatar: u.imagen || u.fotoPerfilUrl,
-            initials: initialsFromName(u.name || u.username || 'U'),
-          }))
-          .filter((u) => u.id),
-      );
-    } catch {
-      setResults([]);
-      setSearchError(true);
-    } finally {
-      setSearching(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!open || tab !== 'search') return;
-    const timer = window.setTimeout(() => {
-      void runSearch(query);
-    }, 350);
-    return () => window.clearTimeout(timer);
-  }, [open, tab, query, runSearch]);
+  const results = useMemo(() => searchPlatformUsers(query), [query]);
 
   if (!open) return null;
 
-  const addPlatform = (u: SearchUserRow) => {
+  const addPlatform = (u: PlatformUser) => {
     onAdd({
       id: u.id,
       name: u.name,
-      username: u.username ? `@${u.username.replace(/^@/, '')}` : undefined,
+      username: u.username,
       email: u.email,
       avatar: u.avatar,
       initials: u.initials,
-      source: 'platform',
+      phone: u.phone,
+      countryCode: u.countryCode,
+      source: u.id.startsWith('u-') ? 'platform' : 'contact',
     });
   };
 
   const addManual = () => {
     if (!manual.name.trim()) return;
-    if (manual.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(manual.email.trim())) return;
     onAdd({
       id: `host-${Date.now()}`,
       name: manual.name.trim(),
@@ -166,32 +107,26 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
   };
 
   const inputCls =
-    'w-full rounded-xl border border-border/60 bg-background px-3.5 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20';
+    'w-full rounded-xl border border-border bg-background px-3.5 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center">
-      <div className="flex max-h-[90vh] w-full max-w-md flex-col rounded-t-3xl border border-border/60 bg-card shadow-sm ring-1 ring-primary/10 sm:rounded-3xl">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-background/50 sm:items-center">
+      <div className="flex max-h-[90vh] w-full max-w-md flex-col rounded-t-3xl bg-card shadow-2xl sm:rounded-3xl">
+        {/* Header */}
         <div className="flex items-center justify-between p-5 pb-3">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
-              <UserPlus className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <h3 className="text-lg font-extrabold text-foreground">Seleccionar anfitrión</h3>
-              <p className="text-xs font-extrabold text-muted-foreground mt-0.5">Busca en la plataforma o agrega manualmente</p>
-            </div>
-          </div>
+          <h3 className="text-lg font-bold text-foreground">Seleccionar anfitrión</h3>
           <button
             type="button"
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-card text-muted-foreground ring-2 ring-primary/20 shadow-sm hover:bg-secondary"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary"
             aria-label="Cerrar"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="flex border-b border-border/60 px-2">
+        {/* Tabs */}
+        <div className="flex border-b border-border px-2">
           {TABS.map((t) => {
             const active = tab === t.key;
             return (
@@ -199,8 +134,8 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
                 key={t.key}
                 type="button"
                 onClick={() => setTab(t.key)}
-                className={`relative flex-1 px-3 py-3 text-sm transition-colors ${
-                  active ? 'font-extrabold text-primary' : 'font-extrabold text-muted-foreground hover:text-foreground'
+                className={`relative flex-1 px-3 py-3 text-sm font-semibold transition-colors ${
+                  active ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 {t.label}
@@ -212,11 +147,12 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
           })}
         </div>
 
+        {/* Content */}
         <div className="flex-1 overflow-y-auto p-5">
           {tab === 'search' && (
             <div className="space-y-3">
-              <p className="text-sm font-extrabold text-foreground">
-                Buscar por nombre, @usuario, email o teléfono
+              <p className="text-sm font-semibold text-foreground">
+                Buscar por nombre, @usuario o email
               </p>
               <div className="relative">
                 <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -225,14 +161,14 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="@usuario, nombre o email"
-                  className={`${inputCls} pl-9 pr-9 ring-2 ring-primary/20 border-primary/40`}
+                  className={`${inputCls} pl-9 pr-9 ring-2 ring-primary/40 border-primary`}
                   autoFocus
                 />
                 {query && (
                   <button
                     type="button"
                     onClick={() => setQuery('')}
-                    className="absolute right-2 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-card text-muted-foreground ring-2 ring-primary/20 shadow-sm hover:bg-secondary"
+                    className="absolute right-2 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary"
                     aria-label="Limpiar"
                   >
                     <X className="h-4 w-4" />
@@ -241,48 +177,14 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
               </div>
 
               <div className="space-y-2">
-                {query.trim().length < 2 ? (
-                  <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-primary/25 border-border/60 bg-card py-8 text-center shadow-sm">
-                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
-                      <Search className="h-7 w-7 text-primary" />
-                    </div>
-                    <p className="text-sm font-extrabold text-muted-foreground px-4">
-                      Escribe al menos 2 caracteres para buscar usuarios de Do•events
-                    </p>
-                  </div>
-                ) : searching ? (
-                  <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-card py-8 shadow-sm">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
-                      <Loader2 className="h-7 w-7 animate-spin text-primary" />
-                    </div>
-                    <p className="text-sm font-extrabold text-foreground">Buscando…</p>
-                  </div>
-                ) : searchError ? (
-                  <div className="flex flex-col items-center gap-3 rounded-2xl border border-destructive/30 bg-card py-8 text-center shadow-sm">
-                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
-                      <AlertCircle className="h-7 w-7 text-destructive" />
-                    </div>
-                    <p className="text-sm font-extrabold text-destructive">Error al buscar usuarios</p>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="mt-3 gap-1.5 rounded-full font-extrabold shadow-sm"
-                      onClick={() => void runSearch(query)}
-                    >
-                      <RefreshCw className="h-3.5 w-3.5" />
-                      Reintentar
-                    </Button>
-                  </div>
-                ) : searched && results.length === 0 ? (
-                  <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-primary/25 border-border/60 bg-card py-8 text-center shadow-sm">
-                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
-                      <UserPlus className="h-7 w-7 text-primary" />
-                    </div>
-                    <p className="text-sm font-extrabold text-muted-foreground px-4">
-                      No se encontraron usuarios con “{query}”
-                    </p>
-                  </div>
+                {query.trim() === '' ? (
+                  <p className="py-8 text-center text-sm text-muted-foreground">
+                    Empieza a escribir para buscar usuarios de Do•events
+                  </p>
+                ) : results.length === 0 ? (
+                  <p className="py-8 text-center text-sm text-muted-foreground">
+                    No se encontraron usuarios con “{query}”
+                  </p>
                 ) : (
                   results.map((u) => (
                     <UserRow
@@ -299,10 +201,9 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
 
           {tab === 'manual' && (
             <div className="space-y-3">
-              <div className="flex items-center gap-2 rounded-xl border border-primary/20 border-border/60 bg-primary/5 p-3 text-xs font-extrabold text-foreground shadow-sm">
-                <BookUser className="h-4 w-4 shrink-0" />
+              <p className="text-sm text-muted-foreground">
                 Agrega un anfitrión que no está registrado en la plataforma.
-              </div>
+              </p>
               <input
                 type="text"
                 value={manual.name}
@@ -350,10 +251,27 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
                 type="button"
                 onClick={addManual}
                 disabled={!manual.name.trim()}
-                className="mt-2 flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3 text-sm font-extrabold text-primary-foreground shadow-sm disabled:opacity-50"
+                className="mt-2 flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3 text-sm font-bold text-primary-foreground disabled:opacity-50"
               >
                 <UserPlus className="h-4 w-4" /> Agregar anfitrión
               </button>
+            </div>
+          )}
+
+          {tab === 'contacts' && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 rounded-xl bg-accent/60 p-3 text-xs text-accent-foreground">
+                <BookUser className="h-4 w-4 shrink-0" />
+                Estos son contactos de demostración importados desde tu agenda.
+              </div>
+              {platformUsers.slice(0, 6).map((u) => (
+                <UserRow
+                  key={`c-${u.id}`}
+                  user={u}
+                  added={existingIds.includes(u.id)}
+                  onAdd={() => addPlatform(u)}
+                />
+              ))}
             </div>
           )}
         </div>
