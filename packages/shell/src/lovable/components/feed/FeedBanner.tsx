@@ -1,71 +1,81 @@
-import { useState } from 'react';
-import { Megaphone, X } from 'lucide-react';
-import { Button } from '@lovable/components/ui/button';
+import useEmblaCarousel from 'embla-carousel-react';
+import { useState, useEffect, useCallback } from 'react';
 import { cn } from '@lovable/lib/utils';
+import { bannerEvents } from '@lovable/data/mockData';
 
-interface FeedBannerProps {
-  title: string;
-  message: string;
-  onAction?: () => void;
-  actionLabel?: string;
-  className?: string;
-  dismissible?: boolean;
-  onDismiss?: () => void;
-}
+const FeedBanner = () => {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: false,
+    align: 'start',
+    slidesToScroll: 1,
+    containScroll: 'trimSnaps',
+  });
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
-export const FeedBanner = ({
-  title,
-  message,
-  onAction,
-  actionLabel = 'Ver más',
-  className,
-  dismissible = false,
-  onDismiss,
-}: FeedBannerProps) => {
-  const [dismissed, setDismissed] = useState(false);
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi]);
 
-  if (dismissed) return null;
-
-  const handleDismiss = () => {
-    setDismissed(true);
-    onDismiss?.();
-  };
+  useEffect(() => {
+    if (!emblaApi) return;
+    onSelect();
+    emblaApi.on('select', onSelect);
+    return () => {
+      emblaApi.off('select', onSelect);
+    };
+  }, [emblaApi, onSelect]);
 
   return (
-    <div
-      className={cn(
-        'relative mx-4 rounded-2xl border border-border/40 bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10 p-4 shadow-sm',
-        className,
-      )}
-    >
-      {dismissible && (
-        <button
-          type="button"
-          onClick={handleDismiss}
-          className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-background/60 text-muted-foreground ring-2 ring-border/60 hover:text-foreground"
-          aria-label="Cerrar banner"
-        >
-          <X className="h-4 w-4" />
-        </button>
-      )}
-      <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 ring-2 ring-primary/20">
-          <Megaphone className="h-5 w-5 text-primary" />
-        </div>
-        <div className="min-w-0 flex-1 pr-6">
-          <h3 className="text-sm font-extrabold text-foreground">{title}</h3>
-          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{message}</p>
-          {onAction && (
-            <Button
-              type="button"
-              size="sm"
-              className="mt-3 rounded-full"
-              onClick={onAction}
+    <div className="pb-2">
+      <div className="px-4 py-3">
+        <h2 className="text-base font-bold text-card-foreground">
+          Eventos recientes cercanos a mi ubicación
+        </h2>
+      </div>
+      <div className="overflow-hidden" ref={emblaRef}>
+        <div className="flex gap-3 px-4">
+          {bannerEvents.map((event) => (
+            <div
+              key={event.id}
+              className="min-w-0 flex-[0_0_75%] cursor-pointer"
             >
-              {actionLabel}
-            </Button>
-          )}
+              <div className="relative overflow-hidden rounded-xl">
+                <img
+                  src={event.image}
+                  alt={event.title}
+                  className="aspect-[16/10] w-full object-cover"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-transparent to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-3">
+                  <h3 className="text-sm font-bold text-primary-foreground">
+                    {event.title}
+                  </h3>
+                  <p className="mt-0.5 text-xs text-primary-foreground/80">
+                    {event.date} - {event.location}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
+      </div>
+      {/* Dots */}
+      <div className="mt-3 flex justify-center gap-1.5">
+        {bannerEvents.map((_, i) => (
+          <button
+            key={i}
+            className={cn(
+              'h-2 rounded-full transition-all duration-200',
+              i === selectedIndex
+                ? 'w-5 bg-primary'
+                : 'w-2 bg-muted-foreground/30'
+            )}
+            onClick={() => emblaApi?.scrollTo(i)}
+            aria-label={`Ir a evento ${i + 1}`}
+          />
+        ))}
       </div>
     </div>
   );
