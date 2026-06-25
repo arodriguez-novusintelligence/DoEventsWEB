@@ -30,7 +30,7 @@ const TicketPurchaseFlow = ({ event, onBack }: Props) => {
 
   if (!event.id) {
     return (
-      <div className="flex min-h-[100dvh] flex-col bg-secondary">
+      <div className="flex min-h-[100dvh] flex-col bg-background">
         <div className="px-4 pt-4">
           <button
             type="button"
@@ -58,15 +58,24 @@ const TicketPurchaseFlow = ({ event, onBack }: Props) => {
   }
 
   return (
-    <div className="flex min-h-[100dvh] flex-col bg-secondary">
-      <div className="px-4 pt-4">
+    <div className="flex min-h-[100dvh] flex-col bg-background">
+      <div className="rounded-b-3xl bg-gradient-to-br from-primary via-primary to-accent px-4 pb-8 pt-4">
         <button
           type="button"
           onClick={onBack}
-          className="flex items-center gap-1 text-sm font-semibold text-primary"
+          className="-ml-2 flex items-center gap-1 rounded-lg px-2 py-1 text-sm font-medium text-primary-foreground transition hover:bg-primary-foreground/10"
         >
-          <ChevronLeft className="h-5 w-5" /> Volver
+          <ChevronLeft className="h-4 w-4" /> Volver
         </button>
+        <div className="mt-2 flex items-center gap-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-foreground/15 backdrop-blur">
+            <Ticket className="h-5 w-5 text-primary-foreground" />
+          </div>
+          <div>
+            <h1 className="text-lg font-bold text-primary-foreground">Comprar boletas</h1>
+            <p className="text-[11px] text-primary-foreground/80">Resumen antes del checkout seguro</p>
+          </div>
+        </div>
       </div>
 
       <div className="mx-auto flex w-full max-w-lg flex-1 flex-col px-4 pb-16 pt-4">

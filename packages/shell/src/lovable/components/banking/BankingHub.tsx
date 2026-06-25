@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Loader2, Wallet, AlertCircle, RefreshCw } from 'lucide-react';
+import { Loader2, Landmark, AlertCircle, RefreshCw, ChevronLeft } from 'lucide-react';
 import {
   createBankAccount,
   fetchBankAccountsByUser,
@@ -8,7 +8,6 @@ import {
   setDefaultBankAccount,
 } from '@doevents/shared';
 import { toast } from '@lovable/components/ui/sonner';
-import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBanner';
 import { Button } from '@lovable/components/ui/button';
 import BankingForm, { type SavedPaymentMethod } from './BankingForm';
 import PaymentMethodsDashboard from './PaymentMethodsDashboard';
@@ -22,6 +21,7 @@ const BankingHub = ({ onBack }: BankingHubProps) => {
   const userId = useSelector((s: RootState) => s.auth.idUser);
   const [view, setView] = useState<'dashboard' | 'form'>('dashboard');
   const [editingMethod, setEditingMethod] = useState<SavedPaymentMethod | undefined>(undefined);
+  const [initialMethodType, setInitialMethodType] = useState<'local' | 'international' | 'paypal' | undefined>(undefined);
   const [methods, setMethods] = useState<SavedPaymentMethod[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -51,10 +51,18 @@ const BankingHub = ({ onBack }: BankingHubProps) => {
     void loadMethods();
   }, [loadMethods]);
 
-  const handleAddMethod = () => { setEditingMethod(undefined); setView('form'); };
+  const handleAddMethod = (initialType?: 'local' | 'international' | 'paypal') => {
+    setEditingMethod(undefined);
+    setInitialMethodType(initialType);
+    setView('form');
+  };
   const handleEditMethod = (id: string) => {
     const m = methods.find((x) => x.id === id);
-    if (m) { setEditingMethod(m); setView('form'); }
+    if (m) {
+      setEditingMethod(m);
+      setInitialMethodType(undefined);
+      setView('form');
+    }
   };
 
   const handleFormComplete = async (newMethod?: SavedPaymentMethod) => {
@@ -75,6 +83,7 @@ const BankingHub = ({ onBack }: BankingHubProps) => {
       }
     }
     setEditingMethod(undefined);
+    setInitialMethodType(undefined);
     setView('dashboard');
   };
 
@@ -92,91 +101,89 @@ const BankingHub = ({ onBack }: BankingHubProps) => {
   };
 
   const handleDelete = (id: string) => {
-    toast('Eliminar cuenta bancaria requiere endpoint backend', { description: 'Contacta soporte si necesitas retirar un método.' });
+    toast('Eliminar cuenta bancaria requiere endpoint backend', {
+      description: 'Contacta soporte si necesitas retirar un método.',
+    });
     void id;
   };
 
+  const handleBack = view === 'form' ? () => setView('dashboard') : onBack;
+
+  const bannerTitle = view === 'form'
+    ? (editingMethod ? 'Editar datos bancarios' : 'Agregar datos bancarios')
+    : 'Datos bancarios';
+  const bannerSubtitle = view === 'form'
+    ? 'Configura tu método de cobro'
+    : loading
+      ? 'Cargando…'
+      : `${methods.length} método${methods.length === 1 ? '' : 's'} registrado${methods.length === 1 ? '' : 's'}`;
+
   return (
-    <div className="min-h-screen bg-secondary pb-24">
-      {view === 'dashboard' && (
-        <ProfileSectionBanner
-          title="Métodos de cobro"
-          subtitle={loading ? 'Cargando…' : `${methods.length} método${methods.length === 1 ? '' : 's'} registrado${methods.length === 1 ? '' : 's'}`}
-          icon={Wallet}
-          onBack={onBack}
-        />
-      )}
+    <div className="mx-auto min-h-screen max-w-lg bg-background pb-32">
+      <div className="rounded-b-3xl bg-gradient-to-br from-primary via-primary to-accent px-4 pb-10 pt-4">
+        <button
+          type="button"
+          onClick={handleBack}
+          className="-ml-2 flex items-center gap-1 rounded-lg px-2 py-1 text-sm font-medium text-primary-foreground transition hover:bg-primary-foreground/10"
+        >
+          <ChevronLeft className="h-4 w-4" /> Volver
+        </button>
+        <div className="mt-2 flex items-center gap-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-foreground/15 backdrop-blur">
+            <Landmark className="h-5 w-5 text-primary-foreground" />
+          </div>
+          <div className="min-w-0">
+            <h1 className="truncate text-lg font-bold leading-tight text-primary-foreground">{bannerTitle}</h1>
+            <p className="text-[11px] text-primary-foreground/80">{bannerSubtitle}</p>
+          </div>
+        </div>
+      </div>
+
       {view === 'dashboard' && !loading && !loadError && (
-        <div className="mx-auto max-w-4xl px-4 pt-2">
-          <div className="flex gap-3 rounded-xl border border-border/60 border-warning/30 bg-warning/5 p-4 shadow-sm ring-1 ring-primary/10">
+        <div className="mx-auto max-w-lg px-4 pt-4">
+          <div className="flex gap-3 rounded-xl border border-warning/30 bg-warning/5 p-4 shadow-sm">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-warning/10 ring-2 ring-primary/20">
               <AlertCircle className="h-5 w-5 text-warning" />
             </div>
-            <div className="text-xs font-extrabold text-muted-foreground leading-relaxed">
-              <p className="font-extrabold text-foreground">BACKEND_REQUIRED</p>
-              <p className="mt-1 font-extrabold">Eliminar cuenta bancaria y PayPal payout requieren endpoints backend pendientes. Los cobros vía cuenta bancaria siguen operativos.</p>
+            <div className="text-xs leading-relaxed text-muted-foreground">
+              <p className="font-semibold text-foreground">Eliminar cuenta y PayPal</p>
+              <p className="mt-1">Requieren endpoints backend pendientes. Los cobros vía cuenta bancaria siguen operativos.</p>
             </div>
           </div>
         </div>
       )}
-      {view === 'form' && (
-        <div className="mx-auto max-w-4xl px-4 pt-4">
-          <Button
-            type="button"
-            variant="outline"
-            className="rounded-full border-border/60 font-extrabold shadow-sm"
-            onClick={() => setView('dashboard')}
-          >
-            ← Volver al listado
-          </Button>
-        </div>
-      )}
+
       {view === 'form' ? (
         <BankingForm onComplete={handleFormComplete} editingMethod={editingMethod} />
       ) : loading ? (
-        <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-card py-24 shadow-sm mx-4">
+        <div className="mx-4 mt-4 flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-card py-24 shadow-sm">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
             <Loader2 className="h-7 w-7 animate-spin text-primary" />
           </div>
-          <p className="text-sm font-extrabold text-foreground">Cargando métodos de cobro…</p>
+          <p className="text-sm font-semibold text-foreground">Cargando métodos de cobro…</p>
         </div>
       ) : loadError ? (
-        <div className="mx-4 flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-card py-24 px-6 text-center shadow-sm">
+        <div className="mx-4 mt-4 flex flex-col items-center justify-center gap-3 rounded-2xl border border-border/60 bg-card py-24 px-6 text-center shadow-sm">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
             <AlertCircle className="h-7 w-7 text-destructive" />
           </div>
-          <p className="text-sm font-extrabold text-foreground">{loadError}</p>
-          <Button type="button" variant="outline" className="rounded-full font-extrabold shadow-sm" onClick={() => void loadMethods()}>
+          <p className="text-sm font-semibold text-foreground">{loadError}</p>
+          <Button type="button" variant="outline" className="rounded-full" onClick={() => void loadMethods()}>
             <RefreshCw className="mr-2 h-4 w-4" />
             Reintentar
           </Button>
         </div>
       ) : (
-        <div className="mx-auto max-w-4xl px-4 ring-1 ring-primary/10">
-          <PaymentMethodsDashboard
-            methods={methods}
-            onAddMethod={handleAddMethod}
-            onSetDefault={handleSetDefault}
-            onDelete={handleDelete}
-            onEdit={handleEditMethod}
-            onCheckFiscalStatus={() => {
-              toast.info('Revisa tu correo o contacta soporte para el estado fiscal de tu cuenta.');
-            }}
-          />
-        </div>
-      )}
-      {view === 'dashboard' && !loading && !loadError && methods.some((m) => m.type === 'paypal') && (
-        <div className="mx-auto max-w-4xl px-4 pb-6">
-          <div className="flex gap-3 rounded-xl border border-border/60 border-warning/30 bg-warning/5 p-4 shadow-sm ring-1 ring-primary/10">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-warning/10 ring-2 ring-primary/20">
-              <AlertCircle className="h-5 w-5 text-warning" />
-            </div>
-            <div className="text-xs font-extrabold text-muted-foreground leading-relaxed">
-              <p className="font-extrabold text-foreground">PayPal payout</p>
-              <p className="mt-1 font-extrabold">Requiere integración backend pendiente. Los cobros vía cuenta bancaria siguen operativos.</p>
-            </div>
-          </div>
-        </div>
+        <PaymentMethodsDashboard
+          methods={methods}
+          onAddMethod={handleAddMethod}
+          onSetDefault={handleSetDefault}
+          onDelete={handleDelete}
+          onEdit={handleEditMethod}
+          onCheckFiscalStatus={() => {
+            toast.info('Revisa tu correo o contacta soporte para el estado fiscal de tu cuenta.');
+          }}
+        />
       )}
     </div>
   );

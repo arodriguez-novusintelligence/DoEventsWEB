@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, RotateCcw } from 'lucide-react';
+import { ChevronLeft, RotateCcw } from 'lucide-react';
 import { AdminPaymentsTab } from '../../../pages/admin/tabs/AdminPaymentsTab';
 
 /** Panel de reembolsos y dispersiones — empalme Lovable con datos reales de pagos admin. */
@@ -8,29 +8,28 @@ export const AdminRefundsPanel = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      <div className="sticky top-0 z-10 border-b border-border/40 bg-gradient-to-r from-primary/5 via-background to-accent/5 px-4 py-4 shadow-sm">
+      <div className="rounded-b-3xl bg-gradient-to-br from-primary via-primary to-accent px-4 pb-8 pt-4 text-primary-foreground">
         <button
           type="button"
           onClick={() => navigate('/admin?tab=payments')}
-          className="flex items-center gap-1 text-sm font-medium text-primary"
+          className="-ml-2 mb-2 flex items-center gap-1 rounded-lg px-2 py-1 text-sm font-medium text-primary-foreground/90 transition hover:bg-primary-foreground/10 hover:text-primary-foreground"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ChevronLeft className="h-4 w-4" />
           Volver al panel
         </button>
-        <div className="mt-3 flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
-            <RotateCcw className="h-6 w-6 text-primary" />
+        <div className="flex items-center gap-3">
+          <div className="rounded-2xl bg-primary-foreground/15 p-3 backdrop-blur">
+            <RotateCcw className="h-7 w-7" />
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-primary">Administración</p>
-            <h1 className="text-xl font-extrabold text-foreground">Reembolsos y dispersiones</h1>
-            <p className="text-xs text-muted-foreground">Gestión de pagos pendientes y dispersados</p>
+            <h1 className="text-2xl font-bold">Reembolsos y dispersiones</h1>
+            <p className="text-sm text-primary-foreground/80">Gestión de pagos pendientes y dispersados</p>
           </div>
         </div>
       </div>
       <div className="p-4">
-        <div className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
-        <AdminPaymentsTab />
+        <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
+          <AdminPaymentsTab />
         </div>
       </div>
     </div>

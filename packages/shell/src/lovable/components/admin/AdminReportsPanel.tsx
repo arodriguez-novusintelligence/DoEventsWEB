@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, BarChart3, Loader2 } from 'lucide-react';
+import { ChevronLeft, Loader2, BarChart3 } from 'lucide-react';
 import {
   fetchAdminDashboard,
   useToast,
@@ -24,23 +24,22 @@ export const AdminReportsPanel = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      <div className="sticky top-0 z-10 border-b border-border/40 bg-gradient-to-r from-primary/5 via-background to-accent/5 px-4 py-4 shadow-sm">
+      <div className="rounded-b-3xl bg-gradient-to-br from-primary via-primary to-accent px-4 pb-8 pt-4 text-primary-foreground">
         <button
           type="button"
           onClick={() => navigate('/admin?tab=home')}
-          className="flex items-center gap-1 text-sm font-medium text-primary"
+          className="-ml-2 mb-2 flex items-center gap-1 rounded-lg px-2 py-1 text-sm font-medium text-primary-foreground/90 transition hover:bg-primary-foreground/10 hover:text-primary-foreground"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ChevronLeft className="h-4 w-4" />
           Volver al panel
         </button>
-        <div className="mt-3 flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
-            <BarChart3 className="h-6 w-6 text-primary" />
+        <div className="flex items-center gap-3">
+          <div className="rounded-2xl bg-primary-foreground/15 p-3 backdrop-blur">
+            <BarChart3 className="h-7 w-7" />
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-primary">Administración</p>
-            <h1 className="text-xl font-extrabold text-foreground">Reportes y KPIs</h1>
-            <p className="text-xs text-muted-foreground">Métricas en vivo de la plataforma</p>
+            <h1 className="text-2xl font-bold">Reportes y KPIs</h1>
+            <p className="text-sm text-primary-foreground/80">Métricas en vivo de la plataforma</p>
           </div>
         </div>
       </div>
@@ -51,7 +50,7 @@ export const AdminReportsPanel = () => {
             <p className="text-sm text-muted-foreground">Cargando reportes…</p>
           </div>
         ) : (
-          <div className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
+          <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
             <AdminHomeTab stats={stats} />
           </div>
         )}

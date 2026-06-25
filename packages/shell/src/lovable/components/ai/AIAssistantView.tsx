@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ImagePlus, Send, RotateCcw, Sparkles, ChevronLeft, Loader2, CheckCircle2 } from 'lucide-react';
+import { ImagePlus, Send, RotateCcw, Sparkles, ChevronLeft, Loader2, CheckCircle2, Wand2 } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
 import {
   sendAIAssistantMessage,
@@ -249,12 +249,17 @@ export const AIAssistantView: React.FC<AIAssistantViewProps> = ({ userId, onBack
     <div className="de-ai-assistant fixed inset-0 z-[110] mx-auto flex max-w-lg flex-col bg-background">
       <header className="flex shrink-0 items-center gap-3 border-b border-border bg-card px-4 py-3 safe-area-top shadow-sm">
         {onBack && (
-          <button type="button" onClick={onBack} className="flex h-9 w-9 items-center justify-center rounded-full text-primary" aria-label="Volver">
+          <button
+            type="button"
+            onClick={onBack}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background"
+            aria-label="Volver"
+          >
             <ChevronLeft className="h-5 w-5" />
           </button>
         )}
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
-          <Sparkles className="h-5 w-5 text-primary" />
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-[hsl(var(--primary-deep))] text-primary-foreground">
+          <Sparkles className="h-4 w-4" />
         </span>
         <div className="flex flex-1 flex-col min-w-0">
           <span className="text-[10px] font-bold uppercase tracking-widest text-primary">PRO · IA</span>
@@ -271,12 +276,11 @@ export const AIAssistantView: React.FC<AIAssistantViewProps> = ({ userId, onBack
         </button>
       </header>
 
-      <div className="shrink-0 border-b border-border bg-muted/40 px-4 py-2.5">
-        <p className="text-[11px] leading-snug text-muted-foreground">
-          <span className="font-bold text-foreground">Nueva conversación</span>
+      <div className="shrink-0 border-b border-border bg-muted/30 px-4 py-2">
+        <p className="text-[10px] leading-snug text-muted-foreground">
+          <span className="font-semibold text-foreground">Nueva conversación</span>
           {' '}
-          borra el historial del chat y el contexto que la IA recordaba (ciudad, borradores pendientes, etc.).
-          Úsala si quieres empezar un tema distinto o si la IA se confundió con mensajes anteriores.
+          reinicia el historial y el contexto de la IA.
         </p>
       </div>
 
@@ -393,9 +397,9 @@ export const AIAssistantView: React.FC<AIAssistantViewProps> = ({ userId, onBack
                 key={s}
                 type="button"
                 onClick={() => void send(s)}
-                className="flex w-full items-start gap-2 rounded-xl border border-border/60 bg-card px-3 py-2.5 text-left text-sm shadow-sm transition-colors hover:border-primary/40 hover:bg-primary/5 active:scale-[0.99]"
+                className="flex w-full items-start gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-left text-sm shadow-sm transition-colors hover:border-primary/40 hover:bg-primary/5 active:scale-[0.99]"
               >
-                <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <Wand2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                 <span className="leading-snug">{s}</span>
               </button>
             ))}
