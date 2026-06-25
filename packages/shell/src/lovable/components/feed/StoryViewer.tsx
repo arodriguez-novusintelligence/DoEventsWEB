@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Loader2, MoreHorizontal, Sparkles, X, Eye } from 'lucide-react';
+import { Loader2, MoreHorizontal, X, Eye } from 'lucide-react';
 import {
   FeedStoryItem,
   UserAvatar,
@@ -66,7 +65,6 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   onOpenViewers,
 }) => {
   const resolvedAuthorId = authorUserId ?? startUserId ?? null;
-  const navigate = useNavigate();
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -215,173 +213,150 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
     setViewersOpen(true);
   };
 
-  return (
-    <div
-      className="fixed inset-0 z-[100] flex flex-col bg-black text-white"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Visor de historias"
-    >
-      {loading && !stories.length && (
-        <div className="flex flex-1 flex-col items-center justify-center gap-3">
-          <Loader2 className="h-10 w-10 animate-spin text-white/80" />
-          <p className="text-sm text-white/70">Cargando historias…</p>
-        </div>
-      )}
+  if (loading && !stories.length) {
+    return (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black">
+        <Loader2 className="h-10 w-10 animate-spin text-white/80" />
+      </div>
+    );
+  }
 
-      {!loading && !stories.length && (
-        <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/10 ring-4 ring-white/20">
-            <Sparkles className="h-7 w-7 text-white/80" />
+  if (!loading && !stories.length) {
+    return (
+      <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black px-6 text-center">
+        <p className="text-sm text-white/80">No hay historias activas de este usuario.</p>
+        <button
+          type="button"
+          onClick={onClose}
+          className="mt-4 rounded-full bg-black/60 px-6 py-2 text-xs font-semibold text-white backdrop-blur"
+        >
+          Cerrar
+        </button>
+      </div>
+    );
+  }
+
+  if (!current) return null;
+
+  const displayName = canManage ? 'Tu historia' : current.authorName;
+  const avatarUrl = current.authorAvatar ? resolveImageUrl(current.authorAvatar) : undefined;
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black">
+      <div className="absolute left-0 right-0 top-0 z-10 flex gap-1 px-3 pt-3">
+        {stories.map((story, i) => (
+          <div key={story.id} className="h-0.5 flex-1 overflow-hidden rounded-full bg-white/30">
+            {i < index ? (
+              <div className="h-full w-full bg-white" />
+            ) : i === index ? (
+              isVideo ? (
+                <div className="h-full w-full bg-white" />
+              ) : (
+                <span
+                  key={`${story.id}-${progressKey}`}
+                  className="block h-full w-0 animate-story-progress bg-white"
+                  style={{ animationDuration: `${STORY_DURATION_MS}ms` }}
+                />
+              )
+            ) : null}
           </div>
-          <p className="text-sm text-white/80">No hay historias activas de este usuario.</p>
+        ))}
+      </div>
+
+      <div className="absolute left-0 right-0 top-6 z-10 flex items-center justify-between px-4 pt-3">
+        <div className="flex min-w-0 items-center gap-2">
+          {avatarUrl ? (
+            <img src={avatarUrl} alt="" className="h-8 w-8 rounded-full border-2 border-white object-cover" />
+          ) : (
+            <UserAvatar name={displayName} size={32} className="border-2 border-white" />
+          )}
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold text-white">{displayName}</p>
+            {(() => {
+              const ago = formatStoryTimeAgo(current.createdAt);
+              return ago ? <p className="text-[10px] text-white/70">hace {ago}</p> : null;
+            })()}
+          </div>
+        </div>
+        <div className="flex items-center gap-1">
+          {canManage && (
+            <button
+              type="button"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-black/40"
+              onClick={toggleMenu}
+              aria-label="Opciones de la historia"
+              aria-expanded={menuOpen}
+              disabled={Boolean(busyAction)}
+            >
+              <MoreHorizontal className="h-5 w-5 text-white" />
+            </button>
+          )}
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full bg-white/15 px-6 py-2 text-sm font-semibold shadow-sm"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-black/40"
+            aria-label="Cerrar"
           >
-            Cerrar
+            <X className="h-5 w-5 text-white" />
           </button>
         </div>
+      </div>
+
+      {mediaUrl && !mediaFailed ? (
+        isVideo ? (
+          <video
+            key={mediaUrl}
+            src={mediaUrl}
+            className="max-h-full max-w-full object-contain"
+            autoPlay
+            muted
+            playsInline
+            onEnded={goNext}
+            onError={() => setMediaFailed(true)}
+          />
+        ) : (
+          <img
+            key={mediaUrl}
+            src={mediaUrl}
+            alt=""
+            className="max-h-full max-w-full object-contain"
+            onError={() => setMediaFailed(true)}
+          />
+        )
+      ) : (
+        <p className="px-8 text-center text-lg font-medium text-white">
+          {current.description || (mediaFailed ? 'No se pudo cargar el contenido.' : 'Estado')}
+        </p>
       )}
 
-      {!loading && current && (
-        <>
-          <header className="absolute inset-x-0 top-0 z-20 px-3 pb-3 pt-6 safe-area-top">
-            <div className="mb-3 flex gap-1 px-1">
-              {stories.map((story, i) => (
-                <span
-                  key={story.id}
-                  className="h-0.5 flex-1 overflow-hidden rounded-full bg-white/30"
-                >
-                  <span
-                    key={i === index ? `${story.id}-${progressKey}` : story.id}
-                    className={`block h-full rounded-full bg-white ${
-                      i < index
-                        ? 'w-full'
-                        : i === index
-                          ? 'w-0 animate-story-progress'
-                          : 'w-0'
-                    }`}
-                    style={
-                      i === index && !isVideo
-                        ? { animationDuration: `${STORY_DURATION_MS}ms` }
-                        : undefined
-                    }
-                  />
-                </span>
-              ))}
-            </div>
+      {current.description && mediaUrl && !mediaFailed && (
+        <p className="absolute inset-x-0 bottom-24 px-6 text-center text-sm text-white/90 drop-shadow">
+          {current.description}
+        </p>
+      )}
 
-            <div className="flex items-center justify-between">
-              <button
-                type="button"
-                className="flex min-w-0 items-center gap-2"
-                onClick={() => navigate(`/users/${resolvedAuthorId}`)}
-              >
-                <UserAvatar name={current.authorName} imageUrl={current.authorAvatar} size={36} className="border-2 border-white" />
-                <div className="min-w-0 text-left">
-                  <div className="flex items-center gap-2">
-                    <span className="truncate text-sm font-semibold">{current.authorName}</span>
-                    {current.isLive && (
-                      <span className="rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold uppercase shadow-sm">
-                        Live
-                      </span>
-                    )}
-                  </div>
-                  {(() => {
-                    const ago = formatStoryTimeAgo(current.createdAt);
-                    return ago ? <p className="text-[10px] text-white/70">hace {ago}</p> : null;
-                  })()}
-                </div>
-              </button>
+      <button
+        type="button"
+        className="absolute bottom-0 left-0 top-0 w-1/3"
+        aria-label="Historia anterior"
+        onClick={goPrev}
+      />
+      <button
+        type="button"
+        className="absolute bottom-0 right-0 top-0 w-1/3"
+        aria-label="Siguiente historia"
+        onClick={goNext}
+      />
 
-              <div className="flex items-center gap-1">
-                {canManage && (
-                  <button
-                    type="button"
-                    className="flex h-9 w-9 items-center justify-center rounded-full bg-black/40"
-                    onClick={toggleMenu}
-                    aria-label="Opciones de la historia"
-                    aria-expanded={menuOpen}
-                    disabled={Boolean(busyAction)}
-                  >
-                    <MoreHorizontal className="h-5 w-5" />
-                  </button>
-                )}
-                <button
-                  type="button"
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-black/40"
-                  onClick={onClose}
-                  aria-label="Cerrar"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-            </div>
-          </header>
-
-          <div className="relative flex flex-1 items-center justify-center" role="presentation">
-            {mediaUrl && !mediaFailed ? (
-              isVideo ? (
-                <video
-                  key={mediaUrl}
-                  src={mediaUrl}
-                  className="max-h-full w-full object-contain"
-                  autoPlay
-                  muted
-                  playsInline
-                  onEnded={goNext}
-                  onError={() => setMediaFailed(true)}
-                />
-              ) : (
-                <img
-                  key={mediaUrl}
-                  src={mediaUrl}
-                  alt=""
-                  className="max-h-full w-full object-contain"
-                  onError={() => setMediaFailed(true)}
-                />
-              )
-            ) : (
-              <div className="px-8 text-center">
-                <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-white/10 ring-4 ring-white/20">
-                  <Sparkles className="h-7 w-7 text-white/80" />
-                </div>
-                <p className="text-lg font-medium">
-                  {current.description || (mediaFailed ? 'No se pudo cargar el contenido.' : 'Estado')}
-                </p>
-              </div>
-            )}
-            {current.description && mediaUrl && !mediaFailed && (
-              <p className="absolute inset-x-0 bottom-24 px-6 text-center text-sm text-white/90 drop-shadow">
-                {current.description}
-              </p>
-            )}
-            <button
-              type="button"
-              className="absolute inset-y-0 left-0 w-1/3"
-              aria-label="Historia anterior"
-              onClick={goPrev}
-            />
-            <button
-              type="button"
-              className="absolute inset-y-0 right-0 w-1/3"
-              aria-label="Siguiente historia"
-              onClick={goNext}
-            />
-            {canManage && (
-              <button
-                type="button"
-                onClick={openViewers}
-                className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/60 px-4 py-2 text-xs font-semibold text-white backdrop-blur"
-              >
-                <Eye className="h-4 w-4" />
-                Quién vio tu historia
-              </button>
-            )}
-          </div>
-        </>
+      {canManage && (
+        <button
+          type="button"
+          onClick={openViewers}
+          className="absolute bottom-6 left-1/2 z-10 inline-flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/60 px-4 py-2 text-xs font-semibold text-white backdrop-blur"
+        >
+          <Eye className="h-4 w-4" />
+          0 vistas
+        </button>
       )}
 
       {menuOpen && canManage && (

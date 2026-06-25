@@ -1293,12 +1293,7 @@ export const EventInvitationModal = ({
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <DialogContent stacked className="max-w-md mx-auto rounded-2xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 font-bold">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
-                <Mail className="h-5 w-5 text-primary" />
-              </span>
-              Confirmar envío de invitaciones
-            </DialogTitle>
+            <DialogTitle className="font-bold">Confirmar envío de invitaciones</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <div className="grid grid-cols-3 gap-2 text-center">

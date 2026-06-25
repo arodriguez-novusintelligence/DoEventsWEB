@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, CreditCard, Loader2, ShieldCheck, Ticket, CalendarDays, MapPin } from 'lucide-react';
+import { ChevronLeft, CreditCard, Home, Loader2, MapPin, ShieldCheck, Ticket } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
 import { resolveImageUrl } from '@doevents/shared';
 import { InvitationEvent } from '@lovable/data/invitationsData';
@@ -13,8 +13,8 @@ interface Props {
 }
 
 /**
- * Flujo de compra Lovable: resumen del evento → checkout real (`/events/:id/checkout`).
- * Sin mocks ni pasarela simulada.
+ * Flujo de compra Lovable (resumen + venue) → checkout real (`/events/:id/checkout`).
+ * Sin mocks de mapa de sillas ni pasarela simulada.
  */
 const TicketPurchaseFlow = ({ event, onBack }: Props) => {
   const navigate = useNavigate();
@@ -30,24 +30,21 @@ const TicketPurchaseFlow = ({ event, onBack }: Props) => {
 
   if (!event.id) {
     return (
-      <div className="flex min-h-[100dvh] flex-col bg-background">
+      <div className="mx-auto min-h-screen max-w-lg bg-background pb-20">
         <div className="px-4 pt-4">
           <button
             type="button"
             onClick={onBack}
-            className="flex items-center gap-1 text-sm font-semibold text-primary"
+            className="mb-3 flex items-center gap-1 text-sm font-medium text-foreground"
           >
             <ChevronLeft className="h-5 w-5" /> Volver
           </button>
         </div>
-        <div className="flex flex-1 flex-col items-center justify-center px-6 pb-16 text-center">
-          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-4 ring-primary/20">
-            <CreditCard className="h-7 w-7 text-primary" />
-          </div>
+        <div className="flex flex-col items-center px-6 pb-16 pt-12 text-center">
+          <CreditCard className="mb-4 h-14 w-14 text-primary" />
           <h2 className="text-lg font-bold text-foreground">Compra no disponible</h2>
           <p className="mt-2 max-w-sm text-sm text-muted-foreground">
-            Este evento no tiene un identificador válido para checkout. Abre el evento desde
-            invitaciones o el feed para usar la pasarela de pago real.
+            Este evento no tiene un identificador válido para checkout.
           </p>
           <Button className="mt-6 rounded-full px-8" onClick={onBack}>
             Volver al evento
@@ -57,90 +54,87 @@ const TicketPurchaseFlow = ({ event, onBack }: Props) => {
     );
   }
 
+  const venueName = event.venue?.name || 'Lugar del evento';
+  const venueAddress = event.venue?.address || '';
+  const capacity = event.capacity ? `Capacidad ${event.capacity}` : null;
+
   return (
-    <div className="flex min-h-[100dvh] flex-col bg-background">
-      <div className="rounded-b-3xl bg-gradient-to-br from-primary via-primary to-accent px-4 pb-8 pt-4">
+    <div className="mx-auto min-h-screen max-w-lg bg-background pb-20">
+      <div className="px-4 pt-4">
         <button
           type="button"
           onClick={onBack}
-          className="-ml-2 flex items-center gap-1 rounded-lg px-2 py-1 text-sm font-medium text-primary-foreground transition hover:bg-primary-foreground/10"
+          className="mb-3 flex items-center gap-1 text-sm font-medium text-foreground"
         >
-          <ChevronLeft className="h-4 w-4" /> Volver
+          <ChevronLeft className="h-5 w-5" /> Volver
         </button>
-        <div className="mt-2 flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-foreground/15 backdrop-blur">
-            <Ticket className="h-5 w-5 text-primary-foreground" />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold text-primary-foreground">Comprar boletas</h1>
-            <p className="text-[11px] text-primary-foreground/80">Resumen antes del checkout seguro</p>
-          </div>
-        </div>
+        <p className="text-base font-bold text-primary">Compra de boletería</p>
+        <h1 className="text-2xl font-extrabold leading-tight text-foreground">{event.title || 'Evento'}</h1>
       </div>
 
-      <div className="mx-auto flex w-full max-w-lg flex-1 flex-col px-4 pb-16 pt-4">
-        {event.image && (
-          <div className="relative mb-4 overflow-hidden rounded-2xl border border-border/60 shadow-sm aspect-[16/9]">
+      {event.image && (
+        <div className="mt-4 px-4">
+          <div className="relative aspect-[16/9] overflow-hidden rounded-2xl bg-card shadow-sm">
             <img
               src={resolveImageUrl(event.image) || event.image}
               alt=""
               className="h-full w-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-            <p className="absolute bottom-3 left-3 right-3 truncate text-sm font-bold text-white drop-shadow">
-              {event.title || 'Evento'}
-            </p>
           </div>
-        )}
-
-        <div className="mb-4 flex items-center justify-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground shadow-sm">
-            1
-          </span>
-          <span className="h-0.5 w-8 rounded-full bg-primary" />
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-xs font-bold text-muted-foreground ring-2 ring-border">
-            2
-          </span>
-          <p className="ml-2 text-xs text-muted-foreground">Resumen → Checkout</p>
         </div>
+      )}
 
-        <div className="rounded-2xl bg-card p-6 shadow-sm border border-border/60">
-          <div className="flex items-center gap-3">
-            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
-              <Ticket className="h-6 w-6 text-primary" />
-            </span>
-            <div className="min-w-0">
-              <h2 className="text-lg font-extrabold text-foreground">Comprar boletas</h2>
-              <p className="text-xs text-muted-foreground">Resumen antes del checkout</p>
+      <div className="mt-4 px-4">
+        <div className="rounded-2xl bg-card p-4 shadow-sm">
+          <div className="flex items-start gap-3">
+            <Home className="mt-1 h-6 w-6 shrink-0 text-primary" />
+            <div className="min-w-0 flex-1">
+              <p className="font-bold text-foreground">{venueName}</p>
+              {capacity && (
+                <p className="mt-1 text-xs text-muted-foreground">{capacity}</p>
+              )}
+              {venueAddress && (
+                <p className="text-xs text-muted-foreground">{venueAddress}</p>
+              )}
             </div>
           </div>
+          {event.venue?.images && event.venue.images.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {event.venue.images.slice(0, 3).map((img, i) => (
+                <img
+                  key={i}
+                  src={resolveImageUrl(img) || img}
+                  alt=""
+                  className="h-20 w-20 rounded-xl object-cover"
+                />
+              ))}
+            </div>
+          )}
+          {venueAddress && (
+            <p className="mt-3 flex items-center gap-2 text-sm font-semibold text-primary">
+              <MapPin className="h-4 w-4 shrink-0" />
+              {venueAddress}
+            </p>
+          )}
+        </div>
+      </div>
 
-          <div className="mt-6 space-y-3 rounded-xl bg-secondary/80 p-4">
-            <p className="text-sm font-bold text-foreground">{event.title || 'Evento'}</p>
-            {event.startDate && (
-              <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <CalendarDays className="h-3.5 w-3.5 shrink-0 text-primary" />
-                {event.startDate}
-                {event.startTime ? ` · ${event.startTime}` : ''}
-              </p>
-            )}
-            {(event.venue?.address || event.venue?.name) && (
-              <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <MapPin className="h-3.5 w-3.5 shrink-0 text-primary" />
-                {event.venue.address || event.venue.name}
-              </p>
-            )}
+      <div className="mt-5 px-4">
+        <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
+          <div className="flex items-center gap-2">
+            <Ticket className="h-5 w-5 text-primary" />
+            <p className="font-bold text-foreground">Selección de boletas</p>
           </div>
-
-          <p className="mt-4 flex items-start gap-2 text-xs text-muted-foreground">
-            <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-            Serás redirigido a la pasarela de pago segura de Do.Events para elegir categorías
-            y completar tu compra.
+          <p className="mt-2 text-sm text-muted-foreground">
+            En el checkout podrás elegir categorías, cantidades y asientos (si el evento tiene mapa de silletería).
           </p>
-
+          <p className="mt-3 flex items-start gap-2 text-xs text-muted-foreground">
+            <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+            Pasarela de pago segura de Do.Events — sin simulaciones.
+          </p>
           <Button
             type="button"
-            className="mt-6 w-full rounded-full"
+            className="mt-4 w-full rounded-full"
             disabled={navigating}
             onClick={() => setConfirmed(true)}
           >
