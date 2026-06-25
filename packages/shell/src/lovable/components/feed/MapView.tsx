@@ -29,9 +29,9 @@ interface MapItem {
 
 // Pin color per category
 const PIN_COLOR: Record<Category, string> = {
-  eventos: 'hsl(var(--primary))',
-  lugares: 'hsl(var(--accent-foreground, var(--primary)) / 0.85)',
-  servicios: 'hsl(var(--chart-2, var(--primary)) / 0.75)',
+  eventos: 'hsl(245, 72%, 59%)',
+  lugares: 'hsl(28, 92%, 55%)',
+  servicios: 'hsl(152, 65%, 42%)',
 };
 
 const CATEGORY_LABEL: Record<Category, string> = {

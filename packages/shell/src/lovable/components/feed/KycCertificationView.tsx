@@ -1,6 +1,19 @@
-import { ShieldCheck, Mail, AlertCircle, CheckCircle2, Clock, XCircle, Loader2, Camera, IdCard, Upload, RefreshCw } from 'lucide-react';
+import {
+  ShieldCheck,
+  Mail,
+  AlertCircle,
+  CheckCircle2,
+  Clock,
+  XCircle,
+  Loader2,
+  Camera,
+  IdCard,
+  Upload,
+  RefreshCw,
+  ChevronLeft,
+  BadgeCheck,
+} from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
-import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBanner';
 import { useKyc, type KycStatus } from '@lovable/contexts/KycContext';
 
 interface KycCertificationViewProps {
@@ -41,29 +54,48 @@ const UPLOAD_STEPS = [
   },
 ] as const;
 
+const INTRO_BULLETS = [
+  'Captura de tu Face ID en tiempo real',
+  'Validación de cédula o pasaporte',
+  'Prueba de vida (movimientos guiados)',
+  'Insignia visible en tu perfil al aprobar',
+] as const;
+
 export const KycCertificationView = ({ onBack }: KycCertificationViewProps) => {
   const { status, loading, loadError, loadErrorMessage, isCertified, statusLabel, refresh } = useKyc();
   const StatusIcon = STATUS_ICONS[status];
 
-  return (
-    <div className="mx-auto min-h-screen max-w-lg bg-secondary pb-24">
-      {onBack ? (
-        <ProfileSectionBanner
-          title="Organizador certificado (KYC)"
-          subtitle="Verificación de identidad"
-          icon={ShieldCheck}
-          onBack={onBack}
-        />
-      ) : (
-        <ProfileSectionBanner
-          title="Organizador certificado (KYC)"
-          subtitle="Verificación de identidad"
-          icon={ShieldCheck}
-          onBack={() => window.history.back()}
-        />
-      )}
+  const handleBack = () => {
+    if (onBack) onBack();
+    else window.history.back();
+  };
 
-      <div className="px-4 pt-6 space-y-4">
+  return (
+    <div className="mx-auto min-h-screen max-w-lg bg-background pb-32">
+      <div className="rounded-b-3xl bg-gradient-to-br from-primary via-primary to-accent px-4 pb-10 pt-4">
+        <button
+          type="button"
+          onClick={handleBack}
+          className="-ml-2 flex items-center gap-1 rounded-lg px-2 py-1 text-sm font-medium text-primary-foreground transition hover:bg-primary-foreground/10"
+        >
+          <ChevronLeft className="h-4 w-4" /> Atrás
+        </button>
+        <div className="mt-2 flex items-center gap-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-foreground/15 backdrop-blur">
+            <ShieldCheck className="h-5 w-5 text-primary-foreground" />
+          </div>
+          <div className="min-w-0">
+            <h1 className="truncate text-lg font-bold leading-tight text-primary-foreground">
+              Certifica tu identidad
+            </h1>
+            <p className="text-[11px] text-primary-foreground/80">
+              {isCertified ? 'Identidad verificada' : 'Proceso KYC seguro'}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-2 space-y-4 px-4 pt-4">
         {loading ? (
           <div className="flex justify-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -76,13 +108,37 @@ export const KycCertificationView = ({ onBack }: KycCertificationViewProps) => {
             <p className="mt-3 text-sm font-medium text-destructive">
               {loadErrorMessage || 'No se pudo cargar el estado KYC'}
             </p>
-            <Button type="button" variant="outline" className="mt-4 rounded-full gap-1.5" onClick={() => refresh()}>
+            <Button type="button" variant="outline" className="mt-4 gap-1.5 rounded-full" onClick={() => refresh()}>
               <RefreshCw className="h-4 w-4" />
               Reintentar
             </Button>
           </div>
         ) : (
           <>
+            {!isCertified && status === 'pending' && (
+              <div className="space-y-4 rounded-2xl bg-card p-5 shadow-sm">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                    <BadgeCheck className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h2 className="font-bold text-foreground">Insignia de Identidad Verificada</h2>
+                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                      Obtén el sello azul de verificación en tu perfil y demuestra a la comunidad que eres una persona real.
+                    </p>
+                  </div>
+                </div>
+                <ul className="space-y-2 text-sm">
+                  {INTRO_BULLETS.map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-foreground">
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             <div className="rounded-2xl bg-card p-6 text-center shadow-sm">
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-4 ring-primary/20">
                 <StatusIcon className={`h-7 w-7 ${STATUS_COLORS[status]}`} />
@@ -108,7 +164,7 @@ export const KycCertificationView = ({ onBack }: KycCertificationViewProps) => {
             {!isCertified && (
               <>
                 <div className="space-y-3">
-                  <h3 className="text-sm font-bold text-foreground px-1">Pasos de verificación</h3>
+                  <h3 className="px-1 text-sm font-bold text-foreground">Pasos de verificación</h3>
                   {UPLOAD_STEPS.map((step, index) => {
                     const StepIcon = step.icon;
                     return (
@@ -133,7 +189,7 @@ export const KycCertificationView = ({ onBack }: KycCertificationViewProps) => {
 
                 <div className="rounded-2xl border border-warning/30 bg-warning/10 p-4">
                   <div className="flex items-start gap-3">
-                    <AlertCircle className="h-5 w-5 shrink-0 text-warning mt-0.5" />
+                    <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
                     <div>
                       <p className="text-sm font-semibold text-foreground">Envío pendiente de backend</p>
                       <p className="mt-1 text-xs text-muted-foreground">

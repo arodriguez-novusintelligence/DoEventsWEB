@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { MapPin, Plus, Sparkles, Loader2 } from 'lucide-react';
 import { UserAvatar } from '@doevents/shared';
 import { cn } from '@lovable/lib/utils';
@@ -6,7 +6,6 @@ import { useStories } from '@lovable/contexts/StoriesContext';
 import AddStorySheet from './AddStorySheet';
 import StoryViewer from './StoryViewer';
 import StoryViewersSheet from './StoryViewersSheet';
-import ChangeLocationSheet, { type SelectedLocation } from './ChangeLocationSheet';
 
 export interface FeedStoryItem {
   id: string;
@@ -30,8 +29,6 @@ interface FeedHeroProps {
   showBuiltInStories?: boolean;
 }
 
-const LOCATION_STORAGE_KEY = 'feed_user_location_v1';
-
 const FeedHero = ({
   userName = 'Andrés',
   location = 'Ricaurte, Cundinamarca',
@@ -54,31 +51,6 @@ const FeedHero = ({
     userId: null,
     itemId: null,
   });
-  const [locationOpen, setLocationOpen] = useState(false);
-  const [storedLocation, setStoredLocation] = useState<SelectedLocation | null>(() => {
-    try {
-      const raw = localStorage.getItem(LOCATION_STORAGE_KEY);
-      return raw ? (JSON.parse(raw) as SelectedLocation) : null;
-    } catch {
-      return null;
-    }
-  });
-
-  useEffect(() => {
-    if (storedLocation) {
-      try {
-        localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(storedLocation));
-      } catch {
-        /* ignore */
-      }
-    }
-  }, [storedLocation]);
-
-  const displayLocation = storedLocation?.label ?? location;
-  const displayCity = storedLocation?.city;
-  const displayCountry = storedLocation?.country;
-  const displayDetail = storedLocation?.detail;
-
   const handleContextStoryClick = (userId: string, hasItems: boolean, isOwn: boolean) => {
     if (isOwn && !hasItems) {
       setAddOpen(true);
@@ -90,7 +62,6 @@ const FeedHero = ({
 
   const handleOpenLocation = () => {
     onChangeLocation?.();
-    setLocationOpen(true);
   };
 
   const showStoriesSection = useApiStories || useContextStories;
@@ -114,16 +85,7 @@ const FeedHero = ({
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-primary-foreground/70">
                   Tu ubicación
                 </p>
-                {displayLocation && displayLocation !== displayCity && (
-                  <p className="truncate text-sm font-bold text-primary-foreground">{displayLocation}</p>
-                )}
-                {displayCity && <p className="truncate text-sm font-bold text-primary-foreground">{displayCity}</p>}
-                {displayCountry && (
-                  <p className="truncate text-[11px] font-semibold text-primary-foreground">{displayCountry}</p>
-                )}
-                {!displayCity && !displayCountry && displayDetail && (
-                  <p className="truncate text-[11px] text-primary-foreground/80">{displayDetail}</p>
-                )}
+                <p className="truncate text-sm font-bold text-primary-foreground">{location}</p>
               </div>
             </div>
             <button
@@ -286,12 +248,6 @@ const FeedHero = ({
           />
         </>
       )}
-      <ChangeLocationSheet
-        open={locationOpen}
-        onOpenChange={setLocationOpen}
-        initial={storedLocation}
-        onSelect={(loc) => setStoredLocation(loc)}
-      />
     </div>
   );
 };
