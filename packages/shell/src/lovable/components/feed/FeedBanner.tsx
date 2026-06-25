@@ -34,7 +34,7 @@ export const FeedBanner = ({
   return (
     <div
       className={cn(
-        'relative mx-4 rounded-2xl border border-border/60 border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10 p-4 shadow-sm ring-2 ring-primary/20',
+        'relative mx-4 rounded-2xl border border-border/40 bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10 p-4 shadow-sm',
         className,
       )}
     >

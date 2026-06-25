@@ -184,8 +184,8 @@ export const LovableLayout: React.FC = () => {
     <CompanyProvider userId={userId}>
     <NotificationsProvider userId={userId || undefined}>
       <PrivacyProvider>
-        <div className="min-h-screen bg-secondary overflow-x-hidden">
-          <div className={`relative mx-auto min-h-screen w-full bg-secondary ${fullBleedRoute ? '' : 'max-w-lg shadow-sm'}`}>
+        <div className="min-h-screen bg-background overflow-x-hidden">
+          <div className={`relative mx-auto min-h-screen w-full bg-background ${fullBleedRoute ? '' : 'max-w-lg shadow-sm'}`}>
             {showHeader && (
               <div className="fixed inset-x-0 top-0 z-[100] mx-auto w-full max-w-lg">
                 <TopHeader

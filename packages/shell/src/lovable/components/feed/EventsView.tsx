@@ -51,35 +51,55 @@ type Category = {
   color: string;
 };
 
-/** Paleta semántica DSF — evita colores hardcoded pink/violet/emerald en chips. */
-const DISCOVER_CHIP_STYLES: Pick<Category, 'bg' | 'color'>[] = [
-  { bg: 'bg-primary/10', color: 'text-primary' },
-  { bg: 'bg-accent', color: 'text-accent-foreground' },
-  { bg: 'bg-secondary', color: 'text-secondary-foreground' },
-  { bg: 'bg-primary/15', color: 'text-primary' },
-  { bg: 'bg-muted', color: 'text-muted-foreground' },
-  { bg: 'bg-accent/80', color: 'text-accent-foreground' },
-  { bg: 'bg-primary/10', color: 'text-primary' },
-  { bg: 'bg-secondary', color: 'text-secondary-foreground' },
+/** Chips de categoría — paleta Lovable (Descubrir). */
+const LOVABLE_EVENT_CHIP_STYLES: Pick<Category, 'bg' | 'color'>[] = [
+  { bg: 'bg-pink-100', color: 'text-pink-500' },
+  { bg: 'bg-violet-100', color: 'text-violet-500' },
+  { bg: 'bg-blue-100', color: 'text-blue-500' },
+  { bg: 'bg-emerald-100', color: 'text-emerald-500' },
+  { bg: 'bg-amber-100', color: 'text-amber-500' },
+  { bg: 'bg-orange-100', color: 'text-orange-500' },
+  { bg: 'bg-teal-100', color: 'text-teal-500' },
+  { bg: 'bg-fuchsia-100', color: 'text-fuchsia-500' },
+];
+
+const LOVABLE_VENUE_CHIP_STYLES: Pick<Category, 'bg' | 'color'>[] = [
+  { bg: 'bg-emerald-100', color: 'text-emerald-600' },
+  { bg: 'bg-blue-100', color: 'text-blue-600' },
+  { bg: 'bg-amber-100', color: 'text-amber-600' },
+  { bg: 'bg-pink-100', color: 'text-pink-600' },
+  { bg: 'bg-violet-100', color: 'text-violet-600' },
+  { bg: 'bg-orange-100', color: 'text-orange-600' },
+];
+
+const LOVABLE_SERVICE_CHIP_STYLES: Pick<Category, 'bg' | 'color'>[] = [
+  { bg: 'bg-orange-100', color: 'text-orange-600' },
+  { bg: 'bg-pink-100', color: 'text-pink-600' },
+  { bg: 'bg-blue-100', color: 'text-blue-600' },
+  { bg: 'bg-amber-100', color: 'text-amber-600' },
+  { bg: 'bg-emerald-100', color: 'text-emerald-600' },
+  { bg: 'bg-violet-100', color: 'text-violet-600' },
+  { bg: 'bg-teal-100', color: 'text-teal-600' },
+  { bg: 'bg-fuchsia-100', color: 'text-fuchsia-600' },
 ];
 
 const categories = DISCOVER_EVENT_CATEGORIES.map((chip, index) => {
   const icons = [Music, Mic, MonitorPlay, Store, Smile, Trophy, MapPin, PartyPopper];
-  const style = DISCOVER_CHIP_STYLES[index] || DISCOVER_CHIP_STYLES[0];
+  const style = LOVABLE_EVENT_CHIP_STYLES[index] || LOVABLE_EVENT_CHIP_STYLES[0];
   const icon = icons[index] || Music;
   return { label: chip.label, icon, bg: style.bg, color: style.color };
 });
 
 const venueCategories = DISCOVER_VENUE_CATEGORIES.map((chip, index) => {
   const icons = [Trees, Building2, Home, Hotel, Warehouse, UtensilsCrossed];
-  const style = DISCOVER_CHIP_STYLES[index] || DISCOVER_CHIP_STYLES[0];
+  const style = LOVABLE_VENUE_CHIP_STYLES[index] || LOVABLE_VENUE_CHIP_STYLES[0];
   const icon = icons[index] || Trees;
   return { label: chip.label, icon, bg: style.bg, color: style.color };
 });
 
 const serviceCategories = DISCOVER_SERVICE_CATEGORIES.map((chip, index) => {
   const icons = [UtensilsCrossed, Music, Camera, Truck, ShieldCheck, Megaphone, Mic2, Truck];
-  const style = DISCOVER_CHIP_STYLES[index] || DISCOVER_CHIP_STYLES[0];
+  const style = LOVABLE_SERVICE_CHIP_STYLES[index] || LOVABLE_SERVICE_CHIP_STYLES[0];
   const icon = icons[index] || UtensilsCrossed;
   return { label: chip.label, icon, bg: style.bg, color: style.color };
 });
@@ -175,7 +195,7 @@ const EventMedia = ({ event }: { event: EventItem }) => {
 const FavoriteHeartButton = ({
   active,
   onToggle,
-  className = 'absolute top-2.5 right-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-background/90 text-primary shadow-sm ring-2 ring-primary/20',
+  className = 'absolute top-2.5 right-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-primary shadow-sm',
   iconClassName = 'h-4 w-4',
 }: {
   active?: boolean;
@@ -212,7 +232,7 @@ const EventCard = ({
 }) => (
   <button
     onClick={onClick}
-    className="min-w-[210px] max-w-[210px] flex-shrink-0 rounded-2xl bg-card shadow-sm overflow-hidden border border-border/60 text-left transition-transform active:scale-[0.98]"
+    className="min-w-[210px] max-w-[210px] flex-shrink-0 rounded-2xl bg-card shadow-sm overflow-hidden border border-border/40 text-left transition-transform active:scale-[0.98]"
   >
     <div className="relative h-36">
       <EventMedia event={event} />
@@ -422,7 +442,7 @@ const VenueCard = ({
 }) => (
   <button
     onClick={onClick}
-    className="min-w-[210px] max-w-[210px] flex-shrink-0 rounded-2xl bg-card shadow-sm overflow-hidden border border-border/60 text-left transition-transform active:scale-[0.98]"
+    className="min-w-[210px] max-w-[210px] flex-shrink-0 rounded-2xl bg-card shadow-sm overflow-hidden border border-border/40 text-left transition-transform active:scale-[0.98]"
   >
     <div className="relative h-36">
       <SafeImage
@@ -645,9 +665,9 @@ const EventsView = ({
 
   const filterPills: { id: FilterType; label: string; dot: string }[] = [
     { id: 'todos', label: 'Todos', dot: '' },
-    { id: 'eventos', label: 'Eventos', dot: 'bg-primary' },
-    { id: 'lugares', label: 'Lugares', dot: 'bg-accent-foreground/70' },
-    { id: 'servicios', label: 'Servicios', dot: 'bg-success' },
+    { id: 'eventos', label: 'Eventos', dot: 'bg-violet-500' },
+    { id: 'lugares', label: 'Lugares', dot: 'bg-orange-500' },
+    { id: 'servicios', label: 'Servicios', dot: 'bg-emerald-500' },
   ];
 
   const isInitialDiscoverLoad = discoverLoading
@@ -699,7 +719,7 @@ const EventsView = ({
                 key={p.id}
                 type="button"
                 onClick={() => handleFilterChange(p.id)}
-                className={`flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-extrabold whitespace-nowrap shadow-sm transition-all border border-border/60 ${
+                className={`flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold whitespace-nowrap shadow-sm transition-all border border-border/40 ${
                   active
                     ? 'bg-primary text-primary-foreground border-primary'
                     : 'bg-card text-foreground hover:bg-accent/50'
@@ -728,10 +748,10 @@ const EventsView = ({
                   onClick={() => clickable && setSelectedCategory(isActive ? null : c.label)}
                   className="flex flex-col items-center gap-1.5 min-w-[64px] max-w-[64px]"
                 >
-                  <div className={`h-14 w-14 rounded-full flex items-center justify-center transition-all ring-2 ring-primary/20 ${isActive ? 'bg-primary' : c.bg}`}>
+                  <div className={`flex h-14 w-14 items-center justify-center rounded-full transition-all ${isActive ? 'bg-primary ring-2 ring-primary/40' : c.bg}`}>
                     <Icon className={`h-6 w-6 ${isActive ? 'text-primary-foreground' : c.color}`} strokeWidth={2} />
                   </div>
-                  <span className={`text-[11px] font-extrabold text-center leading-tight line-clamp-2 ${isActive ? 'text-primary' : 'text-foreground'}`}>
+                  <span className={`text-[11px] font-medium text-center leading-tight line-clamp-2 ${isActive ? 'font-bold text-primary' : 'text-foreground'}`}>
                     {c.label}
                   </span>
                 </button>
