@@ -1,5 +1,12 @@
 import { Star } from 'lucide-react';
-import { resolveEventImageUrl } from '@doevents/shared';
+import ana from '@lovable/assets/avatars/ana.jpg';
+import carlos from '@lovable/assets/avatars/carlos.jpg';
+import isabel from '@lovable/assets/avatars/isabel.jpg';
+import laura from '@lovable/assets/avatars/laura.jpg';
+import luis from '@lovable/assets/avatars/luis.jpg';
+import maria from '@lovable/assets/avatars/maria.jpg';
+import miguel from '@lovable/assets/avatars/miguel.jpg';
+import pedro from '@lovable/assets/avatars/pedro.jpg';
 
 export interface FeedServiceCard {
   id: string;
