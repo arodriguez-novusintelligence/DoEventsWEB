@@ -100,7 +100,7 @@ export const ChangeLocationSheet = ({
         <div className="rounded-t-3xl bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10 px-4 pb-4 pt-4">
           <SheetHeader className="text-left">
             <SheetTitle className="flex items-center gap-2">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 backdrop-blur ring-2 ring-primary/20">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 backdrop-blur">
                 <MapPin className="h-5 w-5 text-primary" />
               </div>
               <div>

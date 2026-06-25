@@ -889,7 +889,7 @@ export const EventInvitationModal = ({
                 )}
                 {!loadingEvents && eventsLoadError && (
                   <div className="flex flex-col items-center gap-3 py-12 text-center">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
                       <AlertCircle className="h-7 w-7 text-destructive" />
                     </div>
                     <p className="text-sm font-semibold text-foreground">{eventsLoadError}</p>
@@ -901,7 +901,7 @@ export const EventInvitationModal = ({
                 )}
                 {!loadingEvents && !eventsLoadError && events.length === 0 && (
                   <div className="flex flex-col items-center gap-3 py-12 text-center">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
                       <CalendarDays className="h-7 w-7 text-primary" />
                     </div>
                     <p className="text-sm font-semibold text-foreground">Sin eventos activos</p>

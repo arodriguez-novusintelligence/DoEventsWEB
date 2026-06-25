@@ -18,9 +18,9 @@
   "lovableRoot": "C:\\DoEvents\\AplicacionWEB\\discover-joyful-feed",
   "webRoot": "C:\\DoEvents\\AplicacionWEB\\DoEventsWEB",
   "trackedFiles": 167,
-  "overallSimilarityPercent": 85.96,
+  "overallSimilarityPercent": 86.42,
   "targetSimilarityPercent": 98.0,
-  "alignmentGapPercent": 12.04,
+  "alignmentGapPercent": 11.58,
   "missingInWebCount": 0,
   "needsAdaptationCount": 38,
   "requiresAgentForDesignAlignment": true,
@@ -69,7 +69,7 @@
     {
       "lovablePath": "src/components/ai/AIAssistantView.tsx",
       "webPath": "packages/shell/src/lovable/components/ai/AIAssistantView.tsx",
-      "similarityPercent": 57.02
+      "similarityPercent": 57.68
     },
     {
       "lovablePath": "src/components/banking/BankingHub.tsx",
@@ -94,12 +94,12 @@
     {
       "lovablePath": "src/components/feed/AddStorySheet.tsx",
       "webPath": "packages/shell/src/lovable/components/feed/AddStorySheet.tsx",
-      "similarityPercent": 8.48
+      "similarityPercent": 76.19
     },
     {
       "lovablePath": "src/components/feed/ChangeLocationSheet.tsx",
       "webPath": "packages/shell/src/lovable/components/feed/ChangeLocationSheet.tsx",
-      "similarityPercent": 58.16
+      "similarityPercent": 57.96
     },
     {
       "lovablePath": "src/components/feed/EventsView.tsx",
@@ -124,7 +124,7 @@
     {
       "lovablePath": "src/components/feed/ProfileCommentsView.tsx",
       "webPath": "packages/shell/src/lovable/components/feed/ProfileCommentsView.tsx",
-      "similarityPercent": 47.87
+      "similarityPercent": 49.27
     },
     {
       "lovablePath": "src/components/feed/ReportPostDialog.tsx",
@@ -139,12 +139,12 @@
     {
       "lovablePath": "src/components/feed/StoryViewersSheet.tsx",
       "webPath": "packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx",
-      "similarityPercent": 72.62
+      "similarityPercent": 79.02
     },
     {
       "lovablePath": "src/components/guests/EventInvitationModal.tsx",
       "webPath": "packages/shell/src/lovable/components/guests/EventInvitationModal.tsx",
-      "similarityPercent": 68.18
+      "similarityPercent": 68.17
     },
     {
       "lovablePath": "src/components/invitations/TicketPurchaseFlow.tsx",
@@ -550,7 +550,7 @@
       "lovablePath": "src/components/ai/AIAssistantView.tsx",
       "webPath": "packages/shell/src/lovable/components/ai/AIAssistantView.tsx",
       "status": "needs_adaptation",
-      "similarityPercent": 57.02,
+      "similarityPercent": 57.68,
       "compareMode": "structural",
       "lovableHasMockPatterns": true,
       "webHasMockPatterns": false,
@@ -563,7 +563,7 @@
         "where": "Asistente IA",
         "status": "needs_adaptation",
         "statusLabel": "Revisar empalme",
-        "similarityPercent": 57.02,
+        "similarityPercent": 57.68,
         "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
         "checks": [
           "Chat con IA",
@@ -1277,7 +1277,7 @@
       "lovablePath": "src/components/feed/AddStorySheet.tsx",
       "webPath": "packages/shell/src/lovable/components/feed/AddStorySheet.tsx",
       "status": "needs_adaptation",
-      "similarityPercent": 8.48,
+      "similarityPercent": 76.19,
       "compareMode": "structural",
       "lovableHasMockPatterns": true,
       "webHasMockPatterns": false,
@@ -1288,7 +1288,10 @@
         "bg-black",
         "text-white"
       ],
-      "webHardcodedColors": [],
+      "webHardcodedColors": [
+        "bg-black",
+        "text-white"
+      ],
       "action": "review_empalme",
       "validationHint": {
         "area": "Historias y b\u00fasqueda",
@@ -1296,7 +1299,7 @@
         "where": "Crear historia",
         "status": "needs_adaptation",
         "statusLabel": "Revisar empalme",
-        "similarityPercent": 8.48,
+        "similarityPercent": 76.19,
         "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
         "checks": [
           "Sheet crear story",
@@ -1336,7 +1339,7 @@
       "lovablePath": "src/components/feed/ChangeLocationSheet.tsx",
       "webPath": "packages/shell/src/lovable/components/feed/ChangeLocationSheet.tsx",
       "status": "needs_adaptation",
-      "similarityPercent": 58.16,
+      "similarityPercent": 57.96,
       "compareMode": "structural",
       "lovableHasMockPatterns": false,
       "webHasMockPatterns": false,
@@ -1349,7 +1352,7 @@
         "where": "Navegar a \u00abFeed / Inicio\u00bb en la app",
         "status": "needs_adaptation",
         "statusLabel": "Revisar empalme",
-        "similarityPercent": 58.16,
+        "similarityPercent": 57.96,
         "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
         "checks": [
           "Comparar visualmente \u00abCambiar ubicaci\u00f3n\u00bb con dise\u00f1o Lovable"
@@ -2046,7 +2049,7 @@
       "lovablePath": "src/components/feed/ProfileCommentsView.tsx",
       "webPath": "packages/shell/src/lovable/components/feed/ProfileCommentsView.tsx",
       "status": "needs_adaptation",
-      "similarityPercent": 47.87,
+      "similarityPercent": 49.27,
       "compareMode": "structural",
       "lovableHasMockPatterns": false,
       "webHasMockPatterns": false,
@@ -2059,7 +2062,7 @@
         "where": "Mi perfil \u2192 Comentarios",
         "status": "needs_adaptation",
         "statusLabel": "Revisar empalme",
-        "similarityPercent": 47.87,
+        "similarityPercent": 49.27,
         "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
         "checks": [
           "Lista de comentarios",
@@ -2253,7 +2256,7 @@
       "lovablePath": "src/components/feed/StoryViewersSheet.tsx",
       "webPath": "packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx",
       "status": "needs_adaptation",
-      "similarityPercent": 72.62,
+      "similarityPercent": 79.02,
       "compareMode": "structural",
       "lovableHasMockPatterns": false,
       "webHasMockPatterns": false,
@@ -2266,7 +2269,7 @@
         "where": "Navegar a \u00abFeed / Inicio\u00bb en la app",
         "status": "needs_adaptation",
         "statusLabel": "Revisar empalme",
-        "similarityPercent": 72.62,
+        "similarityPercent": 79.02,
         "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
         "checks": [
           "Comparar visualmente \u00abStory ers\u00bb con dise\u00f1o Lovable"
@@ -2472,7 +2475,7 @@
       "lovablePath": "src/components/guests/EventInvitationModal.tsx",
       "webPath": "packages/shell/src/lovable/components/guests/EventInvitationModal.tsx",
       "status": "needs_adaptation",
-      "similarityPercent": 68.18,
+      "similarityPercent": 68.17,
       "compareMode": "structural",
       "lovableHasMockPatterns": false,
       "webHasMockPatterns": false,
@@ -2485,7 +2488,7 @@
         "where": "Navegar a \u00abInvitados\u00bb en la app",
         "status": "needs_adaptation",
         "statusLabel": "Revisar empalme",
-        "similarityPercent": 68.18,
+        "similarityPercent": 68.17,
         "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
         "checks": [
           "Comparar visualmente \u00abEvent invitation\u00bb con dise\u00f1o Lovable"
@@ -4792,7 +4795,7 @@
       "where": "Navegar a \u00abFeed / Inicio\u00bb en la app",
       "status": "needs_adaptation",
       "statusLabel": "Revisar empalme",
-      "similarityPercent": 72.62,
+      "similarityPercent": 79.02,
       "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
       "checks": [
         "Comparar visualmente \u00abStory ers\u00bb con dise\u00f1o Lovable"
@@ -4820,7 +4823,7 @@
       "where": "Navegar a \u00abFeed / Inicio\u00bb en la app",
       "status": "needs_adaptation",
       "statusLabel": "Revisar empalme",
-      "similarityPercent": 58.16,
+      "similarityPercent": 57.96,
       "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
       "checks": [
         "Comparar visualmente \u00abCambiar ubicaci\u00f3n\u00bb con dise\u00f1o Lovable"
@@ -4920,7 +4923,7 @@
       "where": "Mi perfil \u2192 Comentarios",
       "status": "needs_adaptation",
       "statusLabel": "Revisar empalme",
-      "similarityPercent": 47.87,
+      "similarityPercent": 49.27,
       "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
       "checks": [
         "Lista de comentarios",
@@ -5009,6 +5012,21 @@
     },
     {
       "area": "Historias y b\u00fasqueda",
+      "feature": "Agregar historia",
+      "where": "Crear historia",
+      "status": "needs_adaptation",
+      "statusLabel": "Revisar empalme",
+      "similarityPercent": 76.19,
+      "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
+      "checks": [
+        "Sheet crear story",
+        "Subir media"
+      ],
+      "lovablePath": "src/components/feed/AddStorySheet.tsx",
+      "component": "AddStorySheet"
+    },
+    {
+      "area": "Historias y b\u00fasqueda",
       "feature": "Visor de historias",
       "where": "Feed \u2192 historias",
       "status": "needs_adaptation",
@@ -5021,21 +5039,6 @@
       ],
       "lovablePath": "src/components/feed/StoryViewer.tsx",
       "component": "StoryViewer"
-    },
-    {
-      "area": "Historias y b\u00fasqueda",
-      "feature": "Agregar historia",
-      "where": "Crear historia",
-      "status": "needs_adaptation",
-      "statusLabel": "Revisar empalme",
-      "similarityPercent": 8.48,
-      "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
-      "checks": [
-        "Sheet crear story",
-        "Subir media"
-      ],
-      "lovablePath": "src/components/feed/AddStorySheet.tsx",
-      "component": "AddStorySheet"
     },
     {
       "area": "Mapa y eventos",
@@ -5310,7 +5313,7 @@
       "where": "Navegar a \u00abInvitados\u00bb en la app",
       "status": "needs_adaptation",
       "statusLabel": "Revisar empalme",
-      "similarityPercent": 68.18,
+      "similarityPercent": 68.17,
       "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
       "checks": [
         "Comparar visualmente \u00abEvent invitation\u00bb con dise\u00f1o Lovable"
@@ -5569,7 +5572,7 @@
       "where": "Asistente IA",
       "status": "needs_adaptation",
       "statusLabel": "Revisar empalme",
-      "similarityPercent": 57.02,
+      "similarityPercent": 57.68,
       "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
       "checks": [
         "Chat con IA",

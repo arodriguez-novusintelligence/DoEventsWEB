@@ -1,4 +1,5 @@
 import { AlertCircle, ChevronLeft, Loader2, MessageSquare, RefreshCw, Star } from 'lucide-react';
+import { UserAvatar } from '@doevents/shared';
 import { Button } from '@lovable/components/ui/button';
 
 export type ProfileCommentItem = {
@@ -72,7 +73,9 @@ const ProfileCommentsView = ({
         </div>
       ) : (
         comments.map((c) => (
-          <div key={c.id} className="rounded-2xl border border-border/50 bg-card p-4 shadow-sm">
+          <div key={c.id} className="flex gap-3 rounded-2xl border border-border/50 bg-card p-4 shadow-sm">
+            <UserAvatar name={c.authorName} size={40} className="shrink-0" />
+            <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between gap-2">
               <p className="text-sm font-bold text-foreground">{c.authorName}</p>
               {c.rating != null && c.rating > 0 && (
@@ -91,6 +94,7 @@ const ProfileCommentsView = ({
             {c.createdAt && (
               <p className="mt-2 text-[10px] text-muted-foreground">{c.createdAt}</p>
             )}
+            </div>
           </div>
         ))
       )}

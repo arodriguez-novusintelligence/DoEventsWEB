@@ -268,21 +268,13 @@ export const AIAssistantView: React.FC<AIAssistantViewProps> = ({ userId, onBack
         <button
           type="button"
           onClick={() => void reset()}
-          className="flex items-center gap-1.5 rounded-full border-2 border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary transition hover:border-primary hover:bg-primary/15"
-          title="Reinicia la conversación desde cero"
+          className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition hover:bg-muted"
+          title="Nueva conversación"
+          aria-label="Nueva conversación"
         >
-          <RotateCcw className="h-3.5 w-3.5" />
-          Nueva conversación
+          <RotateCcw className="h-4 w-4" />
         </button>
       </header>
-
-      <div className="shrink-0 border-b border-border bg-muted/30 px-4 py-2">
-        <p className="text-[10px] leading-snug text-muted-foreground">
-          <span className="font-semibold text-foreground">Nueva conversación</span>
-          {' '}
-          reinicia el historial y el contexto de la IA.
-        </p>
-      </div>
 
       <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto px-4 py-4 space-y-4 pb-4">
         {messages.map((m) => (
