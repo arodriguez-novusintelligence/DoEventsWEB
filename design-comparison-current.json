@@ -18,11 +18,11 @@
   "lovableRoot": "C:\\DoEvents\\AplicacionWEB\\discover-joyful-feed",
   "webRoot": "C:\\DoEvents\\AplicacionWEB\\DoEventsWEB",
   "trackedFiles": 167,
-  "overallSimilarityPercent": 85.47,
+  "overallSimilarityPercent": 85.54,
   "targetSimilarityPercent": 98.0,
-  "alignmentGapPercent": 12.53,
+  "alignmentGapPercent": 12.46,
   "missingInWebCount": 0,
-  "needsAdaptationCount": 41,
+  "needsAdaptationCount": 39,
   "requiresAgentForDesignAlignment": true,
   "missingInWeb": [],
   "lowSimilarity": [
@@ -34,22 +34,22 @@
     {
       "lovablePath": "src/components/admin/AdminPanelView.tsx",
       "webPath": "packages/shell/src/lovable/components/admin/AdminPanelView.tsx",
-      "similarityPercent": 16.81
+      "similarityPercent": 2.61
     },
     {
       "lovablePath": "src/components/admin/AdminRefundsPanel.tsx",
       "webPath": "packages/shell/src/lovable/components/admin/AdminRefundsPanel.tsx",
-      "similarityPercent": 21.8
+      "similarityPercent": 20.78
     },
     {
       "lovablePath": "src/components/admin/AdminReportsPanel.tsx",
       "webPath": "packages/shell/src/lovable/components/admin/AdminReportsPanel.tsx",
-      "similarityPercent": 16.62
+      "similarityPercent": 16.14
     },
     {
       "lovablePath": "src/components/admin/AdminUsersPanel.tsx",
       "webPath": "packages/shell/src/lovable/components/admin/AdminUsersPanel.tsx",
-      "similarityPercent": 10.21
+      "similarityPercent": 1.73
     },
     {
       "lovablePath": "src/components/admin/EventSalesDetail.tsx",
@@ -59,27 +59,27 @@
     {
       "lovablePath": "src/components/admin/NewUsersPanel.tsx",
       "webPath": "packages/shell/src/lovable/components/admin/NewUsersPanel.tsx",
-      "similarityPercent": 9.34
+      "similarityPercent": 1.52
     },
     {
       "lovablePath": "src/components/admin/PaymentsPanel.tsx",
       "webPath": "packages/shell/src/lovable/components/admin/PaymentsPanel.tsx",
-      "similarityPercent": 9.84
+      "similarityPercent": 1.59
     },
     {
       "lovablePath": "src/components/admin/SupportSearchPanel.tsx",
       "webPath": "packages/shell/src/lovable/components/admin/SupportSearchPanel.tsx",
-      "similarityPercent": 8.09
+      "similarityPercent": 1.49
     },
     {
       "lovablePath": "src/components/ai/AIAssistantView.tsx",
       "webPath": "packages/shell/src/lovable/components/ai/AIAssistantView.tsx",
-      "similarityPercent": 56.83
+      "similarityPercent": 57.02
     },
     {
       "lovablePath": "src/components/banking/BankingHub.tsx",
       "webPath": "packages/shell/src/lovable/components/banking/BankingHub.tsx",
-      "similarityPercent": 73.03
+      "similarityPercent": 73.07
     },
     {
       "lovablePath": "src/components/chat/MessagesListView.tsx",
@@ -89,7 +89,7 @@
     {
       "lovablePath": "src/components/events/EventDetailView.tsx",
       "webPath": "packages/shell/src/lovable/components/events/EventDetailView.tsx",
-      "similarityPercent": 46.34
+      "similarityPercent": 67.92
     },
     {
       "lovablePath": "src/components/events/SeatingMapEditor.tsx",
@@ -112,11 +112,6 @@
       "similarityPercent": 79.43
     },
     {
-      "lovablePath": "src/components/feed/FeedBanner.tsx",
-      "webPath": "packages/shell/src/lovable/components/feed/FeedBanner.tsx",
-      "similarityPercent": 84.87
-    },
-    {
       "lovablePath": "src/components/feed/GlobalSearchView.tsx",
       "webPath": "packages/shell/src/lovable/components/feed/GlobalSearchView.tsx",
       "similarityPercent": 77.81
@@ -134,7 +129,7 @@
     {
       "lovablePath": "src/components/feed/ProfileCommentsView.tsx",
       "webPath": "packages/shell/src/lovable/components/feed/ProfileCommentsView.tsx",
-      "similarityPercent": 45.29
+      "similarityPercent": 47.87
     },
     {
       "lovablePath": "src/components/feed/ReportPostDialog.tsx",
@@ -152,11 +147,6 @@
       "similarityPercent": 72.62
     },
     {
-      "lovablePath": "src/components/feed/TopHeader.tsx",
-      "webPath": "packages/shell/src/lovable/components/feed/TopHeader.tsx",
-      "similarityPercent": 81.8
-    },
-    {
       "lovablePath": "src/components/guests/EventInvitationModal.tsx",
       "webPath": "packages/shell/src/lovable/components/guests/EventInvitationModal.tsx",
       "similarityPercent": 68.21
@@ -164,7 +154,7 @@
     {
       "lovablePath": "src/components/invitations/TicketPurchaseFlow.tsx",
       "webPath": "packages/shell/src/lovable/components/invitations/TicketPurchaseFlow.tsx",
-      "similarityPercent": 21.88
+      "similarityPercent": 24.32
     },
     {
       "lovablePath": "src/components/purchases/MyPurchasesView.tsx",
@@ -324,7 +314,7 @@
       "lovablePath": "src/components/admin/AdminPanelView.tsx",
       "webPath": "packages/shell/src/lovable/components/admin/AdminPanelView.tsx",
       "status": "needs_adaptation",
-      "similarityPercent": 16.81,
+      "similarityPercent": 2.61,
       "compareMode": "structural",
       "lovableHasMockPatterns": false,
       "webHasMockPatterns": false,
@@ -337,7 +327,7 @@
         "where": "Admin \u2192 panel",
         "status": "needs_adaptation",
         "statusLabel": "Revisar empalme",
-        "similarityPercent": 16.81,
+        "similarityPercent": 2.61,
         "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
         "checks": [
           "Dashboard admin",
@@ -351,7 +341,7 @@
       "lovablePath": "src/components/admin/AdminRefundsPanel.tsx",
       "webPath": "packages/shell/src/lovable/components/admin/AdminRefundsPanel.tsx",
       "status": "needs_adaptation",
-      "similarityPercent": 21.8,
+      "similarityPercent": 20.78,
       "compareMode": "structural",
       "lovableHasMockPatterns": true,
       "webHasMockPatterns": false,
@@ -364,7 +354,7 @@
         "where": "Navegar a \u00abPanel admin\u00bb en la app",
         "status": "needs_adaptation",
         "statusLabel": "Revisar empalme",
-        "similarityPercent": 21.8,
+        "similarityPercent": 20.78,
         "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
         "checks": [
           "Comparar visualmente \u00abAdmin refunds panel\u00bb con dise\u00f1o Lovable"
@@ -377,7 +367,7 @@
       "lovablePath": "src/components/admin/AdminReportsPanel.tsx",
       "webPath": "packages/shell/src/lovable/components/admin/AdminReportsPanel.tsx",
       "status": "needs_adaptation",
-      "similarityPercent": 16.62,
+      "similarityPercent": 16.14,
       "compareMode": "structural",
       "lovableHasMockPatterns": true,
       "webHasMockPatterns": false,
@@ -390,7 +380,7 @@
         "where": "Navegar a \u00abPanel admin\u00bb en la app",
         "status": "needs_adaptation",
         "statusLabel": "Revisar empalme",
-        "similarityPercent": 16.62,
+        "similarityPercent": 16.14,
         "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
         "checks": [
           "Comparar visualmente \u00abAdmin reports panel\u00bb con dise\u00f1o Lovable"
@@ -403,7 +393,7 @@
       "lovablePath": "src/components/admin/AdminUsersPanel.tsx",
       "webPath": "packages/shell/src/lovable/components/admin/AdminUsersPanel.tsx",
       "status": "needs_adaptation",
-      "similarityPercent": 10.21,
+      "similarityPercent": 1.73,
       "compareMode": "structural",
       "lovableHasMockPatterns": false,
       "webHasMockPatterns": false,
@@ -416,7 +406,7 @@
         "where": "Navegar a \u00abPanel admin\u00bb en la app",
         "status": "needs_adaptation",
         "statusLabel": "Revisar empalme",
-        "similarityPercent": 10.21,
+        "similarityPercent": 1.73,
         "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
         "checks": [
           "Comparar visualmente \u00abAdmin users panel\u00bb con dise\u00f1o Lovable"
@@ -460,7 +450,7 @@
       "lovablePath": "src/components/admin/NewUsersPanel.tsx",
       "webPath": "packages/shell/src/lovable/components/admin/NewUsersPanel.tsx",
       "status": "needs_adaptation",
-      "similarityPercent": 9.34,
+      "similarityPercent": 1.52,
       "compareMode": "structural",
       "lovableHasMockPatterns": true,
       "webHasMockPatterns": false,
@@ -473,7 +463,7 @@
         "where": "Navegar a \u00abPanel admin\u00bb en la app",
         "status": "needs_adaptation",
         "statusLabel": "Revisar empalme",
-        "similarityPercent": 9.34,
+        "similarityPercent": 1.52,
         "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
         "checks": [
           "Comparar visualmente \u00abNew users panel\u00bb con dise\u00f1o Lovable"
@@ -486,10 +476,10 @@
       "lovablePath": "src/components/admin/PaymentsPanel.tsx",
       "webPath": "packages/shell/src/lovable/components/admin/PaymentsPanel.tsx",
       "status": "needs_adaptation",
-      "similarityPercent": 9.84,
+      "similarityPercent": 1.59,
       "compareMode": "structural",
       "lovableHasMockPatterns": true,
-      "webHasMockPatterns": true,
+      "webHasMockPatterns": false,
       "lovableHardcodedColors": [],
       "webHardcodedColors": [],
       "action": "review_empalme",
@@ -499,7 +489,7 @@
         "where": "Navegar a \u00abPanel admin\u00bb en la app",
         "status": "needs_adaptation",
         "statusLabel": "Revisar empalme",
-        "similarityPercent": 9.84,
+        "similarityPercent": 1.59,
         "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
         "checks": [
           "Comparar visualmente \u00abPayments panel\u00bb con dise\u00f1o Lovable"
@@ -512,7 +502,7 @@
       "lovablePath": "src/components/admin/SupportSearchPanel.tsx",
       "webPath": "packages/shell/src/lovable/components/admin/SupportSearchPanel.tsx",
       "status": "needs_adaptation",
-      "similarityPercent": 8.09,
+      "similarityPercent": 1.49,
       "compareMode": "structural",
       "lovableHasMockPatterns": false,
       "webHasMockPatterns": false,
@@ -525,7 +515,7 @@
         "where": "Navegar a \u00abPanel admin\u00bb en la app",
         "status": "needs_adaptation",
         "statusLabel": "Revisar empalme",
-        "similarityPercent": 8.09,
+        "similarityPercent": 1.49,
         "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
         "checks": [
           "Comparar visualmente \u00abSupport search panel\u00bb con dise\u00f1o Lovable"
@@ -565,7 +555,7 @@
       "lovablePath": "src/components/ai/AIAssistantView.tsx",
       "webPath": "packages/shell/src/lovable/components/ai/AIAssistantView.tsx",
       "status": "needs_adaptation",
-      "similarityPercent": 56.83,
+      "similarityPercent": 57.02,
       "compareMode": "structural",
       "lovableHasMockPatterns": true,
       "webHasMockPatterns": false,
@@ -578,7 +568,7 @@
         "where": "Asistente IA",
         "status": "needs_adaptation",
         "statusLabel": "Revisar empalme",
-        "similarityPercent": 56.83,
+        "similarityPercent": 57.02,
         "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
         "checks": [
           "Chat con IA",
@@ -671,7 +661,7 @@
       "lovablePath": "src/components/banking/BankingHub.tsx",
       "webPath": "packages/shell/src/lovable/components/banking/BankingHub.tsx",
       "status": "needs_adaptation",
-      "similarityPercent": 73.03,
+      "similarityPercent": 73.07,
       "compareMode": "structural",
       "lovableHasMockPatterns": false,
       "webHasMockPatterns": false,
@@ -684,7 +674,7 @@
         "where": "Men\u00fa \u2192 Pagos / banca",
         "status": "needs_adaptation",
         "statusLabel": "Revisar empalme",
-        "similarityPercent": 73.03,
+        "similarityPercent": 73.07,
         "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
         "checks": [
           "Hub de m\u00e9todos de pago",
@@ -916,7 +906,7 @@
       "lovablePath": "src/components/events/EventDetailView.tsx",
       "webPath": "packages/shell/src/lovable/components/events/EventDetailView.tsx",
       "status": "needs_adaptation",
-      "similarityPercent": 46.34,
+      "similarityPercent": 67.92,
       "compareMode": "structural",
       "lovableHasMockPatterns": true,
       "webHasMockPatterns": false,
@@ -929,7 +919,7 @@
         "where": "Evento \u2192 detalle",
         "status": "needs_adaptation",
         "statusLabel": "Revisar empalme",
-        "similarityPercent": 46.34,
+        "similarityPercent": 67.92,
         "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
         "checks": [
           "Hero, info, botones comprar/compartir",
@@ -1566,22 +1556,22 @@
     {
       "lovablePath": "src/components/feed/FeedBanner.tsx",
       "webPath": "packages/shell/src/lovable/components/feed/FeedBanner.tsx",
-      "status": "needs_adaptation",
-      "similarityPercent": 84.87,
+      "status": "aligned",
+      "similarityPercent": 98.65,
       "compareMode": "structural",
       "lovableHasMockPatterns": true,
-      "webHasMockPatterns": false,
+      "webHasMockPatterns": true,
       "lovableHardcodedColors": [],
       "webHardcodedColors": [],
-      "action": "review_empalme",
+      "action": "none",
       "validationHint": {
         "area": "Feed / Inicio",
         "feature": "Banner promocional",
         "where": "Navegar a \u00abFeed / Inicio\u00bb en la app",
-        "status": "needs_adaptation",
-        "statusLabel": "Revisar empalme",
-        "similarityPercent": 84.87,
-        "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
+        "status": "aligned",
+        "statusLabel": "Alineado",
+        "similarityPercent": 98.65,
+        "action": "Confirmar que coincide con Lovable",
         "checks": [
           "Comparar visualmente \u00abBanner promocional\u00bb con dise\u00f1o Lovable"
         ],
@@ -2061,7 +2051,7 @@
       "lovablePath": "src/components/feed/ProfileCommentsView.tsx",
       "webPath": "packages/shell/src/lovable/components/feed/ProfileCommentsView.tsx",
       "status": "needs_adaptation",
-      "similarityPercent": 45.29,
+      "similarityPercent": 47.87,
       "compareMode": "structural",
       "lovableHasMockPatterns": false,
       "webHasMockPatterns": false,
@@ -2074,7 +2064,7 @@
         "where": "Mi perfil \u2192 Comentarios",
         "status": "needs_adaptation",
         "statusLabel": "Revisar empalme",
-        "similarityPercent": 45.29,
+        "similarityPercent": 47.87,
         "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
         "checks": [
           "Lista de comentarios",
@@ -2319,22 +2309,22 @@
     {
       "lovablePath": "src/components/feed/TopHeader.tsx",
       "webPath": "packages/shell/src/lovable/components/feed/TopHeader.tsx",
-      "status": "needs_adaptation",
-      "similarityPercent": 81.8,
+      "status": "aligned",
+      "similarityPercent": 99.55,
       "compareMode": "structural",
       "lovableHasMockPatterns": false,
       "webHasMockPatterns": false,
       "lovableHardcodedColors": [],
       "webHardcodedColors": [],
-      "action": "review_empalme",
+      "action": "none",
       "validationHint": {
         "area": "Layout / navegaci\u00f3n",
         "feature": "Top header",
         "where": "Header superior",
-        "status": "needs_adaptation",
-        "statusLabel": "Revisar empalme",
-        "similarityPercent": 81.8,
-        "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
+        "status": "aligned",
+        "statusLabel": "Alineado",
+        "similarityPercent": 99.55,
+        "action": "Confirmar que coincide con Lovable",
         "checks": [
           "Logo, b\u00fasqueda, notificaciones, avatar"
         ],
@@ -2670,7 +2660,7 @@
       "lovablePath": "src/components/invitations/InvitationEventDetailView.tsx",
       "webPath": "packages/shell/src/lovable/components/invitations/InvitationEventDetailView.tsx",
       "status": "minor_drift",
-      "similarityPercent": 90.23,
+      "similarityPercent": 90.68,
       "compareMode": "structural",
       "lovableHasMockPatterns": false,
       "webHasMockPatterns": false,
@@ -2689,7 +2679,7 @@
         "where": "Navegar a \u00abInvitaciones y tickets\u00bb en la app",
         "status": "minor_drift",
         "statusLabel": "Ajuste menor",
-        "similarityPercent": 90.23,
+        "similarityPercent": 90.68,
         "action": "Confirmar ajustes menores de UI",
         "checks": [
           "Comparar visualmente \u00abInvitation event detail\u00bb con dise\u00f1o Lovable"
@@ -2755,7 +2745,7 @@
       "lovablePath": "src/components/invitations/TicketPurchaseFlow.tsx",
       "webPath": "packages/shell/src/lovable/components/invitations/TicketPurchaseFlow.tsx",
       "status": "needs_adaptation",
-      "similarityPercent": 21.88,
+      "similarityPercent": 24.32,
       "compareMode": "structural",
       "lovableHasMockPatterns": true,
       "webHasMockPatterns": true,
@@ -2776,7 +2766,7 @@
         "where": "Comprar ticket",
         "status": "needs_adaptation",
         "statusLabel": "Revisar empalme",
-        "similarityPercent": 21.88,
+        "similarityPercent": 24.32,
         "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
         "checks": [
           "Flujo de compra",
@@ -4781,26 +4771,12 @@
     }
   ],
   "summary": {
-    "aligned": 70,
+    "aligned": 72,
     "minorDrift": 56,
-    "needsAdaptation": 41,
+    "needsAdaptation": 39,
     "missingInWeb": 0
   },
   "validationChecklist": [
-    {
-      "area": "Feed / Inicio",
-      "feature": "Banner promocional",
-      "where": "Navegar a \u00abFeed / Inicio\u00bb en la app",
-      "status": "needs_adaptation",
-      "statusLabel": "Revisar empalme",
-      "similarityPercent": 84.87,
-      "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
-      "checks": [
-        "Comparar visualmente \u00abBanner promocional\u00bb con dise\u00f1o Lovable"
-      ],
-      "lovablePath": "src/components/feed/FeedBanner.tsx",
-      "component": "FeedBanner"
-    },
     {
       "area": "Feed / Inicio",
       "feature": "Report post",
@@ -4949,7 +4925,7 @@
       "where": "Mi perfil \u2192 Comentarios",
       "status": "needs_adaptation",
       "statusLabel": "Revisar empalme",
-      "similarityPercent": 45.29,
+      "similarityPercent": 47.87,
       "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
       "checks": [
         "Lista de comentarios",
@@ -5250,7 +5226,7 @@
       "where": "Evento \u2192 detalle",
       "status": "needs_adaptation",
       "statusLabel": "Revisar empalme",
-      "similarityPercent": 46.34,
+      "similarityPercent": 67.92,
       "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
       "checks": [
         "Hero, info, botones comprar/compartir",
@@ -5280,7 +5256,7 @@
       "where": "Comprar ticket",
       "status": "needs_adaptation",
       "statusLabel": "Revisar empalme",
-      "similarityPercent": 21.88,
+      "similarityPercent": 24.32,
       "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
       "checks": [
         "Flujo de compra",
@@ -5295,7 +5271,7 @@
       "where": "Navegar a \u00abInvitaciones y tickets\u00bb en la app",
       "status": "minor_drift",
       "statusLabel": "Ajuste menor",
-      "similarityPercent": 90.23,
+      "similarityPercent": 90.68,
       "action": "Confirmar ajustes menores de UI",
       "checks": [
         "Comparar visualmente \u00abInvitation event detail\u00bb con dise\u00f1o Lovable"
@@ -5483,7 +5459,7 @@
       "where": "Men\u00fa \u2192 Pagos / banca",
       "status": "needs_adaptation",
       "statusLabel": "Revisar empalme",
-      "similarityPercent": 73.03,
+      "similarityPercent": 73.07,
       "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
       "checks": [
         "Hub de m\u00e9todos de pago",
@@ -5598,7 +5574,7 @@
       "where": "Asistente IA",
       "status": "needs_adaptation",
       "statusLabel": "Revisar empalme",
-      "similarityPercent": 56.83,
+      "similarityPercent": 57.02,
       "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
       "checks": [
         "Chat con IA",
@@ -5628,7 +5604,7 @@
       "where": "Navegar a \u00abPanel admin\u00bb en la app",
       "status": "needs_adaptation",
       "statusLabel": "Revisar empalme",
-      "similarityPercent": 21.8,
+      "similarityPercent": 20.78,
       "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
       "checks": [
         "Comparar visualmente \u00abAdmin refunds panel\u00bb con dise\u00f1o Lovable"
@@ -5638,26 +5614,11 @@
     },
     {
       "area": "Panel admin",
-      "feature": "Admin panel",
-      "where": "Admin \u2192 panel",
-      "status": "needs_adaptation",
-      "statusLabel": "Revisar empalme",
-      "similarityPercent": 16.81,
-      "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
-      "checks": [
-        "Dashboard admin",
-        "Navegaci\u00f3n entre paneles"
-      ],
-      "lovablePath": "src/components/admin/AdminPanelView.tsx",
-      "component": "AdminPanelView"
-    },
-    {
-      "area": "Panel admin",
       "feature": "Admin reports panel",
       "where": "Navegar a \u00abPanel admin\u00bb en la app",
       "status": "needs_adaptation",
       "statusLabel": "Revisar empalme",
-      "similarityPercent": 16.62,
+      "similarityPercent": 16.14,
       "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
       "checks": [
         "Comparar visualmente \u00abAdmin reports panel\u00bb con dise\u00f1o Lovable"
@@ -5667,59 +5628,18 @@
     },
     {
       "area": "Panel admin",
-      "feature": "Admin users panel",
-      "where": "Navegar a \u00abPanel admin\u00bb en la app",
+      "feature": "Admin panel",
+      "where": "Admin \u2192 panel",
       "status": "needs_adaptation",
       "statusLabel": "Revisar empalme",
-      "similarityPercent": 10.21,
+      "similarityPercent": 2.61,
       "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
       "checks": [
-        "Comparar visualmente \u00abAdmin users panel\u00bb con dise\u00f1o Lovable"
+        "Dashboard admin",
+        "Navegaci\u00f3n entre paneles"
       ],
-      "lovablePath": "src/components/admin/AdminUsersPanel.tsx",
-      "component": "AdminUsersPanel"
-    },
-    {
-      "area": "Panel admin",
-      "feature": "Payments panel",
-      "where": "Navegar a \u00abPanel admin\u00bb en la app",
-      "status": "needs_adaptation",
-      "statusLabel": "Revisar empalme",
-      "similarityPercent": 9.84,
-      "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
-      "checks": [
-        "Comparar visualmente \u00abPayments panel\u00bb con dise\u00f1o Lovable"
-      ],
-      "lovablePath": "src/components/admin/PaymentsPanel.tsx",
-      "component": "PaymentsPanel"
-    },
-    {
-      "area": "Panel admin",
-      "feature": "New users panel",
-      "where": "Navegar a \u00abPanel admin\u00bb en la app",
-      "status": "needs_adaptation",
-      "statusLabel": "Revisar empalme",
-      "similarityPercent": 9.34,
-      "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
-      "checks": [
-        "Comparar visualmente \u00abNew users panel\u00bb con dise\u00f1o Lovable"
-      ],
-      "lovablePath": "src/components/admin/NewUsersPanel.tsx",
-      "component": "NewUsersPanel"
-    },
-    {
-      "area": "Panel admin",
-      "feature": "Support search panel",
-      "where": "Navegar a \u00abPanel admin\u00bb en la app",
-      "status": "needs_adaptation",
-      "statusLabel": "Revisar empalme",
-      "similarityPercent": 8.09,
-      "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
-      "checks": [
-        "Comparar visualmente \u00abSupport search panel\u00bb con dise\u00f1o Lovable"
-      ],
-      "lovablePath": "src/components/admin/SupportSearchPanel.tsx",
-      "component": "SupportSearchPanel"
+      "lovablePath": "src/components/admin/AdminPanelView.tsx",
+      "component": "AdminPanelView"
     },
     {
       "area": "Panel admin",
@@ -5736,6 +5656,62 @@
       "component": "EventSalesDetail"
     },
     {
+      "area": "Panel admin",
+      "feature": "Admin users panel",
+      "where": "Navegar a \u00abPanel admin\u00bb en la app",
+      "status": "needs_adaptation",
+      "statusLabel": "Revisar empalme",
+      "similarityPercent": 1.73,
+      "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
+      "checks": [
+        "Comparar visualmente \u00abAdmin users panel\u00bb con dise\u00f1o Lovable"
+      ],
+      "lovablePath": "src/components/admin/AdminUsersPanel.tsx",
+      "component": "AdminUsersPanel"
+    },
+    {
+      "area": "Panel admin",
+      "feature": "Payments panel",
+      "where": "Navegar a \u00abPanel admin\u00bb en la app",
+      "status": "needs_adaptation",
+      "statusLabel": "Revisar empalme",
+      "similarityPercent": 1.59,
+      "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
+      "checks": [
+        "Comparar visualmente \u00abPayments panel\u00bb con dise\u00f1o Lovable"
+      ],
+      "lovablePath": "src/components/admin/PaymentsPanel.tsx",
+      "component": "PaymentsPanel"
+    },
+    {
+      "area": "Panel admin",
+      "feature": "New users panel",
+      "where": "Navegar a \u00abPanel admin\u00bb en la app",
+      "status": "needs_adaptation",
+      "statusLabel": "Revisar empalme",
+      "similarityPercent": 1.52,
+      "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
+      "checks": [
+        "Comparar visualmente \u00abNew users panel\u00bb con dise\u00f1o Lovable"
+      ],
+      "lovablePath": "src/components/admin/NewUsersPanel.tsx",
+      "component": "NewUsersPanel"
+    },
+    {
+      "area": "Panel admin",
+      "feature": "Support search panel",
+      "where": "Navegar a \u00abPanel admin\u00bb en la app",
+      "status": "needs_adaptation",
+      "statusLabel": "Revisar empalme",
+      "similarityPercent": 1.49,
+      "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
+      "checks": [
+        "Comparar visualmente \u00abSupport search panel\u00bb con dise\u00f1o Lovable"
+      ],
+      "lovablePath": "src/components/admin/SupportSearchPanel.tsx",
+      "component": "SupportSearchPanel"
+    },
+    {
       "area": "Venues",
       "feature": "Venue detail",
       "where": "Detalle de venue",
@@ -5749,20 +5725,6 @@
       ],
       "lovablePath": "src/pages/VenueDetail.tsx",
       "component": "VenueDetail"
-    },
-    {
-      "area": "Layout / navegaci\u00f3n",
-      "feature": "Top header",
-      "where": "Header superior",
-      "status": "needs_adaptation",
-      "statusLabel": "Revisar empalme",
-      "similarityPercent": 81.8,
-      "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
-      "checks": [
-        "Logo, b\u00fasqueda, notificaciones, avatar"
-      ],
-      "lovablePath": "src/components/feed/TopHeader.tsx",
-      "component": "TopHeader"
     },
     {
       "area": "Layout / navegaci\u00f3n",
@@ -6187,7 +6149,7 @@
     }
   ],
   "validationChecklistByArea": {
-    "Feed / Inicio": 11,
+    "Feed / Inicio": 10,
     "Mi perfil": 4,
     "Perfil de otros usuarios": 1,
     "Historias y b\u00fasqueda": 3,
@@ -6203,7 +6165,7 @@
     "Asistente IA": 2,
     "Panel admin": 8,
     "Venues": 1,
-    "Layout / navegaci\u00f3n": 2,
+    "Layout / navegaci\u00f3n": 1,
     "Otros": 29
   }
 }

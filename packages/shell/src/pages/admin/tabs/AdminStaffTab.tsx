@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Pencil, Search, ShieldCheck, UserCheck, UserX, Users } from 'lucide-react';
+import { Clock, Lock, Pencil, Search, UserCheck, UserX, Users } from 'lucide-react';
 import {
   fetchAdminStaffUsers,
   updateAdminUser,
@@ -101,15 +101,35 @@ export const AdminStaffTab: React.FC = () => {
       <div>
         <h2 className="text-2xl font-bold">Administración de Usuarios</h2>
         <p className="text-sm text-muted-foreground">
-          Consulta y gestiona todos los usuarios registrados en la aplicación
+          Aprueba registros, asigna roles y consulta historial.
         </p>
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <CountCard label="Total" value={summary.total ?? users.length} icon={Users} color="text-primary" />
-        <CountCard label="Activos" value={summary.active ?? summary.approved ?? 0} icon={UserCheck} color="text-green-500" />
-        <CountCard label="Bloqueados" value={summary.blocked ?? summary.closed ?? 0} icon={UserX} color="text-red-500" />
-        <CountCard label="Administradores" value={summary.admins ?? 0} icon={ShieldCheck} color="text-indigo-500" />
+        <CountCard
+          label="Pendientes"
+          value={summary.pending ?? summary.pendiente ?? users.filter((u) => u.staffStatus === 'pendiente').length}
+          icon={Clock}
+          color="text-yellow-500"
+        />
+        <CountCard
+          label="Aprobados"
+          value={summary.approved ?? summary.aprobado ?? summary.active ?? users.filter((u) => u.staffStatus === 'aprobado').length}
+          icon={UserCheck}
+          color="text-green-500"
+        />
+        <CountCard
+          label="Rechazados"
+          value={summary.rejected ?? summary.rechazado ?? users.filter((u) => u.staffStatus === 'rechazado').length}
+          icon={UserX}
+          color="text-red-500"
+        />
+        <CountCard
+          label="Cerrados"
+          value={summary.closed ?? summary.cerrado ?? summary.blocked ?? users.filter((u) => u.staffStatus === 'cerrado').length}
+          icon={Lock}
+          color="text-muted-foreground"
+        />
       </div>
 
       <section className="rounded-2xl border border-border bg-card shadow-sm">
@@ -275,9 +295,9 @@ function CountCard({
   color: string;
 }) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-4">
+    <div className="rounded-2xl border border-border bg-card p-6">
       <div className="flex items-center gap-4">
-        <Icon className={`h-8 w-8 ${color}`} />
+        <Icon className={`h-8 w-8 shrink-0 ${color}`} />
         <div>
           <p className="text-sm text-muted-foreground">{label}</p>
           <p className="text-2xl font-bold">{value}</p>

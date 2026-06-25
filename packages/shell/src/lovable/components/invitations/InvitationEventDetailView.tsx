@@ -197,24 +197,23 @@ const InvitationEventDetailView = ({
 
       {/* Image carousel */}
       <div className="px-4">
-        <div className="relative rounded-2xl overflow-hidden border border-border/60 shadow-sm ring-2 ring-primary/20">
-          {images.length > 0 ? (
-            <button
-              type="button"
-              className="block w-full"
-              onClick={() => { setGalleryIndex(imgIdx); setGalleryOpen(true); }}
-            >
-              <img src={images[imgIdx] || images[0]} alt={event.title} className="w-full h-56 object-cover" />
-            </button>
-          ) : (
-            <div className="flex h-56 w-full flex-col items-center justify-center rounded-2xl border border-dashed border-primary/25 bg-muted">
-              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
-                <CalendarDays className="h-7 w-7 text-primary" />
-              </div>
-              <p className="text-sm font-semibold text-foreground">Sin imagen del evento</p>
+        {images.length > 0 ? (
+          <button
+            type="button"
+            onClick={() => { setGalleryIndex(imgIdx); setGalleryOpen(true); }}
+            className="relative block w-full overflow-hidden rounded-2xl transition active:scale-[0.99]"
+            aria-label="Ampliar imagen"
+          >
+            <img src={images[imgIdx] || images[0]} alt={event.title} className="h-56 w-full object-cover" />
+          </button>
+        ) : (
+          <div className="flex h-56 w-full flex-col items-center justify-center rounded-2xl border border-dashed border-primary/25 bg-muted">
+            <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+              <CalendarDays className="h-7 w-7 text-primary" />
             </div>
-          )}
-        </div>
+            <p className="text-sm font-semibold text-foreground">Sin imagen del evento</p>
+          </div>
+        )}
         {images.length > 1 && (
           <div className="flex justify-center gap-2 mt-3">
             {images.map((_, i) => (
@@ -245,30 +244,30 @@ const InvitationEventDetailView = ({
               if (onLike) onLike();
               else setLikedLocal((v) => !v);
             }}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/40 text-primary shadow-sm ring-2 ring-primary/20 transition-transform active:scale-95"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 transition-transform active:scale-95"
           >
-            <Heart className={`h-5 w-5 ${liked ? 'fill-primary' : ''}`} />
+            <Heart className={`h-5 w-5 ${liked ? 'fill-primary text-primary' : 'text-primary'}`} />
           </button>
           <button
             type="button"
             onClick={onChat}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/40 text-primary shadow-sm ring-2 ring-primary/20 transition-transform active:scale-95"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 transition-transform active:scale-95"
           >
-            <MessageSquare className="h-5 w-5" />
+            <MessageSquare className="h-5 w-5 text-primary" />
           </button>
           <button
             type="button"
             onClick={onReply}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/40 text-primary shadow-sm ring-2 ring-primary/20 transition-transform active:scale-95"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 transition-transform active:scale-95"
           >
-            <Reply className="h-5 w-5" />
+            <Reply className="h-5 w-5 text-primary" />
           </button>
           <button
             type="button"
             onClick={onShare}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/40 text-primary shadow-sm ring-2 ring-primary/20 transition-transform active:scale-95"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 transition-transform active:scale-95"
           >
-            <Share2 className="h-5 w-5" />
+            <Share2 className="h-5 w-5 text-primary" />
           </button>
         </div>
       </div>
