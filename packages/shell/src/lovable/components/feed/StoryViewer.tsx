@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Loader2, MoreHorizontal, X, Eye } from 'lucide-react';
 import {
   FeedStoryItem,
@@ -74,6 +74,9 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   const [index, setIndex] = useState(0);
   const [mediaFailed, setMediaFailed] = useState(false);
   const [progressKey, setProgressKey] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const rafRef = useRef<number | null>(null);
+  const startRef = useRef(0);
 
   const loadStories = useCallback(async (userId: string, preferCache = true) => {
     if (preferCache) {
@@ -199,8 +202,24 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
 
   useEffect(() => {
     if (!open || loading || !current || isVideo || busyAction || menuOpen || mediaFailed) return;
-    const timer = window.setTimeout(goNext, STORY_DURATION_MS);
-    return () => window.clearTimeout(timer);
+    startRef.current = performance.now();
+    setProgress(0);
+
+    const tick = (t: number) => {
+      const elapsed = t - startRef.current;
+      const p = Math.min(1, elapsed / STORY_DURATION_MS);
+      setProgress(p);
+      if (p >= 1) {
+        goNext();
+      } else {
+        rafRef.current = requestAnimationFrame(tick);
+      }
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
   }, [open, loading, current, isVideo, index, goNext, busyAction, menuOpen, mediaFailed, progressKey]);
 
   if (!open || !resolvedAuthorId) return null;
@@ -246,19 +265,12 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
       <div className="absolute left-0 right-0 top-0 z-10 flex gap-1 px-3 pt-3">
         {stories.map((story, i) => (
           <div key={story.id} className="h-0.5 flex-1 overflow-hidden rounded-full bg-white/30">
-            {i < index ? (
-              <div className="h-full w-full bg-white" />
-            ) : i === index ? (
-              isVideo ? (
-                <div className="h-full w-full bg-white" />
-              ) : (
-                <span
-                  key={`${story.id}-${progressKey}`}
-                  className="block h-full w-0 animate-story-progress bg-white"
-                  style={{ animationDuration: `${STORY_DURATION_MS}ms` }}
-                />
-              )
-            ) : null}
+            <div
+              className="h-full bg-white transition-none"
+              style={{
+                width: `${i < index ? 100 : i === index ? progress * 100 : 0}%`,
+              }}
+            />
           </div>
         ))}
       </div>

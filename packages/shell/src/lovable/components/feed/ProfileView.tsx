@@ -317,6 +317,8 @@ const ProfileView = ({
         loading={profileCommentsLoading}
         error={profileCommentsError}
         onRetry={onRetryComments}
+        currentUserName={profileName || 'Tú'}
+        currentUserAvatar={profileAvatarProp}
       />
     );
   }

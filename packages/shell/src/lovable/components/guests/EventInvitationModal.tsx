@@ -920,7 +920,7 @@ export const EventInvitationModal = ({
                       {ev.image ? (
                         <img src={ev.image} alt={ev.title} className="w-full h-32 object-cover rounded-t-2xl" />
                       ) : (
-                        <div className="w-full h-32 rounded-t-2xl bg-primary/5 flex items-center justify-center ring-2 ring-primary/20">
+                        <div className="w-full h-32 rounded-t-2xl bg-primary/5 flex items-center justify-center">
                           <CalendarDays className="h-7 w-7 text-primary" />
                         </div>
                       )}
@@ -1037,7 +1037,7 @@ export const EventInvitationModal = ({
                 <div ref={guestSectionRef} className="space-y-3 pb-6 border-t border-border pt-4">
                   <div className="flex items-start justify-between gap-2 flex-wrap">
                     <div className="min-w-0 flex-1">
-                      <h3 className="text-sm font-semibold">Gestionar Invitados</h3>
+                      <h3 className="text-sm font-semibold">Invitados</h3>
                       <p className="text-[11px] text-muted-foreground">
                         {listGuests.length} en lista · {selectedGuests.length} seleccionado(s) para enviar
                       </p>
@@ -1119,7 +1119,7 @@ export const EventInvitationModal = ({
 
                   {!loadingEventGuests && displayGuests.length === 0 ? (
                     <div className="flex flex-col items-center gap-2 py-6 text-center">
-                      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
                         <Users className="h-7 w-7 text-primary" />
                       </div>
                       <p className="text-sm font-semibold text-foreground">Sin invitados en este filtro</p>
@@ -1228,9 +1228,9 @@ export const EventInvitationModal = ({
                                 bad ? 'border-destructive bg-destructive/10' : 'border-border bg-background'
                               }`}
                             >
-                              <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${isEmailOnly ? 'bg-accent/10' : 'bg-primary/10'}`}>
+                              <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${isEmailOnly ? 'bg-blue-500/10' : 'bg-primary/10'}`}>
                                 {isEmailOnly ? (
-                                  <AtSign className="h-3 w-3 text-accent-foreground" />
+                                  <AtSign className="h-3 w-3 text-blue-500" />
                                 ) : (
                                   <span className="text-[9px] font-semibold text-primary">{g.name.charAt(0)}{g.lastName.charAt(0)}</span>
                                 )}
@@ -1260,7 +1260,7 @@ export const EventInvitationModal = ({
                 )}
                 <Button
                   onClick={() => setConfirmOpen(true)}
-                  className="w-full h-12 rounded-full bg-primary hover:bg-primary/90"
+                  className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90"
                   disabled={sending || !guestIds.length || !channels.length || hasErrors}
                 >
                   {sending ? 'Enviando…' : `Enviar Invitación${guestIds.length ? ` (${guestIds.length})` : ''}`}
@@ -1305,8 +1305,8 @@ export const EventInvitationModal = ({
                 <p className="text-lg font-bold text-primary">{existingUsers.length}</p>
                 <p className="text-[10px] text-muted-foreground">Usuarios</p>
               </div>
-              <div className="rounded-xl bg-accent/5 border border-accent/20 p-2">
-                <p className="text-lg font-bold text-accent-foreground">{emailOnly.length}</p>
+              <div className="rounded-xl bg-blue-500/5 border border-blue-500/20 p-2">
+                <p className="text-lg font-bold text-blue-500">{emailOnly.length}</p>
                 <p className="text-[10px] text-muted-foreground">Correos nuevos</p>
               </div>
             </div>
@@ -1324,9 +1324,9 @@ export const EventInvitationModal = ({
                   const isEmailOnly = !g.username && !!g.email;
                   return (
                     <div key={g.id} className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted/50">
-                      <div className={`w-7 h-7 rounded-full flex items-center justify-center ${isEmailOnly ? 'bg-accent/10' : 'bg-primary/10'}`}>
+                      <div className={`w-7 h-7 rounded-full flex items-center justify-center ${isEmailOnly ? 'bg-blue-500/10' : 'bg-primary/10'}`}>
                         {isEmailOnly ? (
-                          <AtSign className="h-3.5 w-3.5 text-accent-foreground" />
+                          <AtSign className="h-3.5 w-3.5 text-blue-500" />
                         ) : (
                           <span className="text-[10px] font-semibold text-primary">{g.name.charAt(0)}{g.lastName.charAt(0)}</span>
                         )}
@@ -1345,12 +1345,12 @@ export const EventInvitationModal = ({
             </ScrollArea>
           </div>
           <DialogFooter className="gap-2 sm:gap-2">
-            <Button variant="outline" onClick={() => setConfirmOpen(false)} className="flex-1 rounded-xl">
+            <Button variant="outline" onClick={() => setConfirmOpen(false)} className="flex-1">
               Cancelar
             </Button>
             <Button
               onClick={() => { setConfirmOpen(false); void send(); }}
-              className="flex-1 rounded-xl bg-primary hover:bg-primary/90"
+              className="flex-1 bg-primary hover:bg-primary/90"
               disabled={sending}
             >
               Enviar {guestIds.length}
