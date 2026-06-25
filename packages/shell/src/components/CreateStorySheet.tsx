@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ImagePlus, Loader2, Radio, Sparkles, Type, Video } from 'lucide-react';
+import { ImagePlus, Loader2, Radio, Type, Video, Image as ImageIcon } from 'lucide-react';
 import {
   createStory,
   resolveDisplayLocation,
@@ -46,6 +46,7 @@ export interface CreateStorySheetProps {
 
 
 type StoryMode = 'image' | 'video' | 'text' | 'live';
+type SheetPhase = 'choose' | 'editor';
 
 
 
@@ -54,6 +55,7 @@ export const CreateStorySheet: React.FC<CreateStorySheetProps> = ({ open, onClos
   const { showToast } = useToast();
 
   const [mode, setMode] = useState<StoryMode>('image');
+  const [phase, setPhase] = useState<SheetPhase>('choose');
 
   const [description, setDescription] = useState('');
 
@@ -129,6 +131,10 @@ export const CreateStorySheet: React.FC<CreateStorySheetProps> = ({ open, onClos
 
       stopLiveStream();
 
+    } else {
+
+      setPhase('choose');
+
     }
 
     return () => {
@@ -145,6 +151,7 @@ export const CreateStorySheet: React.FC<CreateStorySheetProps> = ({ open, onClos
     setMediaPreview(null);
     setMode('image');
     setMediaKind('image');
+    setPhase('choose');
     stopLiveStream();
   };
 
@@ -437,21 +444,58 @@ export const CreateStorySheet: React.FC<CreateStorySheetProps> = ({ open, onClos
 
   return (
     <Sheet open={open} onOpenChange={(next) => { if (!next) onClose(); }}>
-      <SheetContent side="bottom" className="max-h-[92vh] overflow-y-auto rounded-t-2xl px-4 pb-8 pt-6">
+      <SheetContent side="bottom" className="max-h-[92vh] overflow-y-auto rounded-t-3xl px-4 pb-8 pt-6">
         <SheetHeader className="text-left">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
-              <Sparkles className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <SheetTitle>{mode === 'live' && liveActive ? 'En vivo' : 'Nueva historia'}</SheetTitle>
-              <SheetDescription>
-                Comparte momentos que desaparecen en 24 horas. Sin mocks — publicación vía API real.
-              </SheetDescription>
-            </div>
-          </div>
+          <SheetTitle>
+            {phase === 'choose'
+              ? 'Crear'
+              : mode === 'live' && liveActive
+                ? 'En vivo'
+                : 'Crear historia'}
+          </SheetTitle>
+          {phase === 'editor' && (
+            <SheetDescription>
+              Comparte momentos que desaparecen en 24 horas. Publicación vía API real.
+            </SheetDescription>
+          )}
         </SheetHeader>
 
+        {phase === 'choose' ? (
+          <div className="mt-4 grid grid-cols-1 gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                setMode('image');
+                setPhase('editor');
+              }}
+              className="flex items-center gap-4 rounded-2xl border border-border/60 bg-card p-5 text-left transition hover:bg-accent/40"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <ImageIcon className="h-6 w-6" />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-foreground">Crear historia</p>
+                <p className="text-xs text-muted-foreground">Sube una foto, video o estado. Dura 24 horas.</p>
+              </div>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMode('live');
+                setPhase('editor');
+              }}
+              className="flex items-center gap-4 rounded-2xl border border-border/60 bg-card p-5 text-left transition hover:bg-accent/40"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-500/10 text-red-500">
+                <Radio className="h-6 w-6" />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-foreground">Crear en vivo</p>
+                <p className="text-xs text-muted-foreground">Transmite en directo desde tu cámara.</p>
+              </div>
+            </button>
+          </div>
+        ) : (
         <div className="mt-5 space-y-4">
           <div className="flex flex-wrap gap-2">
             {modeOptions.map(({ id, label, icon: Icon }) => (
@@ -568,6 +612,7 @@ export const CreateStorySheet: React.FC<CreateStorySheetProps> = ({ open, onClos
                 : 'Compartir historia'}
           </Button>
         </div>
+        )}
       </SheetContent>
     </Sheet>
   );

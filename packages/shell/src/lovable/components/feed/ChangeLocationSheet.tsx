@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MapPin, Loader2, AlertCircle, Navigation2 } from 'lucide-react';
+import { MapPin, Loader2, AlertCircle, Crosshair } from 'lucide-react';
 import {
   getStoredUserLocation,
   resolveManualUserLocation,
@@ -96,18 +96,23 @@ export const ChangeLocationSheet = ({
         onOpenChange(next);
       }}
     >
-      <SheetContent side="bottom" className="max-h-[90dvh] overflow-y-auto max-w-lg mx-auto rounded-t-2xl">
-        <SheetHeader>
-          <SheetTitle className="flex items-center gap-2">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
-              <MapPin className="h-5 w-5 text-primary" />
-            </div>
-            Cambiar ubicación
-          </SheetTitle>
-        </SheetHeader>
+      <SheetContent side="bottom" className="mx-auto max-h-[90dvh] max-w-lg overflow-y-auto rounded-t-3xl p-0">
+        <div className="rounded-t-3xl bg-gradient-to-br from-primary/10 via-primary/5 to-accent/10 px-4 pb-4 pt-4">
+          <SheetHeader className="text-left">
+            <SheetTitle className="flex items-center gap-2">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 backdrop-blur ring-2 ring-primary/20">
+                <MapPin className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <span className="block text-base font-bold">Cambiar ubicación</span>
+                <span className="text-xs font-normal text-muted-foreground">Eventos y descubrimiento cerca de ti</span>
+              </div>
+            </SheetTitle>
+          </SheetHeader>
+        </div>
 
-        <div className="mt-4 space-y-4">
-          <div className="rounded-2xl border border-border bg-secondary/40 p-4 shadow-sm">
+        <div className="space-y-4 px-4 pb-6 pt-2">
+          <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
             <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Ubicación actual</p>
             <p className="mt-1 text-sm font-semibold text-foreground">{displayLabel}</p>
             {sourceHint && (
@@ -117,14 +122,14 @@ export const ChangeLocationSheet = ({
 
           {inlineError && (
             <div className="flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/5 p-3 text-xs text-destructive">
-              <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
               <span>{inlineError}</span>
             </div>
           )}
 
           <Button
             type="button"
-            className="w-full rounded-full"
+            className="w-full rounded-full py-6 text-base font-bold"
             onClick={localizeMe}
             disabled={locating}
           >
@@ -135,7 +140,7 @@ export const ChangeLocationSheet = ({
               </>
             ) : (
               <>
-                <Navigation2 className="mr-2 h-4 w-4" />
+                <Crosshair className="mr-2 h-4 w-4" />
                 Localízame
               </>
             )}
@@ -162,6 +167,7 @@ export const ChangeLocationSheet = ({
               onKeyDown={(e) => {
                 if (e.key === 'Enter') saveManualCity();
               }}
+              className="rounded-xl"
             />
             <Button
               type="button"

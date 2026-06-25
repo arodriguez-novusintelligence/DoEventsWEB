@@ -444,8 +444,8 @@ const MessagesListView = ({
       className={cn(
         'shrink-0 rounded-full border px-4 py-2 text-xs font-extrabold transition-all',
         filter === value
-          ? 'bg-primary/10 text-primary border-primary/30 shadow-sm'
-          : 'bg-card text-muted-foreground border-border/60 hover:bg-accent/40'
+          ? 'border-primary bg-primary text-primary-foreground shadow-sm'
+          : 'border-border bg-card text-primary hover:bg-accent/40'
       )}
     >
       {label}{count !== undefined ? ` (${count})` : ''}
@@ -453,7 +453,7 @@ const MessagesListView = ({
   );
 
   return (
-    <div className="min-h-screen bg-secondary pb-24">
+    <div className="min-h-screen bg-background pb-24">
       <div className="mx-auto max-w-lg">
         {/* Brand header row */}
         <div className="bg-card px-4 py-3 border-b border-border/60 shadow-sm">

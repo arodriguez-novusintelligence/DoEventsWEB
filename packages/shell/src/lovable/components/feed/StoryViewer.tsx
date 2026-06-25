@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Loader2, MoreHorizontal, Sparkles, X } from 'lucide-react';
+import { Loader2, MoreHorizontal, Sparkles, X, Eye } from 'lucide-react';
 import {
   FeedStoryItem,
   UserAvatar,
@@ -24,6 +24,17 @@ export interface StoryViewerProps {
 }
 
 const STORY_DURATION_MS = 5000;
+
+function formatStoryTimeAgo(iso?: string): string | null {
+  if (!iso) return null;
+  const ts = new Date(iso).getTime();
+  if (Number.isNaN(ts)) return null;
+  const diff = Date.now() - ts;
+  const hours = Math.floor(diff / 3_600_000);
+  if (hours < 1) return `${Math.max(1, Math.floor(diff / 60_000))} min`;
+  if (hours < 24) return `${hours} h`;
+  return `${Math.floor(hours / 24)} d`;
+}
 
 const DISABLED_MENU_ITEMS = [
   'Editar historia',
@@ -255,12 +266,20 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
                 onClick={() => navigate(`/users/${authorUserId}`)}
               >
                 <UserAvatar name={current.authorName} imageUrl={current.authorAvatar} size={36} />
-                <span className="truncate text-sm font-semibold">{current.authorName}</span>
-                {current.isLive && (
-                  <span className="rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold uppercase shadow-sm">
-                    Live
-                  </span>
-                )}
+                <div className="min-w-0 text-left">
+                  <div className="flex items-center gap-2">
+                    <span className="truncate text-sm font-semibold">{current.authorName}</span>
+                    {current.isLive && (
+                      <span className="rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold uppercase shadow-sm">
+                        Live
+                      </span>
+                    )}
+                  </div>
+                  {(() => {
+                    const ago = formatStoryTimeAgo(current.createdAt);
+                    return ago ? <p className="text-[10px] text-white/70">hace {ago}</p> : null;
+                  })()}
+                </div>
               </button>
 
               <div className="flex items-center gap-1">
@@ -337,6 +356,16 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
               aria-label="Siguiente historia"
               onClick={goNext}
             />
+            {canManage && (
+              <button
+                type="button"
+                onClick={() => setViewersOpen(true)}
+                className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/60 px-4 py-2 text-xs font-semibold text-white backdrop-blur"
+              >
+                <Eye className="h-4 w-4" />
+                Quién vio tu historia
+              </button>
+            )}
           </div>
         </>
       )}
