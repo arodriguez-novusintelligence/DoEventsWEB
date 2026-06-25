@@ -50,9 +50,7 @@ export const AdminReportsPanel = () => {
             <p className="text-sm text-muted-foreground">Cargando reportes…</p>
           </div>
         ) : (
-          <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
-            <AdminHomeTab stats={stats} />
-          </div>
+          <AdminHomeTab stats={stats} />
         )}
       </div>
     </div>

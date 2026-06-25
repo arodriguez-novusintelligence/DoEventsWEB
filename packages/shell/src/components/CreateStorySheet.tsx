@@ -444,8 +444,8 @@ export const CreateStorySheet: React.FC<CreateStorySheetProps> = ({ open, onClos
 
   return (
     <Sheet open={open} onOpenChange={(next) => { if (!next) onClose(); }}>
-      <SheetContent side="bottom" className="max-h-[92vh] overflow-y-auto rounded-t-3xl px-4 pb-8 pt-6">
-        <SheetHeader className="text-left">
+      <SheetContent side="bottom" className="flex h-[92vh] flex-col overflow-y-auto rounded-t-3xl p-0">
+        <SheetHeader className="px-4 pb-2 pt-4 text-left">
           <SheetTitle>
             {phase === 'choose'
               ? 'Crear'
@@ -455,27 +455,27 @@ export const CreateStorySheet: React.FC<CreateStorySheetProps> = ({ open, onClos
           </SheetTitle>
           {phase === 'editor' && (
             <SheetDescription>
-              Comparte momentos que desaparecen en 24 horas. Publicación vía API real.
+              Comparte momentos que desaparecen en 24 horas.
             </SheetDescription>
           )}
         </SheetHeader>
 
         {phase === 'choose' ? (
-          <div className="mt-4 grid grid-cols-1 gap-3">
+          <div className="grid flex-1 grid-cols-1 gap-3 p-4">
             <button
               type="button"
               onClick={() => {
                 setMode('image');
                 setPhase('editor');
               }}
-              className="flex items-center gap-4 rounded-2xl border border-border/60 bg-card p-5 text-left transition hover:bg-accent/40"
+              className="flex items-center gap-4 rounded-2xl border bg-card p-5 text-left transition hover:bg-accent"
             >
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
                 <ImageIcon className="h-6 w-6" />
               </div>
               <div className="flex-1">
                 <p className="font-semibold text-foreground">Crear historia</p>
-                <p className="text-xs text-muted-foreground">Sube una foto, video o estado. Dura 24 horas.</p>
+                <p className="text-xs text-muted-foreground">Sube una foto o video. Dura 24 horas.</p>
               </div>
             </button>
             <button
@@ -484,19 +484,19 @@ export const CreateStorySheet: React.FC<CreateStorySheetProps> = ({ open, onClos
                 setMode('live');
                 setPhase('editor');
               }}
-              className="flex items-center gap-4 rounded-2xl border border-border/60 bg-card p-5 text-left transition hover:bg-accent/40"
+              className="flex items-center gap-4 rounded-2xl border bg-card p-5 text-left transition hover:bg-accent"
             >
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-500/10 text-red-500">
                 <Radio className="h-6 w-6" />
               </div>
               <div className="flex-1">
                 <p className="font-semibold text-foreground">Crear en vivo</p>
-                <p className="text-xs text-muted-foreground">Transmite en directo desde tu cámara.</p>
+                <p className="text-xs text-muted-foreground">Graba un video en vivo desde tu cámara.</p>
               </div>
             </button>
           </div>
         ) : (
-        <div className="mt-5 space-y-4">
+        <div className="space-y-4 px-4 pb-4">
           <div className="flex flex-wrap gap-2">
             {modeOptions.map(({ id, label, icon: Icon }) => (
               <button

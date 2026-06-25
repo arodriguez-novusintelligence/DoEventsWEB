@@ -17,10 +17,13 @@ import { StoryViewersSheet } from './StoryViewersSheet';
 
 export interface StoryViewerProps {
   open: boolean;
-  authorUserId: string | null;
+  authorUserId?: string | null;
+  /** Alias Lovable / FeedHero */
+  startUserId?: string | null;
   currentUserId?: string | null;
   onClose: () => void;
   onStoriesChanged?: () => void;
+  onOpenViewers?: (userId: string, itemId: string) => void;
 }
 
 const STORY_DURATION_MS = 5000;
@@ -56,10 +59,13 @@ function inferStoryMediaKind(item: FeedStoryItem): 'image' | 'video' | 'text' {
 export const StoryViewer: React.FC<StoryViewerProps> = ({
   open,
   authorUserId,
+  startUserId,
   currentUserId,
   onClose,
   onStoriesChanged,
+  onOpenViewers,
 }) => {
+  const resolvedAuthorId = authorUserId ?? startUserId ?? null;
   const navigate = useNavigate();
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -87,29 +93,29 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!open || !authorUserId) return;
+    if (!open || !resolvedAuthorId) return;
     let cancelled = false;
     setLoading(true);
     setIndex(0);
     setMenuOpen(false);
     setViewersOpen(false);
     setMediaFailed(false);
-    void loadStories(authorUserId, true)
+    void loadStories(resolvedAuthorId, true)
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [open, authorUserId, loadStories]);
+  }, [open, resolvedAuthorId, loadStories]);
 
   useEffect(() => {
-    if (!open || !authorUserId) return;
+    if (!open || !resolvedAuthorId) return;
     const hasLive = stories.some((story) => story.isLive);
     if (!hasLive) return;
     const timer = window.setInterval(() => {
-      void loadStories(authorUserId, false).catch(() => undefined);
+      void loadStories(resolvedAuthorId, false).catch(() => undefined);
     }, 6000);
     return () => window.clearInterval(timer);
-  }, [open, authorUserId, stories, loadStories]);
+  }, [open, resolvedAuthorId, stories, loadStories]);
 
   const goNext = useCallback(() => {
     setProgressKey((k) => k + 1);
@@ -129,7 +135,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   const mediaKind = current ? inferStoryMediaKind(current) : 'text';
   const mediaUrl = current?.mediaUrl ? resolveImageUrl(current.mediaUrl) : undefined;
   const isVideo = mediaKind === 'video';
-  const storyAuthorId = current?.authorId || authorUserId || '';
+  const storyAuthorId = current?.authorId || resolvedAuthorId || '';
   const canManage = Boolean(
     currentUserId && current && storyAuthorId === currentUserId,
   );
@@ -156,7 +162,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
     try {
       await deletePublication(current.id);
       showToast('Historia eliminada', 'success');
-      dispatchStoriesCacheInvalidated(authorUserId || undefined);
+      dispatchStoriesCacheInvalidated(resolvedAuthorId || undefined);
       onStoriesChanged?.();
       const remaining = stories.filter((story) => story.id !== current.id);
       if (!remaining.length) {
@@ -199,11 +205,19 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
     return () => window.clearTimeout(timer);
   }, [open, loading, current, isVideo, index, goNext, busyAction, menuOpen, mediaFailed, progressKey]);
 
-  if (!open || !authorUserId) return null;
+  if (!open || !resolvedAuthorId) return null;
+
+  const openViewers = () => {
+    if (onOpenViewers && current) {
+      onOpenViewers(resolvedAuthorId, current.id);
+      return;
+    }
+    setViewersOpen(true);
+  };
 
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col bg-black text-white"
+      className="fixed inset-0 z-[100] flex flex-col bg-black text-white"
       role="dialog"
       aria-modal="true"
       aria-label="Visor de historias"
@@ -233,12 +247,12 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
 
       {!loading && current && (
         <>
-          <header className="absolute inset-x-0 top-0 z-20 px-3 pb-3 pt-4 safe-area-top">
+          <header className="absolute inset-x-0 top-0 z-20 px-3 pb-3 pt-6 safe-area-top">
             <div className="mb-3 flex gap-1 px-1">
               {stories.map((story, i) => (
                 <span
                   key={story.id}
-                  className="h-1 flex-1 overflow-hidden rounded-full bg-white/25"
+                  className="h-0.5 flex-1 overflow-hidden rounded-full bg-white/30"
                 >
                   <span
                     key={i === index ? `${story.id}-${progressKey}` : story.id}
@@ -263,9 +277,9 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
               <button
                 type="button"
                 className="flex min-w-0 items-center gap-2"
-                onClick={() => navigate(`/users/${authorUserId}`)}
+                onClick={() => navigate(`/users/${resolvedAuthorId}`)}
               >
-                <UserAvatar name={current.authorName} imageUrl={current.authorAvatar} size={36} />
+                <UserAvatar name={current.authorName} imageUrl={current.authorAvatar} size={36} className="border-2 border-white" />
                 <div className="min-w-0 text-left">
                   <div className="flex items-center gap-2">
                     <span className="truncate text-sm font-semibold">{current.authorName}</span>
@@ -286,7 +300,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
                 {canManage && (
                   <button
                     type="button"
-                    className="flex h-9 w-9 items-center justify-center rounded-full bg-black/30 ring-1 ring-white/10"
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-black/40"
                     onClick={toggleMenu}
                     aria-label="Opciones de la historia"
                     aria-expanded={menuOpen}
@@ -297,7 +311,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
                 )}
                 <button
                   type="button"
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-black/30 ring-1 ring-white/10"
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-black/40"
                   onClick={onClose}
                   aria-label="Cerrar"
                 >
@@ -359,7 +373,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
             {canManage && (
               <button
                 type="button"
-                onClick={() => setViewersOpen(true)}
+                onClick={openViewers}
                 className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/60 px-4 py-2 text-xs font-semibold text-white backdrop-blur"
               >
                 <Eye className="h-4 w-4" />
@@ -394,7 +408,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
               className="flex w-full px-4 py-3 text-left text-sm hover:bg-accent/50"
               onClick={() => {
                 closeMenu();
-                setViewersOpen(true);
+                openViewers();
               }}
               role="menuitem"
             >

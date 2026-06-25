@@ -18,11 +18,11 @@
   "lovableRoot": "C:\\DoEvents\\AplicacionWEB\\discover-joyful-feed",
   "webRoot": "C:\\DoEvents\\AplicacionWEB\\DoEventsWEB",
   "trackedFiles": 167,
-  "overallSimilarityPercent": 85.54,
+  "overallSimilarityPercent": 85.96,
   "targetSimilarityPercent": 98.0,
-  "alignmentGapPercent": 12.46,
+  "alignmentGapPercent": 12.04,
   "missingInWebCount": 0,
-  "needsAdaptationCount": 39,
+  "needsAdaptationCount": 38,
   "requiresAgentForDesignAlignment": true,
   "missingInWeb": [],
   "lowSimilarity": [
@@ -37,14 +37,9 @@
       "similarityPercent": 2.61
     },
     {
-      "lovablePath": "src/components/admin/AdminRefundsPanel.tsx",
-      "webPath": "packages/shell/src/lovable/components/admin/AdminRefundsPanel.tsx",
-      "similarityPercent": 20.78
-    },
-    {
       "lovablePath": "src/components/admin/AdminReportsPanel.tsx",
       "webPath": "packages/shell/src/lovable/components/admin/AdminReportsPanel.tsx",
-      "similarityPercent": 16.14
+      "similarityPercent": 15.35
     },
     {
       "lovablePath": "src/components/admin/AdminUsersPanel.tsx",
@@ -99,7 +94,7 @@
     {
       "lovablePath": "src/components/feed/AddStorySheet.tsx",
       "webPath": "packages/shell/src/lovable/components/feed/AddStorySheet.tsx",
-      "similarityPercent": 5.0
+      "similarityPercent": 8.48
     },
     {
       "lovablePath": "src/components/feed/ChangeLocationSheet.tsx",
@@ -139,7 +134,7 @@
     {
       "lovablePath": "src/components/feed/StoryViewer.tsx",
       "webPath": "packages/shell/src/lovable/components/feed/StoryViewer.tsx",
-      "similarityPercent": 46.21
+      "similarityPercent": 45.36
     },
     {
       "lovablePath": "src/components/feed/StoryViewersSheet.tsx",
@@ -149,7 +144,7 @@
     {
       "lovablePath": "src/components/guests/EventInvitationModal.tsx",
       "webPath": "packages/shell/src/lovable/components/guests/EventInvitationModal.tsx",
-      "similarityPercent": 68.21
+      "similarityPercent": 68.18
     },
     {
       "lovablePath": "src/components/invitations/TicketPurchaseFlow.tsx",
@@ -340,8 +335,8 @@
     {
       "lovablePath": "src/components/admin/AdminRefundsPanel.tsx",
       "webPath": "packages/shell/src/lovable/components/admin/AdminRefundsPanel.tsx",
-      "status": "needs_adaptation",
-      "similarityPercent": 20.78,
+      "status": "minor_drift",
+      "similarityPercent": 89.53,
       "compareMode": "structural",
       "lovableHasMockPatterns": true,
       "webHasMockPatterns": false,
@@ -352,10 +347,10 @@
         "area": "Panel admin",
         "feature": "Admin refunds panel",
         "where": "Navegar a \u00abPanel admin\u00bb en la app",
-        "status": "needs_adaptation",
-        "statusLabel": "Revisar empalme",
-        "similarityPercent": 20.78,
-        "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
+        "status": "minor_drift",
+        "statusLabel": "Ajuste menor",
+        "similarityPercent": 89.53,
+        "action": "Confirmar ajustes menores de UI",
         "checks": [
           "Comparar visualmente \u00abAdmin refunds panel\u00bb con dise\u00f1o Lovable"
         ],
@@ -367,7 +362,7 @@
       "lovablePath": "src/components/admin/AdminReportsPanel.tsx",
       "webPath": "packages/shell/src/lovable/components/admin/AdminReportsPanel.tsx",
       "status": "needs_adaptation",
-      "similarityPercent": 16.14,
+      "similarityPercent": 15.35,
       "compareMode": "structural",
       "lovableHasMockPatterns": true,
       "webHasMockPatterns": false,
@@ -380,7 +375,7 @@
         "where": "Navegar a \u00abPanel admin\u00bb en la app",
         "status": "needs_adaptation",
         "statusLabel": "Revisar empalme",
-        "similarityPercent": 16.14,
+        "similarityPercent": 15.35,
         "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
         "checks": [
           "Comparar visualmente \u00abAdmin reports panel\u00bb con dise\u00f1o Lovable"
@@ -1282,7 +1277,7 @@
       "lovablePath": "src/components/feed/AddStorySheet.tsx",
       "webPath": "packages/shell/src/lovable/components/feed/AddStorySheet.tsx",
       "status": "needs_adaptation",
-      "similarityPercent": 5.0,
+      "similarityPercent": 8.48,
       "compareMode": "structural",
       "lovableHasMockPatterns": true,
       "webHasMockPatterns": false,
@@ -1301,7 +1296,7 @@
         "where": "Crear historia",
         "status": "needs_adaptation",
         "statusLabel": "Revisar empalme",
-        "similarityPercent": 5.0,
+        "similarityPercent": 8.48,
         "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
         "checks": [
           "Sheet crear story",
@@ -2219,7 +2214,7 @@
       "lovablePath": "src/components/feed/StoryViewer.tsx",
       "webPath": "packages/shell/src/lovable/components/feed/StoryViewer.tsx",
       "status": "needs_adaptation",
-      "similarityPercent": 46.21,
+      "similarityPercent": 45.36,
       "compareMode": "structural",
       "lovableHasMockPatterns": false,
       "webHasMockPatterns": false,
@@ -2244,7 +2239,7 @@
         "where": "Feed \u2192 historias",
         "status": "needs_adaptation",
         "statusLabel": "Revisar empalme",
-        "similarityPercent": 46.21,
+        "similarityPercent": 45.36,
         "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
         "checks": [
           "Visor fullscreen",
@@ -2477,7 +2472,7 @@
       "lovablePath": "src/components/guests/EventInvitationModal.tsx",
       "webPath": "packages/shell/src/lovable/components/guests/EventInvitationModal.tsx",
       "status": "needs_adaptation",
-      "similarityPercent": 68.21,
+      "similarityPercent": 68.18,
       "compareMode": "structural",
       "lovableHasMockPatterns": false,
       "webHasMockPatterns": false,
@@ -2490,7 +2485,7 @@
         "where": "Navegar a \u00abInvitados\u00bb en la app",
         "status": "needs_adaptation",
         "statusLabel": "Revisar empalme",
-        "similarityPercent": 68.21,
+        "similarityPercent": 68.18,
         "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
         "checks": [
           "Comparar visualmente \u00abEvent invitation\u00bb con dise\u00f1o Lovable"
@@ -4772,8 +4767,8 @@
   ],
   "summary": {
     "aligned": 72,
-    "minorDrift": 56,
-    "needsAdaptation": 39,
+    "minorDrift": 57,
+    "needsAdaptation": 38,
     "missingInWeb": 0
   },
   "validationChecklist": [
@@ -5018,7 +5013,7 @@
       "where": "Feed \u2192 historias",
       "status": "needs_adaptation",
       "statusLabel": "Revisar empalme",
-      "similarityPercent": 46.21,
+      "similarityPercent": 45.36,
       "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
       "checks": [
         "Visor fullscreen",
@@ -5033,7 +5028,7 @@
       "where": "Crear historia",
       "status": "needs_adaptation",
       "statusLabel": "Revisar empalme",
-      "similarityPercent": 5.0,
+      "similarityPercent": 8.48,
       "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
       "checks": [
         "Sheet crear story",
@@ -5315,7 +5310,7 @@
       "where": "Navegar a \u00abInvitados\u00bb en la app",
       "status": "needs_adaptation",
       "statusLabel": "Revisar empalme",
-      "similarityPercent": 68.21,
+      "similarityPercent": 68.18,
       "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
       "checks": [
         "Comparar visualmente \u00abEvent invitation\u00bb con dise\u00f1o Lovable"
@@ -5600,25 +5595,11 @@
     },
     {
       "area": "Panel admin",
-      "feature": "Admin refunds panel",
-      "where": "Navegar a \u00abPanel admin\u00bb en la app",
-      "status": "needs_adaptation",
-      "statusLabel": "Revisar empalme",
-      "similarityPercent": 20.78,
-      "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
-      "checks": [
-        "Comparar visualmente \u00abAdmin refunds panel\u00bb con dise\u00f1o Lovable"
-      ],
-      "lovablePath": "src/components/admin/AdminRefundsPanel.tsx",
-      "component": "AdminRefundsPanel"
-    },
-    {
-      "area": "Panel admin",
       "feature": "Admin reports panel",
       "where": "Navegar a \u00abPanel admin\u00bb en la app",
       "status": "needs_adaptation",
       "statusLabel": "Revisar empalme",
-      "similarityPercent": 16.14,
+      "similarityPercent": 15.35,
       "action": "Empalmar dise\u00f1o Lovable en componente WEB existente",
       "checks": [
         "Comparar visualmente \u00abAdmin reports panel\u00bb con dise\u00f1o Lovable"
@@ -5710,6 +5691,20 @@
       ],
       "lovablePath": "src/components/admin/SupportSearchPanel.tsx",
       "component": "SupportSearchPanel"
+    },
+    {
+      "area": "Panel admin",
+      "feature": "Admin refunds panel",
+      "where": "Navegar a \u00abPanel admin\u00bb en la app",
+      "status": "minor_drift",
+      "statusLabel": "Ajuste menor",
+      "similarityPercent": 89.53,
+      "action": "Confirmar ajustes menores de UI",
+      "checks": [
+        "Comparar visualmente \u00abAdmin refunds panel\u00bb con dise\u00f1o Lovable"
+      ],
+      "lovablePath": "src/components/admin/AdminRefundsPanel.tsx",
+      "component": "AdminRefundsPanel"
     },
     {
       "area": "Venues",

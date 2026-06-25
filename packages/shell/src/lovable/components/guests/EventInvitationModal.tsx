@@ -876,14 +876,9 @@ export const EventInvitationModal = ({
           <div className="relative flex h-full min-h-0 flex-1 flex-col overflow-hidden">
           {step === 'events' && (
             <>
-              <DialogHeader className="shrink-0 space-y-1 p-6 pb-4 text-left">
-                <DialogTitle className="flex items-center gap-2 text-xl font-semibold">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
-                    <CalendarDays className="h-5 w-5 text-primary" />
-                  </span>
-                  Seleccionar Evento
-                </DialogTitle>
-                <p className="text-sm text-muted-foreground pl-12">Elige un evento para enviar invitaciones</p>
+              <DialogHeader className="shrink-0 space-y-1 p-4 pb-3 text-left sm:p-6 sm:pb-4">
+                <DialogTitle className="text-base font-semibold sm:text-xl">Seleccionar Evento</DialogTitle>
+                <p className="text-xs text-muted-foreground sm:text-sm">Elige un evento para enviar invitaciones</p>
               </DialogHeader>
               <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-6 pb-6 touch-pan-y">
                 {loadingEvents && (
@@ -964,14 +959,9 @@ export const EventInvitationModal = ({
                   <Button variant="ghost" size="sm" onClick={() => setStep('events')} className="h-8 w-8 p-0">
                     <ArrowLeft className="h-4 w-4" />
                   </Button>
-                  <DialogTitle className="flex items-center gap-2 text-base font-bold">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
-                      <Mail className="h-5 w-5 text-primary" />
-                    </span>
-                    Enviar Invitación
-                  </DialogTitle>
+                  <DialogTitle className="text-base font-semibold sm:text-lg">Invitar usuarios</DialogTitle>
                 </div>
-                <p className="text-[11px] sm:text-xs text-muted-foreground pl-10 truncate">
+                <p className="truncate pl-10 text-[11px] text-muted-foreground sm:text-xs">
                   Selecciona usuarios para invitar a &quot;{event.title}&quot;
                 </p>
               </DialogHeader>
