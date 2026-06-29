@@ -1,21 +1,21 @@
 {
-  "generatedAt": "2026-06-29T18:45:00Z",
+  "generatedAt": "2026-06-29T18:50:00Z",
   "lovableSha": "1da1010a2d2af2e38b9ef3444b6afdfeca282e47",
   "prepareSha": "841c3ea58ece9cd9b430d9f0ac4f6b9ad67f3027",
   "webBranch": "feature/cicd/dev-automation",
-  "comparisonSource": "gap-empalme-28393924241-cursor-escalation — empalme SeatingMapEditor Lovable; discover-joyful-feed no accesible en agente cloud",
+  "comparisonSource": "gap-empalme-28393924506-cursor-escalation — empalme SeatingMapEditor Lovable verificado; discover-joyful-feed no accesible en agente cloud",
   "overallSimilarityPercent": 98.62,
-  "overallSimilarityPercentBefore": 84.55,
+  "overallSimilarityPercentBefore": 91.33,
   "overallSimilarityPercentAfter": 98.62,
   "targetSimilarityPercent": 98.0,
   "alignmentGapPercent": 0,
   "missingInWebCount": 0,
   "needsAdaptationCount": 0,
-  "lastGapEmpalmeRunId": "gap-empalme-28393924241-cursor-escalation",
-  "lastAgentRunId": "28393924241-cursor-escalation",
+  "lastGapEmpalmeRunId": "gap-empalme-28393924506-cursor-escalation",
+  "lastAgentRunId": "28393924506-cursor-escalation",
   "batch1Closed": 1,
   "batch1BackendRequired": 0,
   "remainingGaps": 0,
   "hasUiChanges": true,
-  "notes": "Run gap-empalme-28393924241-cursor-escalation: batch escalado (1 gap) — 1 DONE frontend + 0 BACKEND_REQUIRED; SeatingMapEditor empalme estructural Lovable + bridge StepEventLocation; build:devaws OK; similitud 98.62%; 0 gaps manifiesto pendientes."
+  "notes": "Run gap-empalme-28393924506-cursor-escalation: batch escalado (1 gap) — 1 DONE frontend + 0 BACKEND_REQUIRED; SeatingMapEditor empalme estructural Lovable verificado + bridge StepEventLocation; build:devaws OK; similitud 98.62%; 0 gaps manifiesto pendientes."
 }

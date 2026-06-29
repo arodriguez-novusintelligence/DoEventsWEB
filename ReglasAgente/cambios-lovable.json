@@ -424,6 +424,38 @@
         "Adaptacion pendiente por agente Cursor"
       ],
       "agentStatus": "pending"
+    },
+    {
+      "id": "gap-empalme-28393924506-cursor-escalation",
+      "lovableSha": "1da1010a2d2af2e38b9ef3444b6afdfeca282e47",
+      "timestamp": "2026-06-29 18:50 UTC",
+      "workflowRunId": "28393924506",
+      "gapBatch": 1,
+      "changeTypes": [
+        "VISUAL",
+        "FRONTEND_LOGIC"
+      ],
+      "summary": "Escalado único Cursor: SeatingMapEditor empalme Lovable verificado; similitud 91.33%→98.62%",
+      "webFilesModified": [
+        "packages/shell/src/lovable/components/events/SeatingMapEditor.tsx",
+        "packages/shell/src/lovable/components/events/StepEventLocation.tsx",
+        "ReglasAgente/decision-log.md",
+        "ReglasAgente/cambios-lovable.json",
+        "ReglasAgente/impacto-backend.md",
+        "ReglasAgente/reglas-front.md",
+        "docs/changes/gap-empalme-latest.md",
+        "design-comparison.json",
+        "Reports/28393924506-design-comparison.md"
+      ],
+      "gapsClosed": [
+        "src/components/events/SeatingMapEditor.tsx"
+      ],
+      "gapsBackendRequired": [],
+      "designSimilarityPercentBefore": 91.33,
+      "designSimilarityPercentAfter": 98.62,
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "agentStatus": "finished"
     }
   ]
 }

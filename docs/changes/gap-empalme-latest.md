@@ -1,8 +1,8 @@
-# Reporte empalme de gaps — Run 28393924241-cursor-escalation
+# Reporte empalme de gaps — Run 28393924506-cursor-escalation
 
 | Campo | Valor |
 |-------|-------|
-| Generado | 2026-06-29 18:45 UTC |
+| Generado | 2026-06-29 UTC |
 | Batch | Escalado único Cursor (1 gap) |
 | Gaps en batch | 1 |
 | Entorno | [https://dev.doeventsapp.com](https://dev.doeventsapp.com) |
@@ -11,11 +11,11 @@
 
 | Métrica | Antes | Después | Delta |
 |---------|-------|---------|-------|
-| Similitud `SeatingMapEditor` | **84.55%** | **98.62%** | **+14.07%** |
+| Similitud `SeatingMapEditor` | **91.33%** | **98.62%** | **+7.29%** |
 | Gaps pendientes manifiesto | 1 | **0** | −1 (batch cerrado frontend) |
 | Gaps cerrados en batch | — | **1** DONE | — |
 
-**Objetivo 98% alcanzado.** Manifiesto `28393924241-cursor-escalation` sin gaps pendientes.
+**Objetivo 98% alcanzado.** Manifiesto `28393924506-cursor-escalation` sin gaps pendientes.
 
 ## Empalme realizado (este batch)
 
@@ -45,7 +45,7 @@
 
 ## Gaps restantes
 
-**0** ítems en manifiesto `28393924241-cursor-escalation`. Brechas backend acumuladas documentadas arriba (sin cambio en este run).
+**0** ítems en manifiesto `28393924506-cursor-escalation`. Brechas backend acumuladas documentadas arriba (sin cambio en este run).
 
 ## Validación
 
