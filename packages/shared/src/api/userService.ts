@@ -103,12 +103,13 @@ export function getExperienceSegment(eventsCount: number): number {
 
 export async function fetchUserById(userId: string): Promise<UserProfile | null> {
   const env = getCurrentEnv();
-  const response = await fetch(`${env.endpoints.getUser}/${encodeURIComponent(userId)}`, {
-    headers: authHeaders(),
-  });
+  try {
+    const response = await fetch(`${env.endpoints.getUser}/${encodeURIComponent(userId)}`, {
+      headers: authHeaders(),
+    });
 
-  if (!response.ok) return null;
-  const data = await response.json();
+    if (!response.ok) return null;
+    const data = await response.json();
   const raw = (
     (data?.data && typeof data.data === 'object' ? data.data : null)
     || (data?.id || data?.email ? data : null)
@@ -116,10 +117,21 @@ export async function fetchUserById(userId: string): Promise<UserProfile | null>
 
   if (!raw || typeof raw !== 'object') return null;
 
+  let nombre = (raw.name || raw.nombre) as string | undefined;
+  let apellido = (raw.lastName || raw.apellido) as string | undefined;
+  if (!nombre && !apellido) {
+    const userStr = String(raw.user || '').trim();
+    if (userStr && !userStr.includes('@')) {
+      const parts = userStr.split(/\s+/);
+      nombre = parts[0];
+      apellido = parts.slice(1).join(' ') || undefined;
+    }
+  }
+
   return {
     id: raw.id as string | undefined,
-    nombre: (raw.name || raw.nombre) as string | undefined,
-    apellido: (raw.lastName || raw.apellido) as string | undefined,
+    nombre,
+    apellido,
     email: raw.email as string | undefined,
     phone: raw.phone as string | undefined,
     username: (raw.user || raw.username) as string | undefined,
@@ -160,6 +172,9 @@ export async function fetchUserById(userId: string): Promise<UserProfile | null>
       ? true
       : String(raw.isPublicProfile).toLowerCase() !== 'false',
   };
+  } catch {
+    return null;
+  }
 }
 
 export async function fetchUserStats(userId: string): Promise<UserStats | null> {

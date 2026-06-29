@@ -10,7 +10,18 @@ $ErrorActionPreference = "Stop"
 $Root = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 Set-Location $Root
 
+$EnvFile = Join-Path $Root ".env.qa"
+. (Join-Path $PSScriptRoot "load-vite-env.ps1") -EnvFile $EnvFile
+
+if (-not $env:VITE_GOOGLE_MAPS_API_KEY) {
+    throw "Falta VITE_GOOGLE_MAPS_API_KEY. Defínela en .env.qa antes del deploy QA."
+}
+
 Write-Host "=== Build QA ===" -ForegroundColor Cyan
+if ($env:VITE_GOOGLE_MAPS_API_KEY) {
+    $prefix = $env:VITE_GOOGLE_MAPS_API_KEY.Substring(0, [Math]::Min(8, $env:VITE_GOOGLE_MAPS_API_KEY.Length))
+    Write-Host "Google Maps key present: ${prefix}..." -ForegroundColor DarkGray
+}
 npm run build:qa
 if ($LASTEXITCODE -ne 0) { throw "Build falló" }
 

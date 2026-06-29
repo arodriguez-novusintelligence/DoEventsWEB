@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { loadGoogleMapsScript } from '@doevents/shared';
 
 interface Props {
   lat: number;
@@ -6,47 +7,18 @@ interface Props {
   onPick: (lat: number, lng: number) => void;
 }
 
-declare global {
-  interface Window {
-    google?: any;
-    __initEventLocationMap?: () => void;
-  }
-}
-
-const GOOGLE_MAPS_CALLBACK = '__initEventLocationMap';
-let scriptPromise: Promise<void> | null = null;
-
-const loadGoogleMaps = () => {
-  if (typeof window === 'undefined') return Promise.resolve();
-  if (window.google?.maps) return Promise.resolve();
-  if (scriptPromise) return scriptPromise;
-
-  scriptPromise = new Promise<void>((resolve, reject) => {
-    window[GOOGLE_MAPS_CALLBACK] = () => resolve();
-    const key = import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY;
-    const channel = import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_TRACKING_ID;
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${key}&loading=async&callback=${GOOGLE_MAPS_CALLBACK}&channel=${channel}`;
-    script.async = true;
-    script.defer = true;
-    script.onerror = () => reject(new Error('Failed to load Google Maps'));
-    document.head.appendChild(script);
-  });
-  return scriptPromise;
-};
-
 const EventLocationMap = ({ lat, lng, onPick }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<any>(null);
-  const markerRef = useRef<any>(null);
+  const mapRef = useRef<google.maps.Map | null>(null);
+  const markerRef = useRef<google.maps.Marker | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
-    loadGoogleMaps()
-      .then(() => {
-        if (cancelled || !containerRef.current || !window.google?.maps) return;
-        const map = new window.google.maps.Map(containerRef.current, {
+    loadGoogleMapsScript('__initEventLocationMap')
+      .then((googleMaps) => {
+        if (cancelled || !containerRef.current) return;
+        const map = new googleMaps.maps.Map(containerRef.current, {
           center: { lat, lng },
           zoom: 15,
           disableDefaultUI: false,
@@ -54,11 +26,11 @@ const EventLocationMap = ({ lat, lng, onPick }: Props) => {
           mapTypeControl: false,
           fullscreenControl: false,
         });
-        const marker = new window.google.maps.Marker({
+        const marker = new googleMaps.maps.Marker({
           position: { lat, lng },
           map,
         });
-        map.addListener('click', (e: any) => {
+        map.addListener('click', (e: google.maps.MapMouseEvent) => {
           if (!e.latLng) return;
           onPick(e.latLng.lat(), e.latLng.lng());
         });

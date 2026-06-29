@@ -17,6 +17,8 @@ import {
   loadStoredReservation,
   resolveImageUrl,
   resolveOrderExpiresAtTs,
+  resolveUserDisplayName,
+  getPersistedUserDisplayName,
   useReservationTimer,
   useToast,
   RootState,
@@ -56,7 +58,7 @@ export const OrderConfirmationPage: React.FC = () => {
   const [paid, setPaid] = useState(false);
   const [sideMenuOpen, setSideMenuOpen] = useState(false);
   const [payLaterOpen, setPayLaterOpen] = useState(false);
-  const [profileName, setProfileName] = useState('Eventer');
+  const [profileName, setProfileName] = useState(() => getPersistedUserDisplayName() || 'Usuario');
   const [profileUsername, setProfileUsername] = useState('@eventer');
   const [profileAvatar, setProfileAvatar] = useState<string | undefined>();
   const [profileEmail, setProfileEmail] = useState('');
@@ -88,11 +90,9 @@ export const OrderConfirmationPage: React.FC = () => {
     fetchUserById(userId)
       .then((profile) => {
         if (!profile) return;
-        const name = [profile.nombre, profile.apellido].filter(Boolean).join(' ')
-          || profile.username
-          || 'Eventer';
+        const name = resolveUserDisplayName(profile) || getPersistedUserDisplayName() || 'Usuario';
         setProfileName(name);
-        setProfileUsername(profile.username ? `@${profile.username}` : '@eventer');
+        setProfileUsername(profile.username ? `@${profile.username}` : '@usuario');
         setProfileAvatar(resolveImageUrl(profile.imagen) || undefined);
         setProfileEmail(profile.email || '');
         setProfilePhone(profile.phone || '');

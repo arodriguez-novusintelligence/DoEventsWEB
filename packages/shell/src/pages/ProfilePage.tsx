@@ -44,6 +44,8 @@ import {
   toggleEventLike,
   type UserProfile,
   type UserStats,
+  resolveUserDisplayName,
+  getPersistedUserDisplayName,
 } from '@doevents/shared';
 import ProfileView from '@lovable/components/feed/ProfileView';
 import type { FavEventItem, FavPlaceItem } from '@lovable/components/feed/FavoritesView';
@@ -77,6 +79,7 @@ export const ProfilePage: React.FC = () => {
   const { refreshStories, hasActiveStory } = useActiveStoryAuthors();
 
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [stats, setStats] = useState<UserStats | null>(null);
   const [followersCount, setFollowersCount] = useState(0);
@@ -101,9 +104,11 @@ export const ProfilePage: React.FC = () => {
   const reload = useCallback(async (forceNetwork = false) => {
     if (!userId) {
       setLoading(false);
+      setLoadError(null);
       return;
     }
 
+    setLoadError(null);
     if (!forceNetwork) {
       const cached = getProfilePageCache(userId);
       if (cached?.profile) {
@@ -140,7 +145,7 @@ export const ProfilePage: React.FC = () => {
         userVenues,
         userServices,
       ] = await Promise.all([
-        fetchUserById(userId),
+        fetchUserById(userId).catch(() => null),
         fetchUserStats(userId).catch(() => null),
         fetchUserEvents(userId, { forceNetwork, allEvents: true }).catch(() => ({ data: { datosEvento: [] } })),
         fetchFollowersCount(userId).catch(() => ({ count: 0 })),
@@ -211,6 +216,8 @@ export const ProfilePage: React.FC = () => {
         rating: userProfile?.calificacion || userStats?.calificacionPromedio || 0,
         commentsCount: comments?.length || 0,
       });
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : 'No se pudo cargar tu perfil');
     } finally {
       setLoading(false);
     }
@@ -319,6 +326,21 @@ export const ProfilePage: React.FC = () => {
     showToast('Perfil actualizado', 'success');
   };
 
+  if (!userId) {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 bg-background px-6 text-center">
+        <p className="text-sm text-muted-foreground">Inicia sesión para ver tu perfil.</p>
+        <button
+          type="button"
+          className="rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground"
+          onClick={() => navigate('/auth/login')}
+        >
+          Iniciar sesión
+        </button>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center bg-secondary">
@@ -327,9 +349,22 @@ export const ProfilePage: React.FC = () => {
     );
   }
 
-  const profileName = [profile?.nombre, profile?.apellido].filter(Boolean).join(' ')
-    || profile?.username
-    || 'Eventer';
+  if (loadError && !profile) {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 bg-background px-6 text-center">
+        <p className="text-sm font-medium text-destructive">{loadError}</p>
+        <button
+          type="button"
+          className="rounded-full border border-border px-6 py-2.5 text-sm font-semibold"
+          onClick={() => void reload(true)}
+        >
+          Reintentar
+        </button>
+      </div>
+    );
+  }
+
+  const profileName = resolveUserDisplayName(profile) || getPersistedUserDisplayName() || 'Usuario';
   const eventsDone = stats?.eventosRealizados ?? stats?.experienciaEventosRealizados ?? myEventsCount;
 
   return (

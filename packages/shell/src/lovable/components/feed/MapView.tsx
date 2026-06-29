@@ -1,5 +1,6 @@
 /// <reference types="google.maps" />
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
+import { loadGoogleMapsScript, resolveManualUserLocation, resolveUserLocation, useToast } from '@doevents/shared';
 import { Search, Crosshair, Ruler, ChevronDown, Navigation, MapPin, Calendar, Clock, ArrowRight, Users, Star, RefreshCw, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
 import { cn } from '@lovable/lib/utils';
@@ -43,25 +44,8 @@ const CATEGORY_LABEL: Record<Category, string> = {
 const NAV_CLEARANCE = 'calc(7.5rem + env(safe-area-inset-bottom, 0px))';
 
 // Load Google Maps JS API once
-let googleMapsPromise: Promise<typeof google> | null = null;
 function loadGoogleMaps(): Promise<typeof google> {
-  if (googleMapsPromise) return googleMapsPromise;
-  googleMapsPromise = new Promise((resolve, reject) => {
-    if (typeof window === 'undefined') return reject(new Error('No window'));
-    if ((window as any).google?.maps) return resolve((window as any).google);
-    const key = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-      || import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY;
-    const channel = import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_TRACKING_ID;
-    if (!key) return reject(new Error('Missing Google Maps browser key'));
-    (window as any).__initGoogleMaps = () => resolve((window as any).google);
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${key}&loading=async&callback=__initGoogleMaps${channel ? `&channel=${channel}` : ''}`;
-    script.async = true;
-    script.defer = true;
-    script.onerror = () => reject(new Error('Failed to load Google Maps'));
-    document.head.appendChild(script);
-  });
-  return googleMapsPromise;
+  return loadGoogleMapsScript('__initGoogleMaps');
 }
 
 // Custom HTML overlay for image markers (pin color varies per category)
@@ -162,6 +146,57 @@ const MapView = ({
   const [error, setError] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [mapRetryKey, setMapRetryKey] = useState(0);
+  const [locating, setLocating] = useState(false);
+  const [geocoding, setGeocoding] = useState(false);
+  const { showToast } = useToast();
+
+  const panMapTo = (lat: number, lng: number, zoom = 14) => {
+    if (!mapInstance.current) return;
+    mapInstance.current.panTo({ lat, lng });
+    mapInstance.current.setZoom(zoom);
+  };
+
+  const handleDeviceLocation = async () => {
+    setLocating(true);
+    try {
+      const resolved = await resolveUserLocation({ prompt: true, force: true, deviceOnly: true });
+      if (!resolved) {
+        showToast('Activa la ubicación del navegador o escribe tu ciudad en el buscador', 'error');
+        return;
+      }
+      panMapTo(resolved.lat, resolved.lng);
+      showToast('Ubicación del dispositivo aplicada', 'success');
+    } finally {
+      setLocating(false);
+    }
+  };
+
+  const handlePlaceSearch = async () => {
+    const query = searchQuery.trim();
+    if (!query) {
+      showToast('Escribe una ciudad o lugar para buscar', 'error');
+      return;
+    }
+    setGeocoding(true);
+    try {
+      const resolved = await resolveManualUserLocation(query);
+      if (!resolved) {
+        showToast('No encontramos esa ubicación. Prueba: Bogotá, Medellín, Girardot…', 'error');
+        return;
+      }
+      panMapTo(resolved.lat, resolved.lng);
+      showToast(`Mapa centrado en ${resolved.label || resolved.city || query}`, 'success');
+    } finally {
+      setGeocoding(false);
+    }
+  };
+
+  const onSearchKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      void handlePlaceSearch();
+    }
+  };
 
   const items = useMemo<MapItem[]>(() => (
     (mapItems || []).map((it) => ({
@@ -268,9 +303,11 @@ const MapView = ({
   }, [loaded, filtered, selectedId]);
 
   const handleLocate = () => {
-    if (!userLocation) return;
-    mapInstance.current?.panTo(userLocation);
-    mapInstance.current?.setZoom(14);
+    if (userLocation) {
+      panMapTo(userLocation.lat, userLocation.lng);
+      return;
+    }
+    void handleDeviceLocation();
   };
 
   const handleOpenItem = (it: MapItem) => {
@@ -305,15 +342,32 @@ const MapView = ({
       {/* Floating search + distance */}
       <div className="absolute left-0 right-0 top-0 z-30 flex items-center gap-2 px-3 pt-3">
         <div className="flex flex-1 items-center gap-2 rounded-full bg-card px-4 py-2.5 shadow-lg border border-border">
-          <Search className="h-4 w-4 text-primary shrink-0" />
+          <button
+            type="button"
+            onClick={() => void handlePlaceSearch()}
+            disabled={geocoding}
+            className="shrink-0 text-primary disabled:opacity-50"
+            aria-label="Buscar ubicación"
+          >
+            {geocoding ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+          </button>
           <input
             type="text"
             placeholder="Buscar evento, lugar o perfil"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={onSearchKeyDown}
             className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
           />
-          <Crosshair className="h-4 w-4 text-foreground/70 shrink-0" />
+          <button
+            type="button"
+            onClick={() => void handleDeviceLocation()}
+            disabled={locating}
+            className="shrink-0 text-foreground/70 disabled:opacity-50"
+            aria-label="Usar mi ubicación"
+          >
+            {locating ? <Loader2 className="h-4 w-4 animate-spin text-primary" /> : <Crosshair className="h-4 w-4" />}
+          </button>
         </div>
         <div className="relative">
           <button
@@ -415,7 +469,6 @@ const MapView = ({
             size="sm"
             className="mt-2 gap-1.5 rounded-full"
             onClick={() => {
-              googleMapsPromise = null;
               setMapRetryKey((k) => k + 1);
             }}
           >
@@ -429,11 +482,11 @@ const MapView = ({
       <button
         type="button"
         onClick={handleLocate}
-        disabled={!userLocation}
+        disabled={locating}
         className="absolute right-4 bottom-[calc(7.5rem+env(safe-area-inset-bottom,0px)+5.5rem)] z-30 flex h-11 w-11 items-center justify-center rounded-full bg-card border border-border shadow-lg text-primary hover:bg-accent disabled:opacity-40"
         aria-label="Centrar en mi ubicación"
       >
-        <Navigation className="h-5 w-5" />
+        {locating ? <Loader2 className="h-5 w-5 animate-spin" /> : <Navigation className="h-5 w-5" />}
       </button>
 
       {/* Bottom cards — above floating BottomNav */}

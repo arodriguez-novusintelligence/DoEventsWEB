@@ -17,6 +17,7 @@ import {
   getCachedMapData,
   isMapCacheFresh,
   getStoredUserLocation,
+  resolveUserLocation,
   RootState,
   USER_LOCATION_CHANGED_EVENT,
   type StoredUserLocation,
@@ -89,9 +90,18 @@ export const MapPage: React.FC = () => {
   }, [userId]);
 
   useEffect(() => {
-    const stored = getStoredUserLocation();
-    setUserLocation(stored);
-    void loadMap(stored, distanceKm);
+    let cancelled = false;
+    const init = async () => {
+      let stored = getStoredUserLocation();
+      if (!stored) {
+        stored = await resolveUserLocation({ prompt: false }).catch(() => null);
+      }
+      if (cancelled) return;
+      setUserLocation(stored);
+      void loadMap(stored, distanceKm);
+    };
+    void init();
+    return () => { cancelled = true; };
   }, [loadMap, distanceKm]);
 
   useEffect(() => {

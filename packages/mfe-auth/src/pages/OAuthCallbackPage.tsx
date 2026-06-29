@@ -9,6 +9,7 @@ import {
   persistSession,
   setAuthData,
   setAuthenticated,
+  persistOAuthDisplayName,
 } from '@doevents/shared';
 import { getEnvironment } from '@config/environments/index';
 import { resolveOAuthFromCognito } from '../services/oauthCallback';
@@ -96,12 +97,21 @@ export const OAuthCallbackPage: React.FC = () => {
 
         if (result.success && result.data?.token) {
           const { token, user } = result.data;
-          persistSession(token, user.userId);
+          persistSession(
+            token,
+            user.userId,
+            payload.name || [payload.given_name, payload.family_name].filter(Boolean).join(' '),
+          );
           dispatch(setAuthData({ token, idUser: user.userId }));
           dispatch(setAuthenticated(true));
           showToast('Inicio de sesión exitoso', 'success');
           navigate('/');
         } else if (result.data?.codigoRespuesta === 3) {
+          persistOAuthDisplayName(
+            payload.name,
+            payload.given_name,
+            payload.family_name,
+          );
           const oauthUser = {
             id: sub,
             email,

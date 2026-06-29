@@ -42,6 +42,8 @@ import {
 
   useToast,
 
+  resolveUserDisplayName,
+
 } from '@doevents/shared';
 
 import { FollowersSheet } from '../components/FollowersSheet';
@@ -239,7 +241,7 @@ export const PublicUserProfilePage: React.FC = () => {
 
 
 
-  const displayName = [profile.nombre, profile.apellido].filter(Boolean).join(' ') || profile.username || 'Eventer';
+  const displayName = resolveUserDisplayName(profile) || profile.username || 'Usuario';
 
   const username = profile.username ? `@${profile.username}` : '';
 

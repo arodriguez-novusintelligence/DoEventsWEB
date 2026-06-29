@@ -5,6 +5,7 @@ import {
   persistSession,
   setAuthData,
   setAuthenticated,
+  persistOAuthDisplayName,
 } from '@doevents/shared';
 import type { AppDispatch } from '@doevents/shared';
 
@@ -171,13 +172,20 @@ async function syncGoogleUserWithBackend(
     const body = await response.json();
 
     if (body.success && body.data?.token) {
-      persistSession(body.data.token, body.data.user.userId);
+      const displayName = payload.name
+        || [payload.given_name, payload.family_name].filter(Boolean).join(' ');
+      persistSession(body.data.token, body.data.user.userId, displayName);
       dispatch(setAuthData({ token: body.data.token, idUser: body.data.user.userId }));
       dispatch(setAuthenticated(true));
       onSuccess('Inicio de sesión con Google exitoso');
       return true;
     }
     if (body.data?.codigoRespuesta === 3) {
+      persistOAuthDisplayName(
+        payload.name,
+        payload.given_name,
+        payload.family_name,
+      );
       persistPendingOAuthUser({
         provider: 'google',
         user: {

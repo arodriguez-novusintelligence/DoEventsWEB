@@ -9,6 +9,8 @@ import {
   PROFILE_PAGE_CACHE_INVALIDATED_EVENT,
   resolveImageUrl,
   RootState,
+  getPersistedUserDisplayName,
+  resolveUserDisplayName,
 } from '@doevents/shared';
 import TopHeader from '@lovable/components/feed/TopHeader';
 import BottomNav from '@lovable/components/feed/BottomNav';
@@ -66,7 +68,7 @@ export const LovableLayout: React.FC = () => {
   const location = useLocation();
   const userId = useSelector((s: RootState) => s.auth.idUser);
   const [createMenuOpen, setCreateMenuOpen] = useState(false);
-  const [profileName, setProfileName] = useState('Eventer');
+  const [profileName, setProfileName] = useState(() => getPersistedUserDisplayName());
   const [profileUsername, setProfileUsername] = useState('@eventer');
   const [profileAvatar, setProfileAvatar] = useState<string | undefined>();
   const [chatUnread, setChatUnread] = useState(0);
@@ -92,11 +94,9 @@ export const LovableLayout: React.FC = () => {
       fetchUserById(userId)
         .then((profile) => {
           if (!profile) return;
-          const name = [profile.nombre, profile.apellido].filter(Boolean).join(' ')
-            || profile.username
-            || 'Eventer';
+          const name = resolveUserDisplayName(profile) || getPersistedUserDisplayName() || 'Usuario';
           setProfileName(name);
-          setProfileUsername(profile.username ? `@${profile.username}` : '@eventer');
+          setProfileUsername(profile.username ? `@${profile.username}` : '@usuario');
           setProfileAvatar(resolveImageUrl(profile.imagen) || undefined);
           setIsAdmin(isPlatformAdmin(profile.platformRole));
         })

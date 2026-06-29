@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { clearSession } from '../api/authService';
 import { fetchUserById, UserProfile } from '../api/userService';
+import { resolveUserDisplayName, getPersistedUserDisplayName } from '../lib/userDisplayName';
 import { RootState } from '../store';
 import { UserAvatar } from './UserAvatar';
 
@@ -70,10 +71,8 @@ export const SideDrawer: React.FC<SideDrawerProps> = ({ open, onClose }) => {
     navigate('/auth/login');
   };
 
-  const displayName = [profile?.nombre, profile?.apellido].filter(Boolean).join(' ')
-    || profile?.username
-    || 'Eventer';
-  const username = profile?.username ? `@${profile.username}` : '@eventer';
+  const displayName = resolveUserDisplayName(profile) || getPersistedUserDisplayName() || 'Usuario';
+  const username = profile?.username ? `@${profile.username}` : '@usuario';
 
   const toggleProfileMenu = () => {
     if (!userId) {

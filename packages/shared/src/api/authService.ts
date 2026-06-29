@@ -11,6 +11,10 @@ import type {
   UserPreference,
 } from '../types/auth';
 import { invalidateWallCache } from '../lib/eventsCache';
+import {
+  clearPersistedUserDisplayName,
+  persistOAuthDisplayName,
+} from '../lib/userDisplayName';
 
 function endpoints() {
   try {
@@ -390,9 +394,12 @@ export function getEnrollmentUserId(): string {
     || '';
 }
 
-export function persistSession(token: string, userId: string): void {
+export function persistSession(token: string, userId: string, displayName?: string): void {
   setAuthToken(token);
   localStorage.setItem('doevents_user_id', userId);
+  if (displayName?.trim()) {
+    persistOAuthDisplayName(displayName);
+  }
 }
 
 export function clearSession(): void {
@@ -404,6 +411,7 @@ export function clearSession(): void {
   clearPendingLoginCredentials();
   clearPendingOAuthUser();
   invalidateWallCache();
+  clearPersistedUserDisplayName();
 }
 
 export function getStoredUserId(): string {

@@ -88,6 +88,10 @@ import {
 
   mapDiscoverEventBadge,
 
+  resolveUserDisplayName,
+  resolveUserFirstName,
+  getPersistedUserDisplayName,
+
 } from '@doevents/shared';
 
 import FeedHero from '@lovable/components/feed/FeedHero';
@@ -394,7 +398,7 @@ export const SocialWallTab: React.FC = () => {
         setLocationLabel((current) => current || profile.ciudad || null);
       }
       if (profile?.imagen) setProfileAvatar(resolveImageUrl(profile.imagen));
-      const name = [profile?.nombre, profile?.apellido].filter(Boolean).join(' ').trim();
+      const name = resolveUserDisplayName(profile) || getPersistedUserDisplayName();
       if (name) setProfileName(name);
     }).catch(() => undefined);
   }, [userId]);
@@ -828,7 +832,7 @@ export const SocialWallTab: React.FC = () => {
         stories={feedStories}
         storiesLoading={storiesLoading}
         showBuiltInStories={false}
-        userName={profileName?.split(' ')[0] || 'Eventer'}
+        userName={profileName?.split(/\s+/)[0] || resolveUserFirstName(null) || undefined}
         location={locationLabel || profileCity || 'Indica tu ubicación'}
         onChangeLocation={() => setShowLocationSheet(true)}
         selectedCategories={selectedFeedCategories}

@@ -50,4 +50,6 @@ export * from './lib/eventStatusUtils';
 export * from './lib/publishStatus';
 export * from './lib/eventFavoriteSync';
 export * from './lib/discoverCategoryFilters';
+export * from './lib/googleMapsLoader';
+export * from './lib/userDisplayName';
 export * from './services/chatWebSocket';
