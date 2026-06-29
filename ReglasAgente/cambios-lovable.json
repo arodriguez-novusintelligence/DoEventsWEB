@@ -510,6 +510,38 @@
         "Adaptacion pendiente por agente Cursor"
       ],
       "agentStatus": "pending"
+    },
+    {
+      "id": "prepare-906f3fab",
+      "lovableSha": "906f3fab74c6180d9c0fb3c1c5bb1aca4b964435",
+      "before": "758875132394705402c005b9f8921d1fae5e765f",
+      "timestamp": "2026-06-29 22:57 UTC",
+      "workflowRunId": "28408147020",
+      "changeTypes": [
+        "VISUAL",
+        "FRONT_LOGIC"
+      ],
+      "designSimilarityPercent": 86.28,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 11.72,
+      "requiresDesignAlignment": true,
+      "summary": "Manifiesto: UI=True, reglas=True, 6 archivo(s); similitud diseño=86.28%",
+      "changedFilesLovable": [
+        "reglasActuacion/publicaciones/feed-principal.yml",
+        "src/components/feed/FeedThemeToggle.tsx",
+        "src/index.css",
+        "reglasActuacion/eventos/pulep-colombia.yml",
+        "reglasEmpalme/component-index.yml",
+        "reglasEmpalme/port-map.yml"
+      ],
+      "webFilesModified": [],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "pending",
+      "pendingRisks": [
+        "Adaptacion pendiente por agente Cursor"
+      ],
+      "agentStatus": "pending"
     }
   ]
 }
