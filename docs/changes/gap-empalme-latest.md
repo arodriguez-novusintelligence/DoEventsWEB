@@ -1,8 +1,8 @@
-# Reporte empalme de gaps — Run 28392876508-cursor-escalation
+# Reporte empalme de gaps — Run 28393924241-cursor-escalation
 
 | Campo | Valor |
 |-------|-------|
-| Generado | 2026-06-29 18:30 UTC |
+| Generado | 2026-06-29 18:45 UTC |
 | Batch | Escalado único Cursor (1 gap) |
 | Gaps en batch | 1 |
 | Entorno | [https://dev.doeventsapp.com](https://dev.doeventsapp.com) |
@@ -11,26 +11,27 @@
 
 | Métrica | Antes | Después | Delta |
 |---------|-------|---------|-------|
-| Similitud `FeedHero` | **73.89%** | **98.85%** | **+24.96%** |
+| Similitud `SeatingMapEditor` | **84.55%** | **98.62%** | **+14.07%** |
 | Gaps pendientes manifiesto | 1 | **0** | −1 (batch cerrado frontend) |
 | Gaps cerrados en batch | — | **1** DONE | — |
 
-**Objetivo 98% alcanzado.** Manifiesto `28392876508-cursor-escalation` sin gaps pendientes.
+**Objetivo 98% alcanzado.** Manifiesto `28393924241-cursor-escalation` sin gaps pendientes.
 
 ## Empalme realizado (este batch)
 
 | Feature (Lovable) | WEB | Estado |
 |-------------------|-----|--------|
-| Feed hero | `packages/shell/src/lovable/components/feed/FeedHero.tsx` | DONE — categorías overlapping, chips DSF, historias API, tokens semánticos |
+| Seating map editor | `packages/shell/src/lovable/components/events/SeatingMapEditor.tsx` | DONE — geometría SVG arco, header/toolbar Lovable, SeatsGrid API |
+| Preview bridge | `packages/shell/src/lovable/components/events/StepEventLocation.tsx` | DONE — adaptador seatStates → selectedLabels/takenLabels |
 
-### Detalle FeedHero
+### Detalle SeatingMapEditor
 
-- Restaurada sección **Categorías** con card overlapping (`-mt-12`, `pb-16` en hero).
-- Props `selectedCategories`, `onSelectCategory`, `onViewAllCategories` alineados con `SocialWallTab`.
-- MapPin h-10 con anillo; botón Cambiar con `shadow-sm` y `font-extrabold`.
-- Historias desde API real (`feedStories`); estados loading/empty con anillos DSF.
-- Gradientes de story ring semánticos (`primary/accent/destructive`); badge LIVE con token `destructive`.
-- Sin mocks en producción: `showBuiltInStories={false}`; assets dev solo bajo `import.meta.env.DEV`.
+- Empalme estructural desde diseño Lovable (`prepare-1da1010a`), no copy-paste literal.
+- Geometría horseshoe/semicircle con `ArcFigureShape` SVG y bandas de asientos (`seatOuterR`/`seatInnerR`).
+- Header con botones `rounded-full border-border`; título `Piso {currentFloor}` (integración multi-piso WEB).
+- Canvas vacío alineado con copy Lovable; modales legend/text con `shadow-2xl`.
+- `SeatsGrid` expone API Lovable (`selectedLabels`, `takenLabels`, `onSeatToggle`).
+- `StepEventLocation` adapta `SeatVisualState` del bridge sin mocks; `LovableVenueMap` sin cambio de contrato.
 
 ## Backend pendiente para cerrar al 100%
 
@@ -44,7 +45,7 @@
 
 ## Gaps restantes
 
-**0** ítems en manifiesto `28392876508-cursor-escalation`. Brechas backend acumuladas documentadas arriba (sin cambio en este run).
+**0** ítems en manifiesto `28393924241-cursor-escalation`. Brechas backend acumuladas documentadas arriba (sin cambio en este run).
 
 ## Validación
 

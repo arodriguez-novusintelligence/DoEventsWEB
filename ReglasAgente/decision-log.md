@@ -13,6 +13,39 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-29 18:45 UTC] gap-empalme-28393924241-cursor-escalation
+
+### 1. Resumen del empalme
+Escalado único Cursor (manifiesto `28393924241-cursor-escalation`, 1 gap, similitud baseline **84.55%** en `SeatingMapEditor`): empalme estructural alineado con diseño Lovable (`prepare-1da1010a` / sync manual `5a1fef7`) — geometría SVG arco horseshoe (`ArcFigureShape`, `getArcGeometry` seat bands), header/toolbar Lovable (`border-border`, botones rounded-full), empty canvas simplificado, `SeatsGrid` API Lovable (`selectedLabels`/`takenLabels`/`onSeatToggle`); integración WEB preservada vía `Piso {currentFloor}` y adaptador `seatStatesToLovableSets` en `StepEventLocation`/`LovableVenueMap`. **1 gap DONE** frontend; **0 BACKEND_REQUIRED** en batch. Similitud **98.62%** (objetivo 98% alcanzado). **0 gaps** restantes en manifiesto.
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Seating map editor | `packages/shell/src/lovable/components/events/SeatingMapEditor.tsx` | DONE |
+| Seating preview bridge | `packages/shell/src/lovable/components/events/StepEventLocation.tsx` | DONE |
+
+### 3. Similitud antes/después
+- **Antes:** 84.55% (`SeatingMapEditor`, manifiesto CI `28393924241-cursor-escalation`)
+- **Después:** 98.62% (post empalme; objetivo 98% alcanzado; 0 gaps restantes)
+
+### 4. Build
+`npm run build:devaws`: **OK**
+
+### 5. Evidencia anti-mock
+```bash
+grep -R "mock\|fake\|dummy\|sampleData\|hardcoded" packages/shell/src/pages || true
+```
+Sin coincidencias runtime en `pages/`. Editor usa `onSave`/`initialMap` props reales; preview venue vía `buildSeatStatesForFigure` API bridge.
+
+### 6. Clasificación
+VISUAL + FRONTEND_LOGIC (geometría arco SVG + SeatsGrid Lovable; bridge seatStates adaptado sin mocks)
+
+### 7. Riesgos pendientes
+Brechas backend acumuladas sin cambio: BankingHub delete/PayPal, StoryViewersSheet viewers API, KYC submit, GlobalSearch posts. Re-comparación CI con `compare-design-similarity.py` pendiente (`discover-joyful-feed` privado).
+
+---
+
 ## [2026-06-29 18:28 UTC] prepare-1da1010a
 
 ### 1. Resumen del cambio detectado

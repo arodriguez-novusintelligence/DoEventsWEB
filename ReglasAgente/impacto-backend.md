@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-28393924241-cursor-escalation`: escalado único Cursor (1 gap manifiesto) — 1 DONE frontend; 0 BACKEND_REQUIRED en batch. SeatingMapEditor empalme estructural Lovable: geometría SVG arco, header/toolbar/legend/modales alineados; SeatsGrid API Lovable; bridge `seatStatesToLovableSets` en StepEventLocation; `Piso {currentFloor}` preservado; similitud SeatingMapEditor ~98.62%; build:devaws OK; 0 gaps restantes en manifiesto.
+
 Run `gap-empalme-28392876508-cursor-escalation`: escalado único Cursor (1 gap manifiesto) — 1 DONE frontend; 0 BACKEND_REQUIRED en batch. FeedHero empalme DSF completo: categorías overlapping + chips semánticos; props filtro categorías; historias API gradientes destructive/accent; loading h-14 ring; `showBuiltInStories=false` prod; similitud FeedHero ~98.85%; build:devaws OK; 0 gaps restantes en manifiesto.
 
 Run `gap-empalme-27910611218-b6`: batch 1 sexta pasada (20 gaps manifiesto b6) — 20 DONE frontend; 0 BACKEND_REQUIRED en batch. MessagesListView empalme DSF b6 (back pill ring, past rooms shadow-sm + unread ring, search cards border-border/60, private lastMessage extrabold, EmptyState layout); NotificationsSheet header badge + retry ring; NotificationsContext loadingState + NOTIFICATIONS_UPDATED_EVENT export; EventPublished card ring-primary/10 + ghost flat CTAs; 16 gaps verificados intactos b1–b5; similitud ~99.70%; build:devaws OK; 97 gaps batches 2–6 pendientes.
@@ -166,7 +168,12 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-28392876508-cursor-escalation)
+## Empalme realizado (última ejecución — gap-empalme-28393924241-cursor-escalation)
+
+- **SeatingMapEditor:** empalme estructural Lovable (`prepare-1da1010a`): `getArcGeometry` con bandas seatOuterR/seatInnerR; `ArcFigureShape` SVG horseshoe; header botones `rounded-full border-border`; toolbar `border-border`; empty canvas copy Lovable; zoom FABs sin ring DSF extra; legend/text modals `shadow-2xl` + `font-bold`; FooterActions `rounded-xl`; `SeatsGrid` con `selectedLabels`/`takenLabels`/`onSeatToggle`; `Piso {currentFloor}` preservado; APIs `onSave`/`initialMap`/`gates` intactas.
+- **StepEventLocation:** adaptador `seatStatesToLovableSets` mapea `SeatVisualState` bridge → Sets Lovable; `LovableVenueMap` sin cambio de contrato.
+
+## Empalme realizado (ejecución anterior — gap-empalme-28392876508-cursor-escalation)
 
 - **FeedHero:** hero gradiente + pb-16 overlap categorías; MapPin h-10 `ring-primary-foreground/20`; Cambiar `shadow-sm font-extrabold`; card categorías `border-border/60 ring-primary/10 shadow-sm`; grid 6 chips `CATEGORY_CHIP_STYLES` + `ring-primary/20`; Ver todas → `/events` vía props; sección historias API con gradientes `primary/accent/destructive`; LIVE `bg-destructive`; loading h-14 `ring-primary/20`; empty Sparkles dashed; plus badge `shadow-sm ring-primary/20`; `StoriesContext` path solo si `showBuiltInStories`; `defaultStories` assets solo `import.meta.env.DEV`; `SocialWallTab` `feedStories` API real intacto.
 

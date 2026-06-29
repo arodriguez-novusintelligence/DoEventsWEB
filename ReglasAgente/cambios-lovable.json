@@ -399,6 +399,31 @@
         "Adaptacion pendiente por agente Cursor"
       ],
       "agentStatus": "pending"
+    },
+    {
+      "id": "gap-empalme-28393924241-cursor-escalation",
+      "timestamp": "2026-06-29 18:45 UTC",
+      "workflowRunId": "28393924241-cursor-escalation",
+      "gapBatch": 1,
+      "webFilesModified": [
+        "packages/shell/src/lovable/components/events/SeatingMapEditor.tsx",
+        "packages/shell/src/lovable/components/events/StepEventLocation.tsx",
+        "ReglasAgente/decision-log.md",
+        "ReglasAgente/cambios-lovable.json",
+        "ReglasAgente/impacto-backend.md",
+        "ReglasAgente/reglas-front.md",
+        "docs/changes/gap-empalme-latest.md",
+        "design-comparison.json"
+      ],
+      "gapsClosed": [
+        "src/components/events/SeatingMapEditor.tsx"
+      ],
+      "gapsBackendRequired": [],
+      "designSimilarityPercentBefore": 84.55,
+      "designSimilarityPercentAfter": 98.62,
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "agentStatus": "finished"
     }
   ]
 }
