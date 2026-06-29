@@ -12,7 +12,6 @@ export const useFeedTheme = () => {
   useEffect(() => {
     const root = document.documentElement;
     root.removeAttribute('data-feed-theme');
-
     if (theme === 'gold') root.setAttribute('data-feed-theme', 'gold');
     if (theme === 'black') root.setAttribute('data-feed-theme', 'black');
     try { localStorage.setItem(STORAGE_KEY, theme); } catch { /* ignore */ }
@@ -55,6 +54,7 @@ const FeedThemeToggle = () => {
 
   const config = themeConfig[theme];
   const Icon = config.icon;
+
   return (
     <button
       onClick={() => setTheme(nextTheme())}
