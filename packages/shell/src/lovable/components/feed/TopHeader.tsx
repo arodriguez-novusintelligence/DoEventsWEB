@@ -58,9 +58,10 @@ const TopHeader = ({ onViewProfile, onGoToEvent, onGoToTickets, onGoToPost, onNa
   return (
     <>
       <header
-        className={`sticky top-0 z-20 bg-background transition-transform duration-300 ease-in-out ${
+        className={`sticky top-0 z-20 transition-transform duration-300 ease-in-out ${
           hidden ? '-translate-y-full' : 'translate-y-0'
         }`}
+        style={{ background: 'var(--feed-header-bg)' }}
       >
         <div className="mx-auto flex max-w-lg items-center justify-between px-4 py-3">
           <button

@@ -1,59 +1,39 @@
-import { Moon, Sun } from 'lucide-react';
+import { Sparkles, RotateCcw } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { cn } from '@lovable/lib/utils';
 
-const FEED_THEME_STORAGE_KEY = 'feed_theme_v1';
+const STORAGE_KEY = 'feed_theme_v1';
 
-type FeedTheme = 'light' | 'dark';
-
-const readStoredTheme = (): FeedTheme => {
-  if (typeof window === 'undefined') return 'light';
-  try {
-    const stored = localStorage.getItem(FEED_THEME_STORAGE_KEY);
-    if (stored === 'dark' || stored === 'light') return stored;
-  } catch {
-    /* ignore */
-  }
-  return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-};
-
-const applyTheme = (theme: FeedTheme) => {
-  document.documentElement.classList.toggle('dark', theme === 'dark');
-  try {
-    localStorage.setItem(FEED_THEME_STORAGE_KEY, theme);
-  } catch {
-    /* ignore */
-  }
-};
-
-interface FeedThemeToggleProps {
-  className?: string;
-}
-
-const FeedThemeToggle = ({ className }: FeedThemeToggleProps) => {
-  const [theme, setTheme] = useState<FeedTheme>(() => readStoredTheme());
+export const useFeedTheme = () => {
+  const [theme, setTheme] = useState<'default' | 'gold'>(() => {
+    if (typeof window === 'undefined') return 'default';
+    return (localStorage.getItem(STORAGE_KEY) as 'gold' | 'default') || 'default';
+  });
 
   useEffect(() => {
-    applyTheme(theme);
+    const root = document.documentElement;
+    if (theme === 'gold') root.setAttribute('data-feed-theme', 'gold');
+    else root.removeAttribute('data-feed-theme');
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch { /* ignore */ }
   }, [theme]);
 
-  const isDark = theme === 'dark';
+  return { theme, setTheme };
+};
 
+const FeedThemeToggle = () => {
+  const { theme, setTheme } = useFeedTheme();
+  const isGold = theme === 'gold';
   return (
     <button
-      type="button"
-      aria-label={isDark ? 'Activar modo claro' : 'Activar modo oscuro'}
-      onClick={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
-      className={cn(
-        'flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-foreground/15 ring-1 ring-primary-foreground/20 backdrop-blur transition-colors hover:bg-primary-foreground/25',
-        className,
-      )}
+      onClick={() => setTheme(isGold ? 'default' : 'gold')}
+      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold shadow-sm transition-colors ${
+        isGold
+          ? 'bg-white/90 text-amber-700 hover:bg-white'
+          : 'bg-gradient-to-r from-amber-300 to-yellow-500 text-amber-950 hover:from-amber-400 hover:to-yellow-600'
+      }`}
+      title={isGold ? 'Revertir tema' : 'Activar tema dorado'}
     >
-      {isDark ? (
-        <Sun className="h-4 w-4 text-primary-foreground" />
-      ) : (
-        <Moon className="h-4 w-4 text-primary-foreground" />
-      )}
+      {isGold ? <RotateCcw className="h-3.5 w-3.5" /> : <Sparkles className="h-3.5 w-3.5" />}
+      {isGold ? 'Revertir' : 'Dorado'}
     </button>
   );
 };
