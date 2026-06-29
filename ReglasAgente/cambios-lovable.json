@@ -375,32 +375,6 @@
       "agentStatus": "finished"
     },
     {
-      "id": "prepare-1da1010a",
-      "lovableSha": "1da1010a2d2af2e38b9ef3444b6afdfeca282e47",
-      "before": "841c3ea58ece9cd9b430d9f0ac4f6b9ad67f3027",
-      "timestamp": "2026-06-29 18:28 UTC",
-      "workflowRunId": "28393924241",
-      "changeTypes": [
-        "VISUAL"
-      ],
-      "designSimilarityPercent": 86.49,
-      "designSimilarityTarget": 98.0,
-      "designGapPercent": 11.51,
-      "requiresDesignAlignment": true,
-      "summary": "Manifiesto: UI=True, reglas=False, 1 archivo(s); similitud diseño=86.49%",
-      "changedFilesLovable": [
-        "src/components/events/SeatingMapEditor.tsx"
-      ],
-      "webFilesModified": [],
-      "backFilesModified": [],
-      "mocksUsed": false,
-      "buildResult": "pending",
-      "pendingRisks": [
-        "Adaptacion pendiente por agente Cursor"
-      ],
-      "agentStatus": "pending"
-    },
-    {
       "id": "gap-empalme-28393924241-cursor-escalation",
       "timestamp": "2026-06-29 18:45 UTC",
       "workflowRunId": "28393924241-cursor-escalation",
@@ -424,6 +398,32 @@
       "mocksUsed": false,
       "buildResult": "SUCCESS",
       "agentStatus": "finished"
+    },
+    {
+      "id": "prepare-1da1010a",
+      "lovableSha": "1da1010a2d2af2e38b9ef3444b6afdfeca282e47",
+      "before": "841c3ea58ece9cd9b430d9f0ac4f6b9ad67f3027",
+      "timestamp": "2026-06-29 18:37 UTC",
+      "workflowRunId": "28393924506",
+      "changeTypes": [
+        "VISUAL"
+      ],
+      "designSimilarityPercent": 86.53,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 11.47,
+      "requiresDesignAlignment": true,
+      "summary": "Manifiesto: UI=True, reglas=False, 1 archivo(s); similitud diseño=86.53%",
+      "changedFilesLovable": [
+        "src/components/events/SeatingMapEditor.tsx"
+      ],
+      "webFilesModified": [],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "pending",
+      "pendingRisks": [
+        "Adaptacion pendiente por agente Cursor"
+      ],
+      "agentStatus": "pending"
     }
   ]
 }
