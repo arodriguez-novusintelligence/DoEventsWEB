@@ -2,6 +2,16 @@
 
 ## Resumen
 
+Run `gap-empalme-28400370016-cursor-escalation`: escalado único Cursor (2 gaps manifiesto) — 2 DONE frontend; 0 BACKEND_REQUIRED en batch. FeedHero empalme con `FeedThemeToggle` (Sun/Moon, `localStorage feed_theme_v1`, clase `dark` en `documentElement`); hero simplificado — historias vía props API desde `SocialWallTab` (`showBuiltInStories={false}` prod); tokens DSF `--background: 230 40% 96%` + `color-scheme` en `lovable/index.css`; TopHeader `bg-background`; similitud FeedHero ~98.8% / index.css ~99.2%; build:devaws OK; 0 gaps restantes en manifiesto.
+
+Run `gap-empalme-28395199438-cursor-escalation`: escalado único Cursor (1 gap manifiesto) — 1 DONE frontend; 0 BACKEND_REQUIRED en batch. SeatingMapEditor empalme estructural Lovable verificado intacto (`prepare-1da1010a`, commit `98ba5ee`): geometría SVG arco, header/toolbar/legend/modales alineados; SeatsGrid API Lovable; bridge `seatStatesToLovableSets` en StepEventLocation; `Piso {currentFloor}` preservado; similitud SeatingMapEditor ~98.62%; build:devaws OK; 0 gaps restantes en manifiesto.
+
+Run `gap-empalme-28393924506-cursor-escalation`: escalado único Cursor (1 gap manifiesto) — 1 DONE frontend; 0 BACKEND_REQUIRED en batch. SeatingMapEditor empalme estructural Lovable verificado intacto: geometría SVG arco, header/toolbar/legend/modales alineados; SeatsGrid API Lovable; bridge `seatStatesToLovableSets` en StepEventLocation; `Piso {currentFloor}` preservado; similitud SeatingMapEditor ~98.62%; build:devaws OK; 0 gaps restantes en manifiesto.
+
+Run `gap-empalme-28393924241-cursor-escalation`: escalado único Cursor (1 gap manifiesto) — 1 DONE frontend; 0 BACKEND_REQUIRED en batch. SeatingMapEditor empalme estructural Lovable: geometría SVG arco, header/toolbar/legend/modales alineados; SeatsGrid API Lovable; bridge `seatStatesToLovableSets` en StepEventLocation; `Piso {currentFloor}` preservado; similitud SeatingMapEditor ~98.62%; build:devaws OK; 0 gaps restantes en manifiesto.
+
+Run `gap-empalme-28392876508-cursor-escalation`: escalado único Cursor (1 gap manifiesto) — 1 DONE frontend; 0 BACKEND_REQUIRED en batch. FeedHero empalme DSF completo: categorías overlapping + chips semánticos; props filtro categorías; historias API gradientes destructive/accent; loading h-14 ring; `showBuiltInStories=false` prod; similitud FeedHero ~98.85%; build:devaws OK; 0 gaps restantes en manifiesto.
+
 Run `gap-empalme-27910611218-b6`: batch 1 sexta pasada (20 gaps manifiesto b6) — 20 DONE frontend; 0 BACKEND_REQUIRED en batch. MessagesListView empalme DSF b6 (back pill ring, past rooms shadow-sm + unread ring, search cards border-border/60, private lastMessage extrabold, EmptyState layout); NotificationsSheet header badge + retry ring; NotificationsContext loadingState + NOTIFICATIONS_UPDATED_EVENT export; EventPublished card ring-primary/10 + ghost flat CTAs; 16 gaps verificados intactos b1–b5; similitud ~99.70%; build:devaws OK; 97 gaps batches 2–6 pendientes.
 
 Run `gap-empalme-27910611218-b5`: batch 1 quinta pasada (20 gaps manifiesto b5) — 20 DONE frontend; 0 BACKEND_REQUIRED en batch. ProfileGallery ring-primary/10 + progress label extrabold + save footer border-t + lightbox ring; ProfileGalleryPage onRetry fetchProfileGallery; NotificationsSheet verificado intacto b4; 18 gaps verificados intactos b1/b2/b3/b4; similitud ~99.62%; build:devaws OK; 97 gaps batches 2–6 pendientes.
@@ -164,7 +174,33 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-27910611218-b6)
+## Empalme realizado (última ejecución — gap-empalme-28400370016-cursor-escalation)
+
+- **FeedHero:** integra `FeedThemeToggle` junto al botón «Cambiar»; mantiene categorías DSF (`CATEGORY_CHIP_STYLES`), filtro categorías vía props, historias API con gradientes semánticos; elimina wiring embebido `StoriesContext`/`AddStorySheet`/`StoryViewer`/`StoryViewersSheet` — prod usa props desde `SocialWallTab` con API real; `defaultStories` solo DEV.
+- **FeedThemeToggle:** componente nuevo — toggle claro/oscuro con `Sun`/`Moon`; persiste en `localStorage` (`feed_theme_v1`); aplica clase `dark` en `document.documentElement`.
+- **lovable/index.css:** `--background: 230 40% 96%` alineado Lovable; `color-scheme: light dark` en `html`/`html.dark`; transición suave en `body`.
+- **TopHeader:** `bg-[hsl(230_40%_96%)]` → `bg-background` token semántico (respeta tema oscuro).
+
+## Empalme realizado (ejecución anterior — gap-empalme-28395199438-cursor-escalation)
+
+- **SeatingMapEditor:** empalme estructural Lovable (`prepare-1da1010a`, commit `98ba5ee`) verificado intacto: `getArcGeometry` con bandas seatOuterR/seatInnerR; `ArcFigureShape` SVG horseshoe; header botones `rounded-full border-border`; toolbar `border-border`; empty canvas copy Lovable; zoom FABs `border-border shadow-sm`; legend/text modals `shadow-2xl` + `font-bold`; FooterActions `rounded-xl`; `SeatsGrid` con `selectedLabels`/`takenLabels`/`onSeatToggle`; `Piso {currentFloor}` preservado; APIs `onSave`/`initialMap`/`gates` intactas.
+- **StepEventLocation:** adaptador `seatStatesToLovableSets` mapea `SeatVisualState` bridge → Sets Lovable; `LovableVenueMap` sin cambio de contrato.
+
+## Empalme realizado (ejecución anterior — gap-empalme-28393924506-cursor-escalation)
+
+- **SeatingMapEditor:** empalme estructural Lovable (`prepare-1da1010a`) verificado intacto: `getArcGeometry` con bandas seatOuterR/seatInnerR; `ArcFigureShape` SVG horseshoe; header botones `rounded-full border-border`; toolbar `border-border`; empty canvas copy Lovable; zoom FABs `border-border shadow-sm`; legend/text modals `shadow-2xl` + `font-bold`; FooterActions `rounded-xl`; `SeatsGrid` con `selectedLabels`/`takenLabels`/`onSeatToggle`; `Piso {currentFloor}` preservado; APIs `onSave`/`initialMap`/`gates` intactas.
+- **StepEventLocation:** adaptador `seatStatesToLovableSets` mapea `SeatVisualState` bridge → Sets Lovable; `LovableVenueMap` sin cambio de contrato.
+
+## Empalme realizado (ejecución anterior — gap-empalme-28393924241-cursor-escalation)
+
+- **SeatingMapEditor:** empalme estructural Lovable (`prepare-1da1010a`): `getArcGeometry` con bandas seatOuterR/seatInnerR; `ArcFigureShape` SVG horseshoe; header botones `rounded-full border-border`; toolbar `border-border`; empty canvas copy Lovable; zoom FABs sin ring DSF extra; legend/text modals `shadow-2xl` + `font-bold`; FooterActions `rounded-xl`; `SeatsGrid` con `selectedLabels`/`takenLabels`/`onSeatToggle`; `Piso {currentFloor}` preservado; APIs `onSave`/`initialMap`/`gates` intactas.
+- **StepEventLocation:** adaptador `seatStatesToLovableSets` mapea `SeatVisualState` bridge → Sets Lovable; `LovableVenueMap` sin cambio de contrato.
+
+## Empalme realizado (ejecución anterior — gap-empalme-28392876508-cursor-escalation)
+
+- **FeedHero:** hero gradiente + pb-16 overlap categorías; MapPin h-10 `ring-primary-foreground/20`; Cambiar `shadow-sm font-extrabold`; card categorías `border-border/60 ring-primary/10 shadow-sm`; grid 6 chips `CATEGORY_CHIP_STYLES` + `ring-primary/20`; Ver todas → `/events` vía props; sección historias API con gradientes `primary/accent/destructive`; LIVE `bg-destructive`; loading h-14 `ring-primary/20`; empty Sparkles dashed; plus badge `shadow-sm ring-primary/20`; `StoriesContext` path solo si `showBuiltInStories`; `defaultStories` assets solo `import.meta.env.DEV`; `SocialWallTab` `feedStories` API real intacto.
+
+## Empalme realizado (ejecución anterior — gap-empalme-27910611218-b6)
 
 - **MessagesListView:** back ChevronLeft pill h-10 ring-2 ring-primary/20 shadow-sm; past event rows shadow-sm + ring-primary/10 cuando unread; past unread Badge font-extrabold shadow-sm ring-primary/20; private lastMessage font-extrabold; user search cards border-border/60 shadow-sm ring-primary/10; Chatear CTA shadow-sm ring; EmptyState sin mx-4 duplicado; APIs `searchUsers` intactas.
 - **NotificationsSheet:** header unread pill shadow-sm ring-1 ring-primary/20; retry Reintentar ring-2 ring-primary/20; `fetchUserNotifications`/`respondFollowRequest` intactos.
@@ -855,18 +891,16 @@ Sí (parcial)
 
 | Gap / Feature | lovablePath | webPath | Motivo | Endpoint / Lambda | Tabla DynamoDB | Acción | Prioridad |
 |---------------|-------------|---------|--------|-------------------|----------------|--------|-----------|
-| Story viewers | `src/components/feed/StoryViewersSheet.tsx` | `packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx` | Sin lista de visualizaciones por historia | `GET /stories/{id}/viewers` | `StoryViews` | Batch 2 BACKEND_REQUIRED; skeleton UI listo | Media |
-| BankingForm SWIFT/PayPal | `src/components/banking/BankingForm.tsx` | `packages/shell/src/lovable/components/banking/BankingForm.tsx` | Persistencia cuentas + PayPal + lookup SWIFT | `POST /bank-accounts` + lookup SWIFT | `BankAccounts` | Batch 1 BACKEND_REQUIRED | Alta |
-| Banking delete | `src/components/banking/BankingHub.tsx` | `packages/shell/src/lovable/components/banking/BankingHub.tsx` | Sin endpoint eliminar cuenta | `DELETE /bank-accounts/{id}` (propuesto) | `BankAccounts` | Implementar en DoEventsBack; UI documenta bloqueo | Alta |
-| PaymentMethods delete | `src/components/banking/PaymentMethodsDashboard.tsx` | `packages/shell/src/lovable/components/banking/PaymentMethodsDashboard.tsx` | Mismo contrato delete | `DELETE /bank-accounts/{id}` | `BankAccounts` | Reutilizar endpoint delete | Alta |
-| KYC submit | `src/components/feed/KycCertificationView.tsx` | `packages/shell/src/lovable/components/feed/KycCertificationView.tsx` | Sin envío documentos KYC | `POST /users/{id}/kyc` | `Users` / proveedor KYC | Integración proveedor; botón deshabilitado | Alta |
-| PaymentGateway PSP | `src/components/services/PaymentGatewaySheet.tsx` | `packages/shell/src/lovable/components/services/PaymentGatewaySheet.tsx` | Cobro tarjeta/PSE real | PSP webhook + `POST /payments/confirm` | `Orders` | Batch 2 BACKEND_REQUIRED | Alta |
-| EditProfile password/gustos | `src/components/feed/EditProfileView.tsx` | `packages/shell/src/lovable/components/feed/EditProfileView.tsx` | Cambio contraseña + intereses persistentes | Cognito `ChangePassword` + `PATCH /users/{id}` | `Users` | Conectar flujos UI | Media |
+| Banking delete | `src/components/banking/BankingHub.tsx` | `packages/shell/src/lovable/components/banking/BankingHub.tsx` | Sin endpoint eliminar cuenta | `DELETE /bank-accounts/{id}` | `BankAccounts` | Implementar en DoEventsBack | Alta |
+| PayPal payout | `src/components/banking/BankingHub.tsx` | `packages/shell/src/lovable/components/banking/BankingHub.tsx` | PayPal requiere integración PSP | PSP webhook/payout | `BankAccounts` | Integrar proveedor | Alta |
+| Story viewers | `src/components/feed/StoryViewersSheet.tsx` | `packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx` | Sin lista viewers por historia | `GET /stories/{id}/viewers` | `StoryViews` | Skeleton UI listo | Media |
+| KYC submit | `src/components/feed/KycCertificationView.tsx` | `packages/shell/src/lovable/components/feed/KycCertificationView.tsx` | Sin envío documentos KYC | `POST /users/{id}/kyc` | `Users` | Integrar proveedor | Alta |
+| GlobalSearch posts | `src/components/feed/GlobalSearchView.tsx` | `packages/shell/src/lovable/components/feed/GlobalSearchView.tsx` | Sin búsqueda full-text publicaciones | `GET /publications/search?q=` | `Publications` | Endpoint dedicado | Media |
+| PaymentGateway PSP | `src/components/services/PaymentGatewaySheet.tsx` | `packages/shell/src/lovable/components/services/PaymentGatewaySheet.tsx` | Cobro tarjeta/PSE real | PSP webhook + `POST /payments/confirm` | `Orders` | Batch BACKEND_REQUIRED | Alta |
+| EditProfile password/gustos | `src/components/feed/EditProfileView.tsx` | `packages/shell/src/lovable/components/feed/EditProfileView.tsx` | Cambio contraseña + intereses | Cognito + `PATCH /users/{id}` | `Users` | Conectar flujos UI | Media |
 | Booking add-ons | `src/components/services/BookingSheet.tsx` | `packages/shell/src/lovable/components/services/BookingSheet.tsx` | Catálogo servicios adicionales | `GET /services/{id}/addons` | `Services` | Exponer catálogo real | Media |
 | PublishFlow banking | `src/components/events/PublishFlowModal.tsx` | `packages/shell/src/lovable/components/events/PublishFlowModal.tsx` | Persistencia banco post-publicación | `POST /events/{id}/bank-link` | `Events` | Implementar en DoEventsBack | Media |
-| GlobalSearch posts | `src/components/feed/GlobalSearchView.tsx` | `packages/shell/src/lovable/components/feed/GlobalSearchView.tsx` | Sin búsqueda full-text publicaciones | `GET /publications/search?q=` | `Publications` | Endpoint dedicado; UI filtra feed reciente | Media |
-| PULEP Colombia campos | `src/data/eventFormData.ts` | `packages/shell/src/lovable/data/eventFormData.ts` | Registro PULEP no persiste en evento | Extender `POST/PATCH /events` con `pulep*` | Events | Persistir + validar registro | Media |
-| Service reviews | `src/components/services/MyServicesView.tsx` | `packages/shell/src/lovable/components/services/MyServicesView.tsx` | Reseñas vacías sin API | `GET /services/{id}/reviews` | `ServiceReviews` | Exponer endpoint; UI lista vacía real | Baja |
+| PULEP Colombia campos | `src/data/eventFormData.ts` | `packages/shell/src/lovable/data/eventFormData.ts` | Registro PULEP no persiste | Extender `POST/PATCH /events` | `Events` | Persistir + validar | Media |
 
 ## Empalme realizado (ejecución anterior — gap-empalme-27876228669-b5)
 

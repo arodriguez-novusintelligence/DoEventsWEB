@@ -324,6 +324,192 @@
         "Adaptacion pendiente por agente Cursor"
       ],
       "agentStatus": "pending"
+    },
+    {
+      "id": "prepare-6b884586",
+      "lovableSha": "6b884586becdd0da33a9564261acba5275a23e5c",
+      "before": "46337390e02f38722ffe112e423d686c2db7c1c8",
+      "timestamp": "2026-06-29 18:09 UTC",
+      "workflowRunId": "28392876508",
+      "changeTypes": [
+        "VISUAL"
+      ],
+      "designSimilarityPercent": 86.54,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 11.46,
+      "requiresDesignAlignment": true,
+      "summary": "Manifiesto: UI=True, reglas=False, 1 archivo(s); similitud diseño=86.54%",
+      "changedFilesLovable": [
+        "src/components/feed/FeedHero.tsx"
+      ],
+      "webFilesModified": [],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "pending",
+      "pendingRisks": [
+        "Adaptacion pendiente por agente Cursor"
+      ],
+      "agentStatus": "pending"
+    },
+    {
+      "id": "gap-empalme-28392876508-cursor-escalation",
+      "timestamp": "2026-06-29 18:30 UTC",
+      "workflowRunId": "28392876508-cursor-escalation",
+      "gapBatch": 1,
+      "webFilesModified": [
+        "packages/shell/src/lovable/components/feed/FeedHero.tsx",
+        "ReglasAgente/decision-log.md",
+        "ReglasAgente/cambios-lovable.json",
+        "ReglasAgente/impacto-backend.md",
+        "ReglasAgente/reglas-front.md",
+        "docs/changes/gap-empalme-latest.md"
+      ],
+      "gapsClosed": [
+        "src/components/feed/FeedHero.tsx"
+      ],
+      "gapsBackendRequired": [],
+      "designSimilarityPercentBefore": 73.89,
+      "designSimilarityPercentAfter": 98.85,
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "agentStatus": "finished"
+    },
+    {
+      "id": "gap-empalme-28393924241-cursor-escalation",
+      "timestamp": "2026-06-29 18:45 UTC",
+      "workflowRunId": "28393924241-cursor-escalation",
+      "gapBatch": 1,
+      "webFilesModified": [
+        "packages/shell/src/lovable/components/events/SeatingMapEditor.tsx",
+        "packages/shell/src/lovable/components/events/StepEventLocation.tsx",
+        "ReglasAgente/decision-log.md",
+        "ReglasAgente/cambios-lovable.json",
+        "ReglasAgente/impacto-backend.md",
+        "ReglasAgente/reglas-front.md",
+        "docs/changes/gap-empalme-latest.md",
+        "design-comparison.json"
+      ],
+      "gapsClosed": [
+        "src/components/events/SeatingMapEditor.tsx"
+      ],
+      "gapsBackendRequired": [],
+      "designSimilarityPercentBefore": 84.55,
+      "designSimilarityPercentAfter": 98.62,
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "agentStatus": "finished"
+    },
+    {
+      "id": "prepare-1da1010a",
+      "lovableSha": "1da1010a2d2af2e38b9ef3444b6afdfeca282e47",
+      "before": "841c3ea58ece9cd9b430d9f0ac4f6b9ad67f3027",
+      "timestamp": "2026-06-29 19:03 UTC",
+      "workflowRunId": "28395881777",
+      "changeTypes": [
+        "VISUAL"
+      ],
+      "designSimilarityPercent": 86.53,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 11.47,
+      "requiresDesignAlignment": true,
+      "summary": "Manifiesto: UI=True, reglas=False, 1 archivo(s); similitud diseño=86.53%",
+      "changedFilesLovable": [
+        "src/components/events/SeatingMapEditor.tsx"
+      ],
+      "webFilesModified": [],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "pending",
+      "pendingRisks": [
+        "Adaptacion pendiente por agente Cursor"
+      ],
+      "agentStatus": "pending"
+    },
+    {
+      "id": "prepare-6167b95c",
+      "lovableSha": "6167b95c80fba4838ac376588cd0150a021a42fb",
+      "before": "1da1010a2d2af2e38b9ef3444b6afdfeca282e47",
+      "timestamp": "2026-06-29 19:16 UTC",
+      "workflowRunId": "28396322444",
+      "changeTypes": [
+        "VISUAL"
+      ],
+      "designSimilarityPercent": 86.53,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 11.47,
+      "requiresDesignAlignment": true,
+      "summary": "Manifiesto: UI=False, reglas=False, 1 archivo(s); similitud diseño=86.53%",
+      "changedFilesLovable": [
+        "reglasCalidad/risk-policy.yml"
+      ],
+      "webFilesModified": [],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "pending",
+      "pendingRisks": [
+        "Adaptacion pendiente por agente Cursor"
+      ],
+      "agentStatus": "pending"
+    },
+    {
+      "id": "prepare-6d6aae76",
+      "lovableSha": "6d6aae76a403b400b055ad45c82ab58a47933d15",
+      "before": "758875132394705402c005b9f8921d1fae5e765f",
+      "timestamp": "2026-06-29 20:15 UTC",
+      "workflowRunId": "28399585452",
+      "changeTypes": [
+        "FRONT_LOGIC"
+      ],
+      "designSimilarityPercent": 85.99,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 12.01,
+      "requiresDesignAlignment": true,
+      "summary": "Manifiesto: UI=False, reglas=True, 1 archivo(s); similitud diseño=85.99%",
+      "changedFilesLovable": [
+        "reglasActuacion/publicaciones/feed-principal.yml"
+      ],
+      "webFilesModified": [],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "pending",
+      "pendingRisks": [
+        "Adaptacion pendiente por agente Cursor"
+      ],
+      "agentStatus": "pending"
+    },
+    {
+      "id": "prepare-75887513",
+      "lovableSha": "758875132394705402c005b9f8921d1fae5e765f",
+      "before": "758875132394705402c005b9f8921d1fae5e765f",
+      "timestamp": "2026-06-29 21:25 UTC",
+      "workflowRunId": "28403646709",
+      "changeTypes": [
+        "VISUAL",
+        "FRONT_LOGIC"
+      ],
+      "designSimilarityPercent": 86.56,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 11.44,
+      "requiresDesignAlignment": true,
+      "summary": "Manifiesto: UI=True, reglas=True, 8 archivo(s); similitud diseño=86.56%",
+      "changedFilesLovable": [
+        "reglasActuacion/eventos/pulep-colombia.yml",
+        "reglasActuacion/publicaciones/feed-principal.yml",
+        "reglasEmpalme/component-index.yml",
+        "reglasEmpalme/port-map.yml",
+        "src/components/feed/FeedHero.tsx",
+        "src/components/feed/FeedThemeToggle.tsx",
+        "src/components/feed/TopHeader.tsx",
+        "src/index.css"
+      ],
+      "webFilesModified": [],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "pending",
+      "pendingRisks": [
+        "Adaptacion pendiente por agente Cursor"
+      ],
+      "agentStatus": "pending"
     }
   ]
 }

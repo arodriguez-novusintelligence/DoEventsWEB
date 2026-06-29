@@ -2,23 +2,84 @@
   "version": "2.1",
   "description": "Mapeo Lovable → DoEventsWEB (DSF). Cobertura obligatoria para archivos UI cambiados.",
   "mapping": [
-    { "lovable": "src/components/", "web": "packages/shell/src/lovable/components/" },
-    { "lovable": "src/pages/", "web": "packages/shell/src/pages/" },
-    { "lovable": "src/pages/Index.tsx", "web": "packages/shell/src/pages/EventsPage.tsx", "note": "Home feed" },
-    { "lovable": "src/pages/Login.tsx", "web": "packages/mfe-auth/src/pages/LoginPage.tsx", "note": "Auth MFE", "compareMode": "delegated" },
-    { "lovable": "src/pages/SignUp.tsx", "web": "packages/mfe-auth/src/pages/SignUpPage.tsx", "compareMode": "delegated" },
-    { "lovable": "src/pages/ForgotPassword.tsx", "web": "packages/mfe-auth/src/pages/ForgotPasswordPage.tsx", "compareMode": "delegated" },
-    { "lovable": "src/pages/ResetPassword.tsx", "web": "packages/mfe-auth/src/pages/ResetPasswordPage.tsx", "compareMode": "delegated" },
-    { "lovable": "src/pages/VenueDetail.tsx", "web": "packages/shell/src/pages/PlaceDetailPage.tsx" },
-    { "lovable": "src/pages/EventPublished.tsx", "web": "packages/shell/src/pages/EventDetailPage.tsx" },
-    { "lovable": "src/components/feed/MapView.tsx", "web": "packages/shell/src/lovable/components/feed/MapView.tsx", "note": "Mapa explorador" },
-    { "lovable": "src/components/feed/GlobalSearchView.tsx", "web": "packages/shell/src/lovable/components/feed/GlobalSearchView.tsx" },
-    { "lovable": "src/contexts/", "web": "packages/shell/src/lovable/contexts/" },
-    { "lovable": "src/hooks/", "web": "packages/shell/src/lovable/hooks/" },
-    { "lovable": "src/index.css", "web": "packages/shell/src/index.css", "note": "Tokens CSS — validar vs reglasDiseno/tokens.yml" },
-    { "lovable": "public/", "web": "packages/shell/public/" },
-    { "lovable": "reglasActuacion/", "web": "docs/design/reglasActuacion-ref/", "note": "@reference — agente lee desde Lovable, no copia" },
-    { "lovable": "reglasDiseno/", "web": "docs/design/reglasDiseno/", "note": "@reference — tokens y convenciones DSF" }
+    {
+      "lovable": "src/components/",
+      "web": "packages/shell/src/lovable/components/"
+    },
+    {
+      "lovable": "src/pages/",
+      "web": "packages/shell/src/pages/"
+    },
+    {
+      "lovable": "src/pages/Index.tsx",
+      "web": "packages/shell/src/pages/EventsPage.tsx",
+      "note": "Home feed"
+    },
+    {
+      "lovable": "src/pages/Login.tsx",
+      "web": "packages/mfe-auth/src/pages/LoginPage.tsx",
+      "note": "Auth MFE",
+      "compareMode": "delegated"
+    },
+    {
+      "lovable": "src/pages/SignUp.tsx",
+      "web": "packages/mfe-auth/src/pages/SignUpPage.tsx",
+      "compareMode": "delegated"
+    },
+    {
+      "lovable": "src/pages/ForgotPassword.tsx",
+      "web": "packages/mfe-auth/src/pages/ForgotPasswordPage.tsx",
+      "compareMode": "delegated"
+    },
+    {
+      "lovable": "src/pages/ResetPassword.tsx",
+      "web": "packages/mfe-auth/src/pages/ResetPasswordPage.tsx",
+      "compareMode": "delegated"
+    },
+    {
+      "lovable": "src/pages/VenueDetail.tsx",
+      "web": "packages/shell/src/pages/PlaceDetailPage.tsx"
+    },
+    {
+      "lovable": "src/pages/EventPublished.tsx",
+      "web": "packages/shell/src/pages/EventDetailPage.tsx"
+    },
+    {
+      "lovable": "src/components/feed/MapView.tsx",
+      "web": "packages/shell/src/lovable/components/feed/MapView.tsx",
+      "note": "Mapa explorador"
+    },
+    {
+      "lovable": "src/components/feed/GlobalSearchView.tsx",
+      "web": "packages/shell/src/lovable/components/feed/GlobalSearchView.tsx"
+    },
+    {
+      "lovable": "src/contexts/",
+      "web": "packages/shell/src/lovable/contexts/"
+    },
+    {
+      "lovable": "src/hooks/",
+      "web": "packages/shell/src/lovable/hooks/"
+    },
+    {
+      "lovable": "src/index.css",
+      "web": "packages/shell/src/lovable/index.css",
+      "note": "Tokens CSS runtime (@lovable/index.css en main.tsx)"
+    },
+    {
+      "lovable": "public/",
+      "web": "packages/shell/public/"
+    },
+    {
+      "lovable": "reglasActuacion/",
+      "web": "docs/design/reglasActuacion-ref/",
+      "note": "@reference — agente lee desde Lovable, no copia"
+    },
+    {
+      "lovable": "reglasDiseno/",
+      "web": "docs/design/reglasDiseno/",
+      "note": "@reference — tokens y convenciones DSF"
+    }
   ],
   "forbidden": [
     "src/integrations/supabase/",

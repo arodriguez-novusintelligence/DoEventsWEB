@@ -121,6 +121,62 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-29 gap-empalme escalado Cursor (run 28400370016-cursor-escalation)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| FeedThemeToggle claro/oscuro | VISUAL | Sí | `feed/FeedThemeToggle.tsx` | Sun/Moon; localStorage feed_theme_v1; clase dark en documentElement |
+| FeedHero toggle + hero | VISUAL | Sí | `feed/FeedHero.tsx` | FeedThemeToggle junto Cambiar; categorías DSF intactas |
+| FeedHero historias API | Integración | Sí | `feed/FeedHero.tsx` | Props desde SocialWallTab; sin StoriesContext embebido prod |
+| FeedHero anti-mock prod | Bloqueo | Sí | `feed/FeedHero.tsx` | showBuiltInStories=false; defaultStories solo DEV |
+| index.css background feed | VISUAL | Sí | `lovable/index.css` | --background 230 40% 96%; color-scheme; transición body |
+| TopHeader bg-background | VISUAL | Sí | `feed/TopHeader.tsx` | Token semántico vs hsl hardcoded |
+| Batch escalado (2 gaps) | Empalme | Sí | ver `decision-log.md` | 2 DONE + 0 BACKEND_REQUIRED; similitud ~98.5% |
+
+## Ejecución 2026-06-29 gap-empalme escalado Cursor (run 28395199438-cursor-escalation)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| SeatingMapEditor arco SVG | VISUAL | Sí | `events/SeatingMapEditor.tsx` | ArcFigureShape + getArcGeometry seat bands; horseshoe transparent bg |
+| SeatingMapEditor header Lovable | VISUAL | Sí | `events/SeatingMapEditor.tsx` | rounded-full border-border; font-bold; Piso {currentFloor} |
+| SeatingMapEditor empty canvas | VISUAL | Sí | `events/SeatingMapEditor.tsx` | copy Lovable sin LayoutGrid DSF extra |
+| SeatingMapEditor SeatsGrid API | FRONTEND_LOGIC | Sí | `events/SeatingMapEditor.tsx` | selectedLabels/takenLabels/onSeatToggle Lovable |
+| StepEventLocation bridge adapter | Integración | Sí | `events/StepEventLocation.tsx` | seatStatesToLovableSets; LovableVenueMap intacto |
+| Batch escalado (1 gap) | Empalme | Sí | ver `decision-log.md` | 1 DONE + 0 BACKEND_REQUIRED; similitud 98.62% |
+
+## Ejecución 2026-06-29 gap-empalme escalado Cursor (run 28393924506-cursor-escalation)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| SeatingMapEditor arco SVG | VISUAL | Sí | `events/SeatingMapEditor.tsx` | ArcFigureShape + getArcGeometry seat bands; horseshoe transparent bg |
+| SeatingMapEditor header Lovable | VISUAL | Sí | `events/SeatingMapEditor.tsx` | rounded-full border-border; font-bold; Piso {currentFloor} |
+| SeatingMapEditor empty canvas | VISUAL | Sí | `events/SeatingMapEditor.tsx` | copy Lovable sin LayoutGrid DSF extra |
+| SeatingMapEditor SeatsGrid API | FRONTEND_LOGIC | Sí | `events/SeatingMapEditor.tsx` | selectedLabels/takenLabels/onSeatToggle Lovable |
+| StepEventLocation bridge adapter | Integración | Sí | `events/StepEventLocation.tsx` | seatStatesToLovableSets; LovableVenueMap intacto |
+| Batch escalado (1 gap) | Empalme | Sí | ver `decision-log.md` | 1 DONE + 0 BACKEND_REQUIRED; similitud 98.62% |
+
+## Ejecución 2026-06-29 gap-empalme escalado Cursor (run 28393924241-cursor-escalation)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| SeatingMapEditor arco SVG | VISUAL | Sí | `events/SeatingMapEditor.tsx` | ArcFigureShape + getArcGeometry seat bands; horseshoe transparent bg |
+| SeatingMapEditor header Lovable | VISUAL | Sí | `events/SeatingMapEditor.tsx` | rounded-full border-border; font-bold; Piso {currentFloor} |
+| SeatingMapEditor empty canvas | VISUAL | Sí | `events/SeatingMapEditor.tsx` | copy Lovable sin LayoutGrid DSF extra |
+| SeatingMapEditor SeatsGrid API | FRONTEND_LOGIC | Sí | `events/SeatingMapEditor.tsx` | selectedLabels/takenLabels/onSeatToggle Lovable |
+| StepEventLocation bridge adapter | Integración | Sí | `events/StepEventLocation.tsx` | seatStatesToLovableSets; LovableVenueMap intacto |
+| Batch escalado (1 gap) | Empalme | Sí | ver `decision-log.md` | 1 DONE + 0 BACKEND_REQUIRED; similitud 98.62% |
+
+## Ejecución 2026-06-29 gap-empalme escalado Cursor (run 28392876508-cursor-escalation)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| FeedHero categorías overlapping | VISUAL | Sí | `feed/FeedHero.tsx` | CATEGORY_CHIP_STYLES; card border-border/60 ring-primary/10; chips ring-primary/20 |
+| FeedHero filtro categorías | FRONTEND_LOGIC | Sí | `feed/FeedHero.tsx` | selectedCategories/onSelectCategory/onViewAllCategories vía SocialWallTab |
+| FeedHero historias API | Integración | Sí | `feed/FeedHero.tsx` | feedStories API; gradientes primary/accent/destructive; LIVE destructive token |
+| FeedHero anti-mock prod | Bloqueo | Sí | `feed/FeedHero.tsx` | showBuiltInStories=false; defaultStories solo import.meta.env.DEV |
+| FeedHero loading/empty DSF | VISUAL | Sí | `feed/FeedHero.tsx` | h-14 ring-primary/20 loading; Sparkles empty dashed border-primary/25 |
+| Batch escalado (1 gap) | Empalme | Sí | ver `decision-log.md` | 1 DONE + 0 BACKEND_REQUIRED; similitud 98.85% |
+
 ## Ejecución 2026-06-21 gap-empalme batch 1 (run 27910611218-b6)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

@@ -1162,6 +1162,21 @@ const VenueCard = ({
   </div>
 );
 
+const seatStatesToLovableSets = (
+  states?: Record<string, import('../../../lovable-bridge/venueToFigures').SeatVisualState>,
+) => {
+  const selectedLabels = new Set<string>();
+  const takenLabels = new Set<string>();
+  if (!states) return { selectedLabels, takenLabels };
+  Object.entries(states).forEach(([label, state]) => {
+    if (state === 'selected') selectedLabels.add(label);
+    if (state === 'sold' || state === 'highlight' || state === 'disabled') {
+      takenLabels.add(label);
+    }
+  });
+  return { selectedLabels, takenLabels };
+};
+
 export const SeatingPreview = ({
   figures,
   height = 240,
@@ -1252,9 +1267,12 @@ export const SeatingPreview = ({
                 (f.seatsPerRow ?? 0) > 0 && (
                   <SeatsGrid
                     figure={f}
-                    seatStates={seatStatesByFigure?.get(f.id)}
-                    interactive={interactive}
-                    onSeatClick={onSeatClick ? (label) => onSeatClick(f, label) : undefined}
+                    {...seatStatesToLovableSets(seatStatesByFigure?.get(f.id))}
+                    onSeatToggle={
+                      interactive && onSeatClick
+                        ? (label) => onSeatClick(f, label)
+                        : undefined
+                    }
                   />
                 )}
             </div>

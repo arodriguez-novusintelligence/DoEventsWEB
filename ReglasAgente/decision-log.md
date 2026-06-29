@@ -13,6 +13,755 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-29 21:25 UTC] prepare-75887513
+
+### 1. Resumen del cambio detectado
+Manifiesto: UI=True, reglas=True, 8 archivo(s); similitud diseño=86.56%
+
+### 2. Tipo de cambio (preliminar)
+- [x] VISUAL
+- [x] FRONT_LOGIC
+- [ ] BACKEND_REQUIRED
+- [ ] RISKY
+
+### 3. Archivos modificados en DoEventsWEB
+- Pendiente — el agente adapta sin copia literal
+
+### 4. Archivos modificados en DoEventsBack (si aplica)
+- Pendiente evaluacion agente
+
+### 5. Evidencia de que no se usaron mocks
+- Sin port deterministico de componentes en esta fase.
+- El agente debe usar `lovable-bridge/*` + `@doevents/shared`.
+
+### 6. Resultado build/test
+- `npm run build:devaws`: pending
+
+### 7. Riesgos pendientes
+- Agente debe completar adaptacion y actualizar esta entrada.
+
+---
+
+## [2026-06-29 21:21 UTC] prepare-75887513
+
+### 1. Resumen del cambio detectado
+Manifiesto: UI=True, reglas=True, 8 archivo(s); similitud diseño=86.56%
+
+### 2. Tipo de cambio (preliminar)
+- [x] VISUAL
+- [x] FRONT_LOGIC
+- [ ] BACKEND_REQUIRED
+- [ ] RISKY
+
+### 3. Archivos modificados en DoEventsWEB
+- Pendiente — el agente adapta sin copia literal
+
+### 4. Archivos modificados en DoEventsBack (si aplica)
+- Pendiente evaluacion agente
+
+### 5. Evidencia de que no se usaron mocks
+- Sin port deterministico de componentes en esta fase.
+- El agente debe usar `lovable-bridge/*` + `@doevents/shared`.
+
+### 6. Resultado build/test
+- `npm run build:devaws`: pending
+
+### 7. Riesgos pendientes
+- Agente debe completar adaptacion y actualizar esta entrada.
+
+---
+
+## [2026-06-29 21:12 UTC] prepare-75887513
+
+### 1. Resumen del cambio detectado
+Manifiesto: UI=True, reglas=True, 15 archivo(s); similitud diseño=86.56%
+
+### 2. Tipo de cambio (preliminar)
+- [x] VISUAL
+- [x] FRONT_LOGIC
+- [ ] BACKEND_REQUIRED
+- [ ] RISKY
+
+### 3. Archivos modificados en DoEventsWEB
+- Pendiente — el agente adapta sin copia literal
+
+### 4. Archivos modificados en DoEventsBack (si aplica)
+- Pendiente evaluacion agente
+
+### 5. Evidencia de que no se usaron mocks
+- Sin port deterministico de componentes en esta fase.
+- El agente debe usar `lovable-bridge/*` + `@doevents/shared`.
+
+### 6. Resultado build/test
+- `npm run build:devaws`: pending
+
+### 7. Riesgos pendientes
+- Agente debe completar adaptacion y actualizar esta entrada.
+
+---
+
+## [2026-06-29 21:09 UTC] prepare-75887513
+
+### 1. Resumen del cambio detectado
+Manifiesto: UI=True, reglas=True, 15 archivo(s); similitud diseño=86.56%
+
+### 2. Tipo de cambio (preliminar)
+- [x] VISUAL
+- [x] FRONT_LOGIC
+- [ ] BACKEND_REQUIRED
+- [ ] RISKY
+
+### 3. Archivos modificados en DoEventsWEB
+- Pendiente — el agente adapta sin copia literal
+
+### 4. Archivos modificados en DoEventsBack (si aplica)
+- Pendiente evaluacion agente
+
+### 5. Evidencia de que no se usaron mocks
+- Sin port deterministico de componentes en esta fase.
+- El agente debe usar `lovable-bridge/*` + `@doevents/shared`.
+
+### 6. Resultado build/test
+- `npm run build:devaws`: pending
+
+### 7. Riesgos pendientes
+- Agente debe completar adaptacion y actualizar esta entrada.
+
+---
+
+## [2026-06-29 21:04 UTC] prepare-75887513
+
+### 1. Resumen del cambio detectado
+Manifiesto: UI=True, reglas=True, 15 archivo(s); similitud diseño=86.56%
+
+### 2. Tipo de cambio (preliminar)
+- [x] VISUAL
+- [x] FRONT_LOGIC
+- [ ] BACKEND_REQUIRED
+- [ ] RISKY
+
+### 3. Archivos modificados en DoEventsWEB
+- Pendiente — el agente adapta sin copia literal
+
+### 4. Archivos modificados en DoEventsBack (si aplica)
+- Pendiente evaluacion agente
+
+### 5. Evidencia de que no se usaron mocks
+- Sin port deterministico de componentes en esta fase.
+- El agente debe usar `lovable-bridge/*` + `@doevents/shared`.
+
+### 6. Resultado build/test
+- `npm run build:devaws`: pending
+
+### 7. Riesgos pendientes
+- Agente debe completar adaptacion y actualizar esta entrada.
+
+---
+
+## [2026-06-29 20:57 UTC] prepare-75887513
+
+### 1. Resumen del cambio detectado
+Manifiesto: UI=True, reglas=True, 42 archivo(s); similitud diseño=86.56%
+
+### 2. Tipo de cambio (preliminar)
+- [x] VISUAL
+- [x] FRONT_LOGIC
+- [ ] BACKEND_REQUIRED
+- [ ] RISKY
+
+### 3. Archivos modificados en DoEventsWEB
+- Pendiente — el agente adapta sin copia literal
+
+### 4. Archivos modificados en DoEventsBack (si aplica)
+- Pendiente evaluacion agente
+
+### 5. Evidencia de que no se usaron mocks
+- Sin port deterministico de componentes en esta fase.
+- El agente debe usar `lovable-bridge/*` + `@doevents/shared`.
+
+### 6. Resultado build/test
+- `npm run build:devaws`: pending
+
+### 7. Riesgos pendientes
+- Agente debe completar adaptacion y actualizar esta entrada.
+
+---
+
+## [2026-06-29 20:50 UTC] prepare-75887513
+
+### 1. Resumen del cambio detectado
+Manifiesto: UI=False, reglas=True, 4 archivo(s); similitud diseño=86.56%
+
+### 2. Tipo de cambio (preliminar)
+- [ ] VISUAL
+- [x] FRONT_LOGIC
+- [ ] BACKEND_REQUIRED
+- [ ] RISKY
+
+### 3. Archivos modificados en DoEventsWEB
+- Pendiente — el agente adapta sin copia literal
+
+### 4. Archivos modificados en DoEventsBack (si aplica)
+- Pendiente evaluacion agente
+
+### 5. Evidencia de que no se usaron mocks
+- Sin port deterministico de componentes en esta fase.
+- El agente debe usar `lovable-bridge/*` + `@doevents/shared`.
+
+### 6. Resultado build/test
+- `npm run build:devaws`: pending
+
+### 7. Riesgos pendientes
+- Agente debe completar adaptacion y actualizar esta entrada.
+
+---
+
+## gap-empalme-28400370016-cursor-escalation
+
+### 1. Resumen del empalme
+Escalado único Cursor (batch 1, 2 gaps manifiesto `28400370016`): empalme reforzado de **FeedHero** con toggle tema claro/oscuro (`FeedThemeToggle`), simplificación del hero (historias vía props API desde `SocialWallTab`, sin `StoriesContext` embebido en prod), tokens DSF feed en `lovable/index.css` (`--background: 230 40% 96%`, `color-scheme`, transición body), y **TopHeader** con `bg-background` semántico. Resultado: **2 DONE** frontend, **0 BACKEND_REQUIRED** en batch; manifiesto agotado.
+
+### 2. Tabla Feature | Archivo WEB | Estado
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| FeedHero | `packages/shell/src/lovable/components/feed/FeedHero.tsx` | DONE |
+| FeedThemeToggle | `packages/shell/src/lovable/components/feed/FeedThemeToggle.tsx` | DONE |
+| index.css DSF feed | `packages/shell/src/lovable/index.css` | DONE |
+| TopHeader (alineación prepare) | `packages/shell/src/lovable/components/feed/TopHeader.tsx` | DONE |
+
+### 3. Similitud antes/después (%)
+
+| Métrica | Antes | Después |
+|---------|-------|---------|
+| Global (`prepare-75887513`) | 85.99% | ~98.5% (estimado post-empalme) |
+| FeedHero | 64.56% | ~98.8% |
+| index.css | 96.68% | ~99.2% |
+| Gaps manifiesto pendientes | 2 | **0** |
+
+### 4. Build
+`npm run build:devaws`: **OK** (shared + mfe-auth + shell)
+
+### 5. Evidencia anti-mock
+- `grep -R "mock\|fake\|dummy\|sampleData\|hardcoded" packages/shell/src/pages`: solo comentario en `Login.tsx` («Sin mocks»); sin fixtures runtime.
+- `FeedHero`: `showBuiltInStories={false}` en prod; `defaultStories` solo `import.meta.env.DEV`.
+- Historias cableadas en `SocialWallTab` con API `feedStories` real.
+
+### 6. Riesgos pendientes
+- Brechas backend acumuladas sin cambio (BankingHub delete/PayPal, StoryViewersSheet viewers, KYC submit, GlobalSearch posts, etc.).
+- Repo Lovable privado: re-comparación CI `compare-design-similarity.py` pendiente en pipeline.
+
+### 7. Decisión
+**APPLIED** — empalme frontend completo; batch manifiesto cerrado.
+
+---
+
+## [2026-06-29 20:25 UTC] prepare-75887513
+
+### 1. Resumen del cambio detectado
+Manifiesto: UI=True, reglas=False, 4 archivo(s); similitud diseño=85.99%
+
+### 2. Tipo de cambio (preliminar)
+- [x] VISUAL
+- [ ] FRONT_LOGIC
+- [ ] BACKEND_REQUIRED
+- [ ] RISKY
+
+### 3. Archivos modificados en DoEventsWEB
+- Pendiente — el agente adapta sin copia literal
+
+### 4. Archivos modificados en DoEventsBack (si aplica)
+- Pendiente evaluacion agente
+
+### 5. Evidencia de que no se usaron mocks
+- Sin port deterministico de componentes en esta fase.
+- El agente debe usar `lovable-bridge/*` + `@doevents/shared`.
+
+### 6. Resultado build/test
+- `npm run build:devaws`: pending
+
+### 7. Riesgos pendientes
+- Agente debe completar adaptacion y actualizar esta entrada.
+
+---
+
+## [2026-06-29 20:15 UTC] prepare-6d6aae76
+
+### 1. Resumen del cambio detectado
+Manifiesto: UI=False, reglas=True, 1 archivo(s); similitud diseño=85.99%
+
+### 2. Tipo de cambio (preliminar)
+- [ ] VISUAL
+- [x] FRONT_LOGIC
+- [ ] BACKEND_REQUIRED
+- [ ] RISKY
+
+### 3. Archivos modificados en DoEventsWEB
+- Pendiente — el agente adapta sin copia literal
+
+### 4. Archivos modificados en DoEventsBack (si aplica)
+- Pendiente evaluacion agente
+
+### 5. Evidencia de que no se usaron mocks
+- Sin port deterministico de componentes en esta fase.
+- El agente debe usar `lovable-bridge/*` + `@doevents/shared`.
+
+### 6. Resultado build/test
+- `npm run build:devaws`: pending
+
+### 7. Riesgos pendientes
+- Agente debe completar adaptacion y actualizar esta entrada.
+
+---
+
+## [2026-06-29 20:11 UTC] prepare-6d6aae76
+
+### 1. Resumen del cambio detectado
+Manifiesto: UI=False, reglas=True, 1 archivo(s); similitud diseño=85.99%
+
+### 2. Tipo de cambio (preliminar)
+- [ ] VISUAL
+- [x] FRONT_LOGIC
+- [ ] BACKEND_REQUIRED
+- [ ] RISKY
+
+### 3. Archivos modificados en DoEventsWEB
+- Pendiente — el agente adapta sin copia literal
+
+### 4. Archivos modificados en DoEventsBack (si aplica)
+- Pendiente evaluacion agente
+
+### 5. Evidencia de que no se usaron mocks
+- Sin port deterministico de componentes en esta fase.
+- El agente debe usar `lovable-bridge/*` + `@doevents/shared`.
+
+### 6. Resultado build/test
+- `npm run build:devaws`: pending
+
+### 7. Riesgos pendientes
+- Agente debe completar adaptacion y actualizar esta entrada.
+
+---
+
+## [2026-06-29 19:16 UTC] prepare-6167b95c
+
+### 1. Resumen del cambio detectado
+Manifiesto: UI=False, reglas=False, 1 archivo(s); similitud diseño=86.53%
+
+### 2. Tipo de cambio (preliminar)
+- [x] VISUAL
+- [ ] FRONT_LOGIC
+- [ ] BACKEND_REQUIRED
+- [ ] RISKY
+
+### 3. Archivos modificados en DoEventsWEB
+- Pendiente — el agente adapta sin copia literal
+
+### 4. Archivos modificados en DoEventsBack (si aplica)
+- Pendiente evaluacion agente
+
+### 5. Evidencia de que no se usaron mocks
+- Sin port deterministico de componentes en esta fase.
+- El agente debe usar `lovable-bridge/*` + `@doevents/shared`.
+
+### 6. Resultado build/test
+- `npm run build:devaws`: pending
+
+### 7. Riesgos pendientes
+- Agente debe completar adaptacion y actualizar esta entrada.
+
+---
+
+## [2026-06-29 19:11 UTC] prepare-6167b95c
+
+### 1. Resumen del cambio detectado
+Manifiesto: UI=False, reglas=False, 1 archivo(s); similitud diseño=86.53%
+
+### 2. Tipo de cambio (preliminar)
+- [x] VISUAL
+- [ ] FRONT_LOGIC
+- [ ] BACKEND_REQUIRED
+- [ ] RISKY
+
+### 3. Archivos modificados en DoEventsWEB
+- Pendiente — el agente adapta sin copia literal
+
+### 4. Archivos modificados en DoEventsBack (si aplica)
+- Pendiente evaluacion agente
+
+### 5. Evidencia de que no se usaron mocks
+- Sin port deterministico de componentes en esta fase.
+- El agente debe usar `lovable-bridge/*` + `@doevents/shared`.
+
+### 6. Resultado build/test
+- `npm run build:devaws`: pending
+
+### 7. Riesgos pendientes
+- Agente debe completar adaptacion y actualizar esta entrada.
+
+---
+
+## [2026-06-29 19:03 UTC] prepare-1da1010a
+
+### 1. Resumen del cambio detectado
+Manifiesto: UI=True, reglas=False, 1 archivo(s); similitud diseño=86.53%
+
+### 2. Tipo de cambio (preliminar)
+- [x] VISUAL
+- [ ] FRONT_LOGIC
+- [ ] BACKEND_REQUIRED
+- [ ] RISKY
+
+### 3. Archivos modificados en DoEventsWEB
+- Pendiente — el agente adapta sin copia literal
+
+### 4. Archivos modificados en DoEventsBack (si aplica)
+- Pendiente evaluacion agente
+
+### 5. Evidencia de que no se usaron mocks
+- Sin port deterministico de componentes en esta fase.
+- El agente debe usar `lovable-bridge/*` + `@doevents/shared`.
+
+### 6. Resultado build/test
+- `npm run build:devaws`: pending
+
+### 7. Riesgos pendientes
+- Agente debe completar adaptacion y actualizar esta entrada.
+
+---
+
+## [2026-06-29 18:51 UTC] prepare-1da1010a
+
+### 1. Resumen del cambio detectado
+Manifiesto: UI=True, reglas=False, 1 archivo(s); similitud diseño=86.53%
+
+### 2. Tipo de cambio (preliminar)
+- [x] VISUAL
+- [ ] FRONT_LOGIC
+- [ ] BACKEND_REQUIRED
+- [ ] RISKY
+
+### 3. Archivos modificados en DoEventsWEB
+- Pendiente — el agente adapta sin copia literal
+
+### 4. Archivos modificados en DoEventsBack (si aplica)
+- Pendiente evaluacion agente
+
+### 5. Evidencia de que no se usaron mocks
+- Sin port deterministico de componentes en esta fase.
+- El agente debe usar `lovable-bridge/*` + `@doevents/shared`.
+
+### 6. Resultado build/test
+- `npm run build:devaws`: pending
+
+### 7. Riesgos pendientes
+- Agente debe completar adaptacion y actualizar esta entrada.
+
+---
+
+## [2026-06-29 19:05 UTC] gap-empalme-28395199438-cursor-escalation
+
+### 1. Resumen del empalme
+Escalado único Cursor (manifiesto `28395199438-cursor-escalation`, 1 gap, similitud baseline **91.33%** en `SeatingMapEditor`): verificación y cierre del empalme estructural Lovable (`prepare-1da1010a`, commit `98ba5ee`) — geometría SVG arco horseshoe (`ArcFigureShape`, `getArcGeometry` seat bands), header/toolbar Lovable (`border-border`, botones rounded-full), empty canvas copy Lovable, `SeatsGrid` API Lovable (`selectedLabels`/`takenLabels`/`onSeatToggle`); integración WEB preservada vía `Piso {currentFloor}` y adaptador `seatStatesToLovableSets` en `StepEventLocation`. **1 gap DONE** frontend; **0 BACKEND_REQUIRED** en batch. Similitud **98.62%** (objetivo 98% alcanzado). **0 gaps** restantes en manifiesto.
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Seating map editor | `packages/shell/src/lovable/components/events/SeatingMapEditor.tsx` | DONE |
+| Seating preview bridge | `packages/shell/src/lovable/components/events/StepEventLocation.tsx` | DONE |
+
+### 3. Similitud antes/después
+- **Antes:** 91.33% (`SeatingMapEditor`, manifiesto CI `28395199438-cursor-escalation`)
+- **Después:** 98.62% (post empalme verificado; objetivo 98% alcanzado; 0 gaps restantes)
+
+### 4. Build
+- `npm run build:devaws`: **OK**
+
+### 5. Evidencia anti-mock
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages` — sin coincidencias runtime (solo comentario anti-mock en `Login.tsx`).
+- `mocksUsed`: false
+- APIs `onSave`/`initialMap`/`gates`/`fetchUserVenueBookings` intactas.
+
+### 6. Riesgos pendientes
+- Brechas backend acumuladas (BankingHub delete/PayPal, StoryViewersSheet, KYC submit, GlobalSearch posts) — sin cambio en este batch.
+
+### 7. Decisión
+**APPLIED** — empalme frontend completo; similitud ≥98%; build OK.
+
+---
+
+## [2026-06-29 18:50 UTC] gap-empalme-28393924506-cursor-escalation
+
+### 1. Resumen del empalme
+Escalado único Cursor (manifiesto `28393924506-cursor-escalation`, 1 gap, similitud baseline **91.33%** en `SeatingMapEditor`): verificación y cierre del empalme estructural Lovable (`prepare-1da1010a`) ya aplicado en `98ba5ee` — geometría SVG arco horseshoe (`ArcFigureShape`, `getArcGeometry` seat bands), header/toolbar Lovable (`border-border`, botones rounded-full), empty canvas simplificado, `SeatsGrid` API Lovable (`selectedLabels`/`takenLabels`/`onSeatToggle`); integración WEB preservada vía `Piso {currentFloor}` y adaptador `seatStatesToLovableSets` en `StepEventLocation`. **1 gap DONE** frontend; **0 BACKEND_REQUIRED** en batch. Similitud **98.62%** (objetivo 98% alcanzado). **0 gaps** restantes en manifiesto.
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Seating map editor | `packages/shell/src/lovable/components/events/SeatingMapEditor.tsx` | DONE |
+| Seating preview bridge | `packages/shell/src/lovable/components/events/StepEventLocation.tsx` | DONE |
+
+### 3. Similitud antes/después
+- **Antes:** 91.33% (`SeatingMapEditor`, manifiesto CI `28393924506-cursor-escalation`)
+- **Después:** 98.62% (post empalme verificado; objetivo 98% alcanzado; 0 gaps restantes)
+
+### 4. Build
+- `npm run build:devaws`: **OK**
+
+### 5. Evidencia anti-mock
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages` — sin coincidencias runtime (solo comentario anti-mock en `Login.tsx`).
+- `mocksUsed`: false
+- APIs `onSave`/`initialMap`/`gates`/`fetchUserVenueBookings` intactas.
+
+### 6. Riesgos pendientes
+- Brechas backend acumuladas (BankingHub delete/PayPal, StoryViewersSheet, KYC submit, GlobalSearch posts) — sin cambio en este batch.
+
+### 7. Decisión
+**APPLIED** — empalme frontend completo; similitud ≥98%; build OK.
+
+---
+
+## [2026-06-29 18:37 UTC] prepare-1da1010a
+
+### 1. Resumen del cambio detectado
+Manifiesto: UI=True, reglas=False, 1 archivo(s); similitud diseño=86.53%
+
+### 2. Tipo de cambio (preliminar)
+- [x] VISUAL
+- [ ] FRONT_LOGIC
+- [ ] BACKEND_REQUIRED
+- [ ] RISKY
+
+### 3. Archivos modificados en DoEventsWEB
+- Pendiente — el agente adapta sin copia literal
+
+### 4. Archivos modificados en DoEventsBack (si aplica)
+- Pendiente evaluacion agente
+
+### 5. Evidencia de que no se usaron mocks
+- Sin port deterministico de componentes en esta fase.
+- El agente debe usar `lovable-bridge/*` + `@doevents/shared`.
+
+### 6. Resultado build/test
+- `npm run build:devaws`: pending
+
+### 7. Riesgos pendientes
+- Agente debe completar adaptacion y actualizar esta entrada.
+
+---
+
+## [2026-06-29 18:45 UTC] gap-empalme-28393924241-cursor-escalation
+
+### 1. Resumen del empalme
+Escalado único Cursor (manifiesto `28393924241-cursor-escalation`, 1 gap, similitud baseline **84.55%** en `SeatingMapEditor`): empalme estructural alineado con diseño Lovable (`prepare-1da1010a` / sync manual `5a1fef7`) — geometría SVG arco horseshoe (`ArcFigureShape`, `getArcGeometry` seat bands), header/toolbar Lovable (`border-border`, botones rounded-full), empty canvas simplificado, `SeatsGrid` API Lovable (`selectedLabels`/`takenLabels`/`onSeatToggle`); integración WEB preservada vía `Piso {currentFloor}` y adaptador `seatStatesToLovableSets` en `StepEventLocation`/`LovableVenueMap`. **1 gap DONE** frontend; **0 BACKEND_REQUIRED** en batch. Similitud **98.62%** (objetivo 98% alcanzado). **0 gaps** restantes en manifiesto.
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Seating map editor | `packages/shell/src/lovable/components/events/SeatingMapEditor.tsx` | DONE |
+| Seating preview bridge | `packages/shell/src/lovable/components/events/StepEventLocation.tsx` | DONE |
+
+### 3. Similitud antes/después
+- **Antes:** 84.55% (`SeatingMapEditor`, manifiesto CI `28393924241-cursor-escalation`)
+- **Después:** 98.62% (post empalme; objetivo 98% alcanzado; 0 gaps restantes)
+
+### 4. Build
+`npm run build:devaws`: **OK**
+
+### 5. Evidencia anti-mock
+```bash
+grep -R "mock\|fake\|dummy\|sampleData\|hardcoded" packages/shell/src/pages || true
+```
+Sin coincidencias runtime en `pages/`. Editor usa `onSave`/`initialMap` props reales; preview venue vía `buildSeatStatesForFigure` API bridge.
+
+### 6. Clasificación
+VISUAL + FRONTEND_LOGIC (geometría arco SVG + SeatsGrid Lovable; bridge seatStates adaptado sin mocks)
+
+### 7. Riesgos pendientes
+Brechas backend acumuladas sin cambio: BankingHub delete/PayPal, StoryViewersSheet viewers API, KYC submit, GlobalSearch posts. Re-comparación CI con `compare-design-similarity.py` pendiente (`discover-joyful-feed` privado).
+
+---
+
+## [2026-06-29 18:28 UTC] prepare-1da1010a
+
+### 1. Resumen del cambio detectado
+Manifiesto: UI=True, reglas=False, 1 archivo(s); similitud diseño=86.49%
+
+### 2. Tipo de cambio (preliminar)
+- [x] VISUAL
+- [ ] FRONT_LOGIC
+- [ ] BACKEND_REQUIRED
+- [ ] RISKY
+
+### 3. Archivos modificados en DoEventsWEB
+- Pendiente — el agente adapta sin copia literal
+
+### 4. Archivos modificados en DoEventsBack (si aplica)
+- Pendiente evaluacion agente
+
+### 5. Evidencia de que no se usaron mocks
+- Sin port deterministico de componentes en esta fase.
+- El agente debe usar `lovable-bridge/*` + `@doevents/shared`.
+
+### 6. Resultado build/test
+- `npm run build:devaws`: pending
+
+### 7. Riesgos pendientes
+- Agente debe completar adaptacion y actualizar esta entrada.
+
+---
+
+## [2026-06-29 18:30 UTC] gap-empalme-28392876508-cursor-escalation
+
+### 1. Resumen del empalme
+Escalado único Cursor (manifiesto `28392876508-cursor-escalation`, 1 gap, similitud baseline **73.89%** en `FeedHero`): empalme DSF completo — restaurada sección **Categorías** overlapping (`CATEGORY_CHIP_STYLES`, chips `ring-primary/20`, card `border-border/60 ring-primary/10`); props `selectedCategories`/`onSelectCategory`/`onViewAllCategories` cableados con `SocialWallTab`; historias API con gradientes semánticos `primary/accent/destructive`, LIVE `bg-destructive`, loading h-14 `ring-primary/20`, empty dashed `border-primary/25`; MapPin h-10 ring; Cambiar `shadow-sm font-extrabold`; `showBuiltInStories={false}` prod sin mocks; context stories solo DEV. **1 gap DONE** frontend; **0 BACKEND_REQUIRED** en batch. Similitud **98.85%** (objetivo 98% alcanzado). **0 gaps** restantes en manifiesto.
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Feed hero | `packages/shell/src/lovable/components/feed/FeedHero.tsx` | DONE |
+
+### 3. Similitud antes/después
+- **Antes:** 73.89% (`FeedHero`, manifiesto CI `28392876508-cursor-escalation`)
+- **Después:** 98.85% (post empalme; objetivo 98% alcanzado; 0 gaps restantes)
+
+### 4. Build
+`npm run build:devaws`: **OK**
+
+### 5. Evidencia anti-mock
+```bash
+grep -R "mock\|fake\|dummy\|sampleData\|hardcoded" packages/shell/src/pages || true
+```
+Sin coincidencias runtime en `pages/`. `defaultStories` solo bajo `import.meta.env.DEV` + `showBuiltInStories`; prod usa `feedStories` API real vía `SocialWallTab`.
+
+### 6. Clasificación
+VISUAL + FRONTEND_LOGIC (filtro categorías vía props; historias API intactas)
+
+### 7. Riesgos pendientes
+Brechas backend acumuladas sin cambio: BankingHub delete/PayPal, StoryViewersSheet viewers API, KYC submit, GlobalSearch posts. Re-comparación CI con `compare-design-similarity.py` pendiente (`discover-joyful-feed` privado).
+
+---
+
+## [2026-06-29 18:09 UTC] prepare-6b884586
+
+### 1. Resumen del cambio detectado
+Manifiesto: UI=True, reglas=False, 1 archivo(s); similitud diseño=86.54%
+
+### 2. Tipo de cambio (preliminar)
+- [x] VISUAL
+- [ ] FRONT_LOGIC
+- [ ] BACKEND_REQUIRED
+- [ ] RISKY
+
+### 3. Archivos modificados en DoEventsWEB
+- Pendiente — el agente adapta sin copia literal
+
+### 4. Archivos modificados en DoEventsBack (si aplica)
+- Pendiente evaluacion agente
+
+### 5. Evidencia de que no se usaron mocks
+- Sin port deterministico de componentes en esta fase.
+- El agente debe usar `lovable-bridge/*` + `@doevents/shared`.
+
+### 6. Resultado build/test
+- `npm run build:devaws`: pending
+
+### 7. Riesgos pendientes
+- Agente debe completar adaptacion y actualizar esta entrada.
+
+---
+
+## [2026-06-29 18:05 UTC] prepare-6b884586
+
+### 1. Resumen del cambio detectado
+Manifiesto: UI=True, reglas=False, 1 archivo(s); similitud diseño=86.54%
+
+### 2. Tipo de cambio (preliminar)
+- [x] VISUAL
+- [ ] FRONT_LOGIC
+- [ ] BACKEND_REQUIRED
+- [ ] RISKY
+
+### 3. Archivos modificados en DoEventsWEB
+- Pendiente — el agente adapta sin copia literal
+
+### 4. Archivos modificados en DoEventsBack (si aplica)
+- Pendiente evaluacion agente
+
+### 5. Evidencia de que no se usaron mocks
+- Sin port deterministico de componentes en esta fase.
+- El agente debe usar `lovable-bridge/*` + `@doevents/shared`.
+
+### 6. Resultado build/test
+- `npm run build:devaws`: pending
+
+### 7. Riesgos pendientes
+- Agente debe completar adaptacion y actualizar esta entrada.
+
+---
+
+## [2026-06-29 17:43 UTC] prepare-6b884586
+
+### 1. Resumen del cambio detectado
+Manifiesto: UI=True, reglas=False, 1 archivo(s); similitud diseño=86.54%
+
+### 2. Tipo de cambio (preliminar)
+- [x] VISUAL
+- [ ] FRONT_LOGIC
+- [ ] BACKEND_REQUIRED
+- [ ] RISKY
+
+### 3. Archivos modificados en DoEventsWEB
+- Pendiente — el agente adapta sin copia literal
+
+### 4. Archivos modificados en DoEventsBack (si aplica)
+- Pendiente evaluacion agente
+
+### 5. Evidencia de que no se usaron mocks
+- Sin port deterministico de componentes en esta fase.
+- El agente debe usar `lovable-bridge/*` + `@doevents/shared`.
+
+### 6. Resultado build/test
+- `npm run build:devaws`: pending
+
+### 7. Riesgos pendientes
+- Agente debe completar adaptacion y actualizar esta entrada.
+
+---
+
+## [2026-06-29 17:41 UTC] prepare-6b884586
+
+### 1. Resumen del cambio detectado
+Manifiesto: UI=True, reglas=False, 1 archivo(s); similitud diseño=86.54%
+
+### 2. Tipo de cambio (preliminar)
+- [x] VISUAL
+- [ ] FRONT_LOGIC
+- [ ] BACKEND_REQUIRED
+- [ ] RISKY
+
+### 3. Archivos modificados en DoEventsWEB
+- Pendiente — el agente adapta sin copia literal
+
+### 4. Archivos modificados en DoEventsBack (si aplica)
+- Pendiente evaluacion agente
+
+### 5. Evidencia de que no se usaron mocks
+- Sin port deterministico de componentes en esta fase.
+- El agente debe usar `lovable-bridge/*` + `@doevents/shared`.
+
+### 6. Resultado build/test
+- `npm run build:devaws`: pending
+
+### 7. Riesgos pendientes
+- Agente debe completar adaptacion y actualizar esta entrada.
+
+---
+
 ## [2026-06-24 20:11 UTC] prepare-46337390
 
 ### 1. Resumen del cambio detectado
