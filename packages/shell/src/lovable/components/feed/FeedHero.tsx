@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   MapPin,
   Smile,
@@ -18,10 +17,7 @@ import modernKitchen from '@lovable/assets/modern-kitchen.jpg';
 import outdoorDining from '@lovable/assets/outdoor-dining.jpg';
 import vintageCars from '@lovable/assets/vintage-cars.jpg';
 import { cn } from '@lovable/lib/utils';
-import { useStories } from '@lovable/contexts/StoriesContext';
-import AddStorySheet from './AddStorySheet';
-import StoryViewer from './StoryViewer';
-import StoryViewersSheet from './StoryViewersSheet';
+import FeedThemeToggle from './FeedThemeToggle';
 
 type Category = { label: string; icon: LucideIcon; bg: string; color: string };
 
@@ -101,29 +97,9 @@ const FeedHero = ({
   showBuiltInStories = false,
   onViewAllCategories,
 }: FeedHeroProps) => {
-  const { users, currentUserId } = useStories();
   const useApiStories = apiStories !== undefined;
-  const useContextStories = !useApiStories && showBuiltInStories;
-  const showStoriesSection = useApiStories || useContextStories || (showBuiltInStories && import.meta.env.DEV);
   const showDevStories = !useApiStories && showBuiltInStories && import.meta.env.DEV;
-
-  const [addOpen, setAddOpen] = useState(false);
-  const [viewerOpen, setViewerOpen] = useState(false);
-  const [viewerStartId, setViewerStartId] = useState<string | null>(null);
-  const [viewersSheet, setViewersSheet] = useState<{ open: boolean; userId: string | null; itemId: string | null }>({
-    open: false,
-    userId: null,
-    itemId: null,
-  });
-
-  const handleContextStoryClick = (userId: string, hasItems: boolean, isOwn: boolean) => {
-    if (isOwn && !hasItems) {
-      setAddOpen(true);
-      return;
-    }
-    setViewerStartId(userId);
-    setViewerOpen(true);
-  };
+  const showStoriesSection = useApiStories || showDevStories;
 
   const handleOpenLocation = () => {
     onChangeLocation?.();
@@ -151,13 +127,16 @@ const FeedHero = ({
                 <p className="truncate text-sm font-extrabold text-primary-foreground">{location}</p>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={handleOpenLocation}
-              className="shrink-0 rounded-full bg-primary-foreground/15 px-3 py-1.5 text-xs font-extrabold text-primary-foreground shadow-sm ring-1 ring-primary-foreground/20 backdrop-blur transition-colors hover:bg-primary-foreground/25"
-            >
-              Cambiar
-            </button>
+            <div className="flex shrink-0 items-center gap-2">
+              <FeedThemeToggle />
+              <button
+                type="button"
+                onClick={handleOpenLocation}
+                className="rounded-full bg-primary-foreground/15 px-3 py-1.5 text-xs font-extrabold text-primary-foreground shadow-sm ring-1 ring-primary-foreground/20 backdrop-blur transition-colors hover:bg-primary-foreground/25"
+              >
+                Cambiar
+              </button>
+            </div>
           </div>
 
           <h1 className="mt-5 text-2xl font-extrabold text-primary-foreground">
@@ -315,54 +294,6 @@ const FeedHero = ({
                     </span>
                   </button>
                 ))}
-              {useContextStories &&
-                users.map((s) => {
-                  const isOwn = s.id === currentUserId;
-                  const hasItems = s.items.length > 0;
-                  const hasUnseen = !isOwn && s.items.some((i) => !i.viewers.some((v) => v.id === currentUserId));
-                  return (
-                    <button
-                      key={s.id}
-                      type="button"
-                      onClick={() => handleContextStoryClick(s.id, hasItems, isOwn)}
-                      className="flex w-16 shrink-0 flex-col items-center gap-1"
-                    >
-                      <div
-                        className={cn(
-                          'relative h-16 w-16 rounded-full p-[2.5px]',
-                          isOwn
-                            ? hasItems
-                              ? STORY_RING_OWN
-                              : 'bg-muted'
-                            : hasUnseen
-                              ? STORY_RING_DEFAULT
-                              : 'bg-muted',
-                        )}
-                      >
-                        <div className="h-full w-full overflow-hidden rounded-full border-2 border-card">
-                          <img src={s.avatar} alt={s.name} className="h-full w-full object-cover" />
-                        </div>
-                        {isOwn && (
-                          <span
-                            role="button"
-                            tabIndex={0}
-                            aria-label="Agregar historia"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setAddOpen(true);
-                            }}
-                            className="absolute bottom-0 right-0 flex h-5 w-5 cursor-pointer items-center justify-center rounded-full border-2 border-card bg-primary shadow-sm ring-1 ring-primary/20"
-                          >
-                            <Plus className="h-3 w-3 text-primary-foreground" />
-                          </span>
-                        )}
-                      </div>
-                      <span className="w-full truncate text-center text-[10px] font-extrabold text-foreground">
-                        {s.name}
-                      </span>
-                    </button>
-                  );
-                })}
               {showDevStories &&
                 defaultStories.map((s) => (
                   <button key={s.id} type="button" className="flex w-16 shrink-0 flex-col items-center gap-1">
@@ -389,24 +320,6 @@ const FeedHero = ({
             </div>
           </div>
         </div>
-      )}
-
-      {useContextStories && (
-        <>
-          <AddStorySheet open={addOpen} onOpenChange={setAddOpen} />
-          <StoryViewer
-            open={viewerOpen}
-            startUserId={viewerStartId}
-            onClose={() => setViewerOpen(false)}
-            onOpenViewers={(userId, itemId) => setViewersSheet({ open: true, userId, itemId })}
-          />
-          <StoryViewersSheet
-            open={viewersSheet.open}
-            onOpenChange={(v) => setViewersSheet((prev) => ({ ...prev, open: v }))}
-            userId={viewersSheet.userId}
-            itemId={viewersSheet.itemId}
-          />
-        </>
       )}
     </div>
   );

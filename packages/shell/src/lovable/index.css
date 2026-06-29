@@ -10,7 +10,7 @@
        Tint     #F4F5FE  → 234 78% 98%
        Ink      #010E15  → 204 91% 4%
     */
-    --background: 0 0% 100%;
+    --background: 230 40% 96%;
     --foreground: 204 91% 4%;
 
     --card: 0 0% 100%;
@@ -109,12 +109,21 @@
 }
 
 @layer base {
+  html {
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
   * {
     @apply border-border;
   }
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
+    transition: background-color 0.25s ease, color 0.25s ease;
   }
 }
 

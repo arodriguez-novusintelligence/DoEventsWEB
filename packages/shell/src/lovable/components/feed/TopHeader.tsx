@@ -58,7 +58,7 @@ const TopHeader = ({ onViewProfile, onGoToEvent, onGoToTickets, onGoToPost, onNa
   return (
     <>
       <header
-        className={`sticky top-0 z-20 bg-[hsl(230_40%_96%)] transition-transform duration-300 ease-in-out ${
+        className={`sticky top-0 z-20 bg-background transition-transform duration-300 ease-in-out ${
           hidden ? '-translate-y-full' : 'translate-y-0'
         }`}
       >
