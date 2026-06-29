@@ -1,4 +1,4 @@
-# Reporte empalme de gaps — Run 28393924506-cursor-escalation
+# Reporte empalme de gaps — Run 28395199438-cursor-escalation
 
 | Campo | Valor |
 |-------|-------|
@@ -15,7 +15,7 @@
 | Gaps pendientes manifiesto | 1 | **0** | −1 (batch cerrado frontend) |
 | Gaps cerrados en batch | — | **1** DONE | — |
 
-**Objetivo 98% alcanzado.** Manifiesto `28393924506-cursor-escalation` sin gaps pendientes.
+**Objetivo 98% alcanzado.** Manifiesto `28395199438-cursor-escalation` sin gaps pendientes.
 
 ## Empalme realizado (este batch)
 
@@ -26,7 +26,7 @@
 
 ### Detalle SeatingMapEditor
 
-- Empalme estructural desde diseño Lovable (`prepare-1da1010a`), no copy-paste literal.
+- Empalme estructural desde diseño Lovable (`prepare-1da1010a`, commit `98ba5ee`), no copy-paste literal.
 - Geometría horseshoe/semicircle con `ArcFigureShape` SVG y bandas de asientos (`seatOuterR`/`seatInnerR`).
 - Header con botones `rounded-full border-border`; título `Piso {currentFloor}` (integración multi-piso WEB).
 - Canvas vacío alineado con copy Lovable; modales legend/text con `shadow-2xl`.
@@ -45,7 +45,7 @@
 
 ## Gaps restantes
 
-**0** ítems en manifiesto `28393924506-cursor-escalation`. Brechas backend acumuladas documentadas arriba (sin cambio en este run).
+**0** ítems en manifiesto `28395199438-cursor-escalation`. Brechas backend acumuladas documentadas arriba (sin cambio en este run).
 
 ## Validación
 

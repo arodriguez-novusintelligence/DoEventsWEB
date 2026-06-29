@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-28395199438-cursor-escalation`: escalado único Cursor (1 gap manifiesto) — 1 DONE frontend; 0 BACKEND_REQUIRED en batch. SeatingMapEditor empalme estructural Lovable verificado intacto (`prepare-1da1010a`, commit `98ba5ee`): geometría SVG arco, header/toolbar/legend/modales alineados; SeatsGrid API Lovable; bridge `seatStatesToLovableSets` en StepEventLocation; `Piso {currentFloor}` preservado; similitud SeatingMapEditor ~98.62%; build:devaws OK; 0 gaps restantes en manifiesto.
+
 Run `gap-empalme-28393924506-cursor-escalation`: escalado único Cursor (1 gap manifiesto) — 1 DONE frontend; 0 BACKEND_REQUIRED en batch. SeatingMapEditor empalme estructural Lovable verificado intacto: geometría SVG arco, header/toolbar/legend/modales alineados; SeatsGrid API Lovable; bridge `seatStatesToLovableSets` en StepEventLocation; `Piso {currentFloor}` preservado; similitud SeatingMapEditor ~98.62%; build:devaws OK; 0 gaps restantes en manifiesto.
 
 Run `gap-empalme-28393924241-cursor-escalation`: escalado único Cursor (1 gap manifiesto) — 1 DONE frontend; 0 BACKEND_REQUIRED en batch. SeatingMapEditor empalme estructural Lovable: geometría SVG arco, header/toolbar/legend/modales alineados; SeatsGrid API Lovable; bridge `seatStatesToLovableSets` en StepEventLocation; `Piso {currentFloor}` preservado; similitud SeatingMapEditor ~98.62%; build:devaws OK; 0 gaps restantes en manifiesto.
@@ -170,7 +172,12 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-28393924506-cursor-escalation)
+## Empalme realizado (última ejecución — gap-empalme-28395199438-cursor-escalation)
+
+- **SeatingMapEditor:** empalme estructural Lovable (`prepare-1da1010a`, commit `98ba5ee`) verificado intacto: `getArcGeometry` con bandas seatOuterR/seatInnerR; `ArcFigureShape` SVG horseshoe; header botones `rounded-full border-border`; toolbar `border-border`; empty canvas copy Lovable; zoom FABs `border-border shadow-sm`; legend/text modals `shadow-2xl` + `font-bold`; FooterActions `rounded-xl`; `SeatsGrid` con `selectedLabels`/`takenLabels`/`onSeatToggle`; `Piso {currentFloor}` preservado; APIs `onSave`/`initialMap`/`gates` intactas.
+- **StepEventLocation:** adaptador `seatStatesToLovableSets` mapea `SeatVisualState` bridge → Sets Lovable; `LovableVenueMap` sin cambio de contrato.
+
+## Empalme realizado (ejecución anterior — gap-empalme-28393924506-cursor-escalation)
 
 - **SeatingMapEditor:** empalme estructural Lovable (`prepare-1da1010a`) verificado intacto: `getArcGeometry` con bandas seatOuterR/seatInnerR; `ArcFigureShape` SVG horseshoe; header botones `rounded-full border-border`; toolbar `border-border`; empty canvas copy Lovable; zoom FABs `border-border shadow-sm`; legend/text modals `shadow-2xl` + `font-bold`; FooterActions `rounded-xl`; `SeatsGrid` con `selectedLabels`/`takenLabels`/`onSeatToggle`; `Piso {currentFloor}` preservado; APIs `onSave`/`initialMap`/`gates` intactas.
 - **StepEventLocation:** adaptador `seatStatesToLovableSets` mapea `SeatVisualState` bridge → Sets Lovable; `LovableVenueMap` sin cambio de contrato.

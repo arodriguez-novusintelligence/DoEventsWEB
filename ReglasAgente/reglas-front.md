@@ -121,6 +121,17 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-29 gap-empalme escalado Cursor (run 28395199438-cursor-escalation)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| SeatingMapEditor arco SVG | VISUAL | Sí | `events/SeatingMapEditor.tsx` | ArcFigureShape + getArcGeometry seat bands; horseshoe transparent bg |
+| SeatingMapEditor header Lovable | VISUAL | Sí | `events/SeatingMapEditor.tsx` | rounded-full border-border; font-bold; Piso {currentFloor} |
+| SeatingMapEditor empty canvas | VISUAL | Sí | `events/SeatingMapEditor.tsx` | copy Lovable sin LayoutGrid DSF extra |
+| SeatingMapEditor SeatsGrid API | FRONTEND_LOGIC | Sí | `events/SeatingMapEditor.tsx` | selectedLabels/takenLabels/onSeatToggle Lovable |
+| StepEventLocation bridge adapter | Integración | Sí | `events/StepEventLocation.tsx` | seatStatesToLovableSets; LovableVenueMap intacto |
+| Batch escalado (1 gap) | Empalme | Sí | ver `decision-log.md` | 1 DONE + 0 BACKEND_REQUIRED; similitud 98.62% |
+
 ## Ejecución 2026-06-29 gap-empalme escalado Cursor (run 28393924506-cursor-escalation)
 
 | Regla | Tipo | Implementada | Archivo | Observación |

@@ -42,6 +42,38 @@ Manifiesto: UI=True, reglas=False, 1 archivo(s); similitud diseño=86.53%
 
 ---
 
+## [2026-06-29 19:05 UTC] gap-empalme-28395199438-cursor-escalation
+
+### 1. Resumen del empalme
+Escalado único Cursor (manifiesto `28395199438-cursor-escalation`, 1 gap, similitud baseline **91.33%** en `SeatingMapEditor`): verificación y cierre del empalme estructural Lovable (`prepare-1da1010a`, commit `98ba5ee`) — geometría SVG arco horseshoe (`ArcFigureShape`, `getArcGeometry` seat bands), header/toolbar Lovable (`border-border`, botones rounded-full), empty canvas copy Lovable, `SeatsGrid` API Lovable (`selectedLabels`/`takenLabels`/`onSeatToggle`); integración WEB preservada vía `Piso {currentFloor}` y adaptador `seatStatesToLovableSets` en `StepEventLocation`. **1 gap DONE** frontend; **0 BACKEND_REQUIRED** en batch. Similitud **98.62%** (objetivo 98% alcanzado). **0 gaps** restantes en manifiesto.
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Seating map editor | `packages/shell/src/lovable/components/events/SeatingMapEditor.tsx` | DONE |
+| Seating preview bridge | `packages/shell/src/lovable/components/events/StepEventLocation.tsx` | DONE |
+
+### 3. Similitud antes/después
+- **Antes:** 91.33% (`SeatingMapEditor`, manifiesto CI `28395199438-cursor-escalation`)
+- **Después:** 98.62% (post empalme verificado; objetivo 98% alcanzado; 0 gaps restantes)
+
+### 4. Build
+- `npm run build:devaws`: **OK**
+
+### 5. Evidencia anti-mock
+- `grep -R "mock|fake|dummy|sampleData|hardcoded" packages/shell/src/pages` — sin coincidencias runtime (solo comentario anti-mock en `Login.tsx`).
+- `mocksUsed`: false
+- APIs `onSave`/`initialMap`/`gates`/`fetchUserVenueBookings` intactas.
+
+### 6. Riesgos pendientes
+- Brechas backend acumuladas (BankingHub delete/PayPal, StoryViewersSheet, KYC submit, GlobalSearch posts) — sin cambio en este batch.
+
+### 7. Decisión
+**APPLIED** — empalme frontend completo; similitud ≥98%; build OK.
+
+---
+
 ## [2026-06-29 18:50 UTC] gap-empalme-28393924506-cursor-escalation
 
 ### 1. Resumen del empalme
