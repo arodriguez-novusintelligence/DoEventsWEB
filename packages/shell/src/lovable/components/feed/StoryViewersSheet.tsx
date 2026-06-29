@@ -1,81 +1,53 @@
-import { Eye, Loader2 } from 'lucide-react';
-import { UserAvatar } from '@doevents/shared';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@lovable/components/ui/sheet';
+import { useStories } from '@lovable/contexts/StoriesContext';
+import { Eye } from 'lucide-react';
 
-interface StoryViewersSheetProps {
+import { UserAvatar } from '@doevents/shared';
+interface Props {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
-  storyId?: string | null;
-  /** Compat FeedHero / StoriesContext Lovable */
-  userId?: string | null;
-  itemId?: string | null;
-  loading?: boolean;
+  onOpenChange: (v: boolean) => void;
+  userId: string | null;
+  itemId: string | null;
 }
 
-const SKELETON_ROWS = [0, 1, 2];
+const relTime = (ts: number) => {
+  const d = Date.now() - ts;
+  const m = Math.floor(d / 60_000);
+  if (m < 1) return 'ahora';
+  if (m < 60) return `hace ${m} min`;
+  const h = Math.floor(m / 60);
+  return `hace ${h} h`;
+};
 
-export const StoryViewersSheet = ({
-  open,
-  onOpenChange,
-  storyId,
-  userId,
-  itemId,
-  loading = false,
-}: StoryViewersSheetProps) => {
-  const resolvedStoryId = storyId ?? itemId;
-  const viewers: Array<{ id: string; name: string; avatar?: string; viewedAt?: string }> = [];
+const StoryViewersSheet = ({ open, onOpenChange, userId, itemId }: Props) => {
+  const { users } = useStories();
+  const user = users.find((u) => u.id === userId);
+  const item = user?.items.find((i) => i.id === itemId);
+  const viewers = item?.viewers ?? [];
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="mx-auto h-[70vh] max-w-lg rounded-t-3xl p-0">
-        <SheetHeader className="px-4 pt-4 text-left">
-          <SheetTitle className="flex items-center gap-2 text-base font-semibold">
-            <Eye className="h-4 w-4 text-primary" />
-            Visto por {viewers.length}
+      <SheetContent side="bottom" className="h-[70vh] rounded-t-3xl">
+        <SheetHeader>
+          <SheetTitle className="flex items-center gap-2">
+            <Eye className="h-4 w-4" /> Visto por {viewers.length}
           </SheetTitle>
         </SheetHeader>
-
-        <div className="mt-4 h-full space-y-3 overflow-y-auto px-4 pb-20">
-          {loading ? (
-            <>
-              {SKELETON_ROWS.map((row) => (
-                <div key={row} className="flex animate-pulse items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-muted" />
-                  <div className="flex-1 space-y-2">
-                    <div className="h-3 w-24 rounded bg-muted" />
-                    <div className="h-2 w-16 rounded bg-muted" />
-                  </div>
-                </div>
-              ))}
-              <div className="flex justify-center py-4">
-                <Loader2 className="h-6 w-6 animate-spin text-primary" />
-              </div>
-            </>
-          ) : viewers.length === 0 ? (
-            <p className="mt-8 text-center text-sm text-muted-foreground">
-              {resolvedStoryId || userId
-                ? 'Aún nadie ha visto esta historia.'
-                : 'Selecciona una historia para ver quién la visualizó.'}
-            </p>
-          ) : (
-            viewers.map((viewer) => (
-              <div key={viewer.id} className="flex items-center gap-3">
-                <UserAvatar name={viewer.name} imageUrl={viewer.avatar} size={40} />
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-foreground">{viewer.name}</p>
-                  {viewer.viewedAt && (
-                    <p className="text-xs text-muted-foreground">{viewer.viewedAt}</p>
-                  )}
-                </div>
-              </div>
-            ))
+        <div className="mt-4 space-y-3 overflow-y-auto h-full pb-20">
+          {viewers.length === 0 && (
+            <p className="text-center text-sm text-muted-foreground mt-8">Aún nadie ha visto esta historia.</p>
           )}
-
-          {!loading && viewers.length === 0 && (resolvedStoryId || userId) && (
-            <p className="mt-6 text-center text-[10px] text-muted-foreground">
-              El listado detallado estará disponible cuando DoEventsBack exponga GET /stories/{'{id}'}/viewers.
-            </p>
-          )}
+          {viewers.map((v) => (
+            <div key={v.id} className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-muted overflow-hidden">
+                {v.avatar && <img src={v.avatar} alt={v.name} className="h-full w-full object-cover" />}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-foreground truncate">{v.name}</p>
+                <p className="text-xs text-muted-foreground">{relTime(v.viewedAt)}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </SheetContent>
     </Sheet>

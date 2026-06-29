@@ -1,139 +1,225 @@
 import { useState } from 'react';
-import { Flag, AlertCircle, Shield, Loader2 } from 'lucide-react';
-import { reportPublication, useToast } from '@doevents/shared';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
+  DialogFooter,
 } from '@lovable/components/ui/dialog';
 import { Button } from '@lovable/components/ui/button';
+import { Checkbox } from '@lovable/components/ui/checkbox';
 import { Textarea } from '@lovable/components/ui/textarea';
+import { Label } from '@lovable/components/ui/label';
+import { AlertCircle, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
-const REASONS = [
-  { id: 'inappropriate', label: 'Contenido inapropiado' },
-  { id: 'spam', label: 'Spam o engañoso' },
-  { id: 'harassment', label: 'Acoso o violencia' },
-  { id: 'other', label: 'Otro' },
-];
+import { reportPublication, useToast } from '@doevents/shared';
+export interface ReportTarget {
+  targetType: 'post' | 'profile';
+  postId?: string;
+  postTitle?: string;
+  postAuthor?: string;
+  profileId?: string;
+  profileName?: string;
+  profileUsername?: string;
+  reporterName?: string;
+}
 
 interface ReportPostDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  publicationId: string | null;
-  onReported?: () => void;
+  target: ReportTarget | null;
+  onReported?: (info: { adminsNotified: number }) => void;
 }
 
-export const ReportPostDialog = ({
-  open,
-  onOpenChange,
-  publicationId,
-  onReported,
-}: ReportPostDialogProps) => {
-  const { showToast } = useToast();
-  const [reason, setReason] = useState('inappropriate');
-  const [details, setDetails] = useState('');
+const REASONS = [
+  'Spam o contenido engañoso',
+  'Discurso de odio o discriminación',
+  'Violencia o contenido peligroso',
+  'Acoso o intimidación',
+  'Desnudez o contenido sexual',
+  'Información falsa o fraude',
+  'Suplantación de identidad',
+  'Propiedad intelectual',
+];
+
+const ReportPostDialog = ({ open, onOpenChange, target, onReported }: ReportPostDialogProps) => {
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [otherChecked, setOtherChecked] = useState(false);
+  const [otherText, setOtherText] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const reset = () => {
+    setSelected(new Set());
+    setOtherChecked(false);
+    setOtherText('');
+    setSubmitting(false);
+  };
+
+  const toggle = (reason: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(reason)) next.delete(reason);
+      else next.add(reason);
+      return next;
+    });
+  };
+
+  const isProfileReport = target?.targetType === 'profile';
+  const title = isProfileReport ? 'Denunciar perfil' : 'Denunciar publicación';
+  const placeholder = isProfileReport
+    ? 'Cuéntanos qué está mal con este perfil...'
+    : 'Cuéntanos qué está mal con esta publicación...';
+
+  const reportBody = target
+    ? {
+        target_type: target.targetType,
+        post_id: target.postId,
+        post_title: target.postTitle,
+        post_author: target.postAuthor,
+        profile_id: target.profileId,
+        profile_name: target.profileName,
+        profile_username: target.profileUsername,
+        reporter_name: target.reporterName ?? 'Tú',
+        reasons: Array.from(selected),
+        other_reason: otherChecked ? otherText.trim() : undefined,
+      }
+    : null;
+
+  const canSubmit =
+    !!target &&
+    !submitting &&
+    (selected.size > 0 || (otherChecked && otherText.trim().length >= 3));
 
   const handleSubmit = async () => {
-    if (!publicationId) {
-      showToast('No se pudo identificar la publicación', 'error');
-      return;
-    }
+    if (!target || !canSubmit) return;
     setSubmitting(true);
-    setSubmitError(null);
     try {
-      await reportPublication(publicationId, { reason, details: details.trim() });
-      showToast('Reporte enviado. Gracias por ayudarnos a mantener la comunidad segura.', 'success');
-      setDetails('');
-      setReason('inappropriate');
-      onReported?.();
+      const { data, error } = await supabase.functions.invoke('submit-report', {
+        body: reportBody,
+      });
+
+      if (error) {
+        const { error: insertError } = await supabase.from('post_reports').insert({
+          target_type: target.targetType,
+          post_id: target.postId ?? null,
+          post_title: target.postTitle ?? null,
+          post_author: target.postAuthor ?? null,
+          profile_id: target.profileId ?? null,
+          profile_name: target.profileName ?? null,
+          profile_username: target.profileUsername ?? null,
+          reporter_name: target.reporterName ?? 'Tú',
+          reasons: Array.from(selected),
+          other_reason: otherChecked ? otherText.trim() : null,
+        });
+        if (insertError) throw insertError;
+      }
+
+      const adminsNotified = (data as { admins_notified?: number })?.admins_notified ?? 0;
+      toast.success('Denuncia enviada', {
+        description: 'Los administradores fueron notificados. Gracias por tu reporte.',
+      });
+      onReported?.({ adminsNotified });
+      reset();
       onOpenChange(false);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'No se pudo enviar el reporte';
-      setSubmitError(message);
-      showToast(message, 'error');
-    } finally {
+      console.error('[ReportPostDialog]', err);
+      toast.error('No se pudo enviar la denuncia', {
+        description: 'Intenta nuevamente en unos minutos.',
+      });
       setSubmitting(false);
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg rounded-2xl border border-border/60 shadow-sm">
+    <Dialog
+      open={open}
+      onOpenChange={(v) => {
+        if (!v) reset();
+        onOpenChange(v);
+      }}
+    >
+      <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 font-extrabold">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
-              <Flag className="h-5 w-5 text-destructive" />
-            </div>
-            Reportar publicación
+          <DialogTitle className="flex items-center gap-2 text-destructive">
+            <AlertCircle className="h-5 w-5" />
+            {title}
           </DialogTitle>
-          <DialogDescription className="flex items-start gap-2 text-sm font-extrabold text-muted-foreground">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20 mt-0.5">
-              <Shield className="h-4 w-4 text-primary" />
-            </span>
-            <span>
-              Indica por qué consideras que esta publicación debe ser revisada por nuestro equipo.
-            </span>
+          <DialogDescription>
+            Selecciona uno o varios motivos. Tu denuncia es confidencial y será revisada
+            por los administradores.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-3">
-          <div className="space-y-2">
-            {REASONS.map((item) => (
+        <div className="max-h-[55vh] space-y-3 overflow-y-auto pr-1">
+          {REASONS.map((reason) => {
+            const id = `reason-${reason}`;
+            return (
               <label
-                key={item.id}
-                className={`flex items-center gap-2 rounded-xl border p-3 text-sm cursor-pointer transition-colors shadow-sm ${
-                  reason === item.id
-                    ? 'border-primary bg-primary/5 font-extrabold ring-2 ring-primary/20'
-                    : 'border-border/60 font-extrabold hover:bg-accent/50'
-                }`}
+                key={reason}
+                htmlFor={id}
+                className="flex cursor-pointer items-start gap-3 rounded-lg border border-border p-3 transition-colors hover:bg-accent/40"
               >
-                <input
-                  type="radio"
-                  name="report-reason"
-                  value={item.id}
-                  checked={reason === item.id}
-                  onChange={() => setReason(item.id)}
-                  className="accent-primary"
+                <Checkbox
+                  id={id}
+                  checked={selected.has(reason)}
+                  onCheckedChange={() => toggle(reason)}
                 />
-                {item.label}
+                <span className="text-sm text-foreground">{reason}</span>
               </label>
-            ))}
-          </div>
-          <Textarea
-            placeholder="Detalles adicionales (opcional)"
-            value={details}
-            onChange={(e) => setDetails(e.target.value)}
-            rows={3}
-            className="border-border/60 shadow-sm font-extrabold focus-visible:ring-2 focus-visible:ring-primary/20"
-          />
+            );
+          })}
+
+          <label
+            htmlFor="reason-other"
+            className="flex cursor-pointer items-start gap-3 rounded-lg border border-border p-3 transition-colors hover:bg-accent/40"
+          >
+            <Checkbox
+              id="reason-other"
+              checked={otherChecked}
+              onCheckedChange={(c) => setOtherChecked(c === true)}
+            />
+            <span className="text-sm font-semibold text-foreground">Otro</span>
+          </label>
+
+          {otherChecked && (
+            <div className="space-y-2 pl-1">
+              <Label htmlFor="other-text" className="text-xs text-muted-foreground">
+                Describe el motivo (mínimo 3 caracteres)
+              </Label>
+              <Textarea
+                id="other-text"
+                value={otherText}
+                onChange={(e) => setOtherText(e.target.value)}
+                maxLength={1000}
+                rows={3}
+                placeholder={placeholder}
+              />
+            </div>
+          )}
         </div>
 
-        {submitError && (
-          <div className="flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/5 p-3 text-sm font-extrabold text-destructive shadow-sm">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20 mt-0.5">
-              <AlertCircle className="h-4 w-4" />
-            </span>
-            <span>{submitError}</span>
-          </div>
-        )}
-
-        <DialogFooter className="flex flex-col-reverse gap-2 border-t border-border/60 pt-4 sm:flex-row sm:justify-end sm:gap-2">
-          <Button type="button" variant="outline" className="rounded-full font-extrabold shadow-sm" onClick={() => onOpenChange(false)}>
+        <DialogFooter className="gap-2 sm:gap-2">
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            disabled={submitting}
+          >
             Cancelar
           </Button>
-          <Button type="button" variant="destructive" className="gap-1.5 rounded-full font-extrabold shadow-sm" onClick={handleSubmit} disabled={submitting}>
+          <Button
+            variant="destructive"
+            disabled={!canSubmit}
+            onClick={handleSubmit}
+          >
             {submitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Enviando…
+                Enviando...
               </>
             ) : (
-              'Enviar reporte'
+              'Enviar denuncia'
             )}
           </Button>
         </DialogFooter>
