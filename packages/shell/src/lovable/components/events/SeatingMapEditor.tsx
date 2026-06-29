@@ -1806,7 +1806,21 @@ const CategoryFormSheet = ({
 
       <FooterActions
         onCancel={onClose}
-        onSave={onClose}
+        onSave={() => {
+          const missing: string[] = [];
+          if (!figure.name?.trim()) missing.push('Nombre de la categoría');
+          if (figure.priceEnabled && (!figure.price || figure.price <= 0))
+            missing.push('Precio');
+          if (!figure.gateId) missing.push('Puerta de acceso');
+          if (!figure.description?.trim()) missing.push('Descripción');
+          if (missing.length) {
+            toast.error('Completa los campos obligatorios', {
+              description: missing.join(', '),
+            });
+            return;
+          }
+          onClose();
+        }}
         secondary={
           <button
             onClick={onDelete}
