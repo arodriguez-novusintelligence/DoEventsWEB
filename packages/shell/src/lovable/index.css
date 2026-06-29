@@ -360,7 +360,7 @@
   }
 }
 
-/* Feed Gold Theme override — toggled via [data-feed-theme="gold"] on <html> */
+/* Feed Theme overrides — toggled via [data-feed-theme] on <html> */
 :root {
   --feed-hero-grad: linear-gradient(135deg, hsl(var(--primary-deep)) 0%, hsl(var(--primary)) 65%, hsl(232 60% 40%) 100%);
   --feed-header-bg: hsl(230 40% 96%);
@@ -371,3 +371,11 @@ html[data-feed-theme="gold"] {
   --background: 45 60% 95%;
 }
 html[data-feed-theme="gold"] body { background: #fbf3d6; }
+
+html[data-feed-theme="black"] {
+  --feed-hero-grad: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 55%, #2d2d2d 100%);
+  --feed-header-bg: linear-gradient(180deg, #141414 0%, #0a0a0a 100%);
+  --background: 0 0% 6%;
+}
+html[data-feed-theme="black"] body { background: #0a0a0a; }
+
