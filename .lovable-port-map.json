@@ -12,8 +12,8 @@
     },
     {
       "lovable": "src/pages/Index.tsx",
-      "web": "packages/shell/src/pages/EventsPage.tsx",
-      "note": "Home feed"
+      "web": "packages/shell/src/pages/SocialWallTab.tsx",
+      "note": "Feed wall (bridge desde Index Lovable)"
     },
     {
       "lovable": "src/pages/Login.tsx",

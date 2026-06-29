@@ -850,14 +850,21 @@ export const SocialWallTab: React.FC = () => {
       />
 
       {!kycLoading && !isCertified && userId && (
-        <FeedBanner
-          title="Organizador certificado"
-          message="Obtén el sello KYC y desbloquea eventos de gran escala con mayor visibilidad."
-          actionLabel="Ver certificación"
-          onAction={() => navigate('/profile/kyc')}
-          className="mt-3"
-          dismissible
-        />
+        <div className="mx-auto mt-3 max-w-lg px-4">
+          <div className="rounded-2xl bg-gradient-to-r from-primary to-primary-glow p-4 text-primary-foreground shadow-sm">
+            <h3 className="text-sm font-bold">Organizador certificado</h3>
+            <p className="mt-1 text-xs text-primary-foreground/90">
+              Obtén el sello KYC y desbloquea eventos de gran escala con mayor visibilidad.
+            </p>
+            <button
+              type="button"
+              className="mt-3 rounded-full bg-primary-foreground/15 px-4 py-1.5 text-xs font-semibold backdrop-blur"
+              onClick={() => navigate('/profile/kyc')}
+            >
+              Ver certificación
+            </button>
+          </div>
+        </div>
       )}
 
       <div className="mx-auto max-w-lg">
@@ -866,6 +873,8 @@ export const SocialWallTab: React.FC = () => {
           loading={nearbyVenuesLoading}
           onOpenVenue={(venue) => navigate(`/places/${venue.id}`)}
         />
+
+        <FeedBanner />
 
         <div className="space-y-2 px-4 pb-4">
 
