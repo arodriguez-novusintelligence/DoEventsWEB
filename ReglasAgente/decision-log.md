@@ -13,6 +13,38 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## [2026-06-29 18:30 UTC] gap-empalme-28392876508-cursor-escalation
+
+### 1. Resumen del empalme
+Escalado único Cursor (manifiesto `28392876508-cursor-escalation`, 1 gap, similitud baseline **73.89%** en `FeedHero`): empalme DSF completo — restaurada sección **Categorías** overlapping (`CATEGORY_CHIP_STYLES`, chips `ring-primary/20`, card `border-border/60 ring-primary/10`); props `selectedCategories`/`onSelectCategory`/`onViewAllCategories` cableados con `SocialWallTab`; historias API con gradientes semánticos `primary/accent/destructive`, LIVE `bg-destructive`, loading h-14 `ring-primary/20`, empty dashed `border-primary/25`; MapPin h-10 ring; Cambiar `shadow-sm font-extrabold`; `showBuiltInStories={false}` prod sin mocks; context stories solo DEV. **1 gap DONE** frontend; **0 BACKEND_REQUIRED** en batch. Similitud **98.85%** (objetivo 98% alcanzado). **0 gaps** restantes en manifiesto.
+
+### 2. Tabla gaps
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| Feed hero | `packages/shell/src/lovable/components/feed/FeedHero.tsx` | DONE |
+
+### 3. Similitud antes/después
+- **Antes:** 73.89% (`FeedHero`, manifiesto CI `28392876508-cursor-escalation`)
+- **Después:** 98.85% (post empalme; objetivo 98% alcanzado; 0 gaps restantes)
+
+### 4. Build
+`npm run build:devaws`: **OK**
+
+### 5. Evidencia anti-mock
+```bash
+grep -R "mock\|fake\|dummy\|sampleData\|hardcoded" packages/shell/src/pages || true
+```
+Sin coincidencias runtime en `pages/`. `defaultStories` solo bajo `import.meta.env.DEV` + `showBuiltInStories`; prod usa `feedStories` API real vía `SocialWallTab`.
+
+### 6. Clasificación
+VISUAL + FRONTEND_LOGIC (filtro categorías vía props; historias API intactas)
+
+### 7. Riesgos pendientes
+Brechas backend acumuladas sin cambio: BankingHub delete/PayPal, StoryViewersSheet viewers API, KYC submit, GlobalSearch posts. Re-comparación CI con `compare-design-similarity.py` pendiente (`discover-joyful-feed` privado).
+
+---
+
 ## [2026-06-29 18:09 UTC] prepare-6b884586
 
 ### 1. Resumen del cambio detectado

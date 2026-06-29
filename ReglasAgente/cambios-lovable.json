@@ -350,6 +350,29 @@
         "Adaptacion pendiente por agente Cursor"
       ],
       "agentStatus": "pending"
+    },
+    {
+      "id": "gap-empalme-28392876508-cursor-escalation",
+      "timestamp": "2026-06-29 18:30 UTC",
+      "workflowRunId": "28392876508-cursor-escalation",
+      "gapBatch": 1,
+      "webFilesModified": [
+        "packages/shell/src/lovable/components/feed/FeedHero.tsx",
+        "ReglasAgente/decision-log.md",
+        "ReglasAgente/cambios-lovable.json",
+        "ReglasAgente/impacto-backend.md",
+        "ReglasAgente/reglas-front.md",
+        "docs/changes/gap-empalme-latest.md"
+      ],
+      "gapsClosed": [
+        "src/components/feed/FeedHero.tsx"
+      ],
+      "gapsBackendRequired": [],
+      "designSimilarityPercentBefore": 73.89,
+      "designSimilarityPercentAfter": 98.85,
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "agentStatus": "finished"
     }
   ]
 }
