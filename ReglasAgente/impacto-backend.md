@@ -2,6 +2,8 @@
 
 ## Resumen
 
+Run `gap-empalme-28400370016-cursor-escalation`: escalado único Cursor (2 gaps manifiesto) — 2 DONE frontend; 0 BACKEND_REQUIRED en batch. FeedHero empalme con `FeedThemeToggle` (Sun/Moon, `localStorage feed_theme_v1`, clase `dark` en `documentElement`); hero simplificado — historias vía props API desde `SocialWallTab` (`showBuiltInStories={false}` prod); tokens DSF `--background: 230 40% 96%` + `color-scheme` en `lovable/index.css`; TopHeader `bg-background`; similitud FeedHero ~98.8% / index.css ~99.2%; build:devaws OK; 0 gaps restantes en manifiesto.
+
 Run `gap-empalme-28395199438-cursor-escalation`: escalado único Cursor (1 gap manifiesto) — 1 DONE frontend; 0 BACKEND_REQUIRED en batch. SeatingMapEditor empalme estructural Lovable verificado intacto (`prepare-1da1010a`, commit `98ba5ee`): geometría SVG arco, header/toolbar/legend/modales alineados; SeatsGrid API Lovable; bridge `seatStatesToLovableSets` en StepEventLocation; `Piso {currentFloor}` preservado; similitud SeatingMapEditor ~98.62%; build:devaws OK; 0 gaps restantes en manifiesto.
 
 Run `gap-empalme-28393924506-cursor-escalation`: escalado único Cursor (1 gap manifiesto) — 1 DONE frontend; 0 BACKEND_REQUIRED en batch. SeatingMapEditor empalme estructural Lovable verificado intacto: geometría SVG arco, header/toolbar/legend/modales alineados; SeatsGrid API Lovable; bridge `seatStatesToLovableSets` en StepEventLocation; `Piso {currentFloor}` preservado; similitud SeatingMapEditor ~98.62%; build:devaws OK; 0 gaps restantes en manifiesto.
@@ -172,7 +174,14 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-28395199438-cursor-escalation)
+## Empalme realizado (última ejecución — gap-empalme-28400370016-cursor-escalation)
+
+- **FeedHero:** integra `FeedThemeToggle` junto al botón «Cambiar»; mantiene categorías DSF (`CATEGORY_CHIP_STYLES`), filtro categorías vía props, historias API con gradientes semánticos; elimina wiring embebido `StoriesContext`/`AddStorySheet`/`StoryViewer`/`StoryViewersSheet` — prod usa props desde `SocialWallTab` con API real; `defaultStories` solo DEV.
+- **FeedThemeToggle:** componente nuevo — toggle claro/oscuro con `Sun`/`Moon`; persiste en `localStorage` (`feed_theme_v1`); aplica clase `dark` en `document.documentElement`.
+- **lovable/index.css:** `--background: 230 40% 96%` alineado Lovable; `color-scheme: light dark` en `html`/`html.dark`; transición suave en `body`.
+- **TopHeader:** `bg-[hsl(230_40%_96%)]` → `bg-background` token semántico (respeta tema oscuro).
+
+## Empalme realizado (ejecución anterior — gap-empalme-28395199438-cursor-escalation)
 
 - **SeatingMapEditor:** empalme estructural Lovable (`prepare-1da1010a`, commit `98ba5ee`) verificado intacto: `getArcGeometry` con bandas seatOuterR/seatInnerR; `ArcFigureShape` SVG horseshoe; header botones `rounded-full border-border`; toolbar `border-border`; empty canvas copy Lovable; zoom FABs `border-border shadow-sm`; legend/text modals `shadow-2xl` + `font-bold`; FooterActions `rounded-xl`; `SeatsGrid` con `selectedLabels`/`takenLabels`/`onSeatToggle`; `Piso {currentFloor}` preservado; APIs `onSave`/`initialMap`/`gates` intactas.
 - **StepEventLocation:** adaptador `seatStatesToLovableSets` mapea `SeatVisualState` bridge → Sets Lovable; `LovableVenueMap` sin cambio de contrato.

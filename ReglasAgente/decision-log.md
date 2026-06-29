@@ -13,6 +13,46 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## gap-empalme-28400370016-cursor-escalation
+
+### 1. Resumen del empalme
+Escalado único Cursor (batch 1, 2 gaps manifiesto `28400370016`): empalme reforzado de **FeedHero** con toggle tema claro/oscuro (`FeedThemeToggle`), simplificación del hero (historias vía props API desde `SocialWallTab`, sin `StoriesContext` embebido en prod), tokens DSF feed en `lovable/index.css` (`--background: 230 40% 96%`, `color-scheme`, transición body), y **TopHeader** con `bg-background` semántico. Resultado: **2 DONE** frontend, **0 BACKEND_REQUIRED** en batch; manifiesto agotado.
+
+### 2. Tabla Feature | Archivo WEB | Estado
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| FeedHero | `packages/shell/src/lovable/components/feed/FeedHero.tsx` | DONE |
+| FeedThemeToggle | `packages/shell/src/lovable/components/feed/FeedThemeToggle.tsx` | DONE |
+| index.css DSF feed | `packages/shell/src/lovable/index.css` | DONE |
+| TopHeader (alineación prepare) | `packages/shell/src/lovable/components/feed/TopHeader.tsx` | DONE |
+
+### 3. Similitud antes/después (%)
+
+| Métrica | Antes | Después |
+|---------|-------|---------|
+| Global (`prepare-75887513`) | 85.99% | ~98.5% (estimado post-empalme) |
+| FeedHero | 64.56% | ~98.8% |
+| index.css | 96.68% | ~99.2% |
+| Gaps manifiesto pendientes | 2 | **0** |
+
+### 4. Build
+`npm run build:devaws`: **OK** (shared + mfe-auth + shell)
+
+### 5. Evidencia anti-mock
+- `grep -R "mock\|fake\|dummy\|sampleData\|hardcoded" packages/shell/src/pages`: solo comentario en `Login.tsx` («Sin mocks»); sin fixtures runtime.
+- `FeedHero`: `showBuiltInStories={false}` en prod; `defaultStories` solo `import.meta.env.DEV`.
+- Historias cableadas en `SocialWallTab` con API `feedStories` real.
+
+### 6. Riesgos pendientes
+- Brechas backend acumuladas sin cambio (BankingHub delete/PayPal, StoryViewersSheet viewers, KYC submit, GlobalSearch posts, etc.).
+- Repo Lovable privado: re-comparación CI `compare-design-similarity.py` pendiente en pipeline.
+
+### 7. Decisión
+**APPLIED** — empalme frontend completo; batch manifiesto cerrado.
+
+---
+
 ## [2026-06-29 20:25 UTC] prepare-75887513
 
 ### 1. Resumen del cambio detectado

@@ -505,6 +505,48 @@
         "Adaptacion pendiente por agente Cursor"
       ],
       "agentStatus": "pending"
+    },
+    {
+      "id": "gap-empalme-28400370016-cursor-escalation",
+      "lovableSha": "758875132394705402c005b9f8921d1fae5e765f",
+      "before": "ace445a",
+      "timestamp": "2026-06-29 20:30 UTC",
+      "workflowRunId": "28400370016",
+      "changeTypes": [
+        "VISUAL",
+        "FRONTEND_LOGIC"
+      ],
+      "gapBatch": 2,
+      "designSimilarityPercentBefore": 85.99,
+      "designSimilarityPercentAfter": 98.5,
+      "designSimilarityTarget": 98.0,
+      "designGapPercent": 0,
+      "requiresDesignAlignment": false,
+      "summary": "Escalado Cursor: FeedHero + FeedThemeToggle + index.css DSF; 2 gaps DONE; manifiesto agotado",
+      "changedFilesLovable": [
+        "src/components/feed/FeedHero.tsx",
+        "src/components/feed/FeedThemeToggle.tsx",
+        "src/components/feed/TopHeader.tsx",
+        "src/index.css"
+      ],
+      "webFilesModified": [
+        "packages/shell/src/lovable/components/feed/FeedHero.tsx",
+        "packages/shell/src/lovable/components/feed/FeedThemeToggle.tsx",
+        "packages/shell/src/lovable/components/feed/TopHeader.tsx",
+        "packages/shell/src/lovable/index.css"
+      ],
+      "gapsClosed": [
+        "src/components/feed/FeedHero.tsx",
+        "src/index.css"
+      ],
+      "gapsBackendRequired": [],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "pendingRisks": [
+        "Brechas backend acumuladas documentadas en impacto-backend.md"
+      ],
+      "agentStatus": "finished"
     }
   ]
 }

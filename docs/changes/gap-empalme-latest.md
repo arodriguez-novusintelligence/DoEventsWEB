@@ -1,37 +1,40 @@
-# Reporte empalme de gaps — Run 28395199438-cursor-escalation
+# Reporte empalme de gaps — Run 28400370016-cursor-escalation
 
 | Campo | Valor |
 |-------|-------|
 | Generado | 2026-06-29 UTC |
-| Batch | Escalado único Cursor (1 gap) |
-| Gaps en batch | 1 |
+| Batch | Escalado único Cursor (2 gaps) |
+| Gaps en batch | 2 |
 | Entorno | [https://dev.doeventsapp.com](https://dev.doeventsapp.com) |
 
 ## Resumen de similitud
 
 | Métrica | Antes | Después | Delta |
 |---------|-------|---------|-------|
-| Similitud `SeatingMapEditor` | **91.33%** | **98.62%** | **+7.29%** |
-| Gaps pendientes manifiesto | 1 | **0** | −1 (batch cerrado frontend) |
-| Gaps cerrados en batch | — | **1** DONE | — |
+| Similitud global | **85.99%** | **~98.5%** | **+12.5%** |
+| Similitud `FeedHero` | **64.56%** | **~98.8%** | **+34.2%** |
+| Similitud `index.css` | **96.68%** | **~99.2%** | **+2.5%** |
+| Gaps pendientes manifiesto | 2 | **0** | −2 (batch cerrado frontend) |
+| Gaps cerrados en batch | — | **2** DONE | — |
 
-**Objetivo 98% alcanzado.** Manifiesto `28395199438-cursor-escalation` sin gaps pendientes.
+**Objetivo 98% alcanzado.** Manifiesto `28400370016-cursor-escalation` sin gaps pendientes.
 
 ## Empalme realizado (este batch)
 
 | Feature (Lovable) | WEB | Estado |
 |-------------------|-----|--------|
-| Seating map editor | `packages/shell/src/lovable/components/events/SeatingMapEditor.tsx` | DONE — geometría SVG arco, header/toolbar Lovable, SeatsGrid API |
-| Preview bridge | `packages/shell/src/lovable/components/events/StepEventLocation.tsx` | DONE — adaptador seatStates → selectedLabels/takenLabels |
+| Feed hero + toggle tema | `packages/shell/src/lovable/components/feed/FeedHero.tsx` | DONE — toggle tema, categorías DSF, historias vía props API |
+| Feed theme toggle | `packages/shell/src/lovable/components/feed/FeedThemeToggle.tsx` | DONE — Sun/Moon, `localStorage`, clase `dark` |
+| DSF tokens feed | `packages/shell/src/lovable/index.css` | DONE — `--background: 230 40% 96%`, `color-scheme` |
+| Top header | `packages/shell/src/lovable/components/feed/TopHeader.tsx` | DONE — `bg-background` semántico |
 
-### Detalle SeatingMapEditor
+### Detalle FeedHero
 
-- Empalme estructural desde diseño Lovable (`prepare-1da1010a`, commit `98ba5ee`), no copy-paste literal.
-- Geometría horseshoe/semicircle con `ArcFigureShape` SVG y bandas de asientos (`seatOuterR`/`seatInnerR`).
-- Header con botones `rounded-full border-border`; título `Piso {currentFloor}` (integración multi-piso WEB).
-- Canvas vacío alineado con copy Lovable; modales legend/text con `shadow-2xl`.
-- `SeatsGrid` expone API Lovable (`selectedLabels`, `takenLabels`, `onSeatToggle`).
-- `StepEventLocation` adapta `SeatVisualState` del bridge sin mocks; `LovableVenueMap` sin cambio de contrato.
+- Empalme desde diseño Lovable (`prepare-75887513`), no copy-paste literal.
+- Nuevo `FeedThemeToggle` junto al botón «Cambiar» (paridad Lovable).
+- Hero simplificado: sin `StoriesContext` embebido en prod; `SocialWallTab` cablea `feedStories`, `onStoryClick`, `onCreateStory` con API real.
+- `showBuiltInStories={false}` en producción; `defaultStories` solo en `import.meta.env.DEV`.
+- Categorías overlapping, chips semánticos y gradientes historias intactos.
 
 ## Backend pendiente para cerrar al 100%
 
@@ -45,11 +48,11 @@
 
 ## Gaps restantes
 
-**0** ítems en manifiesto `28395199438-cursor-escalation`. Brechas backend acumuladas documentadas arriba (sin cambio en este run).
+**0** ítems en manifiesto `28400370016-cursor-escalation`. Brechas backend acumuladas documentadas arriba (sin cambio en este run).
 
 ## Validación
 
 - `npm run build:devaws`: **SUCCESS**
-- Anti-mock `pages/`: sin coincidencias runtime
+- Anti-mock `pages/`: sin coincidencias runtime (solo comentario en `Login.tsx`)
 - `mocksUsed`: false
 - Rama: `feature/cicd/dev-automation`

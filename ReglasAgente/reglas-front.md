@@ -121,6 +121,18 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-29 gap-empalme escalado Cursor (run 28400370016-cursor-escalation)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| FeedThemeToggle claro/oscuro | VISUAL | Sí | `feed/FeedThemeToggle.tsx` | Sun/Moon; localStorage feed_theme_v1; clase dark en documentElement |
+| FeedHero toggle + hero | VISUAL | Sí | `feed/FeedHero.tsx` | FeedThemeToggle junto Cambiar; categorías DSF intactas |
+| FeedHero historias API | Integración | Sí | `feed/FeedHero.tsx` | Props desde SocialWallTab; sin StoriesContext embebido prod |
+| FeedHero anti-mock prod | Bloqueo | Sí | `feed/FeedHero.tsx` | showBuiltInStories=false; defaultStories solo DEV |
+| index.css background feed | VISUAL | Sí | `lovable/index.css` | --background 230 40% 96%; color-scheme; transición body |
+| TopHeader bg-background | VISUAL | Sí | `feed/TopHeader.tsx` | Token semántico vs hsl hardcoded |
+| Batch escalado (2 gaps) | Empalme | Sí | ver `decision-log.md` | 2 DONE + 0 BACKEND_REQUIRED; similitud ~98.5% |
+
 ## Ejecución 2026-06-29 gap-empalme escalado Cursor (run 28395199438-cursor-escalation)
 
 | Regla | Tipo | Implementada | Archivo | Observación |
