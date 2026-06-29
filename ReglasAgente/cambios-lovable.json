@@ -480,22 +480,22 @@
     {
       "id": "prepare-75887513",
       "lovableSha": "758875132394705402c005b9f8921d1fae5e765f",
-      "before": "6167b95c80fba4838ac376588cd0150a021a42fb",
-      "timestamp": "2026-06-29 20:25 UTC",
-      "workflowRunId": "28400370016",
+      "before": "758875132394705402c005b9f8921d1fae5e765f",
+      "timestamp": "2026-06-29 20:50 UTC",
+      "workflowRunId": "28401785914",
       "changeTypes": [
-        "VISUAL"
+        "FRONT_LOGIC"
       ],
-      "designSimilarityPercent": 85.99,
+      "designSimilarityPercent": 86.56,
       "designSimilarityTarget": 98.0,
-      "designGapPercent": 12.01,
+      "designGapPercent": 11.44,
       "requiresDesignAlignment": true,
-      "summary": "Manifiesto: UI=True, reglas=False, 4 archivo(s); similitud diseño=85.99%",
+      "summary": "Manifiesto: UI=False, reglas=True, 4 archivo(s); similitud diseño=86.56%",
       "changedFilesLovable": [
-        "src/components/feed/FeedHero.tsx",
-        "src/components/feed/FeedThemeToggle.tsx",
-        "src/components/feed/TopHeader.tsx",
-        "src/index.css"
+        "reglasActuacion/eventos/pulep-colombia.yml",
+        "reglasActuacion/publicaciones/feed-principal.yml",
+        "reglasEmpalme/component-index.yml",
+        "reglasEmpalme/port-map.yml"
       ],
       "webFilesModified": [],
       "backFilesModified": [],
@@ -505,48 +505,6 @@
         "Adaptacion pendiente por agente Cursor"
       ],
       "agentStatus": "pending"
-    },
-    {
-      "id": "gap-empalme-28400370016-cursor-escalation",
-      "lovableSha": "758875132394705402c005b9f8921d1fae5e765f",
-      "before": "ace445a",
-      "timestamp": "2026-06-29 20:30 UTC",
-      "workflowRunId": "28400370016",
-      "changeTypes": [
-        "VISUAL",
-        "FRONTEND_LOGIC"
-      ],
-      "gapBatch": 2,
-      "designSimilarityPercentBefore": 85.99,
-      "designSimilarityPercentAfter": 98.5,
-      "designSimilarityTarget": 98.0,
-      "designGapPercent": 0,
-      "requiresDesignAlignment": false,
-      "summary": "Escalado Cursor: FeedHero + FeedThemeToggle + index.css DSF; 2 gaps DONE; manifiesto agotado",
-      "changedFilesLovable": [
-        "src/components/feed/FeedHero.tsx",
-        "src/components/feed/FeedThemeToggle.tsx",
-        "src/components/feed/TopHeader.tsx",
-        "src/index.css"
-      ],
-      "webFilesModified": [
-        "packages/shell/src/lovable/components/feed/FeedHero.tsx",
-        "packages/shell/src/lovable/components/feed/FeedThemeToggle.tsx",
-        "packages/shell/src/lovable/components/feed/TopHeader.tsx",
-        "packages/shell/src/lovable/index.css"
-      ],
-      "gapsClosed": [
-        "src/components/feed/FeedHero.tsx",
-        "src/index.css"
-      ],
-      "gapsBackendRequired": [],
-      "backFilesModified": [],
-      "mocksUsed": false,
-      "buildResult": "SUCCESS",
-      "pendingRisks": [
-        "Brechas backend acumuladas documentadas en impacto-backend.md"
-      ],
-      "agentStatus": "finished"
     }
   ]
 }
