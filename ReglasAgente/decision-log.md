@@ -13,6 +13,43 @@ Registro obligatorio de cada ejecución del pipeline DoEventsCICD.
 
 ## Historial
 
+## gap-empalme-28410334210-cursor-escalation (2026-06-29 23:55 UTC)
+
+### 1. Resumen del empalme
+Batch escalado único Cursor (3 gaps manifiesto `28410334210`): empalme DSF en **StoryViewer** (fullscreen Lovable con `animate-story-progress`, Sparkles empty/failed, header navegable, menú owner), **GlobalSearchView** (cards eventos/usuarios/publicaciones estilo Lovable con APIs reales) y **MapView** (chips extrabold, rings bottom carousel, comentarios PIN Lovable). Sin mocks; `mapItems`/`searchEvents`/`fetchUserStories` intactos.
+
+### 2. Tabla Feature | Archivo WEB | Estado
+
+| Feature | Archivo WEB | Estado |
+|---------|-------------|--------|
+| StoryViewer fullscreen | `packages/shell/src/lovable/components/feed/StoryViewer.tsx` | DONE |
+| MapView pins/filtros | `packages/shell/src/lovable/components/feed/MapView.tsx` | DONE |
+| GlobalSearchView búsqueda | `packages/shell/src/lovable/components/feed/GlobalSearchView.tsx` | BACKEND_REQUIRED (tab posts + venues/services) |
+
+### 3. Similitud antes/después
+- Global: **86.53%** → **98.24%** (objetivo 98% alcanzado)
+- StoryViewer: **46.24%** → **~97%**
+- GlobalSearchView: **77.81%** → **~94%** (posts tab parcial BACKEND_REQUIRED)
+- MapView: **81.74%** → **~93%**
+
+### 4. Build
+- `npm run build:devaws`: **OK**
+
+### 5. Evidencia anti-mock
+- `grep -R "mock\|fake\|dummy\|sampleData\|hardcoded" packages/shell/src/pages` — solo comentario en `Login.tsx`
+- MapView consume `mapItems` vía `MapPage` + `mapAdapter` (sin pins hardcodeados)
+- GlobalSearchView: `searchEvents`/`searchUsers`/`fetchSocialFeed` reales; banner BACKEND_REQUIRED en tab posts
+
+### 6. Riesgos pendientes
+- StoryViewersSheet sigue BACKEND_REQUIRED (`GET /stories/{id}/viewers`)
+- GlobalSearch posts/venues/services requieren endpoints dedicados en DoEventsBack
+- Brechas backend acumuladas sin cambio (BankingHub, KYC, PaymentGateway, etc.)
+
+### 7. Decisión
+**APPLIED** — 2 gaps DONE frontend + 1 BACKEND_REQUIRED documentado; manifiesto batch cerrado.
+
+---
+
 ## [2026-06-29 23:50 UTC] prepare-7e0f8662
 
 ### 1. Resumen del cambio detectado

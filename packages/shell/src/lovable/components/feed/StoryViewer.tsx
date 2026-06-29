@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Loader2, MoreHorizontal, X, Eye } from 'lucide-react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Loader2, MoreHorizontal, Sparkles, X, Eye } from 'lucide-react';
 import {
   FeedStoryItem,
   UserAvatar,
@@ -65,6 +66,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   onOpenViewers,
 }) => {
   const resolvedAuthorId = authorUserId ?? startUserId ?? null;
+  const navigate = useNavigate();
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -74,9 +76,6 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   const [index, setIndex] = useState(0);
   const [mediaFailed, setMediaFailed] = useState(false);
   const [progressKey, setProgressKey] = useState(0);
-  const [progress, setProgress] = useState(0);
-  const rafRef = useRef<number | null>(null);
-  const startRef = useRef(0);
 
   const loadStories = useCallback(async (userId: string, preferCache = true) => {
     if (preferCache) {
@@ -140,6 +139,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   const canManage = Boolean(
     currentUserId && current && storyAuthorId === currentUserId,
   );
+  const displayName = canManage ? 'Tu historia' : (current?.authorName || 'Historia');
 
   useEffect(() => {
     setMediaFailed(false);
@@ -152,6 +152,14 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   };
 
   const closeMenu = () => setMenuOpen(false);
+
+  const openViewers = () => {
+    if (onOpenViewers && current && resolvedAuthorId) {
+      onOpenViewers(resolvedAuthorId, current.id);
+      return;
+    }
+    setViewersOpen(true);
+  };
 
   const handleDelete = async () => {
     if (!current || !canManage || busyAction) return;
@@ -202,173 +210,179 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
 
   useEffect(() => {
     if (!open || loading || !current || isVideo || busyAction || menuOpen || mediaFailed) return;
-    startRef.current = performance.now();
-    setProgress(0);
-
-    const tick = (t: number) => {
-      const elapsed = t - startRef.current;
-      const p = Math.min(1, elapsed / STORY_DURATION_MS);
-      setProgress(p);
-      if (p >= 1) {
-        goNext();
-      } else {
-        rafRef.current = requestAnimationFrame(tick);
-      }
-    };
-
-    rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
+    const timer = window.setTimeout(goNext, STORY_DURATION_MS);
+    return () => window.clearTimeout(timer);
   }, [open, loading, current, isVideo, index, goNext, busyAction, menuOpen, mediaFailed, progressKey]);
 
   if (!open || !resolvedAuthorId) return null;
 
-  const openViewers = () => {
-    if (onOpenViewers && current) {
-      onOpenViewers(resolvedAuthorId, current.id);
-      return;
-    }
-    setViewersOpen(true);
-  };
-
-  if (loading && !stories.length) {
-    return (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black">
-        <Loader2 className="h-10 w-10 animate-spin text-white/80" />
-      </div>
-    );
-  }
-
-  if (!loading && !stories.length) {
-    return (
-      <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black px-6 text-center">
-        <p className="text-sm text-white/80">No hay historias activas de este usuario.</p>
-        <button
-          type="button"
-          onClick={onClose}
-          className="mt-4 rounded-full bg-black/60 px-6 py-2 text-xs font-semibold text-white backdrop-blur"
-        >
-          Cerrar
-        </button>
-      </div>
-    );
-  }
-
-  if (!current) return null;
-
-  const displayName = canManage ? 'Tu historia' : current.authorName;
-  const avatarUrl = current.authorAvatar ? resolveImageUrl(current.authorAvatar) : undefined;
-
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black">
-      <div className="absolute left-0 right-0 top-0 z-10 flex gap-1 px-3 pt-3">
-        {stories.map((story, i) => (
-          <div key={story.id} className="h-0.5 flex-1 overflow-hidden rounded-full bg-white/30">
-            <div
-              className="h-full bg-white transition-none"
-              style={{
-                width: `${i < index ? 100 : i === index ? progress * 100 : 0}%`,
-              }}
-            />
-          </div>
-        ))}
-      </div>
-
-      <div className="absolute left-0 right-0 top-6 z-10 flex items-center justify-between px-4 pt-3">
-        <div className="flex min-w-0 items-center gap-2">
-          {avatarUrl ? (
-            <img src={avatarUrl} alt="" className="h-8 w-8 rounded-full border-2 border-white object-cover" />
-          ) : (
-            <UserAvatar name={displayName} size={32} className="border-2 border-white" />
-          )}
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-white">{displayName}</p>
-            {(() => {
-              const ago = formatStoryTimeAgo(current.createdAt);
-              return ago ? <p className="text-[10px] text-white/70">hace {ago}</p> : null;
-            })()}
-          </div>
+    <div
+      className="fixed inset-0 z-50 flex flex-col bg-black text-white"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Visor de historias"
+    >
+      {loading && !stories.length && (
+        <div className="flex flex-1 flex-col items-center justify-center gap-3">
+          <Loader2 className="h-10 w-10 animate-spin text-white/80" />
+          <p className="text-sm text-white/70">Cargando historias…</p>
         </div>
-        <div className="flex items-center gap-1">
-          {canManage && (
-            <button
-              type="button"
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-black/40"
-              onClick={toggleMenu}
-              aria-label="Opciones de la historia"
-              aria-expanded={menuOpen}
-              disabled={Boolean(busyAction)}
-            >
-              <MoreHorizontal className="h-5 w-5 text-white" />
-            </button>
-          )}
+      )}
+
+      {!loading && !stories.length && (
+        <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/10 ring-4 ring-white/20">
+            <Sparkles className="h-7 w-7 text-white/80" />
+          </div>
+          <p className="text-sm text-white/80">No hay historias activas de este usuario.</p>
           <button
             type="button"
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-black/40"
-            aria-label="Cerrar"
+            className="rounded-full bg-white/15 px-6 py-2 text-sm font-semibold shadow-sm"
           >
-            <X className="h-5 w-5 text-white" />
+            Cerrar
           </button>
         </div>
-      </div>
-
-      {mediaUrl && !mediaFailed ? (
-        isVideo ? (
-          <video
-            key={mediaUrl}
-            src={mediaUrl}
-            className="max-h-full max-w-full object-contain"
-            autoPlay
-            muted
-            playsInline
-            onEnded={goNext}
-            onError={() => setMediaFailed(true)}
-          />
-        ) : (
-          <img
-            key={mediaUrl}
-            src={mediaUrl}
-            alt=""
-            className="max-h-full max-w-full object-contain"
-            onError={() => setMediaFailed(true)}
-          />
-        )
-      ) : (
-        <p className="px-8 text-center text-lg font-medium text-white">
-          {current.description || (mediaFailed ? 'No se pudo cargar el contenido.' : 'Estado')}
-        </p>
       )}
 
-      {current.description && mediaUrl && !mediaFailed && (
-        <p className="absolute inset-x-0 bottom-24 px-6 text-center text-sm text-white/90 drop-shadow">
-          {current.description}
-        </p>
-      )}
+      {!loading && current && (
+        <>
+          <header className="safe-area-top absolute inset-x-0 top-0 z-20 px-3 pb-3 pt-4">
+            <div className="mb-3 flex gap-1 px-1">
+              {stories.map((story, i) => (
+                <span
+                  key={story.id}
+                  className="h-1 flex-1 overflow-hidden rounded-full bg-white/25"
+                >
+                  <span
+                    key={i === index ? `${story.id}-${progressKey}` : story.id}
+                    className={`block h-full rounded-full bg-white ${
+                      i < index
+                        ? 'w-full'
+                        : i === index
+                          ? 'w-0 animate-story-progress'
+                          : 'w-0'
+                    }`}
+                    style={
+                      i === index && !isVideo
+                        ? { animationDuration: `${STORY_DURATION_MS}ms` }
+                        : undefined
+                    }
+                  />
+                </span>
+              ))}
+            </div>
 
-      <button
-        type="button"
-        className="absolute bottom-0 left-0 top-0 w-1/3"
-        aria-label="Historia anterior"
-        onClick={goPrev}
-      />
-      <button
-        type="button"
-        className="absolute bottom-0 right-0 top-0 w-1/3"
-        aria-label="Siguiente historia"
-        onClick={goNext}
-      />
+            <div className="flex items-center justify-between">
+              <button
+                type="button"
+                className="flex min-w-0 items-center gap-2"
+                onClick={() => navigate(`/users/${resolvedAuthorId}`)}
+              >
+                <UserAvatar name={displayName} imageUrl={current.authorAvatar} size={36} />
+                <div className="min-w-0 text-left">
+                  <div className="flex items-center gap-2">
+                    <span className="truncate text-sm font-semibold">{displayName}</span>
+                    {current.isLive && (
+                      <span className="rounded-full bg-destructive px-2 py-0.5 text-[10px] font-bold uppercase shadow-sm">
+                        Live
+                      </span>
+                    )}
+                  </div>
+                  {(() => {
+                    const ago = formatStoryTimeAgo(current.createdAt);
+                    return ago ? <p className="text-[10px] text-white/70">hace {ago}</p> : null;
+                  })()}
+                </div>
+              </button>
 
-      {canManage && (
-        <button
-          type="button"
-          onClick={openViewers}
-          className="absolute bottom-6 left-1/2 z-10 inline-flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/60 px-4 py-2 text-xs font-semibold text-white backdrop-blur"
-        >
-          <Eye className="h-4 w-4" />
-          0 vistas
-        </button>
+              <div className="flex items-center gap-1">
+                {canManage && (
+                  <button
+                    type="button"
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-black/30 ring-1 ring-white/10"
+                    onClick={toggleMenu}
+                    aria-label="Opciones de la historia"
+                    aria-expanded={menuOpen}
+                    disabled={Boolean(busyAction)}
+                  >
+                    <MoreHorizontal className="h-5 w-5" />
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-black/30 ring-1 ring-white/10"
+                  onClick={onClose}
+                  aria-label="Cerrar"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+          </header>
+
+          <div className="relative flex flex-1 items-center justify-center" role="presentation">
+            {mediaUrl && !mediaFailed ? (
+              isVideo ? (
+                <video
+                  key={mediaUrl}
+                  src={mediaUrl}
+                  className="max-h-full w-full object-contain"
+                  autoPlay
+                  muted
+                  playsInline
+                  onEnded={goNext}
+                  onError={() => setMediaFailed(true)}
+                />
+              ) : (
+                <img
+                  key={mediaUrl}
+                  src={mediaUrl}
+                  alt=""
+                  className="max-h-full w-full object-contain"
+                  onError={() => setMediaFailed(true)}
+                />
+              )
+            ) : (
+              <div className="px-8 text-center">
+                <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-white/10 ring-4 ring-white/20">
+                  <Sparkles className="h-7 w-7 text-white/80" />
+                </div>
+                <p className="text-lg font-medium">
+                  {current.description || (mediaFailed ? 'No se pudo cargar el contenido.' : 'Estado')}
+                </p>
+              </div>
+            )}
+            {current.description && mediaUrl && !mediaFailed && (
+              <p className="absolute inset-x-0 bottom-24 px-6 text-center text-sm text-white/90 drop-shadow">
+                {current.description}
+              </p>
+            )}
+            <button
+              type="button"
+              className="absolute inset-y-0 left-0 w-1/3"
+              aria-label="Historia anterior"
+              onClick={goPrev}
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 w-1/3"
+              aria-label="Siguiente historia"
+              onClick={goNext}
+            />
+            {canManage && (
+              <button
+                type="button"
+                onClick={openViewers}
+                className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/60 px-4 py-2 text-xs font-semibold text-white backdrop-blur"
+              >
+                <Eye className="h-4 w-4" />
+                Quién vio tu historia
+              </button>
+            )}
+          </div>
+        </>
       )}
 
       {menuOpen && canManage && (

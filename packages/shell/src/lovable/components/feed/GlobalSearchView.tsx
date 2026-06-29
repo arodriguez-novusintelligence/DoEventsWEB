@@ -1,21 +1,21 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { ChevronLeft, Search, UserPlus, Check, MessageCircle, AlertCircle, Loader2, RefreshCw, X } from 'lucide-react';
+import { ChevronLeft, Search, UserPlus, Check, MessageCircle, AlertCircle, Loader2, RefreshCw, X, Calendar, MapPin } from 'lucide-react';
 import {
-  EventSection,
   FeedPublication,
   fetchFollowersCount,
   fetchPendingFollowRequests,
   followUser,
-  PostCard,
   RootState,
   SearchUserResult,
   UserAvatar,
   fetchSocialFeed,
+  resolveImageUrl,
   searchEvents,
   searchUsers,
   useToast,
+  type FeedEventItem,
 } from '@doevents/shared';
 import { Button } from '@lovable/components/ui/button';
 import { cn } from '@lovable/lib/utils';
@@ -36,6 +36,28 @@ interface GlobalSearchViewProps {
   initialQuery?: string;
   initialTab?: SearchTab;
 }
+
+function formatEventDateLine(ev: FeedEventItem): string {
+  return [ev.fechaIni, ev.horaIni].filter(Boolean).join(' · ');
+}
+
+function formatEventLocationLine(ev: FeedEventItem): string {
+  return [ev.ciudad, ev.departamento].filter(Boolean).join(', ') || ev.direccion || '';
+}
+
+function resolvePostImage(post: FeedPublication): string | null {
+  const raw = post.images?.[0] || post.imageUrl || post.media?.[0]?.url || null;
+  return raw ? resolveImageUrl(raw) : null;
+}
+
+const SearchEmpty = ({ label }: { label: string }) => (
+  <div className="rounded-2xl bg-card p-10 text-center shadow-sm">
+    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+      <Search className="h-7 w-7 text-primary" />
+    </div>
+    <p className="mt-3 text-sm font-semibold text-muted-foreground">{label}</p>
+  </div>
+);
 
 export const GlobalSearchView = ({
   onBack,
@@ -296,18 +318,49 @@ export const GlobalSearchView = ({
                       Escribe para buscar eventos por nombre, ciudad o categoría.
                     </p>
                   ) : eventResults.length === 0 ? (
-                    <div className="rounded-2xl bg-card py-10 text-center shadow-sm">
-                      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
-                        <Search className="h-7 w-7 text-primary" />
-                      </div>
-                      <p className="mt-3 text-sm text-muted-foreground">Sin eventos para «{query.trim()}»</p>
-                    </div>
+                    <SearchEmpty label={`Sin eventos para «${query.trim()}»`} />
                   ) : (
-                    <EventSection
-                      title={`Resultados (${eventResults.length})`}
-                      events={eventResults}
-                      onEventClick={(id) => navigate(`/events/${id}`)}
-                    />
+                    eventResults.map((ev) => {
+                      const imageUrl = ev.imagen ? resolveImageUrl(ev.imagen) : null;
+                      return (
+                        <button
+                          key={ev.id}
+                          type="button"
+                          onClick={() => navigate(`/events/${ev.id}`)}
+                          className="flex w-full overflow-hidden rounded-2xl bg-card shadow-sm text-left ring-1 ring-primary/10"
+                        >
+                          {imageUrl ? (
+                            <img
+                              src={imageUrl}
+                              alt={ev.nombre}
+                              className="h-28 w-28 shrink-0 object-cover"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <div className="flex h-28 w-28 shrink-0 items-center justify-center bg-primary/10">
+                              <Calendar className="h-8 w-8 text-primary" />
+                            </div>
+                          )}
+                          <div className="min-w-0 flex-1 p-3">
+                            <h3 className="line-clamp-2 text-sm font-bold leading-tight text-foreground">
+                              {ev.nombre}
+                            </h3>
+                            {formatEventDateLine(ev) && (
+                              <div className="mt-1 flex items-center gap-1 text-[11px] text-muted-foreground">
+                                <Calendar className="h-3 w-3 shrink-0" />
+                                {formatEventDateLine(ev)}
+                              </div>
+                            )}
+                            {formatEventLocationLine(ev) && (
+                              <div className="mt-0.5 flex items-center gap-1 text-[11px] text-muted-foreground">
+                                <MapPin className="h-3 w-3 shrink-0" />
+                                <span className="truncate">{formatEventLocationLine(ev)}</span>
+                              </div>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })
                   )}
                 </>
               )}
@@ -326,7 +379,7 @@ export const GlobalSearchView = ({
                     return (
                       <div
                         key={userId || user.email}
-                        className="flex items-center gap-3 rounded-2xl bg-card p-3 shadow-sm"
+                        className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card p-3 shadow-sm ring-1 ring-primary/10"
                       >
                         <button
                           type="button"
@@ -339,7 +392,7 @@ export const GlobalSearchView = ({
                             size={44}
                           />
                           <div className="min-w-0">
-                            <p className="truncate text-sm font-semibold">{displayName}</p>
+                            <p className="truncate text-sm font-bold">{displayName}</p>
                             {user.username && (
                               <p className="truncate text-xs text-muted-foreground">@{user.username}</p>
                             )}
@@ -383,12 +436,7 @@ export const GlobalSearchView = ({
                     );
                   })}
                   {hasSearched && query.trim() && !userResults.length && (
-                    <div className="rounded-2xl bg-card py-10 text-center shadow-sm">
-                      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
-                        <Search className="h-7 w-7 text-primary" />
-                      </div>
-                      <p className="mt-3 text-sm text-muted-foreground">Sin usuarios para «{query.trim()}»</p>
-                    </div>
+                    <SearchEmpty label={`Sin usuarios para «${query.trim()}»`} />
                   )}
                 </>
               )}
@@ -400,16 +448,48 @@ export const GlobalSearchView = ({
                       Escribe palabras clave para buscar en publicaciones recientes.
                     </p>
                   )}
-                  {hasSearched && query.trim() && postResults.map((post) => (
-                    <PostCard key={post.id} post={post} />
-                  ))}
-                  {hasSearched && query.trim() && !postResults.length && (
-                    <div className="rounded-2xl bg-card py-10 text-center shadow-sm">
-                      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
-                        <Search className="h-7 w-7 text-primary" />
+                  {hasSearched && query.trim() && postResults.map((post) => {
+                    const imageUrl = resolvePostImage(post);
+                    return (
+                      <div
+                        key={post.id}
+                        className="overflow-hidden rounded-2xl bg-card shadow-sm ring-1 ring-primary/10"
+                      >
+                        {imageUrl && (
+                          <img
+                            src={imageUrl}
+                            alt={post.title || 'Publicación'}
+                            className="h-32 w-full object-cover"
+                            loading="lazy"
+                          />
+                        )}
+                        <div className="p-3">
+                          <div className="mb-1 flex items-center gap-2">
+                            <UserAvatar
+                              name={post.author?.name || 'Usuario'}
+                              imageUrl={post.author?.avatarUrl}
+                              size={28}
+                            />
+                            <div className="min-w-0 text-xs font-semibold text-foreground">
+                              {post.author?.name || 'Usuario'}
+                            </div>
+                          </div>
+                          {(post.title || post.description) && (
+                            <h3 className="line-clamp-2 text-sm font-bold text-foreground">
+                              {post.title || post.description}
+                            </h3>
+                          )}
+                          {post.description && post.title && (
+                            <p className="mt-0.5 line-clamp-2 text-[11px] text-muted-foreground">
+                              {post.description}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                      <p className="mt-3 text-sm text-muted-foreground">Sin publicaciones para «{query.trim()}»</p>
-                    </div>
+                    );
+                  })}
+                  {hasSearched && query.trim() && !postResults.length && (
+                    <SearchEmpty label={`Sin publicaciones para «${query.trim()}»`} />
                   )}
                 </>
               )}

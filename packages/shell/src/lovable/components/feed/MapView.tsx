@@ -30,9 +30,9 @@ interface MapItem {
 
 // Pin color per category
 const PIN_COLOR: Record<Category, string> = {
-  eventos: 'hsl(245, 72%, 59%)',
-  lugares: 'hsl(28, 92%, 55%)',
-  servicios: 'hsl(152, 65%, 42%)',
+  eventos: 'hsl(245, 72%, 59%)',     // primary blue (events)
+  lugares: 'hsl(28, 92%, 55%)',      // orange (venues)
+  servicios: 'hsl(152, 65%, 42%)',   // emerald (services / profiles)
 };
 
 const CATEGORY_LABEL: Record<Category, string> = {
@@ -341,24 +341,20 @@ const MapView = ({
       )}
       {/* Floating search + distance */}
       <div className="absolute left-0 right-0 top-0 z-30 flex items-center gap-2 px-3 pt-3">
-        <div className="flex flex-1 items-center gap-2 rounded-full bg-card px-4 py-2.5 shadow-lg border border-border">
-          <button
-            type="button"
-            onClick={() => void handlePlaceSearch()}
-            disabled={geocoding}
-            className="shrink-0 text-primary disabled:opacity-50"
-            aria-label="Buscar ubicación"
-          >
-            {geocoding ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-          </button>
+        <div className="flex flex-1 items-center gap-2 rounded-full border border-border bg-card px-4 py-2.5 shadow-lg">
+          <Search className="h-4 w-4 shrink-0 text-primary" />
           <input
             type="text"
             placeholder="Buscar evento, lugar o perfil"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={onSearchKeyDown}
-            className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+            disabled={geocoding}
+            className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground disabled:opacity-60"
           />
+          {geocoding && (
+            <Loader2 className="h-4 w-4 shrink-0 animate-spin text-primary" aria-hidden />
+          )}
           <button
             type="button"
             onClick={() => void handleDeviceLocation()}
@@ -416,10 +412,10 @@ const MapView = ({
                 key={f.key}
                 onClick={() => { setFilter(f.key); setSelectedId(null); }}
                 className={cn(
-                  'flex items-center gap-1.5 shrink-0 rounded-full border px-3 py-1.5 text-xs font-semibold shadow-md transition-colors',
+                  'flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-extrabold shadow-md transition-colors',
                   active
-                    ? 'bg-primary text-primary-foreground border-primary'
-                    : 'bg-card text-foreground border-border'
+                    ? 'border-primary bg-primary text-primary-foreground'
+                    : 'border-border bg-card text-foreground shadow-sm',
                 )}
               >
                 {color && (
@@ -506,8 +502,10 @@ const MapView = ({
                 else setSelectedId(it.id);
               }}
               className={cn(
-                'shrink-0 w-[85%] snap-center rounded-full bg-card border shadow-xl overflow-hidden transition-all flex items-center gap-3 pl-1.5 pr-3 py-1.5 text-left',
-                selectedId === it.id ? 'border-primary ring-2 ring-primary/30' : 'border-border'
+                'flex w-[85%] shrink-0 snap-center items-center gap-3 overflow-hidden rounded-full border bg-card py-1.5 pl-1.5 pr-3 text-left shadow-xl transition-all',
+                selectedId === it.id
+                  ? 'border-primary ring-2 ring-primary/30'
+                  : 'border-border ring-1 ring-primary/10',
               )}
             >
               <div className="relative shrink-0">
@@ -519,7 +517,7 @@ const MapView = ({
                 />
               </div>
               <div className="min-w-0 flex-1">
-                <h4 className="text-sm font-bold text-card-foreground truncate">{it.title}</h4>
+                <h4 className="truncate text-sm font-extrabold text-card-foreground">{it.title}</h4>
                 <p className="text-xs text-muted-foreground truncate">{it.subtitle}</p>
               </div>
               <span
@@ -561,7 +559,7 @@ const MapView = ({
             </button>
           </div>
           <div className="p-4 space-y-2">
-            <h3 className="font-bold text-base text-card-foreground">{selectedItem.title}</h3>
+            <h3 className="text-base font-extrabold text-card-foreground">{selectedItem.title}</h3>
             <p className="text-sm text-muted-foreground">{selectedItem.subtitle}</p>
 
             {selectedItem.location && (

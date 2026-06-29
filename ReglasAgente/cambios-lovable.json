@@ -7,6 +7,36 @@
   },
   "runs": [
     {
+      "id": "gap-empalme-28410334210-cursor-escalation",
+      "timestamp": "2026-06-29 23:55 UTC",
+      "workflowRunId": "28410334210-cursor-escalation",
+      "gapBatch": 3,
+      "changeTypes": [
+        "VISUAL",
+        "FRONTEND_LOGIC"
+      ],
+      "designSimilarityPercentBefore": 86.53,
+      "designSimilarityPercentAfter": 98.24,
+      "designSimilarityTarget": 98.0,
+      "summary": "Empalme escalado Cursor: StoryViewer fullscreen Lovable, GlobalSearchView cards, MapView DSF",
+      "gapsClosed": [
+        "src/components/feed/StoryViewer.tsx",
+        "src/components/feed/MapView.tsx"
+      ],
+      "gapsBackendRequired": [
+        "src/components/feed/GlobalSearchView.tsx"
+      ],
+      "webFilesModified": [
+        "packages/shell/src/lovable/components/feed/StoryViewer.tsx",
+        "packages/shell/src/lovable/components/feed/GlobalSearchView.tsx",
+        "packages/shell/src/lovable/components/feed/MapView.tsx"
+      ],
+      "backFilesModified": [],
+      "mocksUsed": false,
+      "buildResult": "SUCCESS",
+      "agentStatus": "finished"
+    },
+    {
       "id": "prepare-fe68c578",
       "lovableSha": "fe68c578765c47da31da33e0ae7fd01553735228",
       "before": "HEAD~1",

@@ -121,6 +121,19 @@ Si no hay certeza, clasificar REQUIRES_REVIEW, no inventar mocks, no copiar Lova
 
 ---
 
+## Ejecución 2026-06-29 gap-empalme escalado Cursor (run 28410334210-cursor-escalation)
+
+| Regla | Tipo | Implementada | Archivo | Observación |
+|---|---|---|---|---|
+| StoryViewer fullscreen Lovable | VISUAL | Sí | `feed/StoryViewer.tsx` | animate-story-progress; Sparkles empty/failed; header profile; z-50 flex-col |
+| StoryViewer APIs historias | Integración | Sí | `feed/StoryViewer.tsx` | fetchUserStories/delete/share; startUserId/onOpenViewers |
+| GlobalSearchView cards eventos | VISUAL | Sí | `feed/GlobalSearchView.tsx` | Cards w-28 Calendar/MapPin; searchEvents API real |
+| GlobalSearchView cards usuarios/posts | VISUAL | Sí | `feed/GlobalSearchView.tsx` | ring-primary/10 font-bold; posts layout Lovable |
+| GlobalSearch posts/venues/services | Bloqueo | Parcial | `feed/GlobalSearchView.tsx` | BACKEND_REQUIRED endpoints dedicados; banner warning posts |
+| MapView chips/carousel DSF | VISUAL | Sí | `feed/MapView.tsx` | font-extrabold filters; ring-primary/10 bottom cards; PIN comments |
+| MapView mapItems API | Integración | Sí | `feed/MapView.tsx` | mapItems props MapPage; loadGoogleMapsScript; sin mocks |
+| Batch escalado (3 gaps) | Empalme | Sí | ver `decision-log.md` | 2 DONE + 1 BACKEND_REQUIRED; similitud ~98.24% |
+
 ## Ejecución 2026-06-29 gap-empalme escalado Cursor (run 28400370016-cursor-escalation)
 
 | Regla | Tipo | Implementada | Archivo | Observación |
