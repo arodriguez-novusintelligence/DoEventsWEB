@@ -547,17 +547,17 @@
       "id": "prepare-b0ca4d2a",
       "lovableSha": "b0ca4d2a567dc4c7143970126f1883bae66543be",
       "before": "b0ca4d2a567dc4c7143970126f1883bae66543be",
-      "timestamp": "2026-06-29 23:34 UTC",
-      "workflowRunId": "28409595434",
+      "timestamp": "2026-06-30 00:02 UTC",
+      "workflowRunId": "28410813819",
       "changeTypes": [
         "VISUAL",
         "FRONT_LOGIC"
       ],
-      "designSimilarityPercent": 86.39,
+      "designSimilarityPercent": 86.53,
       "designSimilarityTarget": 98.0,
-      "designGapPercent": 11.61,
+      "designGapPercent": 11.47,
       "requiresDesignAlignment": true,
-      "summary": "Manifiesto: UI=True, reglas=True, 5 archivo(s); similitud diseño=86.39%",
+      "summary": "Manifiesto: UI=True, reglas=True, 5 archivo(s); similitud diseño=86.53%",
       "changedFilesLovable": [
         "reglasActuacion/eventos/pulep-colombia.yml",
         "reglasActuacion/publicaciones/feed-principal.yml",
