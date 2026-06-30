@@ -13,7 +13,8 @@
     {
       "lovable": "src/pages/Index.tsx",
       "web": "packages/shell/src/pages/SocialWallTab.tsx",
-      "note": "Feed wall (bridge desde Index Lovable)"
+      "note": "Feed wall (bridge desde Index Lovable)",
+      "compareMode": "bridge"
     },
     {
       "lovable": "src/pages/Login.tsx",
