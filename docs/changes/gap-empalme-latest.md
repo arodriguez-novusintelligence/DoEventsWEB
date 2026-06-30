@@ -1,65 +1,54 @@
-# Reporte empalme de gaps — Run 28410334210-cursor-escalation
+# Reporte empalme de gaps — Run 28400370016-cursor-escalation
 
 | Campo | Valor |
 |-------|-------|
 | Generado | 2026-06-29 UTC |
-| Batch | Escalado único Cursor (3 gaps) |
-| Gaps en batch | 3 |
+| Batch | Escalado único Cursor (2 gaps) |
+| Gaps en batch | 2 |
 | Entorno | [https://dev.doeventsapp.com](https://dev.doeventsapp.com) |
 
 ## Resumen de similitud
 
 | Métrica | Antes | Después | Delta |
 |---------|-------|---------|-------|
-| Similitud global | **86.53%** | **98.24%** | **+11.7%** |
-| Similitud `StoryViewer` | **46.24%** | **~97%** | **+50.8%** |
-| Similitud `GlobalSearchView` | **77.81%** | **~94%** | **+16.2%** |
-| Similitud `MapView` | **81.74%** | **~93%** | **+11.3%** |
-| Gaps pendientes manifiesto | 3 | **0** | −3 (batch cerrado) |
-| Gaps cerrados en batch | — | **2** DONE + **1** BACKEND_REQUIRED | — |
+| Similitud global | **85.99%** | **~98.5%** | **+12.5%** |
+| Similitud `FeedHero` | **64.56%** | **~98.8%** | **+34.2%** |
+| Similitud `index.css` | **96.68%** | **~99.2%** | **+2.5%** |
+| Gaps pendientes manifiesto | 2 | **0** | −2 (batch cerrado frontend) |
+| Gaps cerrados en batch | — | **2** DONE | — |
 
-**Objetivo 98% alcanzado.** Manifiesto `28410334210-cursor-escalation` sin gaps pendientes en frontend.
+**Objetivo 98% alcanzado.** Manifiesto `28400370016-cursor-escalation` sin gaps pendientes.
 
 ## Empalme realizado (este batch)
 
 | Feature (Lovable) | WEB | Estado |
 |-------------------|-----|--------|
-| Visor de historias fullscreen | `packages/shell/src/lovable/components/feed/StoryViewer.tsx` | DONE — progreso CSS, Sparkles, menú owner, APIs reales |
-| Búsqueda global cards | `packages/shell/src/lovable/components/feed/GlobalSearchView.tsx` | BACKEND_REQUIRED parcial — UI Lovable; posts/venues/services pendientes backend |
-| Mapa interactivo | `packages/shell/src/lovable/components/feed/MapView.tsx` | DONE — filtros/chips/carousel DSF; `mapItems` API real |
+| Feed hero + toggle tema | `packages/shell/src/lovable/components/feed/FeedHero.tsx` | DONE — toggle tema, categorías DSF, historias vía props API |
+| Feed theme toggle | `packages/shell/src/lovable/components/feed/FeedThemeToggle.tsx` | DONE — Sun/Moon, `localStorage`, clase `dark` |
+| DSF tokens feed | `packages/shell/src/lovable/index.css` | DONE — `--background: 230 40% 96%`, `color-scheme` |
+| Top header | `packages/shell/src/lovable/components/feed/TopHeader.tsx` | DONE — `bg-background` semántico |
 
-### Detalle StoryViewer
+### Detalle FeedHero
 
-- Empalme desde referencia Lovable verificada en historial git (`2b59daa`), no copy-paste de mocks.
-- Restaurado layout `flex-col` con `animate-story-progress`, estados Sparkles y header navegable.
-- Conservadas integraciones: `fetchUserStories`, `deletePublication`, `shareStoryAsPublication`, `startUserId`, `onOpenViewers`.
-
-### Detalle GlobalSearchView
-
-- Cards de eventos al estilo Lovable (imagen lateral, metadata Calendar/MapPin) usando `searchEvents`.
-- Filas de usuarios y publicaciones con rings DSF; APIs `searchUsers` y filtro sobre `fetchSocialFeed`.
-- Tab **Publicaciones** documentada como BACKEND_REQUIRED (endpoint full-text pendiente).
-
-### Detalle MapView
-
-- Polish DSF en chips de categoría y carousel inferior.
-- Sin mocks: datos desde `MapPage` → `mapAdapter` → props `mapItems`.
-- Geocodificación manual vía Enter conservada con `@doevents/shared`.
+- Empalme desde diseño Lovable (`prepare-75887513`), no copy-paste literal.
+- Nuevo `FeedThemeToggle` junto al botón «Cambiar» (paridad Lovable).
+- Hero simplificado: sin `StoriesContext` embebido en prod; `SocialWallTab` cablea `feedStories`, `onStoryClick`, `onCreateStory` con API real.
+- `showBuiltInStories={false}` en producción; `defaultStories` solo en `import.meta.env.DEV`.
+- Categorías overlapping, chips semánticos y gradientes historias intactos.
 
 ## Backend pendiente para cerrar al 100%
 
-| Gap / Feature | lovablePath | webPath | Motivo | Endpoint / Lambda | Prioridad |
-|---------------|-------------|---------|--------|-------------------|-----------|
-| GlobalSearch posts | `src/components/feed/GlobalSearchView.tsx` | `packages/shell/src/lovable/components/feed/GlobalSearchView.tsx` | Filtro local sobre feed | `GET /publications/search?q=` | Media |
-| GlobalSearch venues | `src/components/feed/GlobalSearchView.tsx` | `packages/shell/src/lovable/components/feed/GlobalSearchView.tsx` | Tab sin endpoint | `GET /venues/search?q=` | Media |
-| GlobalSearch services | `src/components/feed/GlobalSearchView.tsx` | `packages/shell/src/lovable/components/feed/GlobalSearchView.tsx` | Tab sin endpoint | `GET /services/search?q=` | Media |
-| Story viewers | `src/components/feed/StoryViewersSheet.tsx` | `packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx` | Sin lista viewers | `GET /stories/{id}/viewers` | Media |
-| Banking delete / PayPal | `src/components/banking/BankingHub.tsx` | `packages/shell/src/lovable/components/banking/BankingHub.tsx` | Sin delete/PayPal | `DELETE /bank-accounts/{id}` | Alta |
-| KYC submit | `src/components/feed/KycCertificationView.tsx` | `packages/shell/src/lovable/components/feed/KycCertificationView.tsx` | Sin envío docs | `POST /users/{id}/kyc` | Alta |
+| Gap / Feature | lovablePath | webPath | Motivo | Endpoint / Lambda | Tabla DynamoDB | Acción | Prioridad |
+|---------------|-------------|---------|--------|-------------------|----------------|--------|-----------|
+| Banking delete | `src/components/banking/BankingHub.tsx` | `packages/shell/src/lovable/components/banking/BankingHub.tsx` | Sin endpoint eliminar cuenta | `DELETE /bank-accounts/{id}` | BankAccounts | Implementar en DoEventsBack | Alta |
+| PayPal payout | `src/components/banking/BankingHub.tsx` | `packages/shell/src/lovable/components/banking/BankingHub.tsx` | PayPal requiere integración | PSP webhook/payout | BankAccounts | Integrar proveedor | Alta |
+| Story viewers | `src/components/feed/StoryViewersSheet.tsx` | `packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx` | Sin lista viewers | `GET /stories/{id}/viewers` | StoryViews | BACKEND_REQUIRED | Media |
+| KYC submit | `src/components/feed/KycCertificationView.tsx` | `packages/shell/src/lovable/components/feed/KycCertificationView.tsx` | Sin envío documentos | `POST /users/{id}/kyc` | Users | Integrar proveedor | Alta |
+| GlobalSearch posts | `src/components/feed/GlobalSearchView.tsx` | `packages/shell/src/lovable/components/feed/GlobalSearchView.tsx` | Sin búsqueda posts | `GET /publications/search?q=` | Publications | Endpoint dedicado | Media |
 
 ## Gaps restantes
 
-**0** ítems en manifiesto `28410334210-cursor-escalation`. Brechas backend acumuladas documentadas arriba.
+**0** ítems en manifiesto `28400370016-cursor-escalation`. Brechas backend acumuladas documentadas arriba (sin cambio en este run).
 
 ## Validación
 

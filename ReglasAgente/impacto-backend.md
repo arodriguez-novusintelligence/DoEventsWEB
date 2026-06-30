@@ -2,8 +2,6 @@
 
 ## Resumen
 
-Run `gap-empalme-28410334210-cursor-escalation`: escalado único Cursor (3 gaps manifiesto) — 2 DONE frontend; 1 BACKEND_REQUIRED parcial (`GlobalSearchView` posts + tabs venues/services). StoryViewer empalme fullscreen Lovable (`animate-story-progress`, Sparkles, header/profile, menú owner, APIs `fetchUserStories`); GlobalSearchView cards Lovable con `searchEvents`/`searchUsers`/`fetchSocialFeed`; MapView DSF chips extrabold + rings carousel sin mocks; similitud global ~98.24%; build:devaws OK; 0 gaps restantes en manifiesto.
-
 Run `gap-empalme-28400370016-cursor-escalation`: escalado único Cursor (2 gaps manifiesto) — 2 DONE frontend; 0 BACKEND_REQUIRED en batch. FeedHero empalme con `FeedThemeToggle` (Sun/Moon, `localStorage feed_theme_v1`, clase `dark` en `documentElement`); hero simplificado — historias vía props API desde `SocialWallTab` (`showBuiltInStories={false}` prod); tokens DSF `--background: 230 40% 96%` + `color-scheme` en `lovable/index.css`; TopHeader `bg-background`; similitud FeedHero ~98.8% / index.css ~99.2%; build:devaws OK; 0 gaps restantes en manifiesto.
 
 Run `gap-empalme-28395199438-cursor-escalation`: escalado único Cursor (1 gap manifiesto) — 1 DONE frontend; 0 BACKEND_REQUIRED en batch. SeatingMapEditor empalme estructural Lovable verificado intacto (`prepare-1da1010a`, commit `98ba5ee`): geometría SVG arco, header/toolbar/legend/modales alineados; SeatsGrid API Lovable; bridge `seatStatesToLovableSets` en StepEventLocation; `Piso {currentFloor}` preservado; similitud SeatingMapEditor ~98.62%; build:devaws OK; 0 gaps restantes en manifiesto.
@@ -176,13 +174,7 @@ Run `gap-empalme-27847959667-b1`: batch 1 (20 gaps) — empalme frontend complet
 
 Sí (parcial)
 
-## Empalme realizado (última ejecución — gap-empalme-28410334210-cursor-escalation)
-
-- **StoryViewer:** restaurado shell fullscreen Lovable (`flex-col`, `z-50`, `role="dialog"`); barras progreso `animate-story-progress`; estados empty/failed con Sparkles h-14 ring; header navegable a perfil; botones `bg-black/30 ring-1 ring-white/10`; badge Live `destructive`; menú owner + `StoryViewersSheet`; APIs `fetchUserStories`/`deletePublication`/`shareStoryAsPublication`; props `startUserId`/`onOpenViewers` intactas.
-- **GlobalSearchView:** resultados eventos como cards Lovable (imagen w-28, Calendar/MapPin metadata) vía `searchEvents`; filas usuarios `border-border/60 ring-primary/10 font-bold`; publicaciones card layout Lovable con `UserAvatar` + `fetchSocialFeed` filtrado; banner BACKEND_REQUIRED tab posts; tabs venues/services empty state sin mocks.
-- **MapView:** comentarios PIN Lovable; chips categoría `font-extrabold shadow-sm`; carousel bottom `ring-primary/10`; títulos extrabold; búsqueda geocode vía Enter + `resolveManualUserLocation`; `loadGoogleMapsScript` + props `mapItems` desde `MapPage` sin datos hardcodeados.
-
-## Empalme realizado (ejecución anterior — gap-empalme-28400370016-cursor-escalation)
+## Empalme realizado (última ejecución — gap-empalme-28400370016-cursor-escalation)
 
 - **FeedHero:** integra `FeedThemeToggle` junto al botón «Cambiar»; mantiene categorías DSF (`CATEGORY_CHIP_STYLES`), filtro categorías vía props, historias API con gradientes semánticos; elimina wiring embebido `StoriesContext`/`AddStorySheet`/`StoryViewer`/`StoryViewersSheet` — prod usa props desde `SocialWallTab` con API real; `defaultStories` solo DEV.
 - **FeedThemeToggle:** componente nuevo — toggle claro/oscuro con `Sun`/`Moon`; persiste en `localStorage` (`feed_theme_v1`); aplica clase `dark` en `document.documentElement`.
@@ -903,9 +895,7 @@ Sí (parcial)
 | PayPal payout | `src/components/banking/BankingHub.tsx` | `packages/shell/src/lovable/components/banking/BankingHub.tsx` | PayPal requiere integración PSP | PSP webhook/payout | `BankAccounts` | Integrar proveedor | Alta |
 | Story viewers | `src/components/feed/StoryViewersSheet.tsx` | `packages/shell/src/lovable/components/feed/StoryViewersSheet.tsx` | Sin lista viewers por historia | `GET /stories/{id}/viewers` | `StoryViews` | Skeleton UI listo | Media |
 | KYC submit | `src/components/feed/KycCertificationView.tsx` | `packages/shell/src/lovable/components/feed/KycCertificationView.tsx` | Sin envío documentos KYC | `POST /users/{id}/kyc` | `Users` | Integrar proveedor | Alta |
-| GlobalSearch posts | `src/components/feed/GlobalSearchView.tsx` | `packages/shell/src/lovable/components/feed/GlobalSearchView.tsx` | Tab posts filtra feed localmente | `GET /publications/search?q=` | `Publications` | Endpoint dedicado | Media |
-| GlobalSearch venues | `src/components/feed/GlobalSearchView.tsx` | `packages/shell/src/lovable/components/feed/GlobalSearchView.tsx` | Tab lugares sin endpoint búsqueda | `GET /venues/search?q=` | `Venues` | Exponer búsqueda | Media |
-| GlobalSearch services | `src/components/feed/GlobalSearchView.tsx` | `packages/shell/src/lovable/components/feed/GlobalSearchView.tsx` | Tab servicios sin endpoint búsqueda | `GET /services/search?q=` | `Services` | Exponer búsqueda | Media |
+| GlobalSearch posts | `src/components/feed/GlobalSearchView.tsx` | `packages/shell/src/lovable/components/feed/GlobalSearchView.tsx` | Sin búsqueda full-text publicaciones | `GET /publications/search?q=` | `Publications` | Endpoint dedicado | Media |
 | PaymentGateway PSP | `src/components/services/PaymentGatewaySheet.tsx` | `packages/shell/src/lovable/components/services/PaymentGatewaySheet.tsx` | Cobro tarjeta/PSE real | PSP webhook + `POST /payments/confirm` | `Orders` | Batch BACKEND_REQUIRED | Alta |
 | EditProfile password/gustos | `src/components/feed/EditProfileView.tsx` | `packages/shell/src/lovable/components/feed/EditProfileView.tsx` | Cambio contraseña + intereses | Cognito + `PATCH /users/{id}` | `Users` | Conectar flujos UI | Media |
 | Booking add-ons | `src/components/services/BookingSheet.tsx` | `packages/shell/src/lovable/components/services/BookingSheet.tsx` | Catálogo servicios adicionales | `GET /services/{id}/addons` | `Services` | Exponer catálogo real | Media |

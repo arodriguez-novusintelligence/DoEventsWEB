@@ -1,299 +1,616 @@
-import { useEffect, useRef, useState } from 'react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@lovable/components/ui/sheet';
-import { Button } from '@lovable/components/ui/button';
-import { Camera, Video, X, Check, Radio, Image as ImageIcon, Circle, Square } from 'lucide-react';
-import { useStories } from '@lovable/contexts/StoriesContext';
-import { useNotifications } from '@lovable/contexts/NotificationsContext';
-import { myFollowers } from '@lovable/data/mockData';
-import { toast } from '@lovable/hooks/use-toast';
-
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { ImagePlus, Loader2, Radio, Type, Video, Image as ImageIcon } from 'lucide-react';
+import {
+  createStory,
+  resolveDisplayLocation,
+  updateStoryLivePlayback,
+  uploadMediaFile,
+  useToast,
+} from '@doevents/shared';
 import { getStoredUserLocation } from '@doevents/shared';
+import { Button } from '@lovable/components/ui/button';
+import { Textarea } from '@lovable/components/ui/textarea';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@lovable/components/ui/sheet';
+import { cn } from '@lovable/lib/utils';
+
+function storyLocationLabel(location: ReturnType<typeof getStoredUserLocation>): string | undefined {
+  if (!location) return undefined;
+  const resolved = resolveDisplayLocation({
+    label: location.label,
+    locationLabel: location.label,
+    ciudad: location.city,
+    departamento: location.departamento,
+  });
+  if (resolved !== '—') return resolved;
+  return location.city || `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}`;
+}
+
+
+
 export interface AddStorySheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCreated?: () => void;
 }
-interface Props {
-  open: boolean;
-  onOpenChange: (v: boolean) => void;
-}
 
-type Mode = 'choose' | 'story' | 'live';
+type StoryMode = 'image' | 'video' | 'text' | 'live';
+type SheetPhase = 'choose' | 'editor';
 
-const AddStorySheet = ({ open, onOpenChange }: Props) => {
-  const { addStory } = useStories();
-  const { addNotification } = useNotifications();
-  const fileRef = useRef<HTMLInputElement>(null);
-  const [mode, setMode] = useState<Mode>('choose');
-  const [preview, setPreview] = useState<{ type: 'image' | 'video'; url: string } | null>(null);
+export const AddStorySheet: React.FC<AddStorySheetProps> = ({ open, onOpenChange, onCreated }) => {
 
-  // Live recording state
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const streamRef = useRef<MediaStream | null>(null);
-  const recorderRef = useRef<MediaRecorder | null>(null);
-  const chunksRef = useRef<Blob[]>([]);
-  const [isRecording, setIsRecording] = useState(false);
-  const [elapsed, setElapsed] = useState(0);
-  const timerRef = useRef<number | null>(null);
+  const { showToast } = useToast();
 
-  const reset = () => {
-    setMode('choose');
-    setPreview(null);
-    setIsRecording(false);
-    setElapsed(0);
-    if (timerRef.current) { window.clearInterval(timerRef.current); timerRef.current = null; }
-    if (recorderRef.current && recorderRef.current.state !== 'inactive') {
-      try { recorderRef.current.stop(); } catch {}
+  const [mode, setMode] = useState<StoryMode>('image');
+  const [phase, setPhase] = useState<SheetPhase>('choose');
+
+  const [description, setDescription] = useState('');
+
+  const [mediaIds, setMediaIds] = useState<string[]>([]);
+
+  const [mediaPreview, setMediaPreview] = useState<string | null>(null);
+
+  const [mediaKind, setMediaKind] = useState<'image' | 'video'>('image');
+
+  const [uploading, setUploading] = useState(false);
+
+  const [submitting, setSubmitting] = useState(false);
+
+  const [liveActive, setLiveActive] = useState(false);
+
+  const [livePublicationId, setLivePublicationId] = useState<string | null>(null);
+
+  const videoPreviewRef = useRef<HTMLVideoElement | null>(null);
+
+  const mediaStreamRef = useRef<MediaStream | null>(null);
+
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+
+  const livePublicationIdRef = useRef<string | null>(null);
+
+
+
+  const stopLiveStream = useCallback(async () => {
+
+    mediaRecorderRef.current?.stop();
+
+    mediaRecorderRef.current = null;
+
+    mediaStreamRef.current?.getTracks().forEach((track) => track.stop());
+
+    mediaStreamRef.current = null;
+
+    if (videoPreviewRef.current) {
+
+      videoPreviewRef.current.srcObject = null;
+
     }
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((t) => t.stop());
-      streamRef.current = null;
+
+    const publicationId = livePublicationIdRef.current;
+
+    livePublicationIdRef.current = null;
+
+    setLiveActive(false);
+
+    setLivePublicationId(null);
+
+    if (publicationId) {
+
+      try {
+
+        await updateStoryLivePlayback({ publicationId, mediaIds: [], isLive: false });
+
+      } catch {
+
+        /* ignore end errors */
+
+      }
+
     }
-  };
+
+  }, []);
+
+
 
   useEffect(() => {
-    if (!open) reset();
-    return () => { if (!open) reset(); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
 
-  const startLive = async () => {
-    setMode('live');
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: true });
-      streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        await videoRef.current.play().catch(() => {});
-      }
-    } catch (e) {
-      toast({ title: 'No se pudo acceder a la cámara', description: 'Verifica los permisos del navegador.' });
-      setMode('choose');
-    }
-  };
+    if (!open) {
 
-  const toggleRecord = () => {
-    if (!streamRef.current) return;
-    if (!isRecording) {
-      chunksRef.current = [];
-      const mime = MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')
-        ? 'video/webm;codecs=vp9,opus'
-        : 'video/webm';
-      const rec = new MediaRecorder(streamRef.current, { mimeType: mime });
-      rec.ondataavailable = (e) => { if (e.data.size > 0) chunksRef.current.push(e.data); };
-      rec.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: 'video/webm' });
-        const reader = new FileReader();
-        reader.onload = () => setPreview({ type: 'video', url: reader.result as string });
-        reader.readAsDataURL(blob);
-        if (streamRef.current) {
-          streamRef.current.getTracks().forEach((t) => t.stop());
-          streamRef.current = null;
-        }
-      };
-      recorderRef.current = rec;
-      rec.start();
-      setIsRecording(true);
-      setElapsed(0);
-      timerRef.current = window.setInterval(() => setElapsed((s) => s + 1), 1000);
+      stopLiveStream();
+
     } else {
-      recorderRef.current?.stop();
-      setIsRecording(false);
-      if (timerRef.current) { window.clearInterval(timerRef.current); timerRef.current = null; }
-    }
-  };
 
-  const handleFile = (f: File) => {
-    const isVideo = f.type.startsWith('video/');
-    if (!isVideo && !f.type.startsWith('image/')) {
-      toast({ title: 'Formato no soportado', description: 'Sube una imagen o video.' });
-      return;
+      setPhase('choose');
+
     }
-    const reader = new FileReader();
-    reader.onload = () => {
-      setPreview({ type: isVideo ? 'video' : 'image', url: reader.result as string });
+
+    return () => {
+
+      stopLiveStream();
+
     };
-    reader.readAsDataURL(f);
+
+  }, [open, stopLiveStream]);
+
+  const reset = () => {
+    setDescription('');
+    setMediaIds([]);
+    setMediaPreview(null);
+    setMode('image');
+    setMediaKind('image');
+    setPhase('choose');
+    stopLiveStream();
   };
 
-  const handlePublish = () => {
-    if (!preview) return;
-    addStory(preview);
-    const isLive = mode === 'live';
-    // Creator confirmation
-    addNotification({
-      type: isLive ? 'live_started' : 'story_published',
-      fromUser: { id: 'me', name: 'Tú', initials: 'TU' },
-      message: `Se enviaron notificaciones a tus ${myFollowers.length} seguidores sobre ${isLive ? 'tu transmisión en vivo' : 'tu historia'}`,
-    });
-    // Fan-out to followers
-    myFollowers.forEach(() => {
-      addNotification({
-        type: isLive ? 'live_started' : 'story_published',
-        fromUser: { id: 'me', name: 'Tú', initials: 'TU' },
-        message: isLive ? 'inició una transmisión en vivo' : 'publicó una nueva historia',
-      });
-    });
-    if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
-      try {
-        new Notification(isLive ? 'En vivo iniciado' : 'Historia publicada', {
-          body: `Se notificó a ${myFollowers.length} seguidores.`,
-        });
-      } catch {}
+  const handleMediaChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    const isVideo = file.type.startsWith('video/');
+
+    setUploading(true);
+
+    try {
+
+      const mediaId = await uploadMediaFile(file);
+
+      setMediaIds([mediaId]);
+
+      setMediaKind(isVideo ? 'video' : 'image');
+
+      setMediaPreview(URL.createObjectURL(file));
+
+      if (isVideo) setMode('video');
+
+    } catch {
+
+      setMediaIds([]);
+
+      setMediaPreview(null);
+
+      showToast('No se pudo subir el archivo', 'error');
+
+    } finally {
+
+      setUploading(false);
+
     }
-    toast({
-      title: isLive ? 'En vivo publicado' : 'Historia publicada',
-      description: 'Visible por 24 horas.',
-    });
-    reset();
-    onOpenChange(false);
+
   };
 
-  const fmt = (s: number) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+
+
+  const uploadLiveSegment = async (blob: Blob) => {
+
+    const publicationId = livePublicationIdRef.current;
+
+    if (!publicationId || !blob.size) return;
+
+    const file = new File([blob], `live-${Date.now()}.webm`, { type: blob.type || 'video/webm' });
+
+    const mediaId = await uploadMediaFile(file);
+
+    await updateStoryLivePlayback({
+
+      publicationId,
+
+      mediaIds: [mediaId],
+
+      isLive: true,
+
+      description: description.trim(),
+
+    });
+
+  };
+
+
+
+  const startLiveBroadcast = async () => {
+
+    if (!navigator.mediaDevices?.getUserMedia) {
+
+      showToast('Tu navegador no soporta transmisión en vivo', 'error');
+
+      return;
+
+    }
+
+    setSubmitting(true);
+
+    try {
+
+      const location = getStoredUserLocation();
+
+      const story = await createStory({
+
+        description: description.trim() || 'Transmisión en vivo',
+
+        mediaKind: 'video',
+
+        isLive: true,
+
+        latitude: location?.lat,
+
+        longitude: location?.lng,
+
+        locationLabel: storyLocationLabel(location),
+
+      });
+
+      const publicationId = story.id;
+
+      livePublicationIdRef.current = publicationId;
+
+      setLivePublicationId(publicationId);
+
+
+
+      const stream = await navigator.mediaDevices.getUserMedia({
+
+        video: { facingMode: 'environment' },
+
+        audio: true,
+
+      });
+
+      mediaStreamRef.current = stream;
+
+      if (videoPreviewRef.current) {
+
+        videoPreviewRef.current.srcObject = stream;
+
+        await videoPreviewRef.current.play().catch(() => undefined);
+
+      }
+
+
+
+      const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')
+
+        ? 'video/webm;codecs=vp8,opus'
+
+        : 'video/webm';
+
+      const recorder = new MediaRecorder(stream, { mimeType });
+
+      mediaRecorderRef.current = recorder;
+
+
+
+      recorder.ondataavailable = (event) => {
+
+        if (event.data.size > 0) {
+
+          uploadLiveSegment(event.data).catch(() => undefined);
+
+        }
+
+      };
+
+      recorder.start(8000);
+
+      setLiveActive(true);
+
+      showToast('Transmisión en vivo iniciada', 'success');
+
+    } catch (err) {
+
+      showToast(err instanceof Error ? err.message : 'No se pudo iniciar la transmisión', 'error');
+
+      await stopLiveStream();
+
+    } finally {
+
+      setSubmitting(false);
+
+    }
+
+  };
+
+
+
+  const endLiveBroadcast = async () => {
+
+    setSubmitting(true);
+
+    try {
+
+      await stopLiveStream();
+
+      showToast('Transmisión finalizada', 'success');
+
+      reset();
+
+      onCreated?.();
+
+      onOpenChange(false);
+
+    } finally {
+
+      setSubmitting(false);
+
+    }
+
+  };
+
+
+
+  const handleSubmit = async () => {
+
+    if (mode === 'live') {
+
+      if (liveActive) {
+
+        await endLiveBroadcast();
+
+      } else {
+
+        await startLiveBroadcast();
+
+      }
+
+      return;
+
+    }
+
+
+
+    if (mode !== 'text' && !mediaIds.length) {
+
+      showToast('Agrega una imagen o video', 'error');
+
+      return;
+
+    }
+
+    if (mode === 'text' && !description.trim()) {
+
+      showToast('Escribe un estado para tu historia', 'error');
+
+      return;
+
+    }
+
+
+
+    setSubmitting(true);
+
+    try {
+
+      const location = getStoredUserLocation();
+
+      await createStory({
+
+        description: description.trim(),
+
+        mediaIds: mediaIds.length ? mediaIds : undefined,
+
+        mediaKind,
+
+        isLive: false,
+
+        latitude: location?.lat,
+
+        longitude: location?.lng,
+
+        locationLabel: storyLocationLabel(location),
+
+      });
+
+      showToast('Historia publicada (24 h)', 'success');
+
+      reset();
+
+      onCreated?.();
+
+      onOpenChange(false);
+
+    } catch (err) {
+
+      showToast(err instanceof Error ? err.message : 'No se pudo publicar la historia', 'error');
+
+    } finally {
+
+      setSubmitting(false);
+
+    }
+
+  };
+
+
+
+  const modeOptions: { id: StoryMode; label: string; icon: typeof ImagePlus }[] = [
+    { id: 'image', label: 'Imagen', icon: ImagePlus },
+    { id: 'video', label: 'Video', icon: Video },
+    { id: 'text', label: 'Estado', icon: Type },
+    { id: 'live', label: 'En vivo', icon: Radio },
+  ];
 
   return (
-    <Sheet open={open} onOpenChange={(v) => { if (!v) reset(); onOpenChange(v); }}>
-      <SheetContent side="bottom" className="h-[92vh] rounded-t-3xl p-0 flex flex-col">
-        <SheetHeader className="px-4 pt-4 pb-2">
+    <Sheet open={open} onOpenChange={(next) => { if (!next) onOpenChange(false); }}>
+      <SheetContent side="bottom" className="flex h-[92vh] flex-col overflow-y-auto rounded-t-3xl p-0">
+        <SheetHeader className="px-4 pb-2 pt-4 text-left">
           <SheetTitle>
-            {mode === 'choose' ? 'Crear' : mode === 'live' ? 'En vivo' : 'Crear historia'}
+            {phase === 'choose'
+              ? 'Crear'
+              : mode === 'live' && liveActive
+                ? 'En vivo'
+                : 'Crear historia'}
           </SheetTitle>
+          {phase === 'editor' && (
+            <SheetDescription>
+              Comparte momentos que desaparecen en 24 horas.
+            </SheetDescription>
+          )}
         </SheetHeader>
 
-        {mode === 'choose' && (
-          <div className="flex-1 p-4 grid grid-cols-1 gap-3">
+        {phase === 'choose' ? (
+          <div className="grid flex-1 grid-cols-1 gap-3 p-4">
             <button
-              onClick={() => setMode('story')}
-              className="rounded-2xl border bg-card p-5 text-left flex items-center gap-4 hover:bg-accent transition"
+              type="button"
+              onClick={() => {
+                setMode('image');
+                setPhase('editor');
+              }}
+              className="flex items-center gap-4 rounded-2xl border bg-card p-5 text-left transition hover:bg-accent"
             >
-              <div className="h-12 w-12 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
                 <ImageIcon className="h-6 w-6" />
               </div>
               <div className="flex-1">
-                <p className="font-semibold">Crear historia</p>
+                <p className="font-semibold text-foreground">Crear historia</p>
                 <p className="text-xs text-muted-foreground">Sube una foto o video. Dura 24 horas.</p>
               </div>
             </button>
             <button
-              onClick={startLive}
-              className="rounded-2xl border bg-card p-5 text-left flex items-center gap-4 hover:bg-accent transition"
+              type="button"
+              onClick={() => {
+                setMode('live');
+                setPhase('editor');
+              }}
+              className="flex items-center gap-4 rounded-2xl border bg-card p-5 text-left transition hover:bg-accent"
             >
-              <div className="h-12 w-12 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-500/10 text-red-500">
                 <Radio className="h-6 w-6" />
               </div>
               <div className="flex-1">
-                <p className="font-semibold">Crear en vivo</p>
+                <p className="font-semibold text-foreground">Crear en vivo</p>
                 <p className="text-xs text-muted-foreground">Graba un video en vivo desde tu cámara.</p>
               </div>
             </button>
           </div>
-        )}
+        ) : (
+        <div className="space-y-4 px-4 pb-4">
+          <div className="flex flex-wrap gap-2">
+            {modeOptions.map(({ id, label, icon: Icon }) => (
+              <button
+                key={id}
+                type="button"
+                className={cn(
+                  'inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors',
+                  mode === id
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-border bg-card text-muted-foreground hover:bg-accent/50',
+                )}
+                onClick={() => {
+                  if (liveActive && id !== 'live') return;
+                  setMode(id);
+                }}
+                disabled={liveActive && id !== 'live'}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                {label}
+              </button>
+            ))}
+          </div>
 
-        {mode === 'story' && (
-          <>
-            <div className="flex-1 overflow-hidden bg-background/95 mx-4 rounded-2xl relative flex items-center justify-center">
-              {preview ? (
-                preview.type === 'image' ? (
-                  <img src={preview.url} alt="preview" className="max-h-full max-w-full object-contain" />
-                ) : (
-                  <video src={preview.url} className="max-h-full max-w-full" autoPlay loop muted playsInline />
-                )
-              ) : (
-                <div className="flex flex-col items-center gap-3 text-primary-foreground/80 px-6 text-center">
-                  <Camera className="h-12 w-12" />
-                  <p className="text-sm">Sube una foto o video para tu historia</p>
-                  <p className="text-xs text-primary-foreground/50">Desaparecerá automáticamente en 24 horas</p>
-                </div>
-              )}
-              {preview && (
-                <button
-                  onClick={() => setPreview(null)}
-                  className="absolute top-3 right-3 h-9 w-9 rounded-full bg-background/60 text-primary-foreground flex items-center justify-center"
-                >
-                  <X className="h-5 w-5" />
-                </button>
+          {mode === 'live' && (
+            <div className="relative overflow-hidden rounded-2xl border border-border bg-black shadow-sm">
+              <video ref={videoPreviewRef} className="aspect-video w-full object-cover" playsInline muted autoPlay />
+              {liveActive && (
+                <span className="absolute left-3 top-3 rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold uppercase text-white shadow-sm">
+                  Live
+                </span>
               )}
             </div>
+          )}
 
-            <input
-              ref={fileRef}
-              type="file"
-              accept="image/*,video/*"
-              className="hidden"
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) handleFile(f);
-                e.target.value = '';
-              }}
+          {(mode === 'image' || mode === 'video') && (
+            <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-card p-6 shadow-sm hover:bg-accent/30">
+              {uploading ? (
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              ) : (
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
+                  {mode === 'video' ? (
+                    <Video className="h-7 w-7 text-primary" />
+                  ) : (
+                    <ImagePlus className="h-7 w-7 text-primary" />
+                  )}
+                </div>
+              )}
+              <span className="text-sm font-medium text-foreground">
+                {uploading
+                  ? 'Subiendo…'
+                  : mode === 'video'
+                    ? 'Adjuntar video'
+                    : 'Adjuntar imagen'}
+              </span>
+              <input
+                type="file"
+                accept={mode === 'video' ? 'video/*' : 'image/*'}
+                onChange={handleMediaChange}
+                disabled={uploading}
+                className="sr-only"
+              />
+            </label>
+          )}
+
+          {mediaPreview && mode !== 'live' && (
+            <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+              {mediaKind === 'video' ? (
+                <video src={mediaPreview} controls className="max-h-64 w-full object-contain" />
+              ) : (
+                <img src={mediaPreview} alt="" className="max-h-64 w-full object-contain" />
+              )}
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground">
+              {mode === 'text' ? 'Tu estado' : 'Descripción (opcional)'}
+            </label>
+            <Textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder={
+                mode === 'text'
+                  ? '¿Qué estás haciendo?'
+                  : mode === 'live'
+                    ? '¿Qué estás transmitiendo?'
+                    : 'Añade contexto…'
+              }
+              className="min-h-[88px] resize-none rounded-xl"
             />
+          </div>
 
-            <div className="p-4 flex gap-2">
-              {!preview ? (
-                <>
-                  <Button variant="outline" className="flex-1" onClick={() => fileRef.current?.click()}>
-                    <Camera className="h-4 w-4 mr-2" /> Foto
-                  </Button>
-                  <Button variant="outline" className="flex-1" onClick={() => fileRef.current?.click()}>
-                    <Video className="h-4 w-4 mr-2" /> Video
-                  </Button>
-                </>
-              ) : (
-                <Button className="flex-1" onClick={handlePublish}>
-                  <Check className="h-4 w-4 mr-2" /> Publicar historia
-                </Button>
-              )}
-            </div>
-          </>
-        )}
+          {mode === 'live' && (
+            <p className="rounded-xl bg-secondary/60 px-3 py-2 text-xs text-muted-foreground">
+              {liveActive
+                ? 'Tu transmisión se actualiza cada pocos segundos para quienes te siguen.'
+                : 'Comparte conciertos y eventos multitudinarios en directo desde tu cámara.'}
+            </p>
+          )}
 
-        {mode === 'live' && (
-          <>
-            <div className="flex-1 overflow-hidden bg-background mx-4 rounded-2xl relative flex items-center justify-center">
-              {preview ? (
-                <video src={preview.url} className="max-h-full max-w-full" autoPlay loop playsInline controls />
-              ) : (
-                <video ref={videoRef} className="h-full w-full object-cover" autoPlay muted playsInline />
-              )}
-
-              {!preview && (
-                <div className="absolute top-3 left-3 flex items-center gap-2">
-                  <span className={`px-2 py-1 rounded-full text-[11px] font-bold text-primary-foreground flex items-center gap-1 ${isRecording ? 'bg-red-600' : 'bg-background/60'}`}>
-                    <span className={`h-2 w-2 rounded-full ${isRecording ? 'bg-white animate-pulse' : 'bg-red-500'}`} />
-                    {isRecording ? `EN VIVO ${fmt(elapsed)}` : 'LISTO'}
-                  </span>
-                </div>
-              )}
-
-              {preview && (
-                <button
-                  onClick={() => { setPreview(null); startLive(); }}
-                  className="absolute top-3 right-3 h-9 w-9 rounded-full bg-background/60 text-primary-foreground flex items-center justify-center"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              )}
-            </div>
-
-            <div className="p-4 flex items-center justify-center gap-3">
-              {!preview ? (
-                <button
-                  onClick={toggleRecord}
-                  className="h-16 w-16 rounded-full border-4 border-white shadow-lg flex items-center justify-center bg-red-600 hover:bg-red-700 transition"
-                  aria-label={isRecording ? 'Detener' : 'Grabar'}
-                >
-                  {isRecording ? <Square className="h-6 w-6 text-primary-foreground fill-white" /> : <Circle className="h-8 w-8 text-primary-foreground fill-white" />}
-                </button>
-              ) : (
-                <Button className="flex-1" onClick={handlePublish}>
-                  <Check className="h-4 w-4 mr-2" /> Publicar en vivo
-                </Button>
-              )}
-            </div>
-          </>
+          <Button
+            className="h-12 w-full rounded-full font-semibold"
+            onClick={() => void handleSubmit()}
+            disabled={submitting || uploading || (mode === 'live' && liveActive && !livePublicationId)}
+          >
+            {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {submitting
+              ? 'Procesando…'
+              : mode === 'live'
+                ? liveActive
+                  ? 'Finalizar transmisión'
+                  : 'Iniciar transmisión en vivo'
+                : 'Compartir historia'}
+          </Button>
+        </div>
         )}
       </SheetContent>
     </Sheet>
   );
 };
 
+
+
 export default AddStorySheet;
+

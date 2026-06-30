@@ -1,45 +1,101 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@lovable/components/ui/sheet';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@lovable/components/ui/tabs';
-import { Avatar, AvatarFallback } from '@lovable/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@lovable/components/ui/avatar';
 import { Button } from '@lovable/components/ui/button';
 import { Input } from '@lovable/components/ui/input';
-import { Search, UserPlus, Check, Shield, X } from 'lucide-react';
-import { users, type User } from '@lovable/data/mockData';
+import { Search, UserPlus, Check, Shield, X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import {
+  followUser,
+  unfollowUser,
+  fetchPendingFollowRequests,
+  respondFollowRequest,
+  resolveImageUrl,
+  type FollowRequestItem,
+} from '@doevents/shared';
 
 export type ProfileListUser = {
   id: string;
+  name: string;
+  initials: string;
+  avatarUrl?: string;
+  username?: string;
+};
+
 interface FollowersSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   defaultTab?: 'followers' | 'following' | 'requests';
-  followersCount?: number;
-  followingCount?: number;
-  onViewProfile?: (user: User) => void;
+  followersList?: ProfileListUser[];
+  followingList?: ProfileListUser[];
+  currentUserId?: string;
+  onViewProfile?: (user: ProfileListUser) => void;
 }
 
-// Mock — derived from  users (excluding current "me")
-const baseUsers = users.filter((u) => u.id !== 'me');
-const initialRequests: User[] = [...baseUsers].slice(0, 3);
+function filterUsers(list: ProfileListUser[], query: string): ProfileListUser[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return list;
+  return list.filter(
+    (u) => u.name.toLowerCase().includes(q) || u.username?.toLowerCase().includes(q),
+  );
+}
+
+function toSheetUser(request: FollowRequestItem): ProfileListUser {
+  const name = request.name || 'Usuario';
+  return {
+    id: request.userId || request.id,
+    name,
+    initials: name.split(' ').filter(Boolean).map((p) => p[0]).join('').slice(0, 2).toUpperCase() || 'DE',
+    avatarUrl: resolveImageUrl(request.avatarUrl) || undefined,
+  };
+}
 
 const UserRow = ({
   user,
   initiallyFollowing,
+  canToggleFollow,
+  onToggleFollow,
   onOpen,
 }: {
-  user: User;
+  user: ProfileListUser;
   initiallyFollowing: boolean;
+  canToggleFollow: boolean;
+  onToggleFollow?: (userId: string, nextFollowing: boolean) => Promise<void>;
   onOpen?: () => void;
 }) => {
   const [following, setFollowing] = useState(initiallyFollowing);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    setFollowing(initiallyFollowing);
+  }, [initiallyFollowing, user.id]);
+
+  const handleToggle = async () => {
+    if (!canToggleFollow || !onToggleFollow || busy) return;
+    const next = !following;
+    setBusy(true);
+    try {
+      await onToggleFollow(user.id, next);
+      setFollowing(next);
+    } catch {
+      // toast handled upstream
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const avatarSrc = user.avatarUrl ? resolveImageUrl(user.avatarUrl) : undefined;
+
   return (
     <div className="flex items-center gap-3 py-2.5">
       <button
+        type="button"
         onClick={onOpen}
-        className="flex flex-1 min-w-0 items-center gap-3 text-left active:opacity-70"
+        className="flex min-w-0 flex-1 items-center gap-3 text-left active:opacity-70"
       >
         <Avatar className="h-11 w-11">
+          {avatarSrc ? <AvatarImage src={avatarSrc} alt="" /> : null}
           <AvatarFallback className="bg-primary/10 text-sm font-bold text-primary">
             {user.initials}
           </AvatarFallback>
@@ -49,50 +105,59 @@ const UserRow = ({
             <p className="truncate text-sm font-semibold text-foreground">{user.name}</p>
             <Shield className="h-3.5 w-3.5 shrink-0 text-primary" />
           </div>
-          <p className="truncate text-xs text-muted-foreground">
-            @{user.name.toLowerCase().replace(/\s+/g, '')}
-          </p>
+          {user.username && (
+            <p className="truncate text-xs text-muted-foreground">{user.username}</p>
+          )}
         </div>
       </button>
-      <Button
-        size="sm"
-        variant={following ? 'outline' : 'default'}
-        className="h-8 shrink-0 rounded-full text-xs"
-        onClick={() => setFollowing((p) => !p)}
-      >
-        {following ? (
-          <>
-            <Check className="mr-1 h-3.5 w-3.5" />
-            Siguiendo
-          </>
-        ) : (
-          <>
-            <UserPlus className="mr-1 h-3.5 w-3.5" />
-            Seguir
-          </>
-        )}
-      </Button>
+      {canToggleFollow && (
+        <Button
+          size="sm"
+          variant={following ? 'outline' : 'default'}
+          className="h-8 shrink-0 rounded-full text-xs"
+          disabled={busy}
+          onClick={() => void handleToggle()}
+        >
+          {busy ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          ) : following ? (
+            <>
+              <Check className="mr-1 h-3.5 w-3.5" />
+              Siguiendo
+            </>
+          ) : (
+            <>
+              <UserPlus className="mr-1 h-3.5 w-3.5" />
+              Seguir
+            </>
+          )}
+        </Button>
+      )}
     </div>
   );
 };
 
 const RequestRow = ({
   user,
+  busy,
   onAccept,
   onReject,
   onOpen,
 }: {
-  user: User;
+  user: ProfileListUser;
+  busy: boolean;
   onAccept: () => void;
   onReject: () => void;
   onOpen?: () => void;
 }) => (
   <div className="flex items-center gap-3 py-2.5">
     <button
+      type="button"
       onClick={onOpen}
-      className="flex flex-1 min-w-0 items-center gap-3 text-left active:opacity-70"
+      className="flex min-w-0 flex-1 items-center gap-3 text-left active:opacity-70"
     >
       <Avatar className="h-11 w-11">
+        {user.avatarUrl ? <AvatarImage src={user.avatarUrl} alt="" /> : null}
         <AvatarFallback className="bg-primary/10 text-sm font-bold text-primary">
           {user.initials}
         </AvatarFallback>
@@ -106,6 +171,7 @@ const RequestRow = ({
       size="icon"
       variant="outline"
       className="h-8 w-8 shrink-0 rounded-full border-destructive/30 text-destructive hover:bg-destructive/10"
+      disabled={busy}
       onClick={onReject}
       aria-label="Rechazar solicitud"
     >
@@ -114,6 +180,7 @@ const RequestRow = ({
     <Button
       size="icon"
       className="h-8 w-8 shrink-0 rounded-full"
+      disabled={busy}
       onClick={onAccept}
       aria-label="Aceptar solicitud"
     >
@@ -126,46 +193,117 @@ const FollowersSheet = ({
   open,
   onOpenChange,
   defaultTab = 'followers',
+  followersList = [],
+  followingList = [],
+  currentUserId,
   onViewProfile,
 }: FollowersSheetProps) => {
   const [query, setQuery] = useState('');
-  const [followers, setFollowers] = useState<User[]>(mockFollowers);
-  const [requests, setRequests] = useState<User[]>(initialRequests);
-  const followingIds = new Set(mockFollowing.map((u) => u.id));
+  const [requests, setRequests] = useState<ProfileListUser[]>([]);
+  const [loadingRequests, setLoadingRequests] = useState(false);
+  const [busyRequestId, setBusyRequestId] = useState<string | null>(null);
+  const [localFollowingIds, setLocalFollowingIds] = useState<Set<string>>(new Set());
 
-  const filter = (list: User[]) =>
-    list.filter((u) => u.name.toLowerCase().includes(query.toLowerCase()));
+  const followingIds = useMemo(() => {
+    const ids = new Set(followingList.map((u) => u.id));
+    localFollowingIds.forEach((id) => ids.add(id));
+    return ids;
+  }, [followingList, localFollowingIds]);
 
-  const acceptRequest = (u: User) => {
-    setRequests((prev) => prev.filter((x) => x.id !== u.id));
-    setFollowers((prev) => [u, ...prev]);
-    toast.success(`Aceptaste a ${u.name} como seguidor`);
+  const loadRequests = useCallback(async () => {
+    if (!currentUserId) {
+      setRequests([]);
+      return;
+    }
+    setLoadingRequests(true);
+    try {
+      const pending = await fetchPendingFollowRequests(currentUserId);
+      setRequests(pending.map(toSheetUser).filter((u) => u.id));
+    } catch {
+      setRequests([]);
+    } finally {
+      setLoadingRequests(false);
+    }
+  }, [currentUserId]);
+
+  useEffect(() => {
+    if (!open) return;
+    void loadRequests();
+  }, [open, loadRequests]);
+
+  const handleToggleFollow = async (targetId: string, shouldFollow: boolean) => {
+    if (!currentUserId || currentUserId === targetId) return;
+    try {
+      if (shouldFollow) {
+        const result = await followUser(currentUserId, targetId);
+        setLocalFollowingIds((prev) => new Set(prev).add(targetId));
+        toast.success(result.message || 'Ahora sigues a este usuario');
+      } else {
+        await unfollowUser(currentUserId, targetId);
+        setLocalFollowingIds((prev) => {
+          const next = new Set(prev);
+          next.delete(targetId);
+          return next;
+        });
+        toast.success('Dejaste de seguir a este usuario');
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'No se pudo actualizar el seguimiento');
+      throw err;
+    }
   };
 
-  const rejectRequest = (u: User) => {
-    setRequests((prev) => prev.filter((x) => x.id !== u.id));
-    toast(`Rechazaste la solicitud de ${u.name}`);
+  const acceptRequest = async (user: ProfileListUser) => {
+    if (!currentUserId) return;
+    setBusyRequestId(user.id);
+    try {
+      await respondFollowRequest(currentUserId, user.id, 'accept');
+      setRequests((prev) => prev.filter((x) => x.id !== user.id));
+      toast.success(`Aceptaste a ${user.name} como seguidor`);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'No se pudo aceptar la solicitud');
+    } finally {
+      setBusyRequestId(null);
+    }
   };
 
-  const open_ = (u: User) => {
+  const rejectRequest = async (user: ProfileListUser) => {
+    if (!currentUserId) return;
+    setBusyRequestId(user.id);
+    try {
+      await respondFollowRequest(currentUserId, user.id, 'reject');
+      setRequests((prev) => prev.filter((x) => x.id !== user.id));
+      toast(`Rechazaste la solicitud de ${user.name}`);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'No se pudo rechazar la solicitud');
+    } finally {
+      setBusyRequestId(null);
+    }
+  };
+
+  const openProfile = (user: ProfileListUser) => {
     onOpenChange(false);
-    onViewProfile?.(u);
+    onViewProfile?.(user);
   };
+
+  const filteredFollowers = filterUsers(followersList, query);
+  const filteredFollowing = filterUsers(followingList, query);
+  const filteredRequests = filterUsers(requests, query);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl p-0">
-        <SheetHeader className="px-5 pt-5 pb-3">
+        <SheetHeader className="px-5 pb-3 pt-5">
           <SheetTitle className="text-left text-base font-bold">Mis seguidores</SheetTitle>
         </SheetHeader>
 
         <Tabs defaultValue={defaultTab} className="flex h-full flex-col">
           <TabsList className="mx-5 grid grid-cols-3 bg-muted">
             <TabsTrigger value="followers" className="text-xs font-semibold">
-              Seguidores ({followers.length})
+              Seguidores ({followersList.length})
             </TabsTrigger>
             <TabsTrigger value="following" className="text-xs font-semibold">
-              Seguidos ({mockFollowing.length})
+              Seguidos ({followingList.length})
             </TabsTrigger>
             <TabsTrigger value="requests" className="text-xs font-semibold">
               Solicitudes ({requests.length})
@@ -185,35 +323,61 @@ const FollowersSheet = ({
           </div>
 
           <TabsContent value="followers" className="mt-0 flex-1 overflow-y-auto px-5 pb-8">
-            {filter(followers).map((u, i) => (
-              <UserRow
-                key={`${u.id}-${i}`}
-                user={u}
-                initiallyFollowing={followingIds.has(u.id)}
-                onOpen={() => open_(u)}
-              />
-            ))}
+            {filteredFollowers.length === 0 ? (
+              <p className="py-10 text-center text-sm text-muted-foreground">
+                Aún no tienes seguidores
+              </p>
+            ) : (
+              filteredFollowers.map((u) => (
+                <UserRow
+                  key={u.id}
+                  user={u}
+                  initiallyFollowing={followingIds.has(u.id)}
+                  canToggleFollow={Boolean(currentUserId && currentUserId !== u.id)}
+                  onToggleFollow={handleToggleFollow}
+                  onOpen={() => openProfile(u)}
+                />
+              ))
+            )}
           </TabsContent>
 
           <TabsContent value="following" className="mt-0 flex-1 overflow-y-auto px-5 pb-8">
-            {filter(mockFollowing).map((u) => (
-              <UserRow key={u.id} user={u} initiallyFollowing onOpen={() => open_(u)} />
-            ))}
+            {filteredFollowing.length === 0 ? (
+              <p className="py-10 text-center text-sm text-muted-foreground">
+                Aún no sigues a nadie
+              </p>
+            ) : (
+              filteredFollowing.map((u) => (
+                <UserRow
+                  key={u.id}
+                  user={u}
+                  initiallyFollowing
+                  canToggleFollow={Boolean(currentUserId && currentUserId !== u.id)}
+                  onToggleFollow={handleToggleFollow}
+                  onOpen={() => openProfile(u)}
+                />
+              ))
+            )}
           </TabsContent>
 
           <TabsContent value="requests" className="mt-0 flex-1 overflow-y-auto px-5 pb-8">
-            {filter(requests).length === 0 ? (
+            {loadingRequests ? (
+              <div className="flex justify-center py-10">
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+              </div>
+            ) : filteredRequests.length === 0 ? (
               <p className="py-10 text-center text-sm text-muted-foreground">
                 No tienes solicitudes pendientes
               </p>
             ) : (
-              filter(requests).map((u) => (
+              filteredRequests.map((u) => (
                 <RequestRow
                   key={u.id}
                   user={u}
-                  onAccept={() => acceptRequest(u)}
-                  onReject={() => rejectRequest(u)}
-                  onOpen={() => open_(u)}
+                  busy={busyRequestId === u.id}
+                  onAccept={() => void acceptRequest(u)}
+                  onReject={() => void rejectRequest(u)}
+                  onOpen={() => openProfile(u)}
                 />
               ))
             )}
