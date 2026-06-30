@@ -95,12 +95,9 @@ import {
 } from '@doevents/shared';
 
 import FeedHero from '@lovable/components/feed/FeedHero';
-import FeedBanner from '@lovable/components/feed/FeedBanner';
-import { useKyc } from '@lovable/contexts/KycContext';
-import FeedVenuesCarousel from '@lovable/components/feed/FeedVenuesCarousel';
+import FeedServicesCarousel from '@lovable/components/feed/FeedServicesCarousel';
 import { ReportPostDialog } from '@lovable/components/feed/ReportPostDialog';
 import { ChangeLocationSheet } from '@lovable/components/feed/ChangeLocationSheet';
-import { useNearbyVenues } from '../lovable-bridge/useNearbyVenues';
 import { CreatePostSheet } from '@doevents/shared';
 import { LovablePostCardBridge } from '../lovable-bridge/LovablePostCardBridge';
 import { LovableCommentsBridge } from '../lovable-bridge/LovableCommentsBridge';
@@ -158,7 +155,6 @@ export const SocialWallTab: React.FC = () => {
   const { showToast } = useToast();
 
   const userId = useSelector((s: RootState) => s.auth.idUser);
-  const { isCertified, loading: kycLoading } = useKyc();
 
   const storedLocation = getStoredUserLocation();
   const cacheKey = useMemo(
@@ -209,10 +205,8 @@ export const SocialWallTab: React.FC = () => {
     profileName,
     profileAvatar,
   );
-  const { venues: nearbyVenues, loading: nearbyVenuesLoading } = useNearbyVenues();
 
   const loadFeed = useCallback(async (nextCursor?: string | null, forceNetwork = false) => {
-
     const data = await fetchSocialFeed(nextCursor, PAGE_SIZE, {
       userId,
       location: getStoredUserLocation(),
@@ -849,32 +843,14 @@ export const SocialWallTab: React.FC = () => {
         }}
       />
 
-      {!kycLoading && !isCertified && userId && (
-        <div className="mx-auto mt-3 max-w-lg px-4">
-          <div className="rounded-2xl bg-gradient-to-r from-primary to-primary-glow p-4 text-primary-foreground shadow-sm">
-            <h3 className="text-sm font-bold">Organizador certificado</h3>
-            <p className="mt-1 text-xs text-primary-foreground/90">
-              Obtén el sello KYC y desbloquea eventos de gran escala con mayor visibilidad.
-            </p>
-            <button
-              type="button"
-              className="mt-3 rounded-full bg-primary-foreground/15 px-4 py-1.5 text-xs font-semibold backdrop-blur"
-              onClick={() => navigate('/profile/kyc')}
-            >
-              Ver certificación
-            </button>
-          </div>
-        </div>
-      )}
-
       <div className="mx-auto max-w-lg">
-        <FeedVenuesCarousel
-          venues={nearbyVenues}
-          loading={nearbyVenuesLoading}
-          onOpenVenue={(venue) => navigate(`/places/${venue.id}`)}
+        <FeedServicesCarousel
+          onOpenService={(card) => {
+            if (card.id && !/^sp-\d+$/i.test(card.id)) {
+              navigate(`/services/${card.id}`);
+            }
+          }}
         />
-
-        <FeedBanner />
 
         <div className="space-y-2 px-4 pb-4">
 
