@@ -17,9 +17,16 @@ export interface EntityFeedContent {
   images: string[];
   /** Miniatura de la tarjeta de entidad: solo media original del evento/servicio/lugar */
   summaryImage?: string;
+  /** Título de la publicación (o del ítem nativo) */
   title: string;
+  /** Nombre original de la entidad para la cápsula; si falta, se usa title */
+  summaryTitle?: string;
   date: string;
+  /** Fecha original de la entidad para subtítulo de cápsula */
+  summaryDate?: string;
   location: string;
+  /** Ubicación original de la entidad para subtítulo de cápsula */
+  summaryLocation?: string;
   description: string;
   tags: string[];
 }
@@ -120,9 +127,10 @@ export function EntityFeedBody({
     ? () => onOpenDetail(postForOpen)
     : undefined;
   const px = compact ? 'px-3' : 'px-4';
-  const summarySubtitle = accentType === 'evento'
-    ? content.date
-    : content.location || content.date;
+  const capsuleTitle = content.summaryTitle || content.title;
+  const capsuleSubtitle = accentType === 'evento'
+    ? (content.summaryDate || content.date)
+    : (content.summaryLocation || content.location || content.summaryDate || content.date);
   const hasMedia = content.images.length > 0;
   const showEventDatePill = Boolean(content.date)
     && (content.summaryType === 'evento' || content.topBadge === 'evento');
@@ -214,8 +222,8 @@ export function EntityFeedBody({
       {content.showSummaryCard && content.summaryType ? (
         <EntitySummaryCard
           type={content.summaryType}
-          title={content.title}
-          subtitle={summarySubtitle}
+          title={capsuleTitle}
+          subtitle={capsuleSubtitle}
           image={content.summaryImage || (content.topBadge !== 'publicacion' ? content.images[0] : undefined)}
           onClick={open}
           compact={compact}
@@ -231,6 +239,9 @@ function buildEntityFeedContent(
     | 'type'
     | 'isUserPublication'
     | 'promotedEntityType'
+    | 'promotedEntityTitle'
+    | 'promotedEntityDate'
+    | 'promotedEntityLocation'
     | 'promotedEntityImages'
     | 'images'
     | 'title'
@@ -248,8 +259,11 @@ function buildEntityFeedContent(
       images: post.images,
       summaryImage: post.promotedEntityImages?.[0],
       title: post.title,
+      summaryTitle: post.promotedEntityTitle,
       date: post.date,
+      summaryDate: post.promotedEntityDate || post.date,
       location: post.location,
+      summaryLocation: post.promotedEntityLocation,
       description: post.description,
       tags: post.tags,
     };
@@ -263,8 +277,11 @@ function buildEntityFeedContent(
       images: post.images,
       summaryImage: post.promotedEntityImages?.[0] || post.images[0],
       title: post.title,
+      summaryTitle: post.title,
       date: post.date,
+      summaryDate: post.date,
       location: post.location,
+      summaryLocation: post.location,
       description: post.description,
       tags: post.tags,
     };
@@ -288,8 +305,11 @@ export function repostOfToEntityContent(
       images: repostOf.images,
       summaryImage: repostOf.promotedEntityImages?.[0],
       title: repostOf.title,
+      summaryTitle: repostOf.promotedEntityTitle,
       date: repostOf.date || '',
+      summaryDate: repostOf.promotedEntityDate || repostOf.date || '',
       location: repostOf.location || '',
+      summaryLocation: repostOf.promotedEntityLocation,
       description: repostOf.description,
       tags: repostOf.tags,
     };

@@ -20,6 +20,16 @@ import {
   DialogTitle,
 } from '@lovable/components/ui/dialog';
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@lovable/components/ui/alert-dialog';
+import {
   Briefcase,
   Calendar,
   Check,
@@ -297,10 +307,12 @@ const FeedCreatePostSheet = ({
   const [descCursor, setDescCursor] = useState(0);
   const [pickedUsers, setPickedUsers] = useState<Map<string, SearchUserResult>>(new Map());
   const [mediaDirty, setMediaDirty] = useState(false);
+  const [discardOpen, setDiscardOpen] = useState(false);
   const suggestTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const descRef = useRef<HTMLTextAreaElement>(null);
   const hydratedEditId = useRef<string | null>(null);
+  const closingGuard = useRef(false);
 
   const needsEntity = category !== 'publicacion';
   const helper = CATEGORY_OPTIONS.find((o) => o.value === category)?.helper ?? '';
@@ -325,7 +337,8 @@ const FeedCreatePostSheet = ({
 
     setCategory(nextCategory);
     setSelectedRef(nextRef);
-    setTitle(initialPublication.title || nextRef?.title || '');
+    // Título libre de la publicación; el nombre de la entidad vive en selectedRef / mentions.
+    setTitle(initialPublication.title || '');
     setDescription(initialPublication.description || '');
     setLocationQuery(location);
     setLocationLabel(location);
@@ -492,17 +505,26 @@ const FeedCreatePostSheet = ({
     || selectedRef,
   );
 
+  const hasNestedOverlay = pickerOpen || galleryOpen || mapPickerOpen || discardOpen;
+
   const requestClose = () => {
-    if (submitting) return;
+    if (submitting || closingGuard.current) return;
+    if (pickerOpen || galleryOpen || mapPickerOpen) return;
     if (!isDirty()) {
       resetForm();
       onOpenChange(false);
       return;
     }
-    if (window.confirm('¿Descartar los cambios de esta publicación?')) {
-      resetForm();
-      onOpenChange(false);
-    }
+    setDiscardOpen(true);
+  };
+
+  const confirmDiscard = () => {
+    closingGuard.current = true;
+    setDiscardOpen(false);
+    resetForm();
+    onOpenChange(false);
+    // Liberar el guard en el siguiente tick (tras cerrar el drawer)
+    setTimeout(() => { closingGuard.current = false; }, 300);
   };
 
   const handleCategoryChange = (next: FeedPostCategory) => {
@@ -518,8 +540,8 @@ const FeedCreatePostSheet = ({
 
   const handlePickItem = (item: PickerItem) => {
     setSelectedRef(item);
-    setTitle(item.title);
-    if (item.location) {
+    // El título/descripción de la publicación son libres; la cápsula usa selectedRef (nombre original).
+    if (item.location && !locationQuery.trim()) {
       setLocationQuery(item.location);
       setLocationLabel(item.location);
     }
@@ -751,7 +773,15 @@ const FeedCreatePostSheet = ({
 
   return (
     <>
-      <Drawer open={open} onOpenChange={(next) => { if (!next) requestClose(); }}>
+      <Drawer
+        open={open}
+        onOpenChange={(next) => {
+          if (next) return;
+          // No cerrar el sheet si hay overlays anidados o ya estamos en flujo de descarte.
+          if (hasNestedOverlay || closingGuard.current) return;
+          requestClose();
+        }}
+      >
         <DrawerContent>
           <div className="mx-auto w-full max-w-lg">
             <DrawerHeader className="flex flex-row items-start justify-between pb-2 text-left">
@@ -806,6 +836,9 @@ const FeedCreatePostSheet = ({
                         </div>
                       )}
                       <div className="min-w-0 flex-1">
+                        <p className="text-[10px] font-bold uppercase tracking-wide text-primary/80">
+                          {category === 'evento' ? 'Evento' : category === 'servicio' ? 'Servicio' : 'Lugar'} · cápsula
+                        </p>
                         <p className="truncate text-sm font-semibold text-card-foreground">{selectedRef.title}</p>
                         {selectedRef.subtitle ? (
                           <p className="truncate text-xs text-muted-foreground">{selectedRef.subtitle}</p>
@@ -1168,6 +1201,26 @@ const FeedCreatePostSheet = ({
         initialLng={longitude}
         onConfirm={applyMapLocation}
       />
+
+      <AlertDialog open={discardOpen} onOpenChange={setDiscardOpen}>
+        <AlertDialogContent className="max-w-sm">
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Descartar los cambios?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Si sales ahora se perderán los cambios de esta publicación.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Seguir editando</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={confirmDiscard}
+            >
+              Descartar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };

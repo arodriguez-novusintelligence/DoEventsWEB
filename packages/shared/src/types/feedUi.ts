@@ -63,6 +63,12 @@ export interface FeedUiPost {
   isUserPublication?: boolean;
   /** Tipo de entidad promocionada en la tarjeta inferior (evento, servicio o lugar) */
   promotedEntityType?: 'evento' | 'servicio' | 'lugar';
+  /** Nombre original de la entidad (cápsula); no debe confundirse con el título de la publicación */
+  promotedEntityTitle?: string;
+  /** Fecha/horario original de la entidad para la cápsula */
+  promotedEntityDate?: string;
+  /** Ubicación original de la entidad para la cápsula */
+  promotedEntityLocation?: string;
   /** Multimedia original de la entidad promocionada (miniatura de la tarjeta EVENTOS/etc.) */
   promotedEntityImages?: string[];
   /** Menciones enriquecidas del backend (usuarios, eventos, etc.) */
@@ -82,6 +88,9 @@ export interface FeedUiPost {
     type?: 'evento' | 'servicio' | 'lugar' | 'publicacion';
     isUserPublication?: boolean;
     promotedEntityType?: 'evento' | 'servicio' | 'lugar';
+    promotedEntityTitle?: string;
+    promotedEntityDate?: string;
+    promotedEntityLocation?: string;
     promotedEntityImages?: string[];
     detailPath?: string | null;
     venueFeed?: VenueFeedData;

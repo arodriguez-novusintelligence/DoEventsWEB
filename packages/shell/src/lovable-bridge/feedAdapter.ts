@@ -100,6 +100,26 @@ function resolvePromotedEntityType(pub: FeedPublication): Post['promotedEntityTy
   return undefined;
 }
 
+/** Datos originales de la entidad etiquetada (cápsula); independientes del título/descripción de la pub. */
+function resolvePromotedEntityMeta(pub: FeedPublication): {
+  title?: string;
+  date?: string;
+  location?: string;
+} {
+  for (const mention of pub.mentions || []) {
+    if (!mentionEntityType(mention)) continue;
+    const title = String(mention.title || mention.name || '').trim();
+    const date = String(mention.dateLabel || '').trim();
+    const location = String(mention.locationLabel || '').trim();
+    return {
+      title: title || undefined,
+      date: date || undefined,
+      location: location || undefined,
+    };
+  }
+  return {};
+}
+
 function resolvePublicationType(pub: FeedPublication): Post['type'] {
   if (isUserFeedPublication(pub)) return 'publicacion';
   if (pub.type === 'event' || resolveEventIdFromFeedPublication(pub)) return 'evento';
@@ -128,6 +148,7 @@ function mapSourcePublicationToRepostOf(source: FeedPublication, parent?: FeedPu
   const isUserPublication = isUserFeedPublication(source);
   const type = resolvePublicationType(source);
   const promotedEntityType = isUserPublication ? resolvePromotedEntityType(source) : undefined;
+  const promotedEntityMeta = isUserPublication ? resolvePromotedEntityMeta(source) : {};
   const promotedEntityImages = isUserPublication
     ? resolveFeedPromotedEntityImages(source)
     : (type !== 'publicacion' ? images : []);
@@ -154,6 +175,9 @@ function mapSourcePublicationToRepostOf(source: FeedPublication, parent?: FeedPu
     type,
     isUserPublication,
     promotedEntityType,
+    promotedEntityTitle: promotedEntityMeta.title,
+    promotedEntityDate: promotedEntityMeta.date,
+    promotedEntityLocation: promotedEntityMeta.location,
     promotedEntityImages: promotedEntityImages.length ? promotedEntityImages : undefined,
     feedMentions: source.mentions,
     detailPath: resolvePublicationDetailPath(source),
@@ -170,6 +194,7 @@ export function feedPublicationToLovablePost(pub: FeedPublication): Post {
   const isUserPublication = isUserFeedPublication(pub);
   const type = resolvePublicationType(pub);
   const promotedEntityType = isUserPublication ? resolvePromotedEntityType(pub) : undefined;
+  const promotedEntityMeta = isUserPublication ? resolvePromotedEntityMeta(pub) : {};
   const entityType = promotedEntityType ?? (type !== 'publicacion' ? type : undefined);
   const images = resolveFeedPublicationImages(pub);
   const promotedEntityImages = isUserPublication
@@ -181,7 +206,8 @@ export function feedPublicationToLovablePost(pub: FeedPublication): Post {
     user: author,
     timeAgo: formatRelativeTime(String(pub.createdAt || Date.now())),
     images,
-    title: pub.title || eventMention?.title || serviceMention?.title || venueMention?.title || pub.description?.slice(0, 80) || 'Publicación',
+    // Título de la publicación (texto libre del autor); no mezclar con el nombre de la entidad.
+    title: pub.title || pub.description?.slice(0, 80) || 'Publicación',
     date:
       eventMention?.dateLabel
       || serviceMention?.dateLabel
@@ -198,10 +224,10 @@ export function feedPublicationToLovablePost(pub: FeedPublication): Post {
         pub.locationLabel,
       )
       : resolveFeedLocation(
+        pub.locationLabel,
         eventMention?.locationLabel,
         serviceMention?.locationLabel,
         venueMention?.locationLabel,
-        pub.locationLabel,
       ),
     tags: mapUserMentionTags(pub.mentions),
     description: pub.description || '',
@@ -214,6 +240,9 @@ export function feedPublicationToLovablePost(pub: FeedPublication): Post {
     type,
     isUserPublication,
     promotedEntityType,
+    promotedEntityTitle: promotedEntityMeta.title,
+    promotedEntityDate: promotedEntityMeta.date,
+    promotedEntityLocation: promotedEntityMeta.location,
     promotedEntityImages: promotedEntityImages.length ? promotedEntityImages : undefined,
     feedMentions: pub.mentions,
     visibility: 'public',
