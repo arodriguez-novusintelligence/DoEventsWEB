@@ -398,6 +398,8 @@ export const EventsPage: React.FC = () => {
         (item) => item.userId,
         userId || undefined,
       );
+      const mineItems = filterDiscoverFeedEvents(mineRes.data?.datosEvento || []);
+      const favItems = filterDiscoverFeedEvents(Array.isArray(favRes) ? favRes : []);
       const sortedNearby = resolveNearbyEvents(nearbyRes, feedItems, loc, mineItems);
       const sortedServices = sortServicesByDistance(servicesRes);
       let mergedVenues = sortVenuesByDistance(venuesRes);
@@ -405,8 +407,6 @@ export const EventsPage: React.FC = () => {
         const ownVenues = await fetchOwnerRentalVenues(userId).catch(() => []);
         mergedVenues = sortVenuesByDistance(mergeVenuesById(mergedVenues, ownVenues));
       }
-      const mineItems = filterDiscoverFeedEvents(mineRes.data?.datosEvento || []);
-      const favItems = filterDiscoverFeedEvents(Array.isArray(favRes) ? favRes : []);
 
       await applyDiscoverPayload(loc, sortedNearby, feedItems, mineItems, favItems, sortedServices, mergedVenues);
 
