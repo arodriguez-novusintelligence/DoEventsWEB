@@ -1,0 +1,49 @@
+<!-- NADF-GUIDE
+Propósito: Plantilla de issue para disparar NADF DoEvents.
+Configuración: Label nadf se aplica al crear (o añadir después).
+-->
+name: NADF — requerimiento DoEvents
+description: Crea un issue que dispara el ciclo NADF (ajuste acotado → DEV)
+title: "[NADF] "
+labels: ["nadf"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe **una sola** funcionalidad. NADF ajustará solo ese alcance en
+        `feature/NovusAIDevelopmentFramework` (WEB y/o Back) y desplegará DEV.
+  - type: textarea
+    id: what
+    attributes:
+      label: Qué cambiar
+      description: Cambio concreto y acotado
+      placeholder: Ej. Cambiar el color del botón primario del login a verde
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Área
+      options:
+        - web
+        - back
+        - ambos
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Criterios de aceptación
+      value: |
+        - 
+        - No se eliminan ni rompen otras funcionalidades
+    validations:
+      required: true
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: Fuera de alcance
+      placeholder: Lo que NO debe tocarse
+  - type: markdown
+    attributes:
+      value: "Entorno: **DEV** únicamente. PROD prohibido."
