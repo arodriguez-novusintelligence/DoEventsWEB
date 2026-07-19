@@ -30,7 +30,7 @@ const GuestManagementView = ({ onBack, guestsController, userId, initialEventId,
     selectedGroupId, searchTerm, setSearchTerm, setSelectedGroupId,
     addGuest, updateGuest, deleteGuest, toggleFavorite,
     addGroup, updateGroup, deleteGroup, moveGuestToGroup, getGroupGuestCount,
-    searchUserByUsername, registerUserAsGuest, purgeJunkGuests, reload,
+    searchUserByUsername, registerUserAsGuest, registerUsersAsGuests, purgeJunkGuests, reload,
     loading: guestsLoading,
   } = guestsController;
 
@@ -431,6 +431,7 @@ const GuestManagementView = ({ onBack, guestsController, userId, initialEventId,
                 hideTrigger
                 onAddGuest={addGuest}
                 onRegisterFoundUser={registerUserAsGuest}
+                onRegisterFoundUsers={registerUsersAsGuests}
                 onSearchUser={searchUserByUsername}
                 groups={groups}
                 existingGuests={allGuests}
@@ -449,6 +450,7 @@ const GuestManagementView = ({ onBack, guestsController, userId, initialEventId,
         hideTrigger
         onAddGuest={addGuest}
         onRegisterFoundUser={registerUserAsGuest}
+        onRegisterFoundUsers={registerUsersAsGuests}
         onSearchUser={searchUserByUsername}
         groups={groups}
         existingGuests={allGuests}

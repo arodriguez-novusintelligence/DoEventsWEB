@@ -3,6 +3,7 @@ import type { FavoriteContact } from '@doevents/shared';
 import {
   addManualContact,
   addRegisteredUserToFavorites,
+  addRegisteredUsersToFavorites,
   createGuestGroup,
   deleteGuestGroup,
   fetchAllGuestContacts,
@@ -526,6 +527,64 @@ export function useApiGuests(userId?: string) {
     return favoriteId || undefined;
   }, [userId, reload, guests, groups]);
 
+  const registerUsersAsGuests = useCallback(async (
+    profiles: Guest[],
+    options?: { groupId?: string; isFavorite?: boolean },
+  ): Promise<{ added: number; skipped: number; failed: number }> => {
+    if (!userId) throw new Error('Debes iniciar sesión para agregar invitados');
+    const unique = new Map<string, Guest>();
+    for (const profile of profiles) {
+      const uid = String(profile.invitedUserId || profile.id || '').trim();
+      if (!uid || uid.startsWith('search-')) continue;
+      if (findMatchingGuest(guests, {
+        invitedUserId: uid,
+        id: uid,
+        email: profile.email,
+        username: profile.username,
+      })) {
+        continue;
+      }
+      unique.set(uid, profile);
+    }
+
+    const skipped = profiles.length - unique.size;
+    if (!unique.size) {
+      return { added: 0, skipped, failed: 0 };
+    }
+
+    const ids = [...unique.keys()];
+    const { results, failed } = await addRegisteredUsersToFavorites(userId, ids);
+    const groupId = options?.isFavorite
+      ? undefined
+      : resolveGuestGroupId(options?.groupId, groups);
+    const category = normalizeGuestCategory({
+      isFavorite: options?.isFavorite ?? true,
+      groupId,
+    });
+
+    await Promise.all(results.map(async (row) => {
+      const favoriteId = row.favoriteId;
+      const targetUserId = row.targetUserId;
+      if (!favoriteId || !targetUserId) return;
+      const profile = unique.get(targetUserId);
+      await updateContact(userId, favoriteId, {
+        name: profile?.name,
+        lastName: profile?.lastName,
+        username: profile?.username,
+        email: profile?.email,
+        isFavorite: category.isFavorite,
+        groupIds: category.groupId ? [category.groupId] : [],
+      });
+    }));
+
+    await reload();
+    return {
+      added: results.length,
+      skipped,
+      failed: failed.length,
+    };
+  }, [userId, guests, groups, reload]);
+
   return {
     allGuests: guests,
     guests: filteredGuests,
@@ -551,6 +610,7 @@ export function useApiGuests(userId?: string) {
     searchUserByUsername,
     searchUsersForGuest,
     registerUserAsGuest,
+    registerUsersAsGuests,
     purgeJunkGuests,
     reload,
   };

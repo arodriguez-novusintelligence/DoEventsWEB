@@ -241,24 +241,46 @@ export async function addRegisteredUserToFavorites(
   userId: string,
   targetUserId: string,
 ): Promise<{ favoriteId?: string }> {
+  const batch = await addRegisteredUsersToFavorites(userId, [targetUserId]);
+  return { favoriteId: batch.results.find((r) => r.targetUserId === targetUserId)?.favoriteId };
+}
+
+/** Agrega varios usuarios de plataforma a favoritos/invitados en una sola llamada. */
+export async function addRegisteredUsersToFavorites(
+  userId: string,
+  targetUserIds: string[],
+): Promise<{
+  results: { favoriteId?: string; targetUserId?: string; success?: boolean }[];
+  failed: { targetUserId?: string; error?: string }[];
+}> {
+  const ids = [...new Set(targetUserIds.map((id) => String(id || '').trim()).filter(Boolean))];
+  if (!ids.length) return { results: [], failed: [] };
+
   const response = await fetch(
     `${guestsBase()}/users/${encodeURIComponent(userId)}/favorites`,
     {
       method: 'POST',
       headers: authHeaders(),
-      body: JSON.stringify({ targetUserId }),
+      body: JSON.stringify(
+        ids.length === 1
+          ? { targetUserId: ids[0] }
+          : { targetUserIds: ids },
+      ),
     },
   );
   const body = await response.json().catch(() => ({})) as {
     error?: string;
     message?: string;
     results?: { favoriteId?: string; targetUserId?: string; success?: boolean }[];
+    errors?: { targetUserId?: string; error?: string }[];
   };
-  if (!response.ok) {
+  if (!response.ok && response.status !== 207) {
     throw new Error(body.message || body.error || 'No se pudo agregar a favoritos');
   }
-  const match = body.results?.find((r) => r.targetUserId === targetUserId) || body.results?.[0];
-  return { favoriteId: match?.favoriteId };
+  return {
+    results: body.results || [],
+    failed: body.errors || [],
+  };
 }
 
 export async function toggleContactFavorite(

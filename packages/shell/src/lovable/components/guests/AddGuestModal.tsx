@@ -46,6 +46,10 @@ interface Props {
     targetUserId: string,
     options?: { skipReload?: boolean; profile?: Guest },
   ) => Promise<string | void | undefined>;
+  onRegisterFoundUsers?: (
+    profiles: Guest[],
+    options?: { groupId?: string; isFavorite?: boolean },
+  ) => Promise<{ added: number; skipped: number; failed: number } | void>;
   onGuestAdded?: () => void;
 }
 
@@ -64,6 +68,7 @@ export function AddGuestModal({
   onSubmitGuest,
   onSubmitGuestBatch,
   onRegisterFoundUser,
+  onRegisterFoundUsers,
   onGuestAdded,
 }: Props) {
   const inviteMode = Boolean(onSubmitGuest || onSubmitGuestBatch);
@@ -83,7 +88,7 @@ export function AddGuestModal({
   const [searchUsername, setSearchUsername] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Guest[]>([]);
-  const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(new Set());
+  const [selectedUsers, setSelectedUsers] = useState<Map<string, Guest>>(new Map());
   const [searchLoading, setSearchLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [foundUser, setFoundUser] = useState<Guest | null>(null);
@@ -236,12 +241,29 @@ export function AddGuestModal({
     }
   };
 
-  const toggleUserSelection = (id: string) => {
-    const next = new Set(selectedUserIds);
-    if (next.has(id)) next.delete(id);
-    else next.add(id);
-    setSelectedUserIds(next);
+  const toggleUserSelection = (user: Guest) => {
+    const id = user.id;
+    if (!id) return;
+    setSelectedUsers((prev) => {
+      const next = new Map(prev);
+      if (next.has(id)) next.delete(id);
+      else next.set(id, user);
+      return next;
+    });
   };
+
+  const setUserSelected = (user: Guest, checked: boolean) => {
+    const id = user.id;
+    if (!id) return;
+    setSelectedUsers((prev) => {
+      const next = new Map(prev);
+      if (checked) next.set(id, user);
+      else next.delete(id);
+      return next;
+    });
+  };
+
+  const clearUserSelection = () => setSelectedUsers(new Map());
 
   const isInExistingList = (guest: Guest) => Boolean(findMatchingGuest(existingGuests, guest));
 
@@ -250,7 +272,7 @@ export function AddGuestModal({
     setSearchUsername("");
     setSearchQuery("");
     setSearchResults([]);
-    setSelectedUserIds(new Set());
+    setSelectedUsers(new Map());
     setFoundUser(null);
     setSelectedContacts(new Set());
     setContactSearch("");
@@ -281,7 +303,7 @@ export function AddGuestModal({
     const fresh = users.filter((g) => !isInExistingList(g));
     if (!fresh.length) {
       toast({ title: "Ya en tu lista", description: "Los usuarios seleccionados ya están catalogados." });
-      return;
+      return { added: 0, skipped: users.length, failed: 0 };
     }
 
     if (onSubmitGuestBatch) {
@@ -289,17 +311,32 @@ export function AddGuestModal({
         platformUserIds: fresh.map((g) => g.invitedUserId || g.id).filter((id) => id && !id.startsWith('search-')),
         guests: fresh,
       });
-      return;
+      return { added: fresh.length, skipped: users.length - fresh.length, failed: 0 };
+    }
+
+    if (onRegisterFoundUsers) {
+      return onRegisterFoundUsers(fresh);
     }
 
     if (onRegisterFoundUser) {
-      for (const guest of fresh) {
+      let added = 0;
+      let failed = 0;
+      for (let i = 0; i < fresh.length; i += 1) {
+        const guest = fresh[i];
         const uid = guest.invitedUserId || guest.id;
         if (!uid || uid.startsWith('search-')) continue;
-        await onRegisterFoundUser(uid, { profile: guest });
+        try {
+          await onRegisterFoundUser(uid, {
+            profile: guest,
+            skipReload: i < fresh.length - 1,
+          });
+          added += 1;
+        } catch {
+          failed += 1;
+        }
       }
       onGuestAdded?.();
-      return;
+      return { added, skipped: users.length - fresh.length, failed };
     }
 
     for (const guest of fresh) {
@@ -313,6 +350,7 @@ export function AddGuestModal({
       });
     }
     onGuestAdded?.();
+    return { added: fresh.length, skipped: users.length - fresh.length, failed: 0 };
   };
 
   const startImportContacts = () => {
@@ -469,18 +507,27 @@ export function AddGuestModal({
   };
 
   const addSelectedPlatformUsers = async () => {
-    const picked = searchResults.filter((g) => selectedUserIds.has(g.id));
+    const picked = Array.from(selectedUsers.values());
     if (!picked.length) {
       toast({ title: "Selecciona usuarios", description: "Marca al menos un usuario de la búsqueda.", variant: "destructive" });
       return;
     }
     setSubmitting(true);
     try {
-      await addPlatformUsers(picked);
+      const result = await addPlatformUsers(picked);
       if (!onSubmitGuestBatch) {
+        const added = result?.added ?? picked.length;
+        const failed = result?.failed ?? 0;
+        if (added === 0 && failed === 0) {
+          toast({ title: "Ya en tu lista", description: "Los usuarios seleccionados ya estaban catalogados." });
+          clearUserSelection();
+          return;
+        }
         finishSuccess(
-          "Usuarios agregados",
-          `${picked.length} usuario(s) agregado(s) a tu lista.`,
+          added > 1 ? "Usuarios agregados" : "Usuario agregado",
+          failed > 0
+            ? `${added} agregado(s), ${failed} no se pudo(ieron) agregar.`
+            : `${added} usuario(s) agregado(s) a tu lista.`,
         );
       } else {
         resetAll();
@@ -608,10 +655,22 @@ export function AddGuestModal({
                       <div className="p-2 space-y-2">
                         {searchResults.map((user) => {
                           const already = isInExistingList(user);
-                          const sel = selectedUserIds.has(user.id);
+                          const sel = selectedUsers.has(user.id);
                           return (
-                            <label
+                            <div
                               key={user.id}
+                              role="button"
+                              tabIndex={already ? -1 : 0}
+                              onClick={() => {
+                                if (!already) toggleUserSelection(user);
+                              }}
+                              onKeyDown={(e) => {
+                                if (already) return;
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  toggleUserSelection(user);
+                                }
+                              }}
                               className={`flex items-center gap-3 p-3 rounded-xl border transition ${
                                 already
                                   ? 'bg-muted/40 border-border opacity-70'
@@ -623,7 +682,11 @@ export function AddGuestModal({
                               <Checkbox
                                 checked={sel}
                                 disabled={already}
-                                onCheckedChange={() => toggleUserSelection(user.id)}
+                                onClick={(e) => e.stopPropagation()}
+                                onCheckedChange={(checked) => {
+                                  if (already) return;
+                                  setUserSelected(user, checked === true);
+                                }}
                               />
                               <UserAvatar name={user.name} imageUrl={user.avatar} userId={user.invitedUserId || user.id} size={36} className="shrink-0" />
                               <div className="flex-1 min-w-0">
@@ -633,21 +696,99 @@ export function AddGuestModal({
                                 )}
                               </div>
                               {already && <span className="text-[10px] text-muted-foreground shrink-0">En lista</span>}
-                            </label>
+                              {!already && sel && <Check className="h-4 w-4 text-primary shrink-0" />}
+                            </div>
                           );
                         })}
                       </div>
                     </ScrollArea>
+
+                    {selectedUsers.size > 0 && (
+                      <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 space-y-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="text-xs font-semibold text-foreground">
+                            Seleccionados ({selectedUsers.size})
+                          </p>
+                          <button
+                            type="button"
+                            onClick={clearUserSelection}
+                            className="text-[11px] font-medium text-primary hover:underline"
+                          >
+                            Limpiar
+                          </button>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {Array.from(selectedUsers.values()).map((user) => (
+                            <button
+                              key={`sel-${user.id}`}
+                              type="button"
+                              onClick={() => toggleUserSelection(user)}
+                              className="inline-flex items-center gap-1 rounded-full bg-background border border-border px-2 py-0.5 text-[11px] font-medium text-foreground"
+                              title="Quitar de la selección"
+                            >
+                              <span className="max-w-[120px] truncate">
+                                {user.username ? `@${user.username.replace(/^@/, '')}` : `${user.name} ${user.lastName}`.trim()}
+                              </span>
+                              <X className="h-3 w-3 text-muted-foreground" />
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     <Button
                       onClick={() => void addSelectedPlatformUsers()}
-                      disabled={submitting || selectedUserIds.size === 0}
+                      disabled={submitting || selectedUsers.size === 0}
                       className="w-full rounded-xl"
                     >
                       {submitting
                         ? <Loader2 className="h-4 w-4 animate-spin" />
-                        : `Agregar seleccionados (${selectedUserIds.size})`}
+                        : `Agregar seleccionados (${selectedUsers.size})`}
                     </Button>
                   </>
+                )}
+
+                {searchResults.length === 0 && selectedUsers.size > 0 && (
+                  <div className="space-y-2">
+                    <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 space-y-2">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-xs font-semibold text-foreground">
+                          Seleccionados ({selectedUsers.size})
+                        </p>
+                        <button
+                          type="button"
+                          onClick={clearUserSelection}
+                          className="text-[11px] font-medium text-primary hover:underline"
+                        >
+                          Limpiar
+                        </button>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {Array.from(selectedUsers.values()).map((user) => (
+                          <button
+                            key={`sel-empty-${user.id}`}
+                            type="button"
+                            onClick={() => toggleUserSelection(user)}
+                            className="inline-flex items-center gap-1 rounded-full bg-background border border-border px-2 py-0.5 text-[11px] font-medium text-foreground"
+                          >
+                            <span className="max-w-[120px] truncate">
+                              {user.username ? `@${user.username.replace(/^@/, '')}` : `${user.name} ${user.lastName}`.trim()}
+                            </span>
+                            <X className="h-3 w-3 text-muted-foreground" />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => void addSelectedPlatformUsers()}
+                      disabled={submitting}
+                      className="w-full rounded-xl"
+                    >
+                      {submitting
+                        ? <Loader2 className="h-4 w-4 animate-spin" />
+                        : `Agregar seleccionados (${selectedUsers.size})`}
+                    </Button>
+                  </div>
                 )}
 
                 <div className="border-t border-border pt-3 space-y-2">
