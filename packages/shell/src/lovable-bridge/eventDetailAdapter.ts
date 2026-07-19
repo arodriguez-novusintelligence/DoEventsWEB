@@ -4,11 +4,17 @@ import {
 
   getPersonDisplayName,
 
+  resolveCategoryDisplayLabel,
+
   resolveDisplayEventStatus,
 
   resolveDisplayLocation,
 
   resolveImageUrl,
+
+  resolveUserAvatarUrl,
+
+  resolveVenueTypeDisplayLabel,
 
 } from '@doevents/shared';
 
@@ -26,8 +32,33 @@ export interface EventDetailViewOptions {
 
     images?: string[];
 
+    latitude?: number;
+
+    longitude?: number;
+
   };
 
+}
+
+function eventCoordinates(detail: EventDetailResponse, options?: EventDetailViewOptions): {
+  latitude?: number;
+  longitude?: number;
+} {
+  const fromVenueLat = options?.venue?.latitude;
+  const fromVenueLng = options?.venue?.longitude;
+  if (
+    typeof fromVenueLat === 'number' && Number.isFinite(fromVenueLat)
+    && typeof fromVenueLng === 'number' && Number.isFinite(fromVenueLng)
+  ) {
+    return { latitude: fromVenueLat, longitude: fromVenueLng };
+  }
+  const ev = detail.event;
+  const lat = ev.ubicacion?.latitude ?? ev.latitude;
+  const lng = ev.ubicacion?.longitude ?? ev.longitude;
+  if (typeof lat === 'number' && Number.isFinite(lat) && typeof lng === 'number' && Number.isFinite(lng)) {
+    return { latitude: lat, longitude: lng };
+  }
+  return {};
 }
 
 
@@ -62,15 +93,22 @@ function mapPerson(
 
   const name = getPersonDisplayName(person, fallbackName);
 
-  const avatar = resolveImageUrl(person?.fotoPerfilUrl) || '';
+  const avatar = resolveUserAvatarUrl(person?.fotoPerfilUrl, person?.id) || '';
+
+  const toFiniteNumber = (value: unknown): number => {
+    const number = Number(value);
+    return Number.isFinite(number) ? number : 0;
+  };
 
   return {
     name,
     avatar,
     initials: avatar ? undefined : initialsFromName(name),
-    rating: Math.min(5, Math.round(person?.calificacionPromedio || person?.calificacion || 0)),
-    eventsCount: person?.eventosRealizados || person?.totalEventos || 0,
-    experiencePct: Math.round(person?.experiencia || 0),
+    rating: Math.max(0, Math.min(5, Math.round(
+      toFiniteNumber(person?.calificacionPromedio ?? person?.calificacion),
+    ))),
+    eventsCount: Math.max(0, toFiniteNumber(person?.eventosRealizados ?? person?.totalEventos)),
+    experiencePct: Math.max(0, Math.min(100, Math.round(toFiniteNumber(person?.experiencia)))),
     userId: person?.id,
   };
 }
@@ -222,7 +260,7 @@ function normalizeVideoUrl(video?: string): string | undefined {
 
   if (/^https?:\/\//i.test(value)) return value;
 
-  if (/^(www\.)?youtube\.com|youtu\.be/i.test(value)) {
+  if (/^(www\.)?(youtube\.com|youtu\.be)|^youtu\.be/i.test(value)) {
 
     return value.startsWith('http') ? value : `https://${value}`;
 
@@ -230,6 +268,20 @@ function normalizeVideoUrl(video?: string): string | undefined {
 
   return value;
 
+}
+
+function mapEventTags(raw: unknown): string[] {
+  if (Array.isArray(raw)) {
+    return raw.map(String).map((tag) => tag.trim()).filter(Boolean);
+  }
+  if (typeof raw === 'string' && raw.trim()) {
+    return raw
+      .split(/[,#]/)
+      .map((tag) => tag.trim())
+      .filter(Boolean)
+      .map((tag) => (tag.startsWith('#') ? tag : `#${tag}`));
+  }
+  return [];
 }
 
 
@@ -256,10 +308,85 @@ function mapEventState(ev: EventDetailResponse['event']): InvitationEvent['state
 
 
 
+function formatEventClassLabel(clase?: string): string {
+  const value = (clase || '').trim();
+  if (!value) return '—';
+  const normalized = value.toLowerCase();
+  if (value === 'A' || normalized === 'public' || normalized === 'abierto') return 'Público';
+  if (value === 'P' || normalized === 'private' || normalized === 'privado') return 'Privado';
+  return value;
+}
+
+function formatVenueTypeLabel(detail: EventDetailResponse): string {
+  const fromApi = detail.placeType?.PlaceType_ES?.trim();
+  if (fromApi && fromApi.toLowerCase() !== 'otro') {
+    return resolveVenueTypeDisplayLabel(fromApi);
+  }
+  const raw = (detail.event.tipoLugar || '').trim();
+  if (!raw || raw.toLowerCase() === 'otro') return '—';
+  return resolveVenueTypeDisplayLabel(raw);
+}
+
 function ubicacionAsLabel(ubicacion: EventDetailResponse['event']['ubicacion']): string | undefined {
   if (!ubicacion) return undefined;
-  if (typeof ubicacion === 'string') return ubicacion;
+  if (typeof ubicacion === 'string') return ubicacion.trim() || undefined;
   return undefined;
+}
+
+
+
+export function buildMinimalInvitationEvent(detail: EventDetailResponse): InvitationEvent {
+  const ev = detail.event;
+  const images = (detail.images || []).filter(Boolean);
+  const mainImage = images[0] || '';
+  const coords = eventCoordinates(detail);
+  const address = resolveDisplayLocation({
+    direccion: ev.direccion,
+    ciudad: ev.ciudad,
+    departamento: ev.departamento,
+    pais: ev.pais,
+  });
+  return {
+    id: ev.id,
+    title: ev.nombre || 'Evento',
+    receivedAt: new Date().toISOString(),
+    inviter: '',
+    status: 'aceptada',
+    state: ev.estatus === 'activo' || ev.estatus === 'ejecucion' || ev.estatus === 'en_ejecucion'
+      ? 'activo'
+      : 'inactivo',
+    image: mainImage,
+    images: images.length ? images : (mainImage ? [mainImage] : []),
+    startDate: ev.fechaIni || '—',
+    endDate: ev.fechaFin || ev.fechaIni || '—',
+    startTime: ev.horaIni || '—',
+    endTime: ev.horaFin || '—',
+    category: detail.category?.preference_name_es
+      || detail.category?.Category_ES
+      || resolveCategoryDisplayLabel(ev.Categoria)
+      || '—',
+    eventClass: formatEventClassLabel(ev.clase),
+    capacity: Number(ev.aforo || ev.avaliableCapacity || 0),
+    venueType: formatVenueTypeLabel(detail),
+    description: ev.descripcion || '',
+    agenda: [],
+    venue: {
+      name: ev.ciudad || ev.direccion || 'Lugar del evento',
+      address: address !== '—' ? address : (ev.direccion || '—'),
+      images: [],
+      ...coords,
+    },
+    videoUrl: undefined,
+    organizer: {
+      ...mapPerson(detail.organizer, ev.organizerName || 'Organizador'),
+      userId: detail.organizer?.id || ev.userId,
+    },
+    host: {
+      ...mapPerson(detail.host, ev.anfitrioName || 'Anfitrión'),
+      userId: detail.host?.id,
+    },
+    refundPolicy: refundPolicyText(ev),
+  };
 }
 
 
@@ -286,94 +413,69 @@ export function eventDetailToInvitationEvent(
   const mainImage = images[0] || '';
 
   const ubicacionLabel = ubicacionAsLabel(ev.ubicacion);
+  const coords = eventCoordinates(detail, options);
 
-  const venueAddress = options?.venue?.address || resolveDisplayLocation({
-
+  const resolvedAddress = resolveDisplayLocation({
     direccion: ev.direccion,
-
     ciudad: ev.ciudad,
-
     departamento: ev.departamento,
-
     pais: ev.pais,
-
     ubicacion: ubicacionLabel,
-
     label: ubicacionLabel,
-
     locationLabel: ubicacionLabel,
-
+    address: options?.venue?.address,
   });
 
+  const venueAddress = (options?.venue?.address && options.venue.address.trim())
+    || (resolvedAddress !== '—' ? resolvedAddress : '')
+    || ev.direccion
+    || ubicacionLabel
+    || '—';
 
+  const venueName = (options?.venue?.name && options.venue.name.trim())
+    || ev.ciudad
+    || ev.direccion
+    || 'Lugar del evento';
 
   return {
-
     id: ev.id,
-
     title: ev.nombre,
-
     receivedAt: new Date().toISOString(),
-
     inviter: '',
-
     status: 'aceptada',
-
     image: mainImage,
-
     images: images.length ? images : (mainImage ? [mainImage] : []),
-
     state: mapEventState(ev),
-
     startDate: ev.fechaIni || '—',
-
     endDate: ev.fechaFin || ev.fechaIni || '—',
-
     startTime: ev.horaIni || '—',
-
     endTime: ev.horaFin || '—',
-
     category: detail.category?.preference_name_es
-
       || detail.category?.Category_ES
-
+      || resolveCategoryDisplayLabel(ev.Categoria)
       || '—',
-
-    eventClass: ev.clase || detail.eventType?.EventType_ES || '—',
-
+    eventClass: formatEventClassLabel(ev.clase),
     capacity: Number(ev.aforo || ev.avaliableCapacity || 0),
-
-    venueType: detail.placeType?.PlaceType_ES || ev.tipoLugar || '—',
-
+    venueType: formatVenueTypeLabel(detail),
     description: ev.descripcion || '',
-
     agenda: mapAgenda(detail) || [],
-
     venue: {
-
-      name: options?.venue?.name || ev.direccion || ev.ciudad || ev.nombre || 'Lugar del evento',
-
+      name: venueName,
       address: venueAddress,
-
       images: options?.venue?.images || [],
-
+      ...coords,
     },
-
     videoUrl: normalizeVideoUrl(ev.video),
-
+    tags: mapEventTags(ev.Hashtags),
     organizer: {
       ...mapPerson(detail.organizer, ev.organizerName || 'Organizador'),
       userId: detail.organizer?.id || ev.userId,
     },
-
     host: {
       ...mapPerson(detail.host, ev.anfitrioName || 'Anfitrión'),
       userId: detail.host?.id,
     },
-
     refundPolicy: refundPolicyText(ev),
-
   };
-
 }
 

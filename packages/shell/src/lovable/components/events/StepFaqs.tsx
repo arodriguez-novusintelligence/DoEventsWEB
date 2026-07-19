@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, X, HelpCircle } from 'lucide-react';
+import { Check, Pencil, Plus, X, HelpCircle } from 'lucide-react';
 import { EventFaq, EventFormData } from '@lovable/data/eventFormData';
 
 interface Props {
@@ -13,14 +13,21 @@ const StepFaqs = ({ formData, updateForm }: Props) => {
   const faqs = formData.faqs ?? [];
   const [draftQ, setDraftQ] = useState('');
   const [draftA, setDraftA] = useState('');
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editQ, setEditQ] = useState('');
+  const [editA, setEditA] = useState('');
 
-  const updateFaq = (id: string, patch: Partial<EventFaq>) =>
-    updateForm({ faqs: faqs.map((f) => (f.id === id ? { ...f, ...patch } : f)) });
-
-  const removeFaq = (id: string) =>
+  const removeFaq = (id: string) => {
+    if (editingId === id) {
+      setEditingId(null);
+      setEditQ('');
+      setEditA('');
+    }
     updateForm({ faqs: faqs.filter((f) => f.id !== id) });
+  };
 
   const canAdd = draftQ.trim() && draftA.trim();
+  const canSaveEdit = Boolean(editQ.trim() && editA.trim());
 
   const commitDraft = () => {
     if (!canAdd) return;
@@ -29,6 +36,30 @@ const StepFaqs = ({ formData, updateForm }: Props) => {
     });
     setDraftQ('');
     setDraftA('');
+  };
+
+  const startEdit = (faq: EventFaq) => {
+    setEditingId(faq.id);
+    setEditQ(faq.question);
+    setEditA(faq.answer);
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditQ('');
+    setEditA('');
+  };
+
+  const saveEdit = () => {
+    if (!editingId || !canSaveEdit) return;
+    updateForm({
+      faqs: faqs.map((f) => (
+        f.id === editingId
+          ? { ...f, question: editQ.trim(), answer: editA.trim() }
+          : f
+      )),
+    });
+    cancelEdit();
   };
 
   return (
@@ -86,29 +117,82 @@ const StepFaqs = ({ formData, updateForm }: Props) => {
         </div>
       </div>
 
-      {faqs.map((faq) => (
-        <div key={faq.id} className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
-          <label className="text-xs font-semibold text-foreground">Pregunta</label>
-          <input
-            value={faq.question}
-            onChange={(e) => updateFaq(faq.id, { question: e.target.value })}
-            className="mt-1 w-full border-0 border-b border-border bg-transparent py-2 text-sm text-foreground focus:border-primary focus:outline-none"
-          />
-          <label className="mt-3 block text-xs font-semibold text-foreground">Respuesta</label>
-          <input
-            value={faq.answer}
-            onChange={(e) => updateFaq(faq.id, { answer: e.target.value })}
-            className="mt-1 w-full border-0 border-b border-border bg-transparent py-2 text-sm text-foreground focus:border-primary focus:outline-none"
-          />
-          <button
-            type="button"
-            onClick={() => removeFaq(faq.id)}
-            className="mt-4 flex items-center gap-1.5 text-sm font-semibold text-destructive"
-          >
-            <X className="h-4 w-4" /> Eliminar pregunta
-          </button>
-        </div>
-      ))}
+      {faqs.map((faq) => {
+        const isEditing = editingId === faq.id;
+        return (
+          <div key={faq.id} className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
+            <label className="text-xs font-semibold text-foreground">Pregunta</label>
+            {isEditing ? (
+              <input
+                value={editQ}
+                onChange={(e) => setEditQ(e.target.value)}
+                placeholder="Ingresa una pregunta"
+                className="mt-1 w-full border-0 border-b border-primary bg-transparent py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                autoFocus
+              />
+            ) : (
+              <p className="mt-1 border-b border-border py-2 text-sm text-foreground">{faq.question}</p>
+            )}
+            <label className="mt-3 block text-xs font-semibold text-foreground">Respuesta</label>
+            {isEditing ? (
+              <input
+                value={editA}
+                onChange={(e) => setEditA(e.target.value)}
+                placeholder="Ingresa una respuesta"
+                className="mt-1 w-full border-0 border-b border-primary bg-transparent py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+              />
+            ) : (
+              <p className="mt-1 border-b border-border py-2 text-sm text-foreground">{faq.answer}</p>
+            )}
+
+            {isEditing ? (
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                <button
+                  type="button"
+                  onClick={() => removeFaq(faq.id)}
+                  className="flex items-center gap-1.5 text-sm font-semibold text-destructive"
+                >
+                  <X className="h-4 w-4" /> Eliminar pregunta
+                </button>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={cancelEdit}
+                    className="text-sm font-semibold text-muted-foreground hover:text-foreground"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!canSaveEdit}
+                    onClick={saveEdit}
+                    className="flex items-center gap-1.5 text-sm font-semibold text-primary disabled:opacity-40"
+                  >
+                    <Check className="h-4 w-4" /> Guardar cambios
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                <button
+                  type="button"
+                  onClick={() => removeFaq(faq.id)}
+                  className="flex items-center gap-1.5 text-sm font-semibold text-destructive"
+                >
+                  <X className="h-4 w-4" /> Eliminar pregunta
+                </button>
+                <button
+                  type="button"
+                  onClick={() => startEdit(faq)}
+                  className="flex items-center gap-1.5 text-sm font-semibold text-primary"
+                >
+                  <Pencil className="h-4 w-4" /> Editar pregunta
+                </button>
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 };

@@ -35,9 +35,14 @@ export function normalizePhoneNumber(value?: string): string {
 
 export function composeFullPhone(indicative?: string, number?: string): string {
   const ind = normalizePhoneIndicative(indicative).replace(/\D/g, '');
-  const num = normalizePhoneNumber(number);
+  let num = normalizePhoneNumber(number);
   if (!num) return '';
-  return `${ind}${num}`;
+  // Si el usuario pegó el E.164 completo en el número local, evitar doble indicativo.
+  if (ind && num.startsWith(ind) && num.length > ind.length + 3) {
+    num = num.slice(ind.length);
+  }
+  if (!num) return `+${ind}`;
+  return `+${ind}${num}`;
 }
 
 interface PhoneCountryFieldsProps {
@@ -97,28 +102,54 @@ export function PhoneCountryFields({
 }
 
 export function splitGuestPhone(phone?: string, indicative?: string, number?: string) {
-  if (indicative || number) {
+  const hasIndicative = Boolean(String(indicative || '').trim());
+  const hasNumber = number !== undefined && number !== null && String(number).trim() !== '';
+
+  if (hasIndicative && hasNumber) {
     return {
-      phoneIndicative: normalizePhoneIndicative(indicative || '+57'),
-      phoneNumber: normalizePhoneNumber(number || phone),
+      phoneIndicative: normalizePhoneIndicative(indicative),
+      phoneNumber: normalizePhoneNumber(number),
     };
   }
+
   const raw = String(phone || '').trim();
   if (!raw) {
-    return { phoneIndicative: '+57', phoneNumber: '' };
-  }
-  const match = PHONE_COUNTRIES
-    .slice()
-    .sort((a, b) => b.code.length - a.code.length)
-    .find((country) => raw.startsWith(country.code));
-  if (match) {
     return {
-      phoneIndicative: match.code,
-      phoneNumber: normalizePhoneNumber(raw.slice(match.code.length)),
+      phoneIndicative: normalizePhoneIndicative(indicative || '+57'),
+      phoneNumber: normalizePhoneNumber(number),
     };
   }
+
+  const digitsOnly = raw.replace(/\D/g, '');
+  const withPlus = raw.startsWith('+') ? `+${digitsOnly}` : `+${digitsOnly}`;
+  const sorted = PHONE_COUNTRIES
+    .slice()
+    .sort((a, b) => b.code.length - a.code.length);
+
+  const match = sorted.find((country) => {
+    const codeDigits = country.code.replace(/\D/g, '');
+    return withPlus.startsWith(country.code) || digitsOnly.startsWith(codeDigits);
+  });
+
+  if (match) {
+    const codeDigits = match.code.replace(/\D/g, '');
+    return {
+      phoneIndicative: match.code,
+      phoneNumber: digitsOnly.slice(codeDigits.length),
+    };
+  }
+
+  if (hasIndicative) {
+    const ind = normalizePhoneIndicative(indicative);
+    const indDigits = ind.replace(/\D/g, '');
+    const local = digitsOnly.startsWith(indDigits)
+      ? digitsOnly.slice(indDigits.length)
+      : digitsOnly;
+    return { phoneIndicative: ind, phoneNumber: local };
+  }
+
   return {
     phoneIndicative: '+57',
-    phoneNumber: normalizePhoneNumber(raw),
+    phoneNumber: digitsOnly,
   };
 }

@@ -16,6 +16,7 @@ import {
   resolveDisplayLocation,
   resolveImageUrl,
   RootState,
+  syncVenuePromoCodes,
   updateRentalVenue,
   updateVenueLayout,
   useToast,
@@ -25,10 +26,15 @@ import type { WizardFloor, WizardGate } from '@doevents/shared';
 import MyPlacesView from '@lovable/components/places/MyPlacesView';
 import type { PlaceFormData } from '@lovable/data/placeData';
 import { initialPlaceFormData } from '@lovable/data/placeData';
-import { finishPublishAndGoToFeed } from '../lovable-bridge/feedPublishBridge';
 import { confirmLeaveWithSave, isJsonDifferent } from '../lib/leaveConfirm';
 import { parseVenueAmenities } from '../lovable-bridge/venuesAdapter';
 import { placeFormToPublishInput } from '@lovable/components/places/placeFormHelpers';
+import {
+  normalizeCatalogSelections,
+  VENUE_ACCESSIBILITY_CATALOG,
+  VENUE_INCLUDED_SERVICE_CATALOG,
+  VENUE_SECURITY_CATALOG,
+} from '@lovable/data/venueCatalogOptions';
 
 function venueToForm(venue: Record<string, unknown>): PlaceFormData {
   const wizard = venueDetailToWizardState(venue as Parameters<typeof venueDetailToWizardState>[0]);
@@ -87,11 +93,16 @@ function venueToForm(venue: Record<string, unknown>): PlaceFormData {
       perMonth: meta.pricing?.perMonth || '',
       currency: meta.pricing?.currency || 'COP',
     },
+    rentalUnit: meta.rentalUnit || 'day',
+    datePrices: meta.datePrices || meta.availability?.datePrices || {},
+    promoCodes: meta.promoCodes || [],
     selectedDates: meta.availability?.selectedDates || [],
     blockedDates: meta.availability?.blockedDates || [],
     globalStartTime: meta.availability?.globalStartTime || '08:00',
     globalEndTime: meta.availability?.globalEndTime || '22:00',
-    bookingPreference: meta.bookingPreference || 'instant',
+    bookingPreference: (meta.bookingPreference === 'instant' || meta.bookingPreference === 'approval')
+      ? meta.bookingPreference
+      : 'approval',
     refundPolicy: meta.refundPolicy || '',
     directions: meta.directions || '',
     nearbyReferencesText: (meta.nearbyReferences || [])
@@ -100,8 +111,12 @@ function venueToForm(venue: Record<string, unknown>): PlaceFormData {
     neighborhood: meta.neighborhood || '',
     facilities: meta.facilities || [],
     allowedEventTypes: meta.allowedEventTypes || [],
-    accessibility: meta.accessibility || [],
-    security: meta.security || [],
+    includedServices: normalizeCatalogSelections(meta.includedServices, VENUE_INCLUDED_SERVICE_CATALOG),
+    accessibility: normalizeCatalogSelections(meta.accessibility, VENUE_ACCESSIBILITY_CATALOG),
+    security: normalizeCatalogSelections(meta.security, VENUE_SECURITY_CATALOG),
+    chargeType: meta.chargeType || 'Por día',
+    calendarWeekdays: meta.calendarWeekdays || [],
+    calendarMonths: meta.calendarMonths || [],
     hostRole: (meta.hostRole === 'dueno' || meta.hostRole === 'admin') ? meta.hostRole : '',
     addonServices: meta.addonServices || [],
     faqs: (meta.faqs || []).map((f, i) => ({
@@ -118,7 +133,46 @@ function seatingLayoutSnapshot(
   floors: WizardFloor[],
   gates: WizardGate[],
 ): string {
-  return JSON.stringify({ hasSeating, floors, gates });
+  const liteFloors = floors.map((floor) => ({
+    floorId: floor.floorId,
+    name: floor.name,
+    description: floor.description,
+    elements: floor.elements,
+    categories: floor.categories.map((cat) => {
+      const gridSize = (cat.rows ?? 0) * (cat.seatsPerRow ?? 0);
+      const disabledSeats = cat.seats
+        .filter((seat) => seat.status && seat.status !== 'available')
+        .map((seat) => seat.seatCode)
+        .sort();
+      return {
+        categoryId: cat.categoryId,
+        name: cat.name,
+        color: cat.color,
+        relX: cat.relX,
+        relY: cat.relY,
+        width: cat.width,
+        height: cat.height,
+        geometry: cat.geometry,
+        rotation: cat.rotation,
+        zIndex: cat.zIndex,
+        ringThickness: cat.ringThickness,
+        locked: cat.locked,
+        gateId: cat.gateId,
+        rows: cat.rows,
+        seatsPerRow: cat.seatsPerRow,
+        colOrder: cat.colOrder,
+        rowOrder: cat.rowOrder,
+        price: cat.price,
+        isPaid: cat.isPaid,
+        currency: cat.currency,
+        description: cat.description,
+        ...(gridSize > 256
+          ? { disabledSeats: cat.disabledSeats || disabledSeats }
+          : { seats: cat.seats }),
+      };
+    }),
+  }));
+  return JSON.stringify({ hasSeating, floors: liteFloors, gates });
 }
 
 function hasReliableSeatingLayout(floors: WizardFloor[]): boolean {
@@ -237,11 +291,14 @@ export const PlaceEditPage: React.FC = () => {
 
     await updateRentalVenue(venueId, { userId, ...updatePayload });
 
+    if (form.promoCodes?.length) {
+      await syncVenuePromoCodes(venueId, form.promoCodes);
+    }
+
     const layoutChanged = seatingLayoutSnapshot(form.hasSeating, form.floors, form.gates)
       !== seatingLayoutSnapshot(initialForm.hasSeating, initialForm.floors, initialForm.gates);
-    const canUpdateLayout = form.hasSeating
-      && layoutChanged
-      && hasReliableSeatingLayout(initialForm.floors);
+    const shouldSyncLayout = form.hasSeating && hasReliableSeatingLayout(form.floors);
+    const canUpdateLayout = shouldSyncLayout && (layoutChanged || !initialForm.hasSeating);
 
     if (canUpdateLayout) {
       await updateVenueLayout(venueId, {
@@ -254,11 +311,7 @@ export const PlaceEditPage: React.FC = () => {
 
     invalidateVenuesCache();
     showToast('Lugar actualizado', 'success');
-    invalidateVenuesCache();
-    await finishPublishAndGoToFeed(venueId, {
-      title: form.name.trim(),
-      onNavigate: (state) => navigate('/', { replace: true, state }),
-    });
+    navigate(`/places/${venueId}`, { replace: true });
   };
 
   const handleBack = (form?: PlaceFormData) => {

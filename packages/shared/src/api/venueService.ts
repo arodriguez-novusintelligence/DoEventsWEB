@@ -4,8 +4,12 @@ import { newWizardId } from '../lib/seatGridBuilder';
 import {
   buildNearbyVenuesCacheKey,
   cacheNearbyVenues,
+  cacheVenueDetail,
   getCachedNearbyVenues,
+  getCachedVenueDetail,
+  isVenueDetailCacheFresh,
 } from '../lib/venuesCache';
+import { revalidateOnce } from '../lib/wallCacheRevalidate';
 import type {
   EventWizardState,
   SavedVenueSummary,
@@ -42,6 +46,8 @@ export interface CreateVenueForEventInput {
   latitude?: number;
   longitude?: number;
   isTemplate?: boolean;
+  /** Tipo de lugar legible (se guarda en tags / type). */
+  placeType?: string;
   gates: WizardGate[];
   floors: WizardFloor[];
 }
@@ -66,6 +72,10 @@ export interface NearbyVenue {
   reviewCount?: number;
   likeCount?: number;
   status?: string;
+  isTemplate?: boolean;
+  isEventVenue?: boolean;
+  eventId?: string;
+  baseVenueId?: string;
 }
 
 export interface VenueCalification {
@@ -102,6 +112,16 @@ export interface PublishRentalPlaceInput {
     perMonth?: string;
     currency?: string;
   };
+  rentalUnit?: 'day' | 'month';
+  datePrices?: Record<string, { price?: string; blocked?: boolean }>;
+  promoCodes?: Array<{
+    id: string;
+    currency: string;
+    value: number;
+    quantity: number;
+    description: string;
+    codes: string[];
+  }>;
   videos?: string[];
   images?: Array<{ base64: string; fileName: string }>;
   imageUrls?: string[];
@@ -117,8 +137,12 @@ export interface PublishRentalPlaceInput {
   addonServices?: import('../data/venueAddonServices').VenueAddonService[];
   facilities?: Array<{ id: string; count: number }>;
   allowedEventTypes?: string[];
-  accessibility?: string[];
-  security?: string[];
+  accessibility?: Array<string | { id: string; label: string }>;
+  security?: Array<string | { id: string; label: string }>;
+  includedServices?: Array<string | { id: string; label: string }>;
+  chargeType?: string;
+  calendarWeekdays?: number[];
+  calendarMonths?: number[];
   hostRole?: string;
   faqs?: Array<{ id?: string; question: string; answer: string }>;
   neighborhood?: string;
@@ -132,11 +156,15 @@ function buildVenueAmenitiesJson(input: PublishRentalPlaceInput): string {
     parking: Boolean(input.parking),
     features: input.features || [],
     pricing: input.pricing || {},
+    rentalUnit: input.rentalUnit || 'day',
+    datePrices: input.datePrices || {},
+    promoCodes: input.promoCodes || [],
     videos: input.videos || [],
     listingType: 'rental',
     availability: {
       selectedDates: input.selectedDates || [],
       blockedDates: input.blockedDates || [],
+      datePrices: input.datePrices || {},
       globalStartTime: input.globalStartTime || '08:00',
       globalEndTime: input.globalEndTime || '22:00',
     },
@@ -147,8 +175,12 @@ function buildVenueAmenitiesJson(input: PublishRentalPlaceInput): string {
     addonServices: input.addonServices || [],
     facilities: input.facilities || [],
     allowedEventTypes: input.allowedEventTypes || [],
+    includedServices: input.includedServices || [],
     accessibility: input.accessibility || [],
     security: input.security || [],
+    chargeType: input.chargeType || 'Por día',
+    calendarWeekdays: input.calendarWeekdays || [],
+    calendarMonths: input.calendarMonths || [],
     hostRole: input.hostRole || '',
     faqs: input.faqs || [],
     neighborhood: input.neighborhood || '',
@@ -195,6 +227,9 @@ export interface VenueCategoryDetail {
   seatsPerRow?: number;
   colOrder?: 'asc' | 'desc';
   rowOrder?: 'asc' | 'desc';
+  labelDx?: number;
+  labelDy?: number;
+  labelRotation?: number;
   seats?: VenueSeatDetail[];
 }
 
@@ -208,6 +243,7 @@ export interface VenueElementDetail {
   height: number;
   rotation?: number;
   ringThickness?: number;
+  notes?: string;
 }
 
 export interface VenueFloorDetail {
@@ -244,20 +280,54 @@ export interface VenueDetail {
 }
 
 export function extractVenueImageUrls(venue: Record<string, unknown>): string[] {
+  const urls: string[] = [];
+  const push = (raw?: unknown) => {
+    const value = String(raw || '').trim();
+    if (value) urls.push(value);
+  };
+
   const rawImages = venue.images;
   if (Array.isArray(rawImages)) {
-    return rawImages.map(String).filter(Boolean);
+    rawImages.forEach((entry) => push(entry));
+  } else if (typeof rawImages === 'string' && rawImages.trim()) {
+    rawImages.split(',').forEach((url) => push(url));
   }
-  if (typeof rawImages === 'string' && rawImages.trim()) {
-    return rawImages.split(',').map((url) => url.trim()).filter(Boolean);
-  }
+
   if (Array.isArray(venue.imageUrls)) {
-    return venue.imageUrls.map(String).filter(Boolean);
+    venue.imageUrls.forEach((entry) => push(entry));
   }
-  if (venue.mainImage) {
-    return [String(venue.mainImage)];
+  push(venue.mainImage);
+
+  const amenitiesRaw = venue.amenities;
+  if (typeof amenitiesRaw === 'string' && amenitiesRaw.trim()) {
+    try {
+      const amenities = JSON.parse(amenitiesRaw) as { gallery?: unknown[] };
+      if (Array.isArray(amenities.gallery)) {
+        for (const entry of amenities.gallery) {
+          if (typeof entry === 'string') push(entry);
+          else if (entry && typeof entry === 'object') {
+            const item = entry as Record<string, unknown>;
+            push(item.url || item.imageUrl || item.publicUrl || item.signedUrl);
+          }
+        }
+      }
+    } catch {
+      // ignore malformed amenities JSON
+    }
+  } else if (amenitiesRaw && typeof amenitiesRaw === 'object') {
+    const gallery = (amenitiesRaw as { gallery?: unknown[] }).gallery;
+    if (Array.isArray(gallery)) {
+      for (const entry of gallery) {
+        if (typeof entry === 'string') push(entry);
+        else if (entry && typeof entry === 'object') {
+          const item = entry as Record<string, unknown>;
+          push(item.url || item.imageUrl || item.publicUrl || item.signedUrl);
+        }
+      }
+    }
   }
-  return [];
+
+  return [...new Set(urls)];
 }
 
 export function parseVenueDetail(body: Record<string, unknown>): VenueDetail {
@@ -324,6 +394,20 @@ function mapCategoryToPayload(
   hasSeating: boolean,
 ) {
   const gate = gates.find((g) => g.gateId === category.gateId);
+  const disabledSeats = hasSeating
+    ? [
+        ...new Set([
+          ...category.seats
+            .filter((seat) => seat.status && seat.status !== 'available')
+            .map((seat) => seat.seatCode),
+          ...(category.disabledSeats || []),
+        ]),
+      ]
+    : [];
+  const useGridPayload = hasSeating
+    && (category.rows ?? 0) > 0
+    && (category.seatsPerRow ?? 0) > 0;
+
   return {
     categoryId: category.categoryId,
     name: category.name,
@@ -334,6 +418,9 @@ function mapCategoryToPayload(
     height: category.height,
     geometry: category.geometry || 'RECTANGLE',
     rotation: category.rotation ?? 0,
+    labelDx: category.labelDx,
+    labelDy: category.labelDy,
+    labelRotation: category.labelRotation,
     zIndex: category.zIndex ?? 0,
     ringThickness: category.ringThickness ?? 55,
     rows: category.rows,
@@ -347,16 +434,18 @@ function mapCategoryToPayload(
     costo: category.isPaid,
     valor: category.price,
     moneda: category.currency,
+    disabledSeats: useGridPayload ? disabledSeats : undefined,
     seats: hasSeating
-      ? category.seats.map((seat: WizardSeat) => ({
-          seatId: seat.seatId,
-          rowLabel: seat.rowLabel,
-          colNumber: seat.colNumber,
-          seatCode: seat.seatCode,
-          seatType: seat.seatType,
-          status: seat.status,
-          isAccessible: seat.isAccessible,
-        }))
+      ? (useGridPayload
+          ? []
+          : category.seats.map((seat: WizardSeat) => ({
+              seatId: seat.seatId,
+              rowLabel: seat.rowLabel,
+              colNumber: seat.colNumber,
+              seatCode: seat.seatCode,
+              ...(seat.status !== 'available' ? { status: seat.status } : {}),
+              ...(seat.isAccessible ? { isAccessible: seat.isAccessible } : {}),
+            })))
       : [],
     ticketCategory: {
       categoria: category.name,
@@ -477,6 +566,45 @@ export async function publishRentalPlace(
   return { ...body, venueId, id: venueId, message: body.message as string | undefined };
 }
 
+/** Busca lugares publicados activos por nombre, ciudad, tipo o dirección. */
+export async function searchVenues(query: string, limit = 40): Promise<NearbyVenue[]> {
+  const term = query.trim().toLowerCase();
+  if (!term) return [];
+
+  let response: Response;
+  try {
+    const params = new URLSearchParams({
+      status: 'active',
+      limit: String(Math.min(Math.max(limit * 3, 50), 100)),
+    });
+    response = await fetch(`${venueItemBase()}?${params}`, { headers: authHeaders() });
+  } catch (err) {
+    throw new Error(toUserFacingError(err, 'la búsqueda de lugares'));
+  }
+
+  const body = await response.json().catch(() => ({})) as {
+    venues?: Array<Record<string, unknown>>;
+    message?: string;
+    error?: string;
+  };
+  if (!response.ok) {
+    throw new Error(body.message || body.error || 'No se pudieron buscar lugares');
+  }
+
+  return mapVenueRecords(body.venues || [])
+    .filter((venue) => {
+      const haystack = [
+        venue.name,
+        venue.city,
+        venue.address,
+        venue.type,
+        venue.tags,
+      ].filter(Boolean).join(' ').toLowerCase();
+      return haystack.includes(term);
+    })
+    .slice(0, limit);
+}
+
 export async function fetchNearbyVenues(
   lat: number,
   lng: number,
@@ -494,7 +622,6 @@ export async function fetchNearbyVenues(
     longitude: String(lng),
     maxDistance: String(maxKm),
     limit: String(limit),
-    isTemplate: 'true',
     status: 'active',
   });
   const response = await fetch(`${venueItemBase()}?${params}`, { headers: authHeaders() });
@@ -507,40 +634,81 @@ export async function fetchNearbyVenues(
     throw new Error(body.message || body.error || 'No se pudieron cargar lugares cercanos');
   }
   const venues = mapVenueRecords(body.venues || []);
-  cacheNearbyVenues(cacheKey, venues);
-  return venues;
+  const { filterByOwnerPrivacy } = await import('../lib/privacyVisibility');
+  const { getStoredUserId } = await import('./authService');
+  const visible = await filterByOwnerPrivacy(
+    venues,
+    (v) => v.ownerUserId,
+    getStoredUserId(),
+  );
+  cacheNearbyVenues(cacheKey, visible);
+  return visible;
 }
 
 function mapVenueRecords(records: Array<Record<string, unknown>>): NearbyVenue[] {
-  return records.map((v) => ({
-    venueId: String(v.venue_id || v.venueId || ''),
-    name: String(v.name || 'Lugar'),
-    type: String(v.type || v.tags || ''),
-    capacity: Number(v.capacity || 0),
-    city: v.city ? String(v.city) : undefined,
-    address: v.address ? String(v.address) : undefined,
-    latitude: v.latitude != null ? Number(v.latitude) : undefined,
-    longitude: v.longitude != null ? Number(v.longitude) : undefined,
-    mainImage: v.mainImage ? String(v.mainImage) : null,
-    imageUrls: Array.isArray(v.imageUrls) ? v.imageUrls.map(String) : undefined,
-    distance: v.distance != null ? Number(v.distance) : null,
-    hasSeating: Boolean(v.hasSeating),
-    ownerUserId: v.ownerUserId ? String(v.ownerUserId) : undefined,
-    amenities: v.amenities ? String(v.amenities) : undefined,
-    tags: v.tags ? String(v.tags) : undefined,
-    rating: v.rating != null ? Number(v.rating) : undefined,
-    reviewCount: v.reviewCount != null ? Number(v.reviewCount) : undefined,
-    likeCount: v.likeCount != null ? Number(v.likeCount) : undefined,
-    status: v.status ? String(v.status) : undefined,
-  })).filter((v) => v.venueId);
+  return records.map((v) => {
+    const parsedImages = extractVenueImageUrls(v);
+    const imageUrls = Array.isArray(v.imageUrls)
+      ? v.imageUrls.map(String).filter(Boolean)
+      : parsedImages;
+    const mainImage = v.mainImage
+      ? String(v.mainImage)
+      : imageUrls[0] || null;
+    return {
+      venueId: String(v.venue_id || v.venueId || ''),
+      name: String(v.name || 'Lugar'),
+      type: String(v.type || v.tags || ''),
+      capacity: Number(v.capacity || 0),
+      city: v.city ? String(v.city) : undefined,
+      address: v.address ? String(v.address) : undefined,
+      latitude: v.latitude != null ? Number(v.latitude) : undefined,
+      longitude: v.longitude != null ? Number(v.longitude) : undefined,
+      mainImage,
+      imageUrls: imageUrls.length ? imageUrls : undefined,
+      distance: v.distance != null ? Number(v.distance) : null,
+      hasSeating: Boolean(v.hasSeating),
+      ownerUserId: v.ownerUserId ? String(v.ownerUserId) : undefined,
+      amenities: v.amenities ? String(v.amenities) : undefined,
+      tags: v.tags ? String(v.tags) : undefined,
+      rating: v.rating != null ? Number(v.rating) : undefined,
+      reviewCount: v.reviewCount != null ? Number(v.reviewCount) : undefined,
+      likeCount: v.likeCount != null ? Number(v.likeCount) : undefined,
+      status: v.status ? String(v.status) : undefined,
+      isTemplate: v.isTemplate === true || v.is_template === true
+        ? true
+        : (v.isTemplate === false || v.is_template === false ? false : undefined),
+      isEventVenue: Boolean(v.isEventVenue ?? v.is_event_venue),
+      eventId: v.eventId ? String(v.eventId) : v.event_id ? String(v.event_id) : undefined,
+      baseVenueId: v.baseVenueId ? String(v.baseVenueId) : v.base_venue_id ? String(v.base_venue_id) : undefined,
+    };
+  }).filter((v) => v.venueId);
 }
 
-export async function fetchOwnerProfileVenues(ownerUserId: string): Promise<NearbyVenue[]> {
-  const params = new URLSearchParams({
-    ownerUserId,
-    limit: '50',
-    isTemplate: 'true',
-  });
+/** Lugares publicados por el usuario (excluye clones ligados a un evento). */
+export function isOwnerRentalVenueRecord(venue: {
+  isEventVenue?: boolean;
+  eventId?: string;
+  baseVenueId?: string;
+  isTemplate?: boolean;
+  status?: string;
+}): boolean {
+  if (venue.isEventVenue || venue.eventId) return false;
+  if (venue.baseVenueId) return false;
+  const status = String(venue.status || '').trim().toLowerCase();
+  if (status === 'deleted' || status === 'archived') return false;
+  if (venue.isTemplate === true) return false;
+  return true;
+}
+
+export function filterOwnerProfileVenues(venues: NearbyVenue[]): NearbyVenue[] {
+  return venues.filter(isOwnerRentalVenueRecord);
+}
+
+async function requestOwnerVenues(
+  ownerUserId: string,
+  query: Record<string, string>,
+): Promise<NearbyVenue[]> {
+  const params = new URLSearchParams({ ownerUserId, limit: '100', ...query });
   const response = await fetch(`${venueItemBase()}?${params}`, { headers: authHeaders() });
   const body = await response.json().catch(() => ({})) as {
     venues?: Array<Record<string, unknown>>;
@@ -553,11 +721,15 @@ export async function fetchOwnerProfileVenues(ownerUserId: string): Promise<Near
   return mapVenueRecords(body.venues || []);
 }
 
+export async function fetchOwnerProfileVenues(ownerUserId: string): Promise<NearbyVenue[]> {
+  const ownedVenues = await requestOwnerVenues(ownerUserId, {});
+  return filterOwnerProfileVenues(ownedVenues);
+}
+
 export async function fetchOwnerRentalVenues(ownerUserId: string): Promise<NearbyVenue[]> {
   const params = new URLSearchParams({
     ownerUserId,
     limit: '50',
-    isTemplate: 'true',
     status: 'active',
   });
   const response = await fetch(`${venueItemBase()}?${params}`, { headers: authHeaders() });
@@ -572,9 +744,72 @@ export async function fetchOwnerRentalVenues(ownerUserId: string): Promise<Nearb
   return mapVenueRecords(body.venues || []);
 }
 
+function mergeVenueImageFields(base: NearbyVenue, incoming: NearbyVenue): NearbyVenue {
+  const mergedUrls = [
+    ...extractVenueImageUrls(base as unknown as Record<string, unknown>),
+    ...extractVenueImageUrls(incoming as unknown as Record<string, unknown>),
+  ];
+  const imageUrls = [...new Set(mergedUrls)];
+  const mainImage = base.mainImage || incoming.mainImage || imageUrls[0] || null;
+  return {
+    ...base,
+    ...incoming,
+    mainImage,
+    imageUrls: imageUrls.length ? imageUrls : undefined,
+  };
+}
+
 export function mergeVenuesById(primary: NearbyVenue[], extra: NearbyVenue[]): NearbyVenue[] {
-  const seen = new Set(primary.map((v) => v.venueId));
-  return [...primary, ...extra.filter((v) => v.venueId && !seen.has(v.venueId))];
+  const order: string[] = [];
+  const byId = new Map<string, NearbyVenue>();
+
+  const upsert = (venue: NearbyVenue) => {
+    if (!venue.venueId) return;
+    const existing = byId.get(venue.venueId);
+    if (!existing) {
+      order.push(venue.venueId);
+      byId.set(venue.venueId, venue);
+      return;
+    }
+    byId.set(venue.venueId, mergeVenueImageFields(existing, venue));
+  };
+
+  primary.forEach(upsert);
+  extra.forEach(upsert);
+  return order.map((id) => byId.get(id)!);
+}
+
+export async function hydrateMissingVenueImages(venues: NearbyVenue[]): Promise<NearbyVenue[]> {
+  const missing = venues.filter(
+    (venue) => !extractVenueImageUrls(venue as unknown as Record<string, unknown>).length,
+  );
+  if (!missing.length) return venues;
+
+  const hydrated = new Map<string, { mainImage: string; imageUrls: string[] }>();
+  await Promise.all(missing.map(async (venue) => {
+    try {
+      const detail = await getVenueById(venue.venueId);
+      const urls = extractVenueImageUrls(detail as unknown as Record<string, unknown>);
+      if (!urls.length) return;
+      hydrated.set(venue.venueId, {
+        mainImage: urls[0],
+        imageUrls: urls,
+      });
+    } catch {
+      // ignore per-venue fetch errors
+    }
+  }));
+
+  if (!hydrated.size) return venues;
+  return venues.map((venue) => {
+    const patch = hydrated.get(venue.venueId);
+    if (!patch) return venue;
+    return {
+      ...venue,
+      mainImage: patch.mainImage,
+      imageUrls: patch.imageUrls,
+    };
+  });
 }
 
 export async function createVenueForEvent(
@@ -598,7 +833,8 @@ export async function createVenueForEvent(
     latitude: input.latitude ?? null,
     longitude: input.longitude ?? null,
     isTemplate: Boolean(input.isTemplate),
-    type: 'stadium',
+    type: input.placeType || 'venue',
+    tags: input.placeType || '',
     status: 'draft',
     gates: input.gates.map((gate) => ({
       gateId: gate.gateId,
@@ -756,6 +992,7 @@ export async function updateVenueLayout(
   venueId: string,
   input: {
     userId: string;
+    eventId?: string;
     hasSeating?: boolean;
     floors: WizardFloor[];
     gates?: WizardGate[];
@@ -763,24 +1000,47 @@ export async function updateVenueLayout(
 ): Promise<void> {
   try {
     const hasSeating = input.hasSeating ?? true;
-    const response = await fetch(`${venueItemBase()}/${encodeURIComponent(venueId)}`, {
-      method: 'PUT',
-      headers: authHeaders(),
-      body: JSON.stringify({
-        userId: input.userId,
-        updatedBy: input.userId,
-        hasSeating,
-        floors: buildVenueFloorsPayload(input.floors, input.gates || [], hasSeating),
-        gates: (input.gates || []).map((gate) => ({
-          gateId: gate.gateId,
-          gateNumber: gate.gateNumber,
-          name: gate.name,
-          description: gate.description,
-        })),
-      }),
-    });
+    const controller = typeof AbortController !== 'undefined' ? new AbortController() : undefined;
+    const timeoutId = controller
+      ? window.setTimeout(() => controller.abort(), 120_000)
+      : undefined;
+    let response: Response;
+    try {
+      response = await fetch(`${venueItemBase()}/${encodeURIComponent(venueId)}`, {
+        method: 'PUT',
+        headers: authHeaders(),
+        body: JSON.stringify({
+          userId: input.userId,
+          updatedBy: input.userId,
+          ...(input.eventId ? { eventId: input.eventId } : {}),
+          hasSeating,
+          floors: buildVenueFloorsPayload(input.floors, input.gates || [], hasSeating),
+          gates: (input.gates || []).map((gate) => ({
+            gateId: gate.gateId,
+            gateNumber: gate.gateNumber,
+            name: gate.name,
+            description: gate.description,
+          })),
+        }),
+        signal: controller?.signal,
+      });
+    } catch (err) {
+      const isTimeout = err instanceof DOMException && (err.name === 'TimeoutError' || err.name === 'AbortError');
+      throw new Error(
+        isTimeout
+          ? 'Guardar el mapa de silletería tardó demasiado. Intenta de nuevo en unos segundos.'
+          : toUserFacingError(err, 'la actualización del mapa de silletería'),
+      );
+    } finally {
+      if (timeoutId) window.clearTimeout(timeoutId);
+    }
     const body = await response.json().catch(() => ({})) as { error?: string; message?: string };
     if (!response.ok) {
+      if (response.status === 504 || response.status === 502) {
+        throw new Error(
+          'Guardar el mapa de silletería tardó demasiado. Intenta de nuevo en unos segundos.',
+        );
+      }
       throw new Error(body.error || body.message || 'No se pudo actualizar el mapa de silletería');
     }
   } catch (err) {
@@ -834,19 +1094,47 @@ export async function deleteVenue(venueId: string, ownerUserId: string): Promise
   }
 }
 
-export async function getVenueById(venueId: string): Promise<VenueDetail> {
-  try {
-    const response = await fetch(`${venueItemBase()}/${encodeURIComponent(venueId)}`, {
-      headers: authHeaders(),
-    });
-    const body = await response.json().catch(() => ({})) as Record<string, unknown> & { message?: string; error?: string };
-    if (!response.ok) {
-      throw new Error(body.message || body.error || 'No se pudo cargar el lugar');
+export async function getVenueById(
+  venueId: string,
+  options?: { forceNetwork?: boolean },
+): Promise<VenueDetail> {
+  if (!options?.forceNetwork) {
+    const cached = getCachedVenueDetail(venueId, true);
+    if (cached) {
+      if (!isVenueDetailCacheFresh(venueId)) {
+        void revalidateOnce(`venue-detail:${venueId}`, async () => {
+          try {
+            const fresh = await requestVenueById(venueId);
+            cacheVenueDetail(venueId, fresh as unknown as Record<string, unknown>);
+          } catch {
+            // background refresh must not break UI
+          }
+        });
+      }
+      return cached as unknown as VenueDetail;
     }
-    return parseVenueDetail(body);
+  }
+
+  try {
+    const detail = await requestVenueById(venueId);
+    cacheVenueDetail(venueId, detail as unknown as Record<string, unknown>);
+    return detail;
   } catch (err) {
+    const stale = getCachedVenueDetail(venueId, true);
+    if (stale) return stale as unknown as VenueDetail;
     throw new Error(toUserFacingError(err, 'la carga del lugar'));
   }
+}
+
+async function requestVenueById(venueId: string): Promise<VenueDetail> {
+  const response = await fetch(`${venueItemBase()}/${encodeURIComponent(venueId)}`, {
+    headers: authHeaders(),
+  });
+  const body = await response.json().catch(() => ({})) as Record<string, unknown> & { message?: string; error?: string };
+  if (!response.ok) {
+    throw new Error(body.message || body.error || 'No se pudo cargar el lugar');
+  }
+  return parseVenueDetail(body);
 }
 
 export async function listUserVenues(
@@ -873,12 +1161,21 @@ export async function listUserVenues(
   if (!response.ok) {
     throw new Error(body.message || body.error || 'No se pudieron cargar los lugares guardados');
   }
-  return (body.venues || []).map((v) => ({
-    venueId: v.venue_id || v.venueId || '',
+  const rawVenues = body.venues || [];
+  const templateById = new Map(
+    rawVenues.map((v) => [String(v.venue_id || v.venueId || ''), Boolean(v.isTemplate)]),
+  );
+  let mapped = mapVenueRecords(rawVenues as Array<Record<string, unknown>>);
+  mapped = await hydrateMissingVenueImages(mapped);
+  return mapped.map((v) => ({
+    venueId: v.venueId,
     name: v.name || 'Lugar sin nombre',
-    capacity: v.capacity,
+    capacity: v.capacity || undefined,
     city: v.city,
-    isTemplate: v.isTemplate,
+    address: v.address,
+    isTemplate: templateById.get(v.venueId),
+    mainImage: v.mainImage || v.imageUrls?.[0] || undefined,
+    imageUrls: v.imageUrls,
   })).filter((v) => v.venueId);
 }
 
@@ -906,6 +1203,31 @@ export async function cloneVenueForEvent(input: {
   return { venueId, ...body };
 }
 
+export async function ensureEventTicketDistributions(eventId: string): Promise<{
+  created?: number;
+  alreadyExisted?: boolean;
+  distributions?: number;
+}> {
+  const response = await fetch(
+    `${venueItemBase()}/events/${encodeURIComponent(eventId)}/ensure-distributions`,
+    {
+      method: 'POST',
+      headers: authHeaders(),
+    },
+  );
+  const body = await response.json().catch(() => ({})) as {
+    created?: number;
+    alreadyExisted?: boolean;
+    distributions?: number;
+    message?: string;
+    error?: string;
+  };
+  if (!response.ok) {
+    throw new Error(body.message || body.error || 'No se pudieron generar las distribuciones de boletas');
+  }
+  return body;
+}
+
 function mapApiSeatToWizard(seat: Record<string, unknown>, idx: number): WizardSeat {
   return {
     seatId: String(seat.seatId || seat.seat_id || newWizardId()),
@@ -917,6 +1239,8 @@ function mapApiSeatToWizard(seat: Record<string, unknown>, idx: number): WizardS
     isAccessible: Boolean(seat.isAccessible || seat.is_accessible),
   };
 }
+
+const LARGE_SEATING_GRID = 256;
 
 export function venueDetailToWizardState(venue: VenueDetail & Record<string, unknown>): {
   floors: WizardFloor[];
@@ -950,31 +1274,47 @@ export function venueDetailToWizardState(venue: VenueDetail & Record<string, unk
         notes: String(rawEl.notes || ''),
       };
     }),
-    categories: (floor.categories || []).map((cat, idx) => ({
-      categoryId: cat.categoryId || newWizardId(),
-      name: cat.name || `Categoría ${idx + 1}`,
-      color: cat.color || '#7C3AED',
-      relX: cat.relX ?? 10,
-      relY: cat.relY ?? 20,
-      width: cat.width ?? 30,
-      height: cat.height ?? 20,
-      geometry: (cat.geometry || 'RECTANGLE') as FloorPlanGeometry,
-      rotation: cat.rotation ?? 0,
-      zIndex: idx + 1,
-      ringThickness: cat.ringThickness ?? 55,
-      locked: false,
-      gateId: '',
-      rows: cat.rows || 4,
-      seatsPerRow: cat.seatsPerRow || 5,
-      seats: (cat.seats || []).map((s, i) => mapApiSeatToWizard(s as Record<string, unknown>, i)),
-      price: Number((cat as unknown as Record<string, unknown>).valor || 50000),
-      isPaid: Boolean((cat as unknown as Record<string, unknown>).costo ?? true),
-      currency: String((cat as unknown as Record<string, unknown>).moneda || 'COP'),
-      description: '',
-      colOrder: 'asc' as const,
-      rowOrder: 'asc' as const,
-      disableSeatsEnabled: false,
-    })),
+    categories: (floor.categories || []).map((cat, idx) => {
+      const rawCat = cat as unknown as Record<string, unknown>;
+      const rows = Number(cat.rows || 0);
+      const seatsPerRow = Number(cat.seatsPerRow || 0);
+      const gridSize = rows * seatsPerRow;
+      const apiSeats = cat.seats || [];
+      const useGridOnly = gridSize > LARGE_SEATING_GRID;
+      return {
+        categoryId: cat.categoryId || newWizardId(),
+        name: cat.name || `Categoría ${idx + 1}`,
+        color: cat.color || '#7C3AED',
+        relX: cat.relX ?? 10,
+        relY: cat.relY ?? 20,
+        width: cat.width ?? 30,
+        height: cat.height ?? 20,
+        geometry: (cat.geometry || 'RECTANGLE') as FloorPlanGeometry,
+        rotation: cat.rotation ?? 0,
+        labelDx: typeof rawCat.labelDx === 'number' ? rawCat.labelDx : undefined,
+        labelDy: typeof rawCat.labelDy === 'number' ? rawCat.labelDy : undefined,
+        labelRotation: typeof rawCat.labelRotation === 'number' ? rawCat.labelRotation : undefined,
+        zIndex: idx + 1,
+        ringThickness: cat.ringThickness ?? 55,
+        locked: false,
+        gateId: String(rawCat.gateId || rawCat.gate_id || ''),
+        rows: rows || 4,
+        seatsPerRow: seatsPerRow || 5,
+        seats: useGridOnly
+          ? []
+          : apiSeats.map((s, i) => mapApiSeatToWizard(s as Record<string, unknown>, i)),
+        price: Number(rawCat.valor ?? rawCat.ticketPrice ?? 0) || 0,
+        isPaid: Boolean(rawCat.costo ?? rawCat.hasPrice ?? false),
+        currency: String(rawCat.moneda || 'COP'),
+        description: String(rawCat.description || ''),
+        colOrder: (rawCat.colOrder as 'asc' | 'desc') || 'asc',
+        rowOrder: (rawCat.rowOrder as 'asc' | 'desc') || 'asc',
+        disableSeatsEnabled: Boolean(rawCat.disableSeatsEnabled || (rawCat.disabledSeats as string[] | undefined)?.length),
+        disabledSeats: Array.isArray(rawCat.disabledSeats)
+          ? (rawCat.disabledSeats as string[])
+          : [],
+      };
+    }),
   }));
 
   const gates = ((raw.gates as WizardGate[]) || []).map((g, i) => ({

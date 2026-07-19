@@ -1,6 +1,6 @@
 import type { EventGuest, FavoriteContact, GuestGroup as ApiGuestGroup } from '@doevents/shared';
 import type { SearchUserResult } from '@doevents/shared';
-import { resolveImageUrl } from '@doevents/shared';
+import { resolveUserAvatarUrl } from '@doevents/shared';
 import type { Guest, GuestGroup } from '@lovable/types/guest';
 
 const GROUP_COLORS = [
@@ -45,9 +45,9 @@ export function contactToGuest(contact: FavoriteContact & { userId?: string }): 
     phone,
     phoneIndicative: phoneIndicative || undefined,
     phoneNumber: phoneNumber || undefined,
-    avatar: resolveImageUrl(contact.profileImageUrl) || undefined,
+    avatar: resolveUserAvatarUrl(contact.profileImageUrl, platformUserId) || undefined,
     isFavorite: Boolean(contact.isFavorite),
-    groupId: contact.groupIds?.[0],
+    groupId: contact.isFavorite ? undefined : contact.groupIds?.[0],
     originType: contact.originType,
     createdAt: new Date(),
   };
@@ -85,7 +85,7 @@ export function searchUserToGuest(user: SearchUserResult): Guest {
     lastName,
     username: user.username || user.user,
     email: user.email,
-    avatar: resolveImageUrl(user.imagen || user.fotoPerfilUrl) || undefined,
+    avatar: resolveUserAvatarUrl(user.imagen || user.fotoPerfilUrl, platformId) || undefined,
     isFavorite: false,
     originType: platformId ? 'REGISTERED' : undefined,
     createdAt: new Date(),
@@ -171,10 +171,30 @@ export function resolveAmigosGroupId(groups: GuestGroup[]): string | undefined {
 
 export function resolveGuestGroupId(
   explicitGroupId: string | undefined,
-  groups: GuestGroup[],
+  _groups: GuestGroup[],
 ): string | undefined {
-  if (explicitGroupId) return explicitGroupId;
-  return resolveAmigosGroupId(groups);
+  return explicitGroupId || undefined;
+}
+
+/** Favoritos y grupos son categorías excluyentes. */
+export function normalizeGuestCategory(input: {
+  isFavorite?: boolean;
+  groupId?: string | null;
+}): { isFavorite: boolean; groupId: string | undefined } {
+  if (input.isFavorite) {
+    return { isFavorite: true, groupId: undefined };
+  }
+  const groupId = input.groupId || undefined;
+  if (groupId) {
+    return { isFavorite: false, groupId };
+  }
+  return { isFavorite: false, groupId: undefined };
+}
+
+export function guestCategorySelectValue(guest: Guest): string {
+  if (guest.isFavorite) return 'favorite';
+  if (guest.groupId) return guest.groupId;
+  return 'none';
 }
 
 export function resolveGuestFavoriteId(guest: Guest): string {
@@ -221,7 +241,7 @@ function pickSingleGroupIds(
   const inc = (incoming || []).filter(Boolean);
   const ext = (existing || []).filter(Boolean);
   if (preferIncoming && inc.length) return [inc[0]];
-  if (ext.length && !inc.length) return [ext[0]];
+  if (ext.length) return [ext[0]];
   if (inc.length) return [inc[0]];
   return [];
 }
@@ -328,7 +348,13 @@ export function guestProbeFromCreateRequest(data: {
 }
 
 function mergeGuestRecords(a: Guest, b: Guest): Guest {
-  const merged = {
+  const groupId = a.groupId || b.groupId;
+  // Grupos y favoritos son excluyentes: si hay grupo, no puede quedar como favorito.
+  const category = normalizeGuestCategory({
+    isFavorite: groupId ? false : Boolean(a.isFavorite || b.isFavorite),
+    groupId,
+  });
+  return {
     ...a,
     ...b,
     id: a.favoriteId || b.favoriteId || a.invitedUserId || b.invitedUserId || a.id || b.id,
@@ -342,11 +368,10 @@ function mergeGuestRecords(a: Guest, b: Guest): Guest {
     phoneIndicative: a.phoneIndicative || b.phoneIndicative,
     phoneNumber: a.phoneNumber || b.phoneNumber,
     avatar: a.avatar || b.avatar,
-    isFavorite: a.isFavorite || b.isFavorite,
-    groupId: a.groupId || b.groupId,
+    isFavorite: category.isFavorite,
+    groupId: category.groupId,
     originType: a.originType || b.originType,
   };
-  return merged;
 }
 
 function mergeContactRecords(
@@ -354,6 +379,16 @@ function mergeContactRecords(
   incoming: FavoriteContact & { userId?: string },
 ): FavoriteContact & { userId?: string } {
   const preferIncomingGroup = Boolean(incoming.groupIds?.filter(Boolean).length);
+  const mergedGroupId = pickSingleGroupIds(
+    existing.groupIds,
+    incoming.groupIds,
+    preferIncomingGroup,
+  )[0];
+  // Si hay grupo, el grupo gana sobre un isFavorite residual de un duplicado.
+  const category = normalizeGuestCategory({
+    isFavorite: mergedGroupId ? false : Boolean(existing.isFavorite || incoming.isFavorite),
+    groupId: mergedGroupId,
+  });
   return {
     ...existing,
     ...incoming,
@@ -368,8 +403,8 @@ function mergeContactRecords(
     phoneIndicative: existing.phoneIndicative || incoming.phoneIndicative,
     phoneNumber: existing.phoneNumber || incoming.phoneNumber,
     profileImageUrl: existing.profileImageUrl || incoming.profileImageUrl,
-    isFavorite: Boolean(existing.isFavorite || incoming.isFavorite),
-    groupIds: pickSingleGroupIds(existing.groupIds, incoming.groupIds, preferIncomingGroup),
+    isFavorite: category.isFavorite,
+    groupIds: category.groupId ? [category.groupId] : [],
     originType: existing.originType || incoming.originType,
   };
 }

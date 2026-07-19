@@ -4,6 +4,11 @@ import { Button } from '@lovable/components/ui/button';
 import { Input } from '@lovable/components/ui/input';
 import { cn } from '@lovable/lib/utils';
 
+interface DatePriceOverride {
+  price?: string;
+  blocked?: boolean;
+}
+
 interface CalendarPlannerProps {
   selectedDates: string[];
   onDatesChange: (dates: string[]) => void;
@@ -16,6 +21,11 @@ interface CalendarPlannerProps {
   priceLabel?: string;
   basePriceCost?: string;
   basePriceCurrency?: string;
+  datePrices?: Record<string, DatePriceOverride>;
+  onDatePricesChange?: (next: Record<string, DatePriceOverride>) => void;
+  allowCustomDayPricing?: boolean;
+  /** Muestra precio base en cada día del mes (modo publicación de lugares). */
+  showAllDaysWithBasePrice?: boolean;
 }
 
 // selectedDates is used only for UI multi-selection before blocking.
@@ -49,13 +59,18 @@ const CalendarPlanner = ({
   onEndTimeChange,
   basePriceCost = '',
   basePriceCurrency = '$',
+  datePrices = {},
+  onDatePricesChange,
+  allowCustomDayPricing = false,
+  showAllDaysWithBasePrice = false,
 }: CalendarPlannerProps) => {
   const today = new Date();
   const [viewYear, setViewYear] = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth());
   const [multiSelect, setMultiSelect] = useState(false);
   const [showEditPanel, setShowEditPanel] = useState(false);
-  const [editStatus, setEditStatus] = useState<'available' | 'blocked'>('available');
+  const [editAction, setEditAction] = useState<'block' | 'price'>('price');
+  const [customPriceInput, setCustomPriceInput] = useState('');
 
   const selectedSet = useMemo(() => new Set(selectedDates), [selectedDates]);
   const blockedSet = useMemo(() => new Set(blockedDates), [blockedDates]);
@@ -64,6 +79,37 @@ const CalendarPlanner = ({
   const firstDayOfWeek = new Date(viewYear, viewMonth, 1).getDay();
 
   const priceDisplay = formatPrice(basePriceCost);
+
+  const resolveDayPrice = (dateStr: string) => {
+    const override = datePrices[dateStr]?.price;
+    if (override?.trim()) return formatPrice(override);
+    return priceDisplay;
+  };
+
+  const selectedMonthDates = selectedDates.filter((d) => {
+    const [y, m] = d.split('-').map(Number);
+    return y === viewYear && m === viewMonth + 1;
+  });
+
+  const applyEditToSelection = () => {
+    const monthDates = selectedMonthDates;
+    if (!monthDates.length) return;
+
+    if (editAction === 'block') {
+      const newBlocked = [...blockedDates, ...monthDates.filter((d) => !blockedDates.includes(d))];
+      onBlockedDatesChange(newBlocked);
+    } else if (allowCustomDayPricing && onDatePricesChange && customPriceInput.trim()) {
+      const next = { ...datePrices };
+      monthDates.forEach((d) => {
+        next[d] = { ...(next[d] || {}), price: customPriceInput.trim() };
+      });
+      onDatePricesChange(next);
+    }
+
+    onDatesChange(selectedDates.filter((d) => !monthDates.includes(d)));
+    setShowEditPanel(false);
+    setCustomPriceInput('');
+  };
 
   const weeks = useMemo(() => {
     const rows: (number | null)[][] = [];
@@ -191,7 +237,13 @@ const CalendarPlanner = ({
       <div className="rounded-2xl bg-card p-4 shadow-sm">
         <h4 className="text-sm font-semibold text-foreground">Calendario de disponibilidad y precios</h4>
         <p className="mt-1 text-xs text-muted-foreground">
-          Por defecto <span className="font-semibold text-foreground">todos los días están disponibles</span>. Selecciona los días que quieras bloquear y presiona 'Editar selección'.
+          {showAllDaysWithBasePrice
+            ? 'Todos los días del mes muestran el precio base. Selecciona días para un precio especial o para bloquearlos.'
+            : (
+              <>
+                Por defecto <span className="font-semibold text-foreground">todos los días están disponibles</span>. Selecciona los días que quieras bloquear y presiona &apos;Editar selección&apos;.
+              </>
+            )}
         </p>
 
         {/* Quick select buttons */}
@@ -233,12 +285,15 @@ const CalendarPlanner = ({
           </Button>
           {selectedInMonth > 0 && (
             <Button
-              variant="destructive"
+              variant={allowCustomDayPricing ? 'default' : 'destructive'}
               size="sm"
               className="gap-1.5 rounded-full text-xs"
-              onClick={() => setShowEditPanel(!showEditPanel)}
+              onClick={() => {
+                setEditAction(allowCustomDayPricing ? 'price' : 'block');
+                setShowEditPanel(!showEditPanel);
+              }}
             >
-              Bloquear selección ({selectedInMonth})
+              Editar selección ({selectedInMonth})
             </Button>
           )}
         </div>
@@ -273,6 +328,8 @@ const CalendarPlanner = ({
                 const isSelected = selectedSet.has(ds);
                 const isBlocked = blockedSet.has(ds);
                 const isToday = ds === todayStr;
+                const dayPriceLabel = resolveDayPrice(ds);
+                const hasCustomPrice = Boolean(datePrices[ds]?.price?.trim());
                 return (
                   <button
                     key={di}
@@ -300,8 +357,10 @@ const CalendarPlanner = ({
                     <span className={cn('text-sm', isToday && 'font-bold text-primary', isBlocked && 'text-muted-foreground')}>{day}</span>
                     {isBlocked ? (
                       <span className="mt-0.5 text-[10px] text-destructive font-medium">Bloq.</span>
-                    ) : priceDisplay ? (
-                      <span className="mt-0.5 text-[10px] text-muted-foreground">{priceDisplay}</span>
+                    ) : dayPriceLabel ? (
+                      <span className={cn('mt-0.5 text-[10px] font-medium', hasCustomPrice ? 'text-primary' : 'text-muted-foreground')}>
+                        {dayPriceLabel}
+                      </span>
                     ) : null}
                   </button>
                 );
@@ -312,57 +371,78 @@ const CalendarPlanner = ({
 
         {/* Edit selection panel */}
         {showEditPanel && selectedInMonth > 0 && (
-          <div className="mt-4 rounded-xl border border-destructive/30 bg-destructive/5 p-4">
+          <div className="mt-4 rounded-xl border border-primary/30 bg-primary/5 p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-muted-foreground">{selectedInMonth} días seleccionados</p>
                 <p className="text-sm font-bold text-foreground">¿Qué deseas hacer con estos días?</p>
               </div>
-              <button onClick={() => setShowEditPanel(false)} className="text-muted-foreground hover:text-foreground">
+              <button type="button" onClick={() => setShowEditPanel(false)} className="text-muted-foreground hover:text-foreground">
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <div className="mt-3 rounded-lg border border-destructive/40 bg-destructive/10 p-3">
-              <p className="text-xs text-muted-foreground">Acción</p>
-              <div className="mt-1 flex items-center gap-2">
-                <div className="h-2.5 w-2.5 rounded-full bg-destructive" />
-                <span className="text-sm font-semibold text-foreground">Bloquear días (no disponible)</span>
+
+            {allowCustomDayPricing && (
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setEditAction('price')}
+                  className={cn(
+                    'rounded-lg border px-3 py-2 text-xs font-semibold',
+                    editAction === 'price' ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-card',
+                  )}
+                >
+                  Precio especial
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditAction('block')}
+                  className={cn(
+                    'rounded-lg border px-3 py-2 text-xs font-semibold',
+                    editAction === 'block' ? 'border-destructive bg-destructive/10 text-destructive' : 'border-border bg-card',
+                  )}
+                >
+                  Bloquear
+                </button>
               </div>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Los días bloqueados no estarán disponibles para reservas.
-              </p>
-            </div>
+            )}
+
+            {editAction === 'price' && allowCustomDayPricing ? (
+              <div className="mt-3 space-y-2">
+                <label className="text-xs text-muted-foreground">Precio por día para la selección</label>
+                <Input
+                  type="number"
+                  min={0}
+                  placeholder={basePriceCost || 'Ej: 3500000'}
+                  value={customPriceInput}
+                  onChange={(e) => setCustomPriceInput(e.target.value)}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Ideal para fines de semana, festivos o fechas de alta demanda.
+                </p>
+              </div>
+            ) : (
+              <div className="mt-3 rounded-lg border border-destructive/40 bg-destructive/10 p-3">
+                <p className="text-xs text-muted-foreground">Acción</p>
+                <div className="mt-1 flex items-center gap-2">
+                  <div className="h-2.5 w-2.5 rounded-full bg-destructive" />
+                  <span className="text-sm font-semibold text-foreground">Bloquear días (no disponible)</span>
+                </div>
+              </div>
+            )}
+
             <div className="mt-4 grid grid-cols-2 gap-3">
-              <Button
-                variant="outline"
-                className="rounded-full gap-1.5"
-                onClick={() => {
-                  setShowEditPanel(false);
-                  setEditStatus('available');
-                }}
-              >
+              <Button variant="outline" className="rounded-full gap-1.5" onClick={() => setShowEditPanel(false)}>
                 <X className="h-3.5 w-3.5" />
                 Cancelar
               </Button>
               <Button
-                variant="destructive"
+                variant={editAction === 'block' ? 'destructive' : 'default'}
                 className="rounded-full gap-1.5"
-                onClick={() => {
-                  // Get selected dates in current month and add them to blocked
-                  const monthDates = selectedDates.filter((d) => {
-                    const [y, m] = d.split('-').map(Number);
-                    return y === viewYear && m === viewMonth + 1;
-                  });
-                  const newBlocked = [...blockedDates, ...monthDates.filter((d) => !blockedDates.includes(d))];
-                  const newSelected = selectedDates.filter((d) => !monthDates.includes(d));
-                  onBlockedDatesChange(newBlocked);
-                  onDatesChange(newSelected);
-                  setShowEditPanel(false);
-                  setEditStatus('available');
-                }}
+                disabled={editAction === 'price' && allowCustomDayPricing && !customPriceInput.trim()}
+                onClick={applyEditToSelection}
               >
-                <X className="h-3.5 w-3.5" />
-                Bloquear {selectedInMonth} días
+                {editAction === 'block' ? `Bloquear ${selectedInMonth} días` : 'Aplicar precio'}
               </Button>
             </div>
           </div>

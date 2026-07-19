@@ -1,30 +1,100 @@
 import { ServiceFormData, DAYS_FULL } from '@lovable/data/servicesData';
-import { Button } from '@lovable/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@lovable/components/ui/collapsible';
 import {
   ChevronUp, Briefcase, Clock, DollarSign, CalendarDays,
-  FileText, HelpCircle, Save, Send, ShieldCheck, Pencil,
+  FileText, HelpCircle, Save, ShieldCheck, Pencil, MapPin, Camera, Eye, Megaphone, Ticket,
 } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
+import { SECTION_ORDER } from './StepUnified';
+
+const ActionButton = ({
+  icon: Icon,
+  label,
+  onClick,
+  variant = 'primary',
+}: {
+  icon: React.ElementType;
+  label: string;
+  onClick?: () => void;
+  variant?: 'primary' | 'soft';
+}) => (
+  <button type="button" onClick={onClick} className="flex flex-1 flex-col items-center gap-2">
+    <div
+      className={`flex h-14 w-14 items-center justify-center rounded-full shadow-md transition-transform active:scale-95 ${
+        variant === 'primary' ? 'bg-primary text-primary-foreground' : 'bg-primary/80 text-primary-foreground'
+      }`}
+    >
+      <Icon className="h-6 w-6" />
+    </div>
+    <span className="text-xs font-medium text-foreground">{label}</span>
+  </button>
+);
 
 interface ServiceSummaryProps {
   formData: ServiceFormData;
   onPublish: () => void;
   onSaveDraft: () => void;
   onEdit?: () => void;
+  onEditStep?: (index: number) => void;
+  onPreview?: () => void;
   isEditing?: boolean;
 }
 
-const ServiceSummary = ({ formData, onPublish, onSaveDraft, onEdit, isEditing }: ServiceSummaryProps) => {
+const ServiceSummary = ({ formData, onPublish, onSaveDraft, onEdit, onEditStep, onPreview, isEditing }: ServiceSummaryProps) => {
+  const [photoOpen, setPhotoOpen] = useState(true);
   const [servicesOpen, setServicesOpen] = useState(true);
   const [pricingOpen, setPricingOpen] = useState(true);
   const [scheduleOpen, setScheduleOpen] = useState(true);
+  const [locationOpen, setLocationOpen] = useState(true);
+  const [promoOpen, setPromoOpen] = useState(false);
   const [prefsOpen, setPrefsOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState(false);
 
+  const sectionIndex = (key: (typeof SECTION_ORDER)[number]) => SECTION_ORDER.indexOf(key);
+
+function summarizeBlockedDates(dates: string[]): string[] {
+  if (!dates.length) return ['Todos los días disponibles'];
+  const sorted = [...dates].sort();
+  if (sorted.length > 20) {
+    return [`${sorted.length} días bloqueados — edita el calendario para ver el detalle`];
+  }
+  const ranges: string[] = [];
+  let start = sorted[0];
+  let prev = sorted[0];
+  const nextDay = (iso: string) => {
+    const d = new Date(`${iso}T12:00:00`);
+    d.setDate(d.getDate() + 1);
+    return d.toISOString().slice(0, 10);
+  };
+  for (let i = 1; i < sorted.length; i += 1) {
+    const current = sorted[i];
+    if (current === nextDay(prev)) {
+      prev = current;
+      continue;
+    }
+    ranges.push(start === prev ? start : `${start} — ${prev}`);
+    start = current;
+    prev = current;
+  }
+  ranges.push(start === prev ? start : `${start} — ${prev}`);
+  return ranges;
+}
+
+  const EditButton = ({ stepKey }: { stepKey: (typeof SECTION_ORDER)[number] }) =>
+    onEditStep ? (
+      <button
+        type="button"
+        onClick={() => onEditStep(sectionIndex(stepKey))}
+        className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
+      >
+        <Pencil className="h-3.5 w-3.5" /> Editar
+      </button>
+    ) : null;
+
   const activityKey = (sector: string, activity: string) => `${sector}::${activity}`;
-  const sortedDates = [...formData.selectedDates].sort();
   const sortedBlocked = [...formData.blockedDates].sort();
+  const availabilitySummary = summarizeBlockedDates(sortedBlocked);
 
   // Calculate total cost (sum of all activity prices)
   const allActivities = formData.sectors.flatMap((sector) =>
@@ -90,6 +160,29 @@ const ServiceSummary = ({ formData, onPublish, onSaveDraft, onEdit, isEditing }:
         </p>
       </div>
 
+      <Collapsible open={photoOpen} onOpenChange={setPhotoOpen}>
+        <SectionToggle
+          icon={Camera}
+          title="Foto del servicio"
+          open={photoOpen}
+          onToggle={() => setPhotoOpen(!photoOpen)}
+        />
+        <CollapsibleContent className="mt-2 rounded-xl bg-card p-4 shadow-sm">
+          {formData.servicePhoto || formData.coverImageUrl || formData.coverImagePreview ? (
+            <div className="aspect-[4/3] overflow-hidden rounded-xl bg-accent/40">
+              <img
+                src={formData.servicePhoto || formData.coverImageUrl || formData.coverImagePreview}
+                alt="Foto del servicio"
+                className="h-full w-full object-cover"
+              />
+            </div>
+          ) : (
+            <p className="text-xs text-muted-foreground">Sin foto principal</p>
+          )}
+          <EditButton stepKey="photo" />
+        </CollapsibleContent>
+      </Collapsible>
+
       {/* Services & Activities */}
       <Collapsible open={servicesOpen} onOpenChange={setServicesOpen}>
         <SectionToggle
@@ -129,6 +222,7 @@ const ServiceSummary = ({ formData, onPublish, onSaveDraft, onEdit, isEditing }:
               <span className="font-medium">Sector adicional:</span> {formData.sectorOther}
             </p>
           )}
+          <EditButton stepKey="sectors" />
         </CollapsibleContent>
       </Collapsible>
 
@@ -170,6 +264,7 @@ const ServiceSummary = ({ formData, onPublish, onSaveDraft, onEdit, isEditing }:
               COP {grandTotal.toLocaleString()}
             </span>
           </div>
+          <EditButton stepKey="pricing" />
         </CollapsibleContent>
       </Collapsible>
 
@@ -180,7 +275,7 @@ const ServiceSummary = ({ formData, onPublish, onSaveDraft, onEdit, isEditing }:
           title="Disponibilidad"
           open={scheduleOpen}
           onToggle={() => setScheduleOpen(!scheduleOpen)}
-          badge={`${sortedDates.length} día(s)`}
+          badge={sortedBlocked.length ? `${sortedBlocked.length} bloqueado(s)` : 'Todos los días'}
         />
         <CollapsibleContent className="mt-2 rounded-xl bg-card p-4 shadow-sm">
           <div className="space-y-3">
@@ -191,32 +286,79 @@ const ServiceSummary = ({ formData, onPublish, onSaveDraft, onEdit, isEditing }:
               </p>
             </div>
             <div>
-              <p className="text-xs font-medium text-muted-foreground">Días disponibles ({sortedDates.length})</p>
-              {sortedDates.length > 0 ? (
-                <div className="mt-1 flex flex-wrap gap-1">
-                  {sortedDates.map((d) => (
-                    <span key={d} className="rounded-full bg-accent px-2 py-0.5 text-[11px] text-accent-foreground">
-                      {d}
-                    </span>
-                  ))}
-                </div>
-              ) : (
-                <p className="mt-1 text-xs text-muted-foreground">Ningún día seleccionado</p>
-              )}
+              <p className="text-xs font-medium text-muted-foreground">Disponibilidad</p>
+              <div className="mt-1 flex flex-wrap gap-1">
+                {availabilitySummary.map((line) => (
+                  <span key={line} className="rounded-full bg-accent px-2 py-0.5 text-[11px] text-accent-foreground">
+                    {line}
+                  </span>
+                ))}
+              </div>
             </div>
             {sortedBlocked.length > 0 && (
               <div>
                 <p className="text-xs font-medium text-destructive">Días bloqueados ({sortedBlocked.length})</p>
-                <div className="mt-1 flex flex-wrap gap-1">
-                  {sortedBlocked.map((d) => (
-                    <span key={d} className="rounded-full bg-destructive/10 px-2 py-0.5 text-[11px] text-destructive">
-                      {d}
-                    </span>
-                  ))}
-                </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {sortedBlocked.length <= 6
+                    ? sortedBlocked.join(', ')
+                    : `${sortedBlocked.slice(0, 3).join(', ')} … y ${sortedBlocked.length - 3} más`}
+                </p>
               </div>
             )}
           </div>
+          <EditButton stepKey="calendar" />
+        </CollapsibleContent>
+      </Collapsible>
+
+      {(formData.locationCity || formData.locationLabel) && (
+        <Collapsible open={locationOpen} onOpenChange={setLocationOpen}>
+          <SectionToggle
+            icon={MapPin}
+            title="Ubicación"
+            open={locationOpen}
+            onToggle={() => setLocationOpen(!locationOpen)}
+          />
+          <CollapsibleContent className="mt-2 rounded-xl bg-card p-4 shadow-sm space-y-2">
+            {formData.locationCity && (
+              <div>
+                <p className="text-xs font-medium text-muted-foreground">Ciudad</p>
+                <p className="text-sm font-semibold text-foreground">{formData.locationCity}</p>
+              </div>
+            )}
+            {formData.locationLabel && (
+              <div>
+                <p className="text-xs font-medium text-muted-foreground">Dirección o referencia</p>
+                <p className="text-sm text-foreground">{formData.locationLabel}</p>
+              </div>
+            )}
+            <EditButton stepKey="location" />
+          </CollapsibleContent>
+        </Collapsible>
+      )}
+
+      <Collapsible open={promoOpen} onOpenChange={setPromoOpen}>
+        <SectionToggle
+          icon={Ticket}
+          title="Códigos promocionales"
+          open={promoOpen}
+          onToggle={() => setPromoOpen(!promoOpen)}
+          badge={(formData.promoCodes?.length ?? 0) > 0 ? `${formData.promoCodes!.length} lote(s)` : 'Inactivo'}
+        />
+        <CollapsibleContent className="mt-2 space-y-2 rounded-xl bg-card p-4 shadow-sm">
+          {(formData.promoCodes?.length ?? 0) > 0 ? (
+            formData.promoCodes!.map((b) => (
+              <div key={b.id} className="flex items-center justify-between rounded-lg bg-secondary/50 p-3">
+                <div>
+                  <p className="text-xs text-muted-foreground">{b.currency} $ {b.value.toLocaleString()}</p>
+                  {b.description && <p className="text-xs italic text-muted-foreground">{b.description}</p>}
+                </div>
+                <span className="text-sm font-bold text-primary">x {b.quantity}</span>
+              </div>
+            ))
+          ) : (
+            <p className="text-xs text-muted-foreground">Sin códigos configurados</p>
+          )}
+          <EditButton stepKey="promo" />
         </CollapsibleContent>
       </Collapsible>
 
@@ -241,6 +383,7 @@ const ServiceSummary = ({ formData, onPublish, onSaveDraft, onEdit, isEditing }:
               {formData.refundPolicy || 'No definida'}
             </p>
           </div>
+          <EditButton stepKey="preferences" />
         </CollapsibleContent>
       </Collapsible>
 
@@ -263,48 +406,28 @@ const ServiceSummary = ({ formData, onPublish, onSaveDraft, onEdit, isEditing }:
                   <p className="mt-1 text-xs text-muted-foreground">{faq.answer}</p>
                 </div>
               ))}
+            <EditButton stepKey="faq" />
           </CollapsibleContent>
         </Collapsible>
       )}
 
-      {/* Action buttons */}
-      <div className="space-y-3 pt-2">
+      <div className="pt-4">
         {isEditing ? (
-          <>
-            <Button
-              onClick={onEdit}
-              className="w-full rounded-full py-6 text-base font-semibold gap-2"
-            >
-              <Pencil className="h-4 w-4" />
-              Editar servicios
-            </Button>
-            <Button
-              onClick={onPublish}
-              variant="outline"
-              className="w-full rounded-full py-6 text-base font-semibold border-primary text-primary gap-2"
-            >
-              <Send className="h-4 w-4" />
-              Re-publicar servicios
-            </Button>
-          </>
+          <div className="flex items-start justify-around gap-2 pt-2">
+            <ActionButton icon={Pencil} label="Editar" onClick={onEdit} variant="soft" />
+            <ActionButton icon={Megaphone} label="Re-publicar" onClick={onPublish} variant="primary" />
+          </div>
         ) : (
-          <>
-            <Button
-              onClick={onPublish}
-              className="w-full rounded-full py-6 text-base font-semibold gap-2"
-            >
-              <Send className="h-4 w-4" />
-              Publicar servicios
-            </Button>
-            <Button
-              onClick={onSaveDraft}
-              variant="outline"
-              className="w-full rounded-full py-6 text-base font-semibold border-primary text-primary gap-2"
-            >
-              <Save className="h-4 w-4" />
-              Guardar borrador
-            </Button>
-          </>
+          <div className="flex items-start justify-around gap-2 pt-2">
+            <ActionButton
+              icon={Eye}
+              label="Previsualizar"
+              onClick={() => (onPreview ? onPreview() : toast.info('Previsualización próximamente'))}
+              variant="soft"
+            />
+            <ActionButton icon={Save} label="Guardar" onClick={onSaveDraft} variant="primary" />
+            <ActionButton icon={Megaphone} label="Publicar" onClick={onPublish} variant="soft" />
+          </div>
         )}
       </div>
     </div>

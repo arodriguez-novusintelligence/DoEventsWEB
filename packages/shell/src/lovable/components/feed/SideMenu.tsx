@@ -11,11 +11,9 @@ import {
   RefreshCcw,
   LogOut,
   ChevronLeft,
-  Shield,
-  CalendarDays,
   Sparkles,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { StoryAvatar } from '../../../components/StoryAvatar';
 import TermsConditionsView from '@lovable/components/legal/TermsConditionsView';
@@ -38,6 +36,7 @@ interface SideMenuProps {
   profileAvatar?: string;
   profileUserId?: string;
   unreadMessages?: number;
+  onOpen?: () => void;
 }
 
 const SideMenu = ({
@@ -53,10 +52,15 @@ const SideMenu = ({
   profileAvatar,
   profileUserId,
   unreadMessages = 0,
+  onOpen,
 }: SideMenuProps) => {
-  const displayName = profileName?.trim() || 'Usuario';
+  const displayName = profileName?.trim() || 'Invitado';
   const displayUsername = profileUsername?.trim() || '@usuario';
   const [activeDoc, setActiveDoc] = useState<LegalDoc>(null);
+
+  useEffect(() => {
+    if (open) onOpen?.();
+  }, [open, onOpen]);
 
   const go = (section: string) => {
     onNavigate?.(section);
@@ -68,14 +72,10 @@ const SideMenu = ({
     onOpenChange(false);
   };
 
-  const mainItems: { label: string; icon: any; onClick: () => void; badge?: number }[] = [
+  const mainItems: { label: string; icon: typeof Home; onClick: () => void; badge?: number }[] = [
+    { label: 'Feed', icon: Home, onClick: () => go('wall') },
     {
-      label: 'Feed',
-      icon: Home,
-      onClick: () => go('wall'),
-    },
-    {
-      label: 'Boletas',
+      label: 'Mis Compras',
       icon: Ticket,
       onClick: () => {
         onGoToTickets?.();
@@ -90,12 +90,31 @@ const SideMenu = ({
     },
     { label: 'Control de accesos', icon: ScanLine, onClick: () => go('control-accesos') },
     { label: 'Mapa', icon: MapIcon, onClick: () => go('mapa') },
-    { label: 'Mis eventos', icon: CalendarDays, onClick: () => go('mis-eventos') },
     { label: 'Gestión de invitados', icon: UsersRound, onClick: () => go('invitados') },
-    { label: 'Asistente IA', icon: Sparkles, onClick: () => go('ai-assistant') },
   ];
 
-  const supportItems: { label: string; icon: any; onClick: () => void }[] = [
+  const adminItems: {
+    label: string;
+    icon: typeof Sparkles;
+    onClick: () => void;
+    pro?: boolean;
+    adminOnly?: boolean;
+  }[] = [
+    { label: 'Asistente IA', icon: Sparkles, onClick: () => go('ai-assistant'), pro: true },
+    {
+      label: 'Panel de administración',
+      icon: ShieldCheck,
+      onClick: () => {
+        onGoToAdmin?.();
+        onOpenChange(false);
+      },
+      adminOnly: true,
+    },
+  ];
+
+  const visibleAdminItems = adminItems.filter((item) => !item.adminOnly || isAdmin);
+
+  const supportItems: { label: string; icon: typeof CircleDollarSign; onClick: () => void }[] = [
     { label: 'Costos de la plataforma', icon: CircleDollarSign, onClick: () => openDoc('costs') },
     { label: 'Términos y Condiciones', icon: FileText, onClick: () => openDoc('terms') },
     { label: 'Política de seguridad', icon: ShieldCheck, onClick: () => openDoc('privacy') },
@@ -124,7 +143,7 @@ const SideMenu = ({
       )}
 
       <aside
-        className={`fixed left-0 top-0 z-[9999] flex h-full w-[84%] max-w-[320px] flex-col bg-[hsl(var(--primary-deep))] text-primary-foreground shadow-xl transition-transform duration-300 ease-in-out ${
+        className={`fixed left-0 top-0 z-[9999] flex h-full w-[84%] max-w-[320px] flex-col bg-[hsl(var(--primary-deep))] text-primary-foreground transition-transform duration-300 ease-in-out ${
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -132,7 +151,7 @@ const SideMenu = ({
         <div className="flex items-center gap-3 px-5 pt-12 pb-5">
           <button
             onClick={() => go('perfil')}
-            className="flex flex-1 items-center gap-3 rounded-lg p-1 -m-1 text-left shadow-sm transition-colors hover:bg-primary-foreground/10 active:bg-primary-foreground/15 ring-2 ring-primary-foreground/15"
+            className="flex flex-1 items-center gap-3 rounded-lg p-1 -m-1 text-left transition-colors hover:bg-primary-foreground/10 active:bg-primary-foreground/15"
             aria-label="Ir a mi perfil"
           >
             <StoryAvatar
@@ -143,7 +162,7 @@ const SideMenu = ({
               isOwn
               onClick={() => go('perfil')}
             />
-            <div className="flex-1 min-w-0">
+            <div className="min-w-0 flex-1">
               <p className="truncate text-base font-semibold text-primary-foreground">{displayName}</p>
               <p className="truncate text-xs text-primary-foreground/60">{displayUsername}</p>
             </div>
@@ -157,7 +176,6 @@ const SideMenu = ({
           </button>
         </div>
 
-
         <div className="flex-1 overflow-y-auto px-3 pb-4">
           {/* Principal */}
           <div className="mt-2">
@@ -168,14 +186,18 @@ const SideMenu = ({
               {mainItems.map((item) => (
                 <button
                   key={item.label}
+                  type="button"
                   onClick={item.onClick}
                   className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-primary-foreground/90 transition-colors hover:bg-primary-foreground/10 active:bg-primary-foreground/15"
                 >
                   <item.icon className="h-[18px] w-[18px] shrink-0" strokeWidth={2} />
                   <span className="flex-1 text-left text-[14px] font-medium">{item.label}</span>
-                  {item.badge && item.badge > 0 ? (
-                    <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-destructive px-1.5 text-[10px] font-bold text-destructive-foreground">
-                      {item.badge > 99 ? '99+' : item.badge}
+                  {typeof item.badge === 'number' && item.badge > 0 ? (
+                    <span
+                      className="ml-auto inline-flex h-5 min-w-[22px] items-center justify-center rounded-full bg-[#FF3B30] px-1.5 text-[11px] font-bold leading-none text-white"
+                      aria-label={`${item.badge} mensajes sin leer`}
+                    >
+                      {item.badge > 999 ? '999+' : item.badge}
                     </span>
                   ) : null}
                 </button>
@@ -183,22 +205,29 @@ const SideMenu = ({
             </div>
           </div>
 
-          {isAdmin && (
-            <div className="mt-6">
+          {/* Administración — Asistente IA (PRO) + Panel admin (solo administradores) */}
+          {visibleAdminItems.length > 0 && (
+            <div className="mt-7">
               <p className="px-3 text-[11px] font-bold uppercase tracking-[0.14em] text-primary-foreground/50">
                 Administración
               </p>
               <div className="mt-2 space-y-0.5">
-                <button
-                  onClick={() => {
-                    onGoToAdmin?.();
-                    onOpenChange(false);
-                  }}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-primary-foreground/90 transition-colors hover:bg-primary-foreground/10 active:bg-primary-foreground/15"
-                >
-                  <Shield className="h-[18px] w-[18px] shrink-0" strokeWidth={2} />
-                  <span className="text-sm font-medium">Panel de administración</span>
-                </button>
+                {visibleAdminItems.map((item) => (
+                  <button
+                    key={item.label}
+                    type="button"
+                    onClick={item.onClick}
+                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-primary-foreground/90 transition-colors hover:bg-primary-foreground/10 active:bg-primary-foreground/15"
+                  >
+                    <item.icon className="h-[18px] w-[18px] shrink-0" strokeWidth={2} />
+                    <span className="flex-1 text-left text-[14px] font-medium">{item.label}</span>
+                    {item.pro && (
+                      <span className="rounded-full bg-amber-400 px-1.5 py-0.5 text-[9px] font-extrabold text-amber-950">
+                        PRO
+                      </span>
+                    )}
+                  </button>
+                ))}
               </div>
             </div>
           )}
@@ -212,6 +241,7 @@ const SideMenu = ({
               {supportItems.map((item) => (
                 <button
                   key={item.label}
+                  type="button"
                   onClick={item.onClick}
                   className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-primary-foreground/90 transition-colors hover:bg-primary-foreground/10 active:bg-primary-foreground/15"
                 >

@@ -1,5 +1,5 @@
 import type { NearbyVenue } from '@doevents/shared';
-import { normalizeVenueAddonServices, resolveImageUrl } from '@doevents/shared';
+import { extractVenueImageUrls, normalizeVenueAddonServices, resolveImageUrl } from '@doevents/shared';
 import type { PublishedVenueDraft } from '@lovable/components/venues/VenueCreator';
 
 const DEFAULT_VENUE_IMAGE =
@@ -15,10 +15,21 @@ export interface ParsedVenueAmenities {
     perMonth?: string;
     currency?: string;
   };
+  promoCodes?: Array<{
+    id: string;
+    currency: string;
+    value: number;
+    quantity: number;
+    description: string;
+    codes: string[];
+  }>;
+  rentalUnit?: 'day' | 'month';
+  datePrices?: Record<string, { price?: string; blocked?: boolean }>;
   videos?: string[];
   availability?: {
     selectedDates?: string[];
     blockedDates?: string[];
+    datePrices?: Record<string, { price?: string; blocked?: boolean }>;
     globalStartTime?: string;
     globalEndTime?: string;
   };
@@ -36,8 +47,12 @@ export interface ParsedVenueAmenities {
   }>;
   facilities?: Array<{ id: string; count: number }>;
   allowedEventTypes?: string[];
-  accessibility?: string[];
-  security?: string[];
+  accessibility?: Array<string | { id: string; label: string }>;
+  security?: Array<string | { id: string; label: string }>;
+  includedServices?: Array<string | { id: string; label: string }>;
+  chargeType?: string;
+  calendarWeekdays?: number[];
+  calendarMonths?: number[];
   hostRole?: string;
   faqs?: Array<{ id?: string; question: string; answer: string }>;
   neighborhood?: string;
@@ -58,7 +73,8 @@ export function resolveVenueAddonServices(meta: ParsedVenueAmenities) {
 }
 
 export function nearbyVenueToPublishedDraft(venue: NearbyVenue): PublishedVenueDraft {
-  const image = resolveImageUrl(venue.mainImage || venue.imageUrls?.[0]) || DEFAULT_VENUE_IMAGE;
+  const parsedImages = extractVenueImageUrls(venue as unknown as Record<string, unknown>);
+  const image = resolveImageUrl(venue.mainImage || venue.imageUrls?.[0] || parsedImages[0]) || DEFAULT_VENUE_IMAGE;
   return {
     id: venue.venueId,
     name: venue.name || 'Lugar',

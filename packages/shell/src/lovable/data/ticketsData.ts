@@ -11,6 +11,7 @@ export interface Ticket {
   eventDate: string;
   startTime: string;
   category: string;
+  categoryColor?: string;
   seat: string;
   seatLabel?: string;
   entrance: string;
@@ -24,6 +25,15 @@ export interface Ticket {
   price?: number;
   paymentExpiresAtTs?: number;
   eventTicketCount?: number;
+  isTransferred?: boolean;
+  /** Enviada por el dueño: QR no usable. */
+  isTransferredOut?: boolean;
+  transferredAt?: string;
+  transferredFromName?: string;
+  transferredToName?: string;
+  /** Reembolso solicitado/procesado: QR inhabilitado. */
+  isRefunded?: boolean;
+  refundStatus?: string;
 }
 import { useSyncExternalStore } from 'react';
 

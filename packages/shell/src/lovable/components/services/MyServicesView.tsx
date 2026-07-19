@@ -1,4 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '@doevents/shared';
+import { saveLocalWizardDraft } from '../../../lib/wizardDraftBridge';
 import { Home, Smile, Briefcase, Plus, ChevronRight, ChevronLeft, DollarSign, Star, MessageSquare, X, MoreVertical, Heart } from 'lucide-react';
 import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBanner';
 import { Button } from '@lovable/components/ui/button';
@@ -14,7 +17,7 @@ import {
   AlertDialogTitle,
 } from '@lovable/components/ui/alert-dialog';
 import { ServiceFormData, initialFormData } from '@lovable/data/servicesData';
-import StepUnified, { SECTION_ORDER } from './StepUnified';
+import StepUnified, { SECTION_ORDER, SECTION_SHORT_LABELS, isSectionComplete, areAllSectionsComplete } from './StepUnified';
 import StepConditions from './StepConditions';
 import ServiceSummary from './ServiceSummary';
 import BookingSheet from './BookingSheet';
@@ -85,13 +88,25 @@ const MyServicesView = ({
   onDuplicateService,
   onOpenService,
 }: MyServicesViewProps) => {
+  const userId = useSelector((s: RootState) => s.auth.idUser);
   const hasPublished = publishedServices.length > 0;
 
   const [currentStep, setCurrentStep] = useState(initialForm ? 1 : (hasPublished ? -1 : 0));
   const [formData, setFormData] = useState<ServiceFormData>(initialForm || initialFormData);
   const [activeSectionIndex, setActiveSectionIndex] = useState(0);
+  const [maxSectionReached, setMaxSectionReached] = useState(() => {
+    const seed = initialForm || initialFormData;
+    return SECTION_ORDER.reduce(
+      (max, key, i) => (isSectionComplete(key, seed) ? Math.max(max, i) : max),
+      0,
+    );
+  });
   const [editingIndex, setEditingIndex] = useState<number>(-1);
   const [servicesList, setServicesList] = useState<ServiceFormData[]>(publishedServices);
+
+  useEffect(() => {
+    setServicesList(publishedServices);
+  }, [publishedServices]);
 
   // Booking state
   const [bookingService, setBookingService] = useState<ServiceFormData | null>(null);
@@ -113,9 +128,29 @@ const MyServicesView = ({
     });
   };
 
+  const handleSectionChange = (index: number) => {
+    setActiveSectionIndex(index);
+    setMaxSectionReached((prev) => Math.max(prev, index));
+  };
+
   const updateForm = (partial: Partial<ServiceFormData>) => {
     setFormData((prev) => ({ ...prev, ...partial }));
   };
+
+  useEffect(() => {
+    if (mode !== 'create' || !userId || currentStep < 1) return;
+    if (!formData.sectors.length && !formData.description?.trim()) return;
+    const timer = window.setTimeout(() => {
+      saveLocalWizardDraft(userId, 'service', formData);
+    }, 1200);
+    return () => window.clearTimeout(timer);
+  }, [formData, userId, mode, currentStep]);
+
+  useEffect(() => {
+    if (currentStep >= 1) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [currentStep]);
 
   const handleFinishConditions = () => {
     setCurrentStep(TOTAL_STEPS + 1);
@@ -150,15 +185,11 @@ const MyServicesView = ({
       toast.error('Configura la ubicación del servicio.');
       return;
     }
-    if (!formData.selectedDates.length) {
-      toast.error('Selecciona al menos un día disponible.');
-      return;
-    }
     if (!formData.refundPolicy.trim()) {
       toast.error('Selecciona una política de reembolso.');
       return;
     }
-    if (!formData.coverImageUrl && !formData.coverImageFile) {
+    if (!formData.coverImageUrl && !formData.coverImageFile && !formData.servicePhoto && !formData.coverImagePreview) {
       toast.error('Debes subir una foto del servicio o usar tu foto de perfil');
       return;
     }
@@ -191,7 +222,8 @@ const MyServicesView = ({
 
     setServicesList(newList);
     onPublish?.(newList);
-    toast('Borrador guardado correctamente');
+    if (userId) saveLocalWizardDraft(userId, 'service', formData);
+    toast.success('Borrador guardado correctamente');
     setCurrentStep(-1);
   };
 
@@ -258,17 +290,24 @@ const MyServicesView = ({
     setActionsFor(null);
   };
 
-  const openServiceDetail = (service: ServiceFormData, index: number) => {
-    if (onOpenService) onOpenService(service);
-    else setBookingService(service);
+  const openServiceDetail = (service: ServiceFormData, _index: number) => {
+    if (onOpenService) {
+      onOpenService(service);
+      return;
+    }
+    setBookingService(service);
   };
 
   const handleEditSave = async () => {
+    if (publishing) return;
     setPublishing(true);
     try {
       await onServicePublished?.(formData);
-    } catch {
-      /* el padre muestra el error */
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'No se pudo guardar el servicio';
+      if (message !== 'no-auth' && message !== 'no-image') {
+        toast.error(message);
+      }
     } finally {
       setPublishing(false);
     }
@@ -277,14 +316,34 @@ const MyServicesView = ({
   if (mode === 'edit') {
     return (
       <div className="mx-auto min-h-screen max-w-lg bg-secondary pb-28">
-        <div className="sticky top-0 z-10 bg-secondary px-4 pt-4 pb-2 shadow-sm">
+        <div className="sticky top-0 z-10 border-b border-border/60 bg-secondary px-4 pt-4 pb-3 shadow-sm">
           <button type="button" onClick={() => onBack(formData)} className="flex items-center gap-1 text-sm font-medium text-primary">
             <ChevronLeft className="h-4 w-4" /> Volver al servicio
           </button>
           <h1 className="mt-2 text-2xl font-bold text-primary">Editar servicio</h1>
           <p className="mt-1 text-xs text-muted-foreground">
-            Abre la sección que quieras cambiar y guarda todo al final.
+            Toca una sección para editarla. Guarda todos los cambios al final.
           </p>
+          <div className="mt-3 flex items-center gap-1.5 overflow-x-auto rounded-full border border-border/60 bg-card p-1.5 shadow-sm">
+            {SECTION_ORDER.map((sectionKey, index) => {
+              const active = activeSectionIndex === index;
+              return (
+                <button
+                  key={sectionKey}
+                  type="button"
+                  onClick={() => handleSectionChange(index)}
+                  aria-current={active ? 'step' : undefined}
+                  className={`flex flex-shrink-0 items-center rounded-full px-2.5 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap ${
+                    active
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'text-muted-foreground hover:bg-muted/60'
+                  }`}
+                >
+                  {SECTION_SHORT_LABELS[sectionKey]}
+                </button>
+              );
+            })}
+          </div>
         </div>
         <div className="px-4 pt-4">
           <StepUnified
@@ -292,7 +351,7 @@ const MyServicesView = ({
             updateForm={updateForm}
             onNext={() => undefined}
             activeSectionIndex={activeSectionIndex}
-            onSectionChange={setActiveSectionIndex}
+            onSectionChange={handleSectionChange}
             defaultProfileImageUrl={defaultProfileImageUrl}
             editMode
           />
@@ -673,8 +732,6 @@ const MyServicesView = ({
   const isSummaryStep = currentStep === TOTAL_STEPS + 1;
   const isEditing = editingIndex >= 0;
 
-  const displayStep = isUnifiedStep ? activeSectionIndex + 1 : TOTAL_STEPS + 1;
-
   const title = isSummaryStep
     ? 'Resumen'
     : isConditionsStep
@@ -699,6 +756,7 @@ const MyServicesView = ({
             } else if (isConditionsStep) {
               setCurrentStep(1);
               setActiveSectionIndex(SECTION_ORDER.length - 1);
+              setMaxSectionReached((prev) => Math.max(prev, SECTION_ORDER.length - 1));
             } else if (activeSectionIndex > 0) {
               setActiveSectionIndex(activeSectionIndex - 1);
             } else {
@@ -717,27 +775,70 @@ const MyServicesView = ({
           {title}
         </h1>
 
-        {/* Step indicator - only show during wizard, not summary */}
-        {!isSummaryStep && (
-          <div className="mt-3 flex items-center justify-center gap-0">
-            {Array.from({ length: TOTAL_STEPS }, (_, i) => i + 1).map((s, i) => (
-              <div key={s} className="flex items-center">
-                <div
-                  className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
-                    displayStep > s
-                      ? 'bg-primary text-primary-foreground'
-                      : displayStep === s
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted text-muted-foreground'
+        {/* Step indicator - named chips (wizard + Resumen) */}
+        {(isUnifiedStep || isSummaryStep) && (
+          <div className="-mx-4 mt-3 overflow-x-auto px-4 no-scrollbar">
+            <div className="flex items-center gap-1.5 pb-1">
+              {SECTION_ORDER.map((key, i) => {
+                const isCurrent = isUnifiedStep && i === activeSectionIndex;
+                const isDone = isSectionComplete(key, formData);
+                const prevComplete = SECTION_ORDER.slice(0, i).every((k) => isSectionComplete(k, formData));
+                const reachable = isSummaryStep || isDone || i <= maxSectionReached || prevComplete;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    disabled={!reachable}
+                    onClick={() => {
+                      if (!reachable) return;
+                      setCurrentStep(1);
+                      handleSectionChange(i);
+                    }}
+                    className={`flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold transition-colors ${
+                      isCurrent
+                        ? 'bg-primary text-primary-foreground'
+                        : isDone
+                        ? 'bg-primary/15 text-primary'
+                        : 'bg-muted text-muted-foreground'
+                    } ${!reachable ? 'cursor-not-allowed opacity-50' : ''}`}
+                  >
+                    <span
+                      className={`inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px] ${
+                        isCurrent
+                          ? 'bg-primary-foreground/25 text-primary-foreground'
+                          : isDone
+                          ? 'bg-primary/25 text-primary'
+                          : 'bg-muted-foreground/20 text-muted-foreground'
+                      }`}
+                    >
+                      {isDone && !isCurrent ? '✓' : i + 1}
+                    </span>
+                    <span className="whitespace-nowrap">{SECTION_SHORT_LABELS[key]}</span>
+                  </button>
+                );
+              })}
+              <button
+                type="button"
+                disabled={!areAllSectionsComplete(formData)}
+                onClick={() => areAllSectionsComplete(formData) && setCurrentStep(TOTAL_STEPS + 1)}
+                className={`flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold transition-colors ${
+                  isSummaryStep
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted text-muted-foreground'
+                } ${!areAllSectionsComplete(formData) ? 'cursor-not-allowed opacity-50' : ''}`}
+              >
+                <span
+                  className={`inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px] ${
+                    isSummaryStep
+                      ? 'bg-primary-foreground/25 text-primary-foreground'
+                      : 'bg-muted-foreground/20 text-muted-foreground'
                   }`}
                 >
-                  {displayStep > s ? '✓' : s}
-                </div>
-                {i < TOTAL_STEPS - 1 && (
-                  <div className={`h-0.5 w-6 ${displayStep > s ? 'bg-primary' : 'bg-muted'}`} />
-                )}
-              </div>
-            ))}
+                  {SECTION_ORDER.length + 1}
+                </span>
+                <span className="whitespace-nowrap">Resumen</span>
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -750,7 +851,7 @@ const MyServicesView = ({
             updateForm={updateForm}
             onNext={() => setCurrentStep(TOTAL_STEPS)}
             activeSectionIndex={activeSectionIndex}
-            onSectionChange={setActiveSectionIndex}
+            onSectionChange={handleSectionChange}
             defaultProfileImageUrl={defaultProfileImageUrl}
           />
         )}
@@ -767,7 +868,8 @@ const MyServicesView = ({
             onPublish={handlePublish}
             onSaveDraft={handleSaveDraft}
             isEditing={isEditing}
-            onEdit={() => { setActiveSectionIndex(0); setCurrentStep(1); }}
+            onEdit={() => { handleSectionChange(0); setCurrentStep(1); }}
+            onEditStep={(i: number) => { handleSectionChange(i); setCurrentStep(1); }}
           />
         )}
       </div>

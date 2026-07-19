@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Clock, Lock, Pencil, Search, UserCheck, UserX, Users } from 'lucide-react';
+import { Clock, Lock, Pencil, Search, ShieldCheck, UserCheck, UserX, Users } from 'lucide-react';
 import {
   fetchAdminStaffUsers,
   updateAdminUser,
@@ -69,6 +69,18 @@ export const AdminStaffTab: React.FC = () => {
     return matchesStatus;
   }), [users, filterStatus]);
 
+  const duplicateEmails = useMemo(() => {
+    const counts = new Map<string, number>();
+    users.forEach((user) => {
+      const email = String(user.email || '').trim().toLowerCase();
+      if (!email) return;
+      counts.set(email, (counts.get(email) || 0) + 1);
+    });
+    return new Set(
+      [...counts.entries()].filter(([, count]) => count > 1).map(([email]) => email),
+    );
+  }, [users]);
+
   const patchUser = async (user: AdminStaffUser, patch: Parameters<typeof updateAdminUser>[1], successMessage: string) => {
     try {
       await updateAdminUser(user.userId, patch);
@@ -91,8 +103,8 @@ export const AdminStaffTab: React.FC = () => {
       selected,
       { platformRole: assignRole, staffStatus: 'aprobado', staffRole: assignRole },
       assignRole === 'admin'
-        ? 'Permisos de administrador otorgados. El usuario recibirá una notificación.'
-        : `Rol ${ROLE_LABELS[assignRole]} otorgado. El usuario recibirá una notificación.`,
+        ? 'Permisos de administrador otorgados. Si el usuario ya está conectado, debe cerrar sesión y volver a entrar (o recargar la app).'
+        : `Rol ${ROLE_LABELS[assignRole]} otorgado. El usuario debe recargar la app para ver los cambios.`,
     );
   };
 
@@ -187,7 +199,15 @@ export const AdminStaffTab: React.FC = () => {
                   {filtered.map((user) => (
                     <tr key={user.userId} className="border-b border-border/60">
                       <td className="px-3 py-3 font-medium">{user.fullName || user.nombre || user.email}</td>
-                      <td className="px-3 py-3 text-xs text-muted-foreground">{user.email}</td>
+                      <td className="px-3 py-3 text-xs text-muted-foreground">
+                        <div>{user.email}</div>
+                        {duplicateEmails.has(String(user.email || '').trim().toLowerCase()) && (
+                          <div className="mt-1 text-[11px] font-medium text-amber-600">
+                            Cuenta duplicada · ID {user.userId}
+                            {user.authSource ? ` · ${user.authSource}` : ''}
+                          </div>
+                        )}
+                      </td>
                       <td className="px-3 py-3 text-xs text-muted-foreground">
                         {user.username ? `@${String(user.username).replace(/^@+/, '')}` : '—'}
                       </td>
@@ -247,8 +267,9 @@ export const AdminStaffTab: React.FC = () => {
           <div className="w-full max-w-md rounded-2xl bg-card p-5 shadow-xl">
             <h3 className="text-lg font-bold">Gestionar permisos</h3>
             <p className="mt-1 text-sm text-muted-foreground">{selected.fullName || selected.email}</p>
+            <p className="mt-1 font-mono text-xs text-muted-foreground">ID: {selected.userId}</p>
             <p className="mt-1 text-xs text-muted-foreground">
-              El usuario recibirá una notificación por correo y en la campana de la app.
+              El rol se aplica a todas las cuentas con el mismo correo. El usuario debe recargar o volver a iniciar sesión.
             </p>
             <div className="mt-4 space-y-3">
               <select

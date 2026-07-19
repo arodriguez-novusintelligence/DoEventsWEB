@@ -372,12 +372,29 @@ const SectionHeader = ({
   </div>
 );
 
-const EmptyHint = ({ children, icon: Icon = Search }: { children: ReactNode; icon?: LucideIcon }) => (
+const EmptyHint = ({
+  children,
+  icon: Icon = Search,
+  action,
+}: {
+  children: ReactNode;
+  icon?: LucideIcon;
+  action?: { label: string; onClick: () => void };
+}) => (
   <div className="mt-4 flex flex-col items-center gap-2 rounded-2xl border border-dashed border-primary/25 border-border/60 bg-card px-4 py-6 text-center shadow-sm ring-1 ring-primary/10">
     <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
       <Icon className="h-7 w-7 text-primary" />
     </div>
     <p className="max-w-[260px] text-sm font-extrabold text-muted-foreground">{children}</p>
+    {action ? (
+      <button
+        type="button"
+        onClick={action.onClick}
+        className="mt-1 rounded-full bg-primary px-4 py-2 text-xs font-extrabold text-primary-foreground shadow-sm"
+      >
+        {action.label}
+      </button>
+    ) : null}
   </div>
 );
 
@@ -411,11 +428,18 @@ interface EventsViewProps {
   nearbyServiceCards?: FeedServiceCard[];
   servicesLoading?: boolean;
   discoverLoading?: boolean;
+  hasUserLocation?: boolean;
+  nearbyRadiusKm?: number;
+  userLocationLabel?: string;
+  onRequestLocation?: () => void;
   onOpenEvent?: (event: EventItem) => void;
   onOpenVenue?: (venue: PublishedVenueDraft) => void;
   onOpenServiceProvider?: (provider: ServiceProviderItem) => void;
   onOpenService?: (card: FeedServiceCard) => void;
   onReserveService?: (serviceId: string) => void;
+  onReserveServiceCard?: (card: FeedServiceCard) => void;
+  onEditServiceCard?: (card: FeedServiceCard) => void;
+  currentUserId?: string;
   onCreateEvent?: () => void;
   onViewAllNearby?: () => void;
   onViewAllRecommended?: () => void;
@@ -429,6 +453,20 @@ interface EventsViewProps {
   onToggleServiceLike?: (serviceId: string) => void;
 }
 
+function resolveVenueTypeIcon(type: string): LucideIcon {
+  const normalized = type.toLowerCase();
+  if (
+    normalized.includes('casa')
+    || normalized.includes('campestre')
+    || normalized.includes('finca')
+    || normalized.includes('home')
+    || normalized.includes('villa')
+  ) {
+    return Home;
+  }
+  return Building2;
+}
+
 const VenueCard = ({
   venue,
   onClick,
@@ -439,39 +477,42 @@ const VenueCard = ({
   onClick?: () => void;
   isLiked?: boolean;
   onToggleLike?: () => void;
-}) => (
-  <button
-    onClick={onClick}
-    className="min-w-[210px] max-w-[210px] flex-shrink-0 rounded-2xl bg-card shadow-sm overflow-hidden border border-border/40 text-left transition-transform active:scale-[0.98]"
-  >
-    <div className="relative h-36">
-      <SafeImage
-        src={venue.image}
-        alt={venue.name}
-        className="h-full w-full object-cover"
-        fallbackSrc={resolveEventImageUrl()}
-      />
-      <span className="absolute top-2.5 left-2.5 px-3 py-1 rounded-full bg-primary/90 text-[11px] font-extrabold text-primary-foreground backdrop-blur-sm">
-        Lugar
-      </span>
-      {onToggleLike ? (
-        <FavoriteHeartButton active={isLiked} onToggle={onToggleLike} />
-      ) : (
-        <span className="absolute top-2.5 right-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-background/90 text-primary shadow-sm ring-2 ring-primary/20">
-          <Heart className="h-4 w-4" strokeWidth={2.2} />
+}) => {
+  const TypeIcon = resolveVenueTypeIcon(venue.type || '');
+  return (
+    <button
+      onClick={onClick}
+      className="min-w-[210px] max-w-[210px] flex-shrink-0 rounded-2xl bg-card shadow-sm overflow-hidden border border-border/40 text-left transition-transform active:scale-[0.98]"
+    >
+      <div className="relative h-36">
+        <SafeImage
+          src={venue.image}
+          alt={venue.name}
+          className="h-full w-full object-cover"
+          fallbackSrc={resolveEventImageUrl()}
+        />
+        <span className="absolute top-2.5 left-2.5 px-3 py-1 rounded-full bg-primary/90 text-[11px] font-semibold text-primary-foreground backdrop-blur-sm">
+          Lugar
         </span>
-      )}
-    </div>
-    <div className="p-3.5">
-      <h3 className="text-sm font-extrabold text-foreground line-clamp-2 leading-snug">{venue.name}</h3>
-      <p className="mt-1.5 text-xs font-extrabold text-muted-foreground line-clamp-1">{venue.address}</p>
-      <div className="mt-2 flex items-center gap-3 text-xs font-extrabold text-muted-foreground">
-        <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{venue.type}</span>
-        <span className="flex items-center gap-1"><Users className="h-3.5 w-3.5" />{venue.capacity}</span>
+        {onToggleLike ? (
+          <FavoriteHeartButton active={isLiked} onToggle={onToggleLike} />
+        ) : (
+          <span className="absolute top-2.5 right-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-primary shadow-sm">
+            <Heart className="h-4 w-4" strokeWidth={2.2} />
+          </span>
+        )}
       </div>
-    </div>
-  </button>
-);
+      <div className="p-3.5">
+        <h3 className="text-sm font-bold text-foreground line-clamp-2 leading-snug">{venue.name}</h3>
+        <p className="mt-1.5 text-xs text-muted-foreground line-clamp-1">{venue.address}</p>
+        <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
+          <span className="flex items-center gap-1"><TypeIcon className="h-3.5 w-3.5" />{venue.type}</span>
+          <span className="flex items-center gap-1"><Users className="h-3.5 w-3.5" />{venue.capacity}</span>
+        </div>
+      </div>
+    </button>
+  );
+};
 
 const ProviderProfileCard = ({
   provider,
@@ -559,11 +600,18 @@ const EventsView = ({
   nearbyServiceCards = [],
   servicesLoading = false,
   discoverLoading = false,
+  hasUserLocation = false,
+  nearbyRadiusKm = 100,
+  userLocationLabel,
+  onRequestLocation,
   onOpenEvent,
   onOpenVenue,
   onOpenServiceProvider,
   onOpenService,
   onReserveService,
+  onReserveServiceCard,
+  onEditServiceCard,
+  currentUserId,
   onCreateEvent,
   onViewAllNearby,
   onViewAllRecommended,
@@ -675,7 +723,9 @@ const EventsView = ({
     && !favoriteEvents.length
     && !nearbyEvents.length
     && !recommendedEvents.length
-    && !publishedVenues.length;
+    && !publishedVenues.length
+    && !nearbyServiceCards.length
+    && !serviceProviders.length;
 
   return (
     <div className="mx-auto max-w-lg pb-40 bg-background">
@@ -814,49 +864,67 @@ const EventsView = ({
         </section>
       )}
 
-      {!isInitialDiscoverLoad && showEvents && (
+      {!isInitialDiscoverLoad && showVenues && (
         <section className="px-4 pt-8 border-t border-border/60 mt-6">
           <div className="pt-6">
-            <SectionHeader title="Eventos cercanos a tu ubicación" action onAction={onViewAllNearby} />
-            {filteredNearEvents.length > 0 ? (
+            <SectionHeader title="Lugares cercanos a mi ubicación" action onAction={onViewAllVenues} />
+            {filteredVenues.length > 0 ? (
               <>
                 <div className={HORIZONTAL_SCROLL}>
-                  {filteredNearEvents.map((e) => (
-                    <EventCard key={e.id} event={e} onClick={() => onOpenEvent?.(e)} isFavorite={isFavorite(e.id)} onToggleFavorite={onToggleFavorite} />
+                  {filteredVenues.map((v) => (
+                    <VenueCard
+                      key={v.id}
+                      venue={v}
+                      onClick={() => onOpenVenue?.(v)}
+                      isLiked={isVenueLiked(v.id)}
+                      onToggleLike={onToggleVenueLike ? () => onToggleVenueLike(v.id) : undefined}
+                    />
                   ))}
                 </div>
-                <Dots count={filteredNearEvents.length} />
+                <Dots count={filteredVenues.length} />
               </>
+            ) : !hasUserLocation ? (
+              <EmptyHint
+                icon={MapPin}
+                action={onRequestLocation ? { label: 'Usar mi ubicación', onClick: onRequestLocation } : undefined}
+              >
+                Activa tu ubicación para ver lugares cerca de ti.
+              </EmptyHint>
             ) : (
-              <EmptyHint icon={MapPin}>Activa tu ubicación para descubrir eventos cerca de ti.</EmptyHint>
+              <EmptyHint>
+                {selectedCategory
+                  ? `No hay lugares de tipo «${selectedCategory}» en ${nearbyRadiusKm} km.`
+                  : `No hay lugares publicados en un radio de ${nearbyRadiusKm} km.`}
+              </EmptyHint>
             )}
           </div>
         </section>
       )}
 
-      {!isInitialDiscoverLoad && showVenues && (
+      {!isInitialDiscoverLoad && showEvents && (
         <section className="px-4 pt-8">
-          <SectionHeader title="Lugares cercanos a tu ubicación" action onAction={onViewAllVenues} />
-          {filteredVenues.length > 0 ? (
+          <SectionHeader title="Eventos cercanos a mi ubicación" action onAction={onViewAllNearby} />
+          {filteredNearEvents.length > 0 ? (
             <>
               <div className={HORIZONTAL_SCROLL}>
-                {filteredVenues.map((v) => (
-                  <VenueCard
-                    key={v.id}
-                    venue={v}
-                    onClick={() => onOpenVenue?.(v)}
-                    isLiked={isVenueLiked(v.id)}
-                    onToggleLike={onToggleVenueLike ? () => onToggleVenueLike(v.id) : undefined}
-                  />
+                {filteredNearEvents.map((e) => (
+                  <EventCard key={e.id} event={e} onClick={() => onOpenEvent?.(e)} isFavorite={isFavorite(e.id)} onToggleFavorite={onToggleFavorite} />
                 ))}
               </div>
-              <Dots count={filteredVenues.length} />
+              <Dots count={filteredNearEvents.length} />
             </>
+          ) : !hasUserLocation ? (
+            <EmptyHint
+              icon={MapPin}
+              action={onRequestLocation ? { label: 'Usar mi ubicación', onClick: onRequestLocation } : undefined}
+            >
+              Activa tu ubicación para descubrir eventos cerca de ti.
+            </EmptyHint>
           ) : (
-            <EmptyHint>
+            <EmptyHint icon={MapPin}>
               {selectedCategory
-                ? `No hay lugares de tipo «${selectedCategory}» cerca de tu ubicación.`
-                : 'No hay lugares publicados cerca de tu ubicación.'}
+                ? `No hay eventos de tipo «${selectedCategory}» en ${nearbyRadiusKm} km${userLocationLabel ? ` desde ${userLocationLabel}` : ''}.`
+                : `No hay eventos activos en un radio de ${nearbyRadiusKm} km${userLocationLabel ? ` desde ${userLocationLabel}` : ''}.`}
             </EmptyHint>
           )}
         </section>
@@ -867,6 +935,9 @@ const EventsView = ({
           providers={filteredServiceCards}
           loading={servicesLoading}
           onOpenService={onOpenService}
+          onReserveService={onReserveServiceCard}
+          onEditService={onEditServiceCard}
+          currentUserId={currentUserId}
           likedServiceIds={likedServiceIds}
           onToggleServiceLike={onToggleServiceLike}
         />

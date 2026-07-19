@@ -1,25 +1,53 @@
 import { SlidersHorizontal, Search, Bell } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import SideMenu from './SideMenu';
 import NotificationsSheet from './NotificationsSheet';
 import GlobalSearchView from './GlobalSearchView';
 import { useNotifications } from '@lovable/contexts/NotificationsContext';
 
+import type { NotificationNavigateTarget } from '../../../lovable-bridge/notificationNavigation';
+
 interface TopHeaderProps {
   onViewProfile?: (user: { name: string; initials: string }) => void;
-  onGoToEvent?: (eventName: string) => void;
+  onNavigateTo?: (target: NotificationNavigateTarget) => void;
   onGoToTickets?: () => void;
-  onGoToPost?: (postId: string) => void;
   onNavigate?: (section: string) => void;
+  onGoToAdmin?: () => void;
+  onLogout?: () => void;
+  profileName?: string;
+  profileUsername?: string;
+  profileAvatar?: string;
+  profileUserId?: string;
+  unreadMessages?: number;
+  isAdmin?: boolean;
 }
 
-const TopHeader = ({ onViewProfile, onGoToEvent, onGoToTickets, onGoToPost, onNavigate }: TopHeaderProps) => {
+const TopHeader = ({
+  onViewProfile,
+  onNavigateTo,
+  onGoToTickets,
+  onNavigate,
+  onGoToAdmin,
+  onLogout,
+  profileName,
+  profileUsername,
+  profileAvatar,
+  profileUserId,
+  unreadMessages = 0,
+  isAdmin = false,
+}: TopHeaderProps) => {
+  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const lastY = useRef(0);
   const { unreadCount } = useNotifications();
+
+  useEffect(() => {
+    setSearchOpen(false);
+  }, [location.pathname]);
 
   useEffect(() => {
     const getScrollTop = () => {
@@ -49,11 +77,6 @@ const TopHeader = ({ onViewProfile, onGoToEvent, onGoToTickets, onGoToPost, onNa
     window.addEventListener('scroll', onScroll, { passive: true, capture: true });
     return () => window.removeEventListener('scroll', onScroll, true);
   }, []);
-
-  const handleViewProfileFromNotif = (user: { name: string; initials: string }) => {
-    setNotifOpen(false);
-    onViewProfile?.(user);
-  };
 
   return (
     <>
@@ -96,16 +119,44 @@ const TopHeader = ({ onViewProfile, onGoToEvent, onGoToTickets, onGoToPost, onNa
         </div>
       </header>
 
-      <SideMenu open={menuOpen} onOpenChange={setMenuOpen} onNavigate={onNavigate} onGoToTickets={onGoToTickets} />
+      <SideMenu
+        open={menuOpen}
+        onOpenChange={setMenuOpen}
+        onNavigate={onNavigate}
+        onGoToTickets={onGoToTickets}
+        onGoToAdmin={onGoToAdmin}
+        onLogout={onLogout}
+        profileName={profileName}
+        profileUsername={profileUsername}
+        profileAvatar={profileAvatar}
+        profileUserId={profileUserId}
+        unreadMessages={unreadMessages}
+        isAdmin={isAdmin}
+        onOpen={() => {
+          window.dispatchEvent(new Event('doevents:chat-unread-updated'));
+        }}
+      />
       <NotificationsSheet
         open={notifOpen}
         onOpenChange={setNotifOpen}
-        onViewProfile={handleViewProfileFromNotif}
-        onGoToEvent={onGoToEvent}
+        onNavigateTo={onNavigateTo}
         onGoToTickets={onGoToTickets}
-        onGoToPost={onGoToPost}
       />
-      {searchOpen && <GlobalSearchView onClose={() => setSearchOpen(false)} />}
+      {searchOpen && (
+        <GlobalSearchView
+          onBack={() => setSearchOpen(false)}
+          onNavigate={onNavigate}
+          onGoToTickets={onGoToTickets}
+          onGoToAdmin={onGoToAdmin}
+          onLogout={onLogout}
+          profileName={profileName}
+          profileUsername={profileUsername}
+          profileAvatar={profileAvatar}
+          profileUserId={profileUserId}
+          unreadMessages={unreadMessages}
+          isAdmin={isAdmin}
+        />
+      )}
     </>
   );
 };

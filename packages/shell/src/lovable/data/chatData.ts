@@ -3,6 +3,8 @@ export interface ChatAttendee {
   name: string;
   initials: string;
   avatar?: string;
+  /** Handle para @mención (si no hay, se deriva del nombre). */
+  username?: string;
   isAdmin: boolean;
   isOnline: boolean;
 }
@@ -29,6 +31,19 @@ export interface ChatSharedEventPreview {
   date?: string;
 }
 
+export interface ChatMessageReply {
+  id: string;
+  text: string;
+  senderName: string;
+  senderId?: string;
+}
+
+export interface ChatMessageReaction {
+  userId: string;
+  emoji: string;
+  createdAt?: string;
+}
+
 export interface ChatMessage {
   id: string;
   senderId: string;
@@ -44,6 +59,8 @@ export interface ChatMessage {
   mediaUrl?: string;
   location?: ChatMessageLocation;
   sharedEvent?: ChatSharedEventPreview;
+  replyTo?: ChatMessageReply;
+  reactions?: ChatMessageReaction[];
 }
 
 export type EventStatus = 'activo' | 'en_ejecucion' | 'cancelado' | 'finalizado';
@@ -58,6 +75,9 @@ export interface EventChatRoom {
   eventTime?: string;
   eventDescription?: string;
   eventStatus: EventStatus;
+  ticketsSold?: number;
+  salesRevenue?: number;
+  promoCodesRedeemed?: number;
   lastMessage: string;
   lastMessageTime: string;
   unreadCount: number;

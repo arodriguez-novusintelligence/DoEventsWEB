@@ -1,12 +1,15 @@
 import { getAuthToken, getCurrentEnv } from './client';
+import { toUserFacingError } from '../lib/apiError';
 import { resolveImageUrl } from '../lib/resolveImageUrl';
 import {
   buildNearbyServicesCacheKey,
   cacheNearbyServices,
   cacheUserServices,
   getCachedNearbyServices,
-  getCachedUserServices,
+  getCachedUserServicesEntry,
+  SERVICES_CACHE_FRESH_MS,
 } from '../lib/servicesCache';
+import { revalidateOnce } from '../lib/wallCacheRevalidate';
 
 export interface NearbyServiceProvider {
   serviceId: string;
@@ -45,6 +48,14 @@ function authHeaders(): Record<string, string> {
     Accept: 'application/json',
     ...(token ? { Authorization: token } : {}),
   };
+}
+
+function normalizeServiceGallery(gallery: unknown): string[] {
+  if (Array.isArray(gallery)) return gallery.map(String).filter(Boolean);
+  if (typeof gallery === 'string' && gallery.trim()) {
+    return gallery.trim().split(/\s+/).filter(Boolean);
+  }
+  return [];
 }
 
 function servicesBase(): string {
@@ -88,6 +99,38 @@ export async function fetchPublishedServicesForVenue(
   return fetchNearbyServices(lat, lng, 10_000, limit, options);
 }
 
+/** Busca servicios publicados por nombre, rol, categoría o descripción. */
+export async function searchServices(query: string, limit = 40): Promise<NearbyServiceProvider[]> {
+  const term = query.trim().toLowerCase();
+  if (!term) return [];
+
+  let catalog: NearbyServiceProvider[];
+  try {
+    catalog = await fetchPublishedServicesForVenue(undefined, undefined, {
+      limit: 50,
+      forceNetwork: true,
+    });
+  } catch (err) {
+    throw new Error(toUserFacingError(err, 'la búsqueda de servicios'));
+  }
+
+  return catalog
+    .filter((service) => {
+      const haystack = [
+        service.name,
+        service.role,
+        service.category,
+        service.description,
+        service.username,
+        service.providerDisplayName,
+        service.city,
+        ...(service.sectors || []),
+      ].filter(Boolean).join(' ').toLowerCase();
+      return haystack.includes(term);
+    })
+    .slice(0, limit);
+}
+
 export async function fetchNearbyServices(
   latitude: number,
   longitude: number,
@@ -101,10 +144,19 @@ export async function fetchNearbyServices(
     if (cached) return cached;
   }
 
+  const { getStoredUserId } = await import('./authService');
+  const viewerId = getStoredUserId();
   const response = await fetch(`${servicesBase()}/nearby`, {
     method: 'POST',
     headers: authHeaders(),
-    body: JSON.stringify({ latitude, longitude, maxDistanceKm, limit }),
+    body: JSON.stringify({
+      latitude,
+      longitude,
+      maxDistanceKm,
+      limit,
+      viewerId: viewerId || undefined,
+      userId: viewerId || undefined,
+    }),
   });
 
   if (!response.ok) {
@@ -119,27 +171,53 @@ export async function fetchNearbyServices(
   const services = (body.services || body.items || [])
     .filter((s) => s.serviceId && !/^sp-\d+$/i.test(s.serviceId))
     .map((s) => {
-    const raw = s.profileImageUrl || s.gallery?.[0];
+    const gallery = normalizeServiceGallery(s.gallery);
+    const raw = s.profileImageUrl || gallery[0];
     return {
       ...s,
+      gallery,
       profileImageUrl: resolveImageUrl(raw) || raw,
     };
   });
-  cacheNearbyServices(cacheKey, services);
-  return services;
+  const { filterByOwnerPrivacy } = await import('../lib/privacyVisibility');
+  const visible = await filterByOwnerPrivacy(services, (s) => s.userId, viewerId);
+  cacheNearbyServices(cacheKey, visible);
+  return visible;
 }
 
 export async function fetchServicesByUserId(
   userId: string,
   options?: { forceNetwork?: boolean; includeInactive?: boolean },
 ): Promise<NearbyServiceProvider[]> {
-  if (!options?.forceNetwork) {
-    const cacheKey = options?.includeInactive ? `${userId}:all` : userId;
-    const cached = getCachedUserServices(cacheKey, true);
-    if (cached) return cached;
+  const cacheKey = options?.includeInactive ? `${userId}:all` : userId;
+  const cachedEntry = getCachedUserServicesEntry(cacheKey, true);
+
+  if (cachedEntry && !options?.forceNetwork) {
+    const age = Date.now() - cachedEntry.cachedAt;
+    if (age >= SERVICES_CACHE_FRESH_MS) {
+      void revalidateOnce(`user-services:${cacheKey}`, async () => {
+        const fresh = await requestServicesByUserId(userId, options?.includeInactive);
+        cacheUserServices(cacheKey, fresh);
+      });
+    }
+    return cachedEntry.data;
   }
 
-  const query = options?.includeInactive ? '?includeInactive=true' : '';
+  try {
+    const services = await requestServicesByUserId(userId, options?.includeInactive);
+    cacheUserServices(cacheKey, services);
+    return services;
+  } catch (err) {
+    if (cachedEntry) return cachedEntry.data;
+    throw err;
+  }
+}
+
+async function requestServicesByUserId(
+  userId: string,
+  includeInactive = false,
+): Promise<NearbyServiceProvider[]> {
+  const query = includeInactive ? '?includeInactive=true' : '';
   const response = await fetch(
     `${servicesBase()}/users/${encodeURIComponent(userId)}${query}`,
     { headers: authHeaders() },
@@ -147,17 +225,20 @@ export async function fetchServicesByUserId(
   if (!response.ok) {
     throw new Error('No se pudieron cargar los servicios del usuario');
   }
-  const body = await response.json() as { services?: NearbyServiceProvider[] };
-  const services = (body.services || []).map((s) => {
-    const raw = s.profileImageUrl || s.gallery?.[0];
+  const body = await response.json() as {
+    services?: NearbyServiceProvider[];
+    items?: NearbyServiceProvider[];
+    count?: number;
+  };
+  return (body.services || body.items || []).map((s) => {
+    const gallery = normalizeServiceGallery(s.gallery);
+    const raw = s.profileImageUrl || gallery[0];
     return {
       ...s,
+      gallery,
       profileImageUrl: resolveImageUrl(raw) || raw,
     };
   });
-  const cacheKey = options?.includeInactive ? `${userId}:all` : userId;
-  cacheUserServices(cacheKey, services);
-  return services;
 }
 
 export interface ServiceCategory {

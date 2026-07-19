@@ -1,4 +1,6 @@
 import { getAuthToken, getCurrentEnv } from './client';
+import { adjustPurchaseCountsCache } from '../lib/purchasesCountsCache';
+import { isTicketTransferredOut } from '../lib/ticketTransfer';
 
 function ordersBase(): string {
   return `${getCurrentEnv().apiBaseUrl}/orders`;
@@ -28,11 +30,41 @@ export interface TicketItem {
   category?: string;
   seatLabel?: string;
   seat_code?: string;
+  seat?: string | {
+    seatLabel?: string;
+    rowLabel?: string;
+    colNumber?: number;
+  };
+  display_ticket_id?: string;
   qr_url?: string;
   qrCodeKey?: string;
   qr_code?: string;
+  categoryColor?: string;
+  category_color?: string;
+  color?: string;
+  ticketCategoryColor?: string;
   price?: number;
+  purchasePrice?: number;
+  ticket_amount?: number;
+  additional_charges_amount?: number;
+  additional_charges?: Array<{ amount?: number }>;
   status?: string;
+  transfer_status?: string;
+  ticket_status?: string;
+  refund_status?: string;
+  user_id?: string;
+  transferred_to?: {
+    user_id?: string;
+    user_name?: string;
+    transferred_at?: string;
+    new_order_id?: string;
+  };
+  transferred_from?: {
+    user_id?: string;
+    user_name?: string;
+    transferred_at?: string;
+    original_order_id?: string;
+  };
 }
 
 export interface TicketEventGroup {
@@ -89,20 +121,51 @@ export function collectTicketsFromGroup(group: TicketEventGroup): TicketWithOrde
   const orders = group.orders || (group.order ? [group.order] : []);
   const tickets: TicketWithOrderRef[] = [];
   orders.forEach((order) => {
-    const orderAny = order as UserTicketOrder & { is_refunded?: boolean; refund_status?: string };
+    const orderAny = order as UserTicketOrder & {
+      is_refunded?: boolean;
+      refund_status?: string;
+      user_id?: string;
+      transferred_from?: TicketItem['transferred_from'];
+    };
     if (orderAny.is_refunded || orderAny.refund_status === 'PENDING') return;
 
     const orderRef = order.order_id || order.id || order.metadata?.reference || '';
     const paymentStatus = order.payment_status || order.status;
+    const orderUserId = orderAny.user_id;
+    const orderTransferFrom = orderAny.transferred_from;
     (order.tickets || []).forEach((ticket) => {
-      tickets.push({
+      const withTransferMeta: TicketWithOrderRef = {
         ...ticket,
         orderRef,
         paymentStatus,
-      });
+        transferred_from: ticket.transferred_from || orderTransferFrom,
+      };
+      if (isTicketTransferredOut(withTransferMeta, orderUserId)) {
+        withTransferMeta.transfer_status = ticket.transfer_status || 'TRANSFERRED';
+      }
+      tickets.push(withTransferMeta);
     });
   });
   return tickets;
+}
+
+/** Conteo ligero para Mis Compras (aprobada + pendiente, sin reembolsos). */
+export function countPurchaseTicketsFromGrouped(grouped: GroupedUserTickets): number {
+  let total = 0;
+  (['APPROVED', 'PENDING'] as const).forEach((bucket) => {
+    grouped[bucket].forEach((group) => {
+      const orders = group.orders || (group.order ? [group.order] : []);
+      orders.forEach((order) => {
+        const orderAny = order as UserTicketOrder & { is_refunded?: boolean; refund_status?: string; user_id?: string };
+        if (orderAny.is_refunded || orderAny.refund_status === 'PENDING') return;
+        (order.tickets || []).forEach((ticket) => {
+          if (isTicketTransferredOut(ticket, orderAny.user_id)) return;
+          total += 1;
+        });
+      });
+    });
+  });
+  return total;
 }
 
 export async function fetchUserTickets(userId: string): Promise<UserTicketOrder[]> {
@@ -270,6 +333,10 @@ export async function transferTicketsToUser(input: {
   }
   if (!response.ok) {
     throw new Error(body.message || body.error || 'No se pudo compartir la(s) boleta(s)');
+  }
+  adjustPurchaseCountsCache(input.currentUserId, { ticketCount: -ids.length });
+  if (input.newUserId) {
+    adjustPurchaseCountsCache(input.newUserId, { ticketCount: ids.length });
   }
 }
 

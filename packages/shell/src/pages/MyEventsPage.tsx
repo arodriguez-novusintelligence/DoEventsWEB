@@ -5,6 +5,7 @@ import {
   cancelEvent,
   deleteEvent,
   duplicateEvent,
+  fetchEventDetail,
   rescheduleEvent,
   EVENTS_CACHE_INVALIDATED_EVENT,
   fetchUserEvents,
@@ -26,14 +27,11 @@ import {
 import MyEventsView, { type MyEventItem } from '@lovable/components/feed/MyEventsView';
 import { Button } from '@lovable/components/ui/button';
 import { Input } from '@lovable/components/ui/input';
-
-function isDeletedUserEvent(ev: UserEventItem): boolean {
-  return String(ev.estatus || '').trim().toUpperCase() === 'DELETED';
-}
-
-function filterVisibleUserEvents(items: UserEventItem[]): UserEventItem[] {
-  return items.filter((ev) => !isDeletedUserEvent(ev));
-}
+import { filterVisibleUserEvents } from '../lovable-bridge/discoverEventFilters';
+import {
+  buildDuplicateEventForm,
+  storeEventResumePrefill,
+} from '../lovable-bridge/eventDuplicateBridge';
 
 function formatEventDate(item: { fechaIni?: string; horaIni?: string }): string {
   return [item.fechaIni, item.horaIni].filter(Boolean).join(' - ');
@@ -68,9 +66,12 @@ function toMyEventItem(ev: UserEventItem): MyEventItem {
     location: formatLocation(ev),
     description: ev.descripcion,
     status,
-    canEdit: canEditEventByStatus(status, schedule),
+    canEdit:
+      status === 'borrador' || status === 'inactivo'
+      || canEditEventByStatus(status, schedule),
     canCancel:
-      String(ev.estatus || '').toLowerCase() === 'activo'
+      status === 'activo'
+      && !['cancelado', 'cancelled', 'canceled'].includes(String(ev.estatus || '').toLowerCase())
       && canEditEventByStatus('activo', schedule),
   };
 }
@@ -157,6 +158,10 @@ export const MyEventsPage: React.FC = () => {
   }, [userId, showToast]);
 
   const handleEdit = (ev: MyEventItem) => {
+    if (ev.status === 'borrador' || ev.status === 'inactivo') {
+      navigate(`/events/create?resume=${encodeURIComponent(ev.id)}`);
+      return;
+    }
     if (ev.canEdit === false) {
       showToast('Solo los eventos activos que no están en curso se pueden editar. Puedes duplicar este evento.', 'error');
       return;
@@ -203,6 +208,7 @@ export const MyEventsPage: React.FC = () => {
     }
     setActionLoading(true);
     try {
+      const sourceDetail = await fetchEventDetail(duplicateFor.id);
       const result = await duplicateEvent(duplicateFor.id, {
         fechaIni,
         fechaFin,
@@ -213,8 +219,22 @@ export const MyEventsPage: React.FC = () => {
       await reload();
       setDuplicateFor(null);
       if (result.newEventId) {
+        if (sourceDetail?.event) {
+          const prefill = await buildDuplicateEventForm(
+            sourceDetail,
+            result.newEventId,
+            duplicateForm,
+            result.newVenueId,
+          );
+          storeEventResumePrefill(result.newEventId, prefill);
+        }
         showToast('Copia creada. Revisa los datos y publícala.', 'success');
-        navigate(`/events/create?resume=${encodeURIComponent(result.newEventId)}`);
+        if (result.venueOccupied) {
+          showToast('El lugar original ya tiene un evento que se cruza con esta fecha.', 'error');
+        }
+        navigate(`/events/create?resume=${encodeURIComponent(result.newEventId)}`, {
+          state: { fromDuplicate: true, duplicateVenueId: result.newVenueId },
+        });
       } else {
         showToast('Evento duplicado correctamente.', 'success');
       }

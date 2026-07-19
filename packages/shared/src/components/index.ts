@@ -31,4 +31,5 @@ export * from './EnrollmentProgress';
 export * from './PreferenceTag';
 export * from './EnrollmentRadioGroup';
 export * from './SuccessIcon';
+export * from './PlaceAutocompleteInput';
 export * from './icons/TabIcons';

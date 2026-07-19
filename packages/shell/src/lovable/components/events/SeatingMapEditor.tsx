@@ -59,6 +59,8 @@ interface Props {
   gates?: EventGate[];
   totalCapacity?: number;
   currentFloor?: number;
+  /** Figuras de todos los pisos — para validar aforo global al editar un piso. */
+  allFiguresForCapacity?: SeatingFigure[];
 }
 
 interface ShapeDef {
@@ -290,6 +292,7 @@ const SeatingMapEditor = ({
   gates = [],
   totalCapacity = 1000,
   currentFloor = 1,
+  allFiguresForCapacity,
 }: Props) => {
   const [figures, setFigures] = useState<SeatingFigure[]>(
     initialMap?.figures ?? []
@@ -354,6 +357,14 @@ const SeatingMapEditor = ({
   const editing = figures.find((f) => f.id === editingId) ?? null;
   const textEditing = figures.find((f) => f.id === textEditId) ?? null;
 
+  const figuresForCapacity = useMemo(() => {
+    if (!allFiguresForCapacity?.length) return figures;
+    const otherFloors = allFiguresForCapacity.filter(
+      (f) => (f.floor ?? 1) !== currentFloor,
+    );
+    return [...otherFloors, ...figures];
+  }, [allFiguresForCapacity, figures, currentFloor]);
+
   const addFigure = (
     shape: SeatingFigureShape,
     role: SeatingFigureRole,
@@ -378,16 +389,17 @@ const SeatingMapEditor = ({
       color,
       ...(role === 'category'
         ? {
-            priceEnabled: true,
+            priceEnabled: false,
             currency: 'COP' as SeatingCurrency,
             price: 0,
             floor: currentFloor,
+            gateId: gates[0]?.id,
             rows: 6,
             seatsPerRow: 5,
             disabledSeats: [],
             seatingOrder: 'top-left' as SeatingOrder,
             seats: 30,
-            description: '',
+            description: defaultName,
           }
         : { notes: '', floor: currentFloor }),
       ...(extras ?? {}),
@@ -413,7 +425,7 @@ const SeatingMapEditor = ({
           return {
             ...f,
             role,
-            priceEnabled: f.priceEnabled ?? true,
+            priceEnabled: f.priceEnabled ?? false,
             currency: f.currency ?? ('COP' as SeatingCurrency),
             price: f.price ?? 0,
             floor: f.floor ?? 1,
@@ -1288,7 +1300,8 @@ const SeatingMapEditor = ({
           figure={editing}
           gates={gates}
           totalCapacity={totalCapacity}
-          allFigures={figures}
+          capacityFigures={figuresForCapacity}
+          floorFigures={figures}
           onChange={(p) => updateFigure(editing.id, p)}
           onDelete={() => deleteFigure(editing.id)}
           onClose={() => setEditingId(null)}
@@ -1473,7 +1486,8 @@ const CategoryFormSheet = ({
   figure,
   gates,
   totalCapacity,
-  allFigures,
+  capacityFigures,
+  floorFigures,
   onChange,
   onDelete,
   onClose,
@@ -1484,7 +1498,8 @@ const CategoryFormSheet = ({
   figure: SeatingFigure;
   gates: EventGate[];
   totalCapacity: number;
-  allFigures: SeatingFigure[];
+  capacityFigures: SeatingFigure[];
+  floorFigures: SeatingFigure[];
   onChange: (p: Partial<SeatingFigure>) => void;
   onDelete: () => void;
   onClose: () => void;
@@ -1492,7 +1507,10 @@ const CategoryFormSheet = ({
   onPickImage: () => void;
   onRemoveImage: () => void;
 }) => {
-  const otherSeats = allFigures
+  const floorSeats = floorFigures
+    .filter((f) => f.role === 'category')
+    .reduce((s, f) => s + (f.seats ?? 0), 0);
+  const otherSeats = capacityFigures
     .filter((f) => f.role === 'category' && f.id !== figure.id)
     .reduce((s, f) => s + (f.seats ?? 0), 0);
   const currentSeats = figure.seats ?? 0;
@@ -1509,6 +1527,8 @@ const CategoryFormSheet = ({
 
   const rows = figure.rows ?? 0;
   const spr = figure.seatsPerRow ?? 0;
+  const priceInvalid =
+    figure.priceEnabled !== false && (!figure.price || figure.price <= 0);
 
   return (
     <Sheet onClose={onClose} title="Nueva Categoría">
@@ -1550,9 +1570,17 @@ const CategoryFormSheet = ({
           <span className="text-sm font-bold text-foreground">Precio</span>
           <Switch
             checked={!!figure.priceEnabled}
-            onCheckedChange={(v) => onChange({ priceEnabled: v })}
+            onCheckedChange={(v) => onChange({
+              priceEnabled: v,
+              ...(v ? {} : { price: 0 }),
+            })}
           />
         </div>
+        {!figure.priceEnabled && (
+          <p className="text-xs text-muted-foreground">
+            Categoría sin costo: se publicará como boletería gratuita.
+          </p>
+        )}
 
         {figure.priceEnabled && (
           <div className="grid grid-cols-2 gap-4">
@@ -1566,11 +1594,19 @@ const CategoryFormSheet = ({
             <Field label="Precio de boletería">
               <Input
                 type="number"
+                min={1}
                 value={figure.price ?? 0}
                 onChange={(e) => onChange({ price: Number(e.target.value) })}
                 placeholder="$450.000"
-                className="h-10 border-0 border-b border-border bg-transparent px-0 text-base shadow-none focus-visible:ring-0"
+                className={`h-10 border-0 border-b bg-transparent px-0 text-base shadow-none focus-visible:ring-0 ${
+                  priceInvalid ? 'border-destructive text-destructive' : 'border-border'
+                }`}
               />
+              {priceInvalid && (
+                <p className="mt-1 text-xs font-medium text-destructive">
+                  Debes asignar un precio mayor a cero para esta categoría.
+                </p>
+              )}
             </Field>
           </div>
         )}
@@ -1630,7 +1666,7 @@ const CategoryFormSheet = ({
             <h4 className="text-sm font-bold text-foreground">Mapa de silletería</h4>
             <span className="text-xs text-muted-foreground">
               Total sillas del mapa{' '}
-              <span className="ml-1 font-bold text-foreground">{usedSeats}</span>
+              <span className="ml-1 font-bold text-foreground">{floorSeats}</span>
             </span>
           </div>
           <div className="mb-3 flex items-center justify-between rounded-lg bg-background/60 px-3 py-2">
@@ -1809,8 +1845,10 @@ const CategoryFormSheet = ({
         onSave={() => {
           const missing: string[] = [];
           if (!figure.name?.trim()) missing.push('Nombre de la categoría');
-          if (figure.priceEnabled && (!figure.price || figure.price <= 0))
-            missing.push('Precio');
+          if (figure.priceEnabled && (!figure.price || figure.price <= 0)) {
+            toast.error('Debes asignar un precio a la boletería de esta categoría.');
+            missing.push('Precio de boletería');
+          }
           if (!figure.gateId) missing.push('Puerta de acceso');
           if (!figure.description?.trim()) missing.push('Descripción');
           if (missing.length) {
@@ -2144,18 +2182,38 @@ export const SeatsGrid = ({
   figure,
   selectedLabels,
   takenLabels,
+  reservedLabels,
+  soldLabels,
   onSeatToggle,
   selectedColor = 'hsl(var(--primary))',
+  reservedColor = '#f97316',
+  soldColor = '#dc2626',
   takenColor = 'rgba(15,23,42,0.55)',
 }: {
   figure: SeatingFigure;
   selectedLabels?: Set<string>;
   takenLabels?: Set<string>;
+  reservedLabels?: Set<string>;
+  soldLabels?: Set<string>;
   onSeatToggle?: (label: string) => void;
   selectedColor?: string;
+  reservedColor?: string;
+  soldColor?: string;
   takenColor?: string;
 }) => {
   const interactive = !!onSeatToggle;
+  const resolveSeatFill = (label: string, off: boolean, isSel: boolean) => {
+    if (off) return 'rgba(161,161,170,0.6)';
+    if (isSel) return selectedColor;
+    if (reservedLabels?.has(label)) return reservedColor;
+    if (soldLabels?.has(label)) return soldColor;
+    if (takenLabels?.has(label)) return takenColor;
+    return 'rgba(255,255,255,0.92)';
+  };
+  const isSeatBlocked = (label: string) =>
+    reservedLabels?.has(label)
+    || soldLabels?.has(label)
+    || takenLabels?.has(label);
   const rows = figure.rows ?? 0;
   const cols = figure.seatsPerRow ?? 0;
   const order: SeatingOrder = figure.seatingOrder ?? 'top-left';
@@ -2232,22 +2290,16 @@ export const SeatsGrid = ({
         );
 
         const isSel = selectedLabels?.has(label);
-        const isTaken = takenLabels?.has(label);
-        const fillCol = off
-          ? 'rgba(161,161,170,0.6)'
-          : isSel
-          ? selectedColor
-          : isTaken
-          ? takenColor
-          : 'rgba(255,255,255,0.92)';
+        const isBlocked = isSeatBlocked(label);
+        const fillCol = resolveSeatFill(label, off, isSel);
         items.push(
-          <g key={`${r}-${c}`} style={interactive && !off && !isTaken ? { cursor: 'pointer' } : undefined}>
+          <g key={`${r}-${c}`} style={interactive && !off && !isBlocked ? { cursor: 'pointer' } : undefined}>
             <path
               d={d}
               fill={fillCol}
               stroke="rgba(15,23,42,0.15)"
               strokeWidth={0.2}
-              onClick={interactive && !off && !isTaken ? () => onSeatToggle?.(label) : undefined}
+              onClick={interactive && !off && !isBlocked ? () => onSeatToggle?.(label) : undefined}
               style={{ pointerEvents: interactive ? 'auto' : 'none' }}
             />
             <text
@@ -2332,12 +2384,16 @@ export const SeatsGrid = ({
     >
       {cells.map((c, i) => {
         const isSel = selectedLabels?.has(c.label);
-        const isTaken = takenLabels?.has(c.label);
+        const isBlocked = isSeatBlocked(c.label);
         const bg = c.off
           ? undefined
           : isSel
           ? selectedColor
-          : isTaken
+          : reservedLabels?.has(c.label)
+          ? reservedColor
+          : soldLabels?.has(c.label)
+          ? soldColor
+          : takenLabels?.has(c.label)
           ? takenColor
           : undefined;
         const baseClasses = `flex items-center justify-center overflow-hidden rounded-full ${
@@ -2355,7 +2411,7 @@ export const SeatsGrid = ({
           lineHeight: 1,
           background: bg,
         };
-        const cellInteractive = interactive && !c.off && !isTaken;
+        const cellInteractive = interactive && !c.off && !isBlocked;
         return (
           <div key={i} className="flex items-center justify-center overflow-hidden">
             {cellInteractive ? (

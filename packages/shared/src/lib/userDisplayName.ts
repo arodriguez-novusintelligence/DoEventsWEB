@@ -1,6 +1,7 @@
 import type { UserProfile } from '../api/userService';
 
 const DISPLAY_NAME_KEY = 'doevents_user_display_name';
+const OAUTH_PHOTO_KEY = 'doevents_oauth_profile_photos';
 
 /** Guarda nombre mostrado tras OAuth (Google/Apple/Facebook). */
 export function persistUserDisplayName(name: string): void {
@@ -25,6 +26,45 @@ export function getPersistedUserDisplayName(): string {
 
 export function clearPersistedUserDisplayName(): void {
   localStorage.removeItem(DISPLAY_NAME_KEY);
+}
+
+export function persistOAuthProfilePhoto(userId: string, photo?: string | null): void {
+  const url = String(photo || '').trim();
+  if (!userId || !url) return;
+  try {
+    const store = JSON.parse(localStorage.getItem(OAUTH_PHOTO_KEY) || '{}') as Record<string, string>;
+    store[userId] = url;
+    localStorage.setItem(OAUTH_PHOTO_KEY, JSON.stringify(store));
+  } catch {
+    // ignore
+  }
+}
+
+/** Quita la foto OAuth cacheada de un usuario (p. ej. tras subir avatar propio). */
+export function clearPersistedOAuthProfilePhoto(userId?: string | null): void {
+  if (!userId) return;
+  try {
+    const store = JSON.parse(localStorage.getItem(OAUTH_PHOTO_KEY) || '{}') as Record<string, string>;
+    if (!(userId in store)) return;
+    delete store[userId];
+    localStorage.setItem(OAUTH_PHOTO_KEY, JSON.stringify(store));
+  } catch {
+    // ignore
+  }
+}
+
+export function getPersistedOAuthProfilePhoto(userId?: string | null): string | undefined {
+  if (!userId) return undefined;
+  try {
+    const store = JSON.parse(localStorage.getItem(OAUTH_PHOTO_KEY) || '{}') as Record<string, string>;
+    return store[userId] || undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+export function clearPersistedOAuthProfilePhotos(): void {
+  localStorage.removeItem(OAUTH_PHOTO_KEY);
 }
 
 /** Nombre para UI: perfil API → OAuth guardado → email → vacío (sin "Eventer"). */

@@ -14,9 +14,15 @@ import {
 
   invalidateVenuesCache,
 
+  invalidateDiscoverCache,
+
+  invalidateProfileHeaderCache,
+
   isPlaceholderLocation,
 
   publishRentalPlace,
+
+  syncVenuePromoCodes,
 
   updateRentalVenue,
 
@@ -47,7 +53,8 @@ import {
   notifyWizardDraftReminder,
 
   saveLocalWizardDraft,
-
+  loadLocalWizardDraft,
+  clearLocalWizardDraft,
 } from '../lib/wizardDraftBridge';
 
 import type { AIEventDraft } from '@doevents/shared';
@@ -134,7 +141,14 @@ async function collectMediaPayload(form: PlaceFormData) {
 
 }
 
-
+function placeMediaExtras(media: Awaited<ReturnType<typeof collectMediaPayload>>) {
+  return {
+    images: media.imagesBase64.length ? media.imagesBase64 : undefined,
+    imageUrls: media.imageUrls.length ? media.imageUrls : undefined,
+    galleryImageImports: media.galleryImageImports.length ? media.galleryImageImports : undefined,
+    videos: media.videoUrls.length ? media.videoUrls : undefined,
+  };
+}
 
 function resolveFormAddress(form: PlaceFormData): string {
 
@@ -206,6 +220,21 @@ export const PlacePublishPage: React.FC = () => {
 
   }, [showToast]);
 
+  React.useEffect(() => {
+    if (!userId || initialForm) return;
+    const draft = loadLocalWizardDraft<PlaceFormData | { form: PlaceFormData; venueId?: string }>(userId, 'venue');
+    const form = draft && typeof draft === 'object' && 'form' in draft
+      ? draft.form
+      : (draft as PlaceFormData | null);
+    const venueId = draft && typeof draft === 'object' && 'venueId' in draft
+      ? draft.venueId
+      : undefined;
+    if (!form?.name?.trim()) return;
+    setInitialForm(form);
+    if (venueId) setPersistedVenueId(venueId);
+    showToast('Reanudamos tu borrador local de lugar', 'success');
+  }, [userId, initialForm, showToast]);
+
 
 
   const savePlaceDraft = async (form: PlaceFormData) => {
@@ -218,7 +247,7 @@ export const PlacePublishPage: React.FC = () => {
 
       ownerUserId: userId,
 
-      ...media,
+      ...placeMediaExtras(media),
 
       status: 'draft',
 
@@ -293,15 +322,10 @@ export const PlacePublishPage: React.FC = () => {
 
 
       const media = await collectMediaPayload(form);
-
       const payload = placeFormToPublishInput(form, {
-
         ownerUserId: userId,
-
-        ...media,
-
+        ...placeMediaExtras(media),
         status: 'active',
-
       });
 
       payload.address = resolveFormAddress(form);
@@ -311,29 +335,37 @@ export const PlacePublishPage: React.FC = () => {
       const result = await publishRentalPlace(payload);
 
       invalidateVenuesCache();
+      invalidateDiscoverCache();
+      if (userId) invalidateProfileHeaderCache(userId);
 
       const venueId = result.venueId || result.id;
 
       if (!venueId) throw new Error('No se recibió el ID del lugar');
 
-
-
       if (media.galleryImageImports.length) {
-
-        await updateRentalVenue(venueId, { userId, galleryImageImports: media.galleryImageImports });
-
+        try {
+          await updateRentalVenue(venueId, { userId, galleryImageImports: media.galleryImageImports });
+        } catch {
+          showToast('Lugar publicado. Algunas imágenes de galería no se sincronizaron.', 'error');
+        }
       }
 
-
+      if (form.promoCodes?.length) {
+        try {
+          await syncVenuePromoCodes(venueId, form.promoCodes);
+        } catch {
+          showToast('Lugar publicado. Los códigos promo no se sincronizaron.', 'error');
+        }
+      }
 
       showToast('¡Lugar publicado en el Feed!', 'success');
 
+      if (userId) clearLocalWizardDraft(userId, 'place');
+
       await finishPublishAndGoToFeed(venueId, {
-
         title: form.name.trim(),
-
-        onNavigate: (state) => navigate('/', { replace: true, state }),
-
+        kind: 'venue',
+        navigate,
       });
 
     } finally {

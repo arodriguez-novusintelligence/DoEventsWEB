@@ -44,8 +44,11 @@ export interface InvitationEvent {
     name: string;
     address: string;
     images: string[];
+    latitude?: number;
+    longitude?: number;
   };
   videoUrl?: string;
+  tags?: string[];
   organizer: InvitationPerson;
   host: InvitationPerson;
   refundPolicy: string;

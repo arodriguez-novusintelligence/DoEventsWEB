@@ -22,6 +22,8 @@ import {
 
   StoredUserLocation,
 
+  useStoredUserLocation,
+
   buildSocialFeedCacheKey,
 
   createPublication,
@@ -33,6 +35,8 @@ import {
   deletePublication,
 
   fetchPublicationComments,
+
+  fetchPublicationById,
 
   fetchSocialFeed,
 
@@ -74,8 +78,13 @@ import {
   likeEvent,
   toggleEventLike,
   invalidateDiscoverCache,
+  dedupeFeedPublications,
   resolveEventIdFromFeedPublication,
+  resolveVenueIdFromFeedPublication,
+  enrichVenueFeedPublicationImages,
+  feedPublicationImageScore,
   resolvePublicationDetailPath,
+  resolvePublicationDetailPathAsync,
   EVENT_FAVORITE_CHANGED_EVENT,
   dispatchEventFavoriteChanged,
   applyEventFavoriteToPublications,
@@ -86,11 +95,12 @@ import {
   buildEventCategoryMapForFeed,
   matchesPublicationCategory,
 
-  mapDiscoverEventBadge,
+  isDiscoverableFeedEvent,
 
   resolveUserDisplayName,
   resolveUserFirstName,
   getPersistedUserDisplayName,
+  userIdsMatch,
 
 } from '@doevents/shared';
 
@@ -98,15 +108,15 @@ import FeedHero from '@lovable/components/feed/FeedHero';
 import FeedServicesCarousel from '@lovable/components/feed/FeedServicesCarousel';
 import { ReportPostDialog } from '@lovable/components/feed/ReportPostDialog';
 import { ChangeLocationSheet } from '@lovable/components/feed/ChangeLocationSheet';
-import { CreatePostSheet } from '@doevents/shared';
+import FeedCreatePostSheet from '@lovable/components/feed/FeedCreatePostSheet';
 import { LovablePostCardBridge } from '../lovable-bridge/LovablePostCardBridge';
 import { LovableCommentsBridge } from '../lovable-bridge/LovableCommentsBridge';
 import { feedPublicationToLovablePost } from '../lovable-bridge/feedAdapter';
 import { filterAndSortMyPublishedEvents } from '../lovable-bridge/discoverEventFilters';
-import EditPostSheet from '@lovable/components/feed/EditPostSheet';
 import RepostSheet from '@lovable/components/feed/RepostSheet';
 import { useFeedStories } from '../lovable-bridge/useFeedStories';
 import { useActiveStoryAuthors } from '../contexts/StoriesContext';
+import { useNearbyServices } from '../lovable-bridge/useNearbyServices';
 import { CreateStorySheet } from '../components/CreateStorySheet';
 import { StoryViewer } from '../components/StoryViewer';
 
@@ -156,10 +166,10 @@ export const SocialWallTab: React.FC = () => {
 
   const userId = useSelector((s: RootState) => s.auth.idUser);
 
-  const storedLocation = getStoredUserLocation();
+  const userLocation = useStoredUserLocation();
   const cacheKey = useMemo(
-    () => buildSocialFeedCacheKey(userId, null, PAGE_SIZE, storedLocation),
-    [userId, storedLocation?.lat, storedLocation?.lng],
+    () => buildSocialFeedCacheKey(userId, null, PAGE_SIZE, userLocation),
+    [userId, userLocation?.lat, userLocation?.lng],
   );
 
   const cachedFeed = useMemo(() => getCachedSocialFeed(cacheKey, true), [cacheKey]);
@@ -198,6 +208,42 @@ export const SocialWallTab: React.FC = () => {
   const [showLocationSheet, setShowLocationSheet] = useState(false);
   const recentLocalPostIds = useRef<Set<string>>(new Set());
 
+  const feedLocationDetails = useMemo(() => {
+    if (!userLocation) {
+      return profileCity ? { city: profileCity } : undefined;
+    }
+
+    const country = userLocation.country?.trim();
+    const labelParts = (userLocation.label || '')
+      .split(',')
+      .map((part) => part.trim())
+      .filter(Boolean);
+    if (
+      country
+      && labelParts.length
+      && labelParts[labelParts.length - 1].toLocaleLowerCase() === country.toLocaleLowerCase()
+    ) {
+      labelParts.pop();
+    }
+
+    const address = userLocation.street
+      ? [userLocation.departamento, userLocation.street].filter(Boolean).join(', ')
+      : labelParts.join(', ');
+
+    return {
+      city: userLocation.city,
+      address: address || undefined,
+      country,
+    };
+  }, [
+    profileCity,
+    userLocation?.city,
+    userLocation?.country,
+    userLocation?.departamento,
+    userLocation?.label,
+    userLocation?.street,
+  ]);
+
   const { refreshStories } = useActiveStoryAuthors();
   const { stories: feedStories, loading: storiesLoading } = useFeedStories(
     storiesRefreshKey,
@@ -205,6 +251,7 @@ export const SocialWallTab: React.FC = () => {
     profileName,
     profileAvatar,
   );
+  const { providers: nearbyServiceCards, loading: servicesLoading } = useNearbyServices(50);
 
   const loadFeed = useCallback(async (nextCursor?: string | null, forceNetwork = false) => {
     const data = await fetchSocialFeed(nextCursor, PAGE_SIZE, {
@@ -222,7 +269,7 @@ export const SocialWallTab: React.FC = () => {
         const preserved = prev.filter(
           (p) => recentLocalPostIds.current.has(p.id) && !incomingIds.has(p.id),
         );
-        return [...preserved, ...incoming];
+        return dedupeFeedPublications([...preserved, ...incoming]);
       });
       setCursor(data.nextCursor || null);
       setHasMore(Boolean(data.hasMore));
@@ -263,8 +310,7 @@ export const SocialWallTab: React.FC = () => {
 
   const handleLocationResolved = useCallback((location: StoredUserLocation) => {
     setLocationLabel(location.label || location.city || null);
-    loadRecommended(location);
-  }, [loadRecommended]);
+  }, []);
 
 
 
@@ -389,30 +435,35 @@ export const SocialWallTab: React.FC = () => {
     fetchUserById(userId).then((profile) => {
       if (profile?.ciudad) {
         setProfileCity(profile.ciudad);
-        setLocationLabel((current) => current || profile.ciudad || null);
+        if (!getStoredUserLocation()) {
+          setLocationLabel((current) => current || profile.ciudad || null);
+        }
       }
-      if (profile?.imagen) setProfileAvatar(resolveImageUrl(profile.imagen));
+      if (profile?.imagen) setProfileAvatar(profile.imagen);
       const name = resolveUserDisplayName(profile) || getPersistedUserDisplayName();
       if (name) setProfileName(name);
     }).catch(() => undefined);
   }, [userId]);
 
   useEffect(() => {
-    const stored = getStoredUserLocation();
-    if (stored?.label || stored?.city) {
-      setLocationLabel(stored.label || stored.city || null);
-      loadRecommended(stored);
+    if (userLocation) {
+      setLocationLabel(userLocation.label || userLocation.city || null);
+      void loadRecommended(userLocation);
       return;
     }
+
+    let cancelled = false;
     resolveUserLocation({ prompt: false, profileCity }).then((resolved) => {
+      if (cancelled) return;
       if (resolved) {
         setLocationLabel(resolved.label || resolved.city || null);
-        loadRecommended(resolved);
+        void loadRecommended(resolved);
       } else {
-        loadRecommended(null);
+        void loadRecommended(null);
       }
     });
-  }, [loadRecommended, profileCity]);
+    return () => { cancelled = true; };
+  }, [userLocation?.lat, userLocation?.lng, profileCity, loadRecommended]);
 
   const enrichedAuthorsRef = useRef(new Set<string>());
 
@@ -454,6 +505,28 @@ export const SocialWallTab: React.FC = () => {
     return () => { cancelled = true; };
   }, [posts]);
 
+  const enrichedVenueImagesRef = useRef(new Set<string>());
+
+  useEffect(() => {
+    const pending = posts.filter((post) => {
+      if (enrichedVenueImagesRef.current.has(post.id)) return false;
+      const venueId = resolveVenueIdFromFeedPublication(post);
+      return Boolean(venueId) && feedPublicationImageScore(post) === 0;
+    });
+    if (!pending.length) return;
+
+    let cancelled = false;
+    pending.forEach((post) => enrichedVenueImagesRef.current.add(post.id));
+
+    void enrichVenueFeedPublicationImages(posts).then((enriched) => {
+      if (cancelled) return;
+      const changed = enriched.some((item, index) => item !== posts[index]);
+      if (changed) setPosts(enriched);
+    }).catch(() => undefined);
+
+    return () => { cancelled = true; };
+  }, [posts]);
+
   const filteredRecommendedEvents = useMemo(
     () => recommendedEvents.filter((ev) => matchesEventCategory(ev, selectedFeedCategories)),
     [recommendedEvents, selectedFeedCategories],
@@ -476,13 +549,19 @@ export const SocialWallTab: React.FC = () => {
         .filter((p) => !hiddenPosts.has(p.id))
         .filter((p) => {
           if (p.type !== 'event') return true;
-          const status = String(p.metadata?.estatus || p.metadata?.status || '').toLowerCase();
-          const badge = mapDiscoverEventBadge({
-            estatus: status,
+          const estatus = String(
+            p.metadata?.estatus || p.metadata?.status || (p.type === 'event' ? 'activo' : ''),
+          );
+          if (!p.metadata?.estatus && !p.metadata?.fechaIni) {
+            return true;
+          }
+          return isDiscoverableFeedEvent({
+            estatus,
             fechaIni: String(p.metadata?.fechaIni || ''),
             fechaFin: String(p.metadata?.fechaFin || ''),
+            horaIni: String(p.metadata?.horaIni || ''),
+            horaFin: String(p.metadata?.horaFin || ''),
           });
-          return badge !== 'borrador' && badge !== 'inactivo';
         })
         .filter((p) => matchesPublicationCategory(p, selectedFeedCategories, eventCategoryMap));
     },
@@ -498,7 +577,7 @@ export const SocialWallTab: React.FC = () => {
     try {
       const result = await followUser(userId, post.author.id);
       setPosts((prev) => prev.map((item) => (
-        item.id === post.id
+        item.author?.id === post.author.id
           ? { ...item, author: { ...item.author, isFollowing: true } }
           : item
       )));
@@ -510,11 +589,11 @@ export const SocialWallTab: React.FC = () => {
 
   const openUserProfile = useCallback((targetUserId: string) => {
     if (!targetUserId) return;
-    if (targetUserId === userId) {
+    if (userId && userIdsMatch(targetUserId, userId)) {
       navigate('/profile');
       return;
     }
-    navigate(`/users/${targetUserId}`);
+    navigate(`/users/${encodeURIComponent(targetUserId)}`);
   }, [navigate, userId]);
 
   const handleLike = async (post: FeedPublication) => {
@@ -600,8 +679,11 @@ export const SocialWallTab: React.FC = () => {
       mentions: data.mentions,
     });
     recentLocalPostIds.current.add(publication.id);
-    setPosts((prev) => [publication, ...prev.filter((p) => p.id !== publication.id)]);
-    void loadFeed(null, true);
+    setPosts((prev) => dedupeFeedPublications([
+      publication,
+      ...prev.filter((p) => p.id !== publication.id),
+    ]));
+    await loadFeed(null, true);
     showToast('Publicación promocionada en el Feed', 'success');
   };
 
@@ -636,7 +718,16 @@ export const SocialWallTab: React.FC = () => {
       setRepostingPost(null);
       showToast('Publicación reposteada', 'success');
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Error al repostear', 'error');
+      const message = err instanceof Error ? err.message : 'Error al repostear';
+      if (/FEED_REPOST_LIMIT|límite de republicaciones/i.test(message)) {
+        showToast('Alcanzaste el límite de republicaciones para este contenido', 'error');
+        return;
+      }
+      if (/FEED_REPOST_COOLDOWN|esperar.*día/i.test(message)) {
+        showToast(message, 'error');
+        return;
+      }
+      showToast(message, 'error');
     }
   };
 
@@ -658,17 +749,37 @@ export const SocialWallTab: React.FC = () => {
 
 
 
-  const handleEditSave = async (
-    postId: string,
-    updates: { title: string; description: string; location: string; images: string[] },
-  ) => {
+  const handleEditSave = async (data: {
+    title: string;
+    description: string;
+    mediaIds?: string[];
+    visibility?: string;
+    locationLabel?: string;
+    latitude?: number;
+    longitude?: number;
+    mentions?: import('@doevents/shared').FeedMention[];
+    mediaChanged?: boolean;
+  }) => {
+    if (!editingPost) return;
     try {
-      const updated = await updatePublication(postId, {
-        title: updates.title,
-        description: updates.description,
-        locationLabel: updates.location,
+      const mediaPayload = data.mediaChanged
+        ? {
+            mediaIds: data.mediaIds || [],
+            replaceMedia: true as const,
+            clearMedia: !(data.mediaIds && data.mediaIds.length),
+          }
+        : {};
+      const updated = await updatePublication(editingPost.id, {
+        title: data.title,
+        description: data.description,
+        locationLabel: data.locationLabel,
+        visibility: data.visibility,
+        mentions: data.mentions || [],
+        latitude: data.latitude ?? null,
+        longitude: data.longitude ?? null,
+        ...mediaPayload,
       });
-      setPosts((prev) => prev.map((p) => (p.id === postId ? updated : p)));
+      setPosts((prev) => prev.map((p) => (p.id === editingPost.id ? updated : p)));
       setEditingPost(null);
       showToast('Publicación actualizada', 'success');
     } catch (err) {
@@ -678,8 +789,19 @@ export const SocialWallTab: React.FC = () => {
 
 
 
-  const handleMentionClick = useCallback(async (mention: string) => {
-    const normalized = mention.toLowerCase().replace(/\s+/g, '');
+  const handleMentionClick = useCallback(async (mention: string, publicationId?: string) => {
+    const normalized = mention.toLowerCase().replace(/^@/, '').replace(/\s+/g, '');
+    const feedPost = publicationId ? posts.find((item) => item.id === publicationId) : undefined;
+    const storedMention = feedPost?.mentions?.find((entry) => {
+      const type = String(entry.mentionType || entry.type || '').toLowerCase();
+      if (type !== 'user' && !entry.userId) return false;
+      const tag = String(entry.tag || entry.username || entry.name || '').replace(/^@/, '').toLowerCase().replace(/\s+/g, '');
+      return tag === normalized;
+    });
+    if (storedMention?.userId) {
+      navigate(`/users/${storedMention.userId}`);
+      return;
+    }
     try {
       const users = await searchUsers(mention);
       const match = users.find((u) => {
@@ -695,18 +817,61 @@ export const SocialWallTab: React.FC = () => {
     } catch {
       showToast('No se pudo abrir el perfil', 'error');
     }
-  }, [navigate, showToast]);
+  }, [navigate, posts, showToast]);
+
+
+
+  const openFeedPublication = useCallback(async (post: FeedPublication) => {
+    try {
+      const detailPath = await resolvePublicationDetailPathAsync(post, {
+        fetchPublication: (publicationId) => fetchPublicationById(publicationId, userId || undefined),
+      });
+
+      if (detailPath) {
+        navigate(detailPath);
+        return;
+      }
+
+      const lovablePath = feedPublicationToLovablePost(post).detailPath;
+      if (lovablePath) {
+        navigate(lovablePath);
+        return;
+      }
+
+      if (post.type === 'post' || post.listItemType === 'publication') {
+        setCommentPostId(post.id);
+        return;
+      }
+
+      showToast('No se pudo abrir este contenido', 'error');
+    } catch {
+      showToast('No se pudo abrir este contenido', 'error');
+    }
+  }, [navigate, showToast, userId]);
 
 
 
   const handleShare = async (post: FeedPublication) => {
     try {
-      const { shareUrl } = await sharePublication(post.id);
       const detailPath = resolvePublicationDetailPath(post);
-      const fallbackUrl = detailPath
-        ? `${window.location.origin}${detailPath}`
-        : `${window.location.origin}/`;
-      const url = shareUrl || fallbackUrl;
+      const origin = (typeof window !== 'undefined' && window.location?.origin)
+        || 'https://dev.doeventsapp.com';
+      // Preferir deep-link al detalle de evento/lugar/servicio cuando el ítem del feed lo promociona.
+      let url = detailPath
+        ? `${origin}${detailPath}`
+        : `${origin}/p/${encodeURIComponent(post.id)}`;
+
+      try {
+        const { shareUrl } = await sharePublication(post.id);
+        // Si no hay detalle de entidad, usar la URL pública del backend.
+        if (!detailPath && shareUrl) url = shareUrl;
+      } catch (apiErr) {
+        // Si el backend falla pero ya tenemos URL de detalle, aún así compartimos el enlace.
+        if (!detailPath) {
+          throw apiErr;
+        }
+      }
+
       const shareText = [post.title, post.description].filter(Boolean).join(' — ').slice(0, 280);
 
       if (typeof navigator.share === 'function') {
@@ -828,6 +993,7 @@ export const SocialWallTab: React.FC = () => {
         showBuiltInStories={false}
         userName={profileName?.split(/\s+/)[0] || resolveUserFirstName(null) || undefined}
         location={locationLabel || profileCity || 'Indica tu ubicación'}
+        locationDetails={feedLocationDetails}
         onChangeLocation={() => setShowLocationSheet(true)}
         selectedCategories={selectedFeedCategories}
         onSelectCategory={(label) => {
@@ -845,10 +1011,10 @@ export const SocialWallTab: React.FC = () => {
 
       <div className="mx-auto max-w-lg">
         <FeedServicesCarousel
+          providers={nearbyServiceCards}
+          loading={servicesLoading}
           onOpenService={(card) => {
-            if (card.id && !/^sp-\d+$/i.test(card.id)) {
-              navigate(`/services/${card.id}`);
-            }
+            if (card.id) navigate(`/services/${card.id}`);
           }}
         />
 
@@ -869,7 +1035,6 @@ export const SocialWallTab: React.FC = () => {
         ) : (
 
           filteredPosts.map((post) => {
-            const detailPath = resolvePublicationDetailPath(post);
             const authorId = post.author?.id;
             return (
             <LovablePostCardBridge
@@ -902,7 +1067,7 @@ export const SocialWallTab: React.FC = () => {
                   setReportPostId(post.id);
                 }
               }}
-              onOpen={detailPath ? () => navigate(detailPath) : undefined}
+              onOpen={() => { void openFeedPublication(post); }}
               onOpenStory={(authorUserId) => setStoryViewerUserId(authorUserId)}
             />
             );
@@ -936,9 +1101,9 @@ export const SocialWallTab: React.FC = () => {
 
 
 
-      <CreatePostSheet
+      <FeedCreatePostSheet
         open={showCreate}
-        onClose={() => setShowCreate(false)}
+        onOpenChange={setShowCreate}
         onSubmit={handleCreate}
         onOpenStorySheet={() => setShowCreateStory(true)}
       />
@@ -956,7 +1121,9 @@ export const SocialWallTab: React.FC = () => {
         open={Boolean(storyViewerUserId)}
         authorUserId={storyViewerUserId}
         currentUserId={userId}
+        currentUserAvatar={profileAvatar}
         onClose={() => setStoryViewerUserId(null)}
+        onOpenProfile={openUserProfile}
         onStoriesChanged={() => {
           setStoriesRefreshKey((k) => k + 1);
           refreshStories();
@@ -974,11 +1141,12 @@ export const SocialWallTab: React.FC = () => {
       />
 
       {editingPost && (
-        <EditPostSheet
+        <FeedCreatePostSheet
           open
+          mode="edit"
+          initialPublication={editingPost}
           onOpenChange={(open) => { if (!open) setEditingPost(null); }}
-          post={feedPublicationToLovablePost(editingPost)}
-          onSave={handleEditSave}
+          onSubmit={handleEditSave}
         />
       )}
 

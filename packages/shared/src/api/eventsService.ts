@@ -1,14 +1,32 @@
-import { apiRequest, getAuthToken, getCurrentEnv } from './client';
+import { apiRequest, fetchServiceToken, getAuthToken, getCurrentEnv } from './client';
 import type { EventDetailResponse, EventPersonInfo, RefundEligibility } from '../types/eventDetail';
 import type { EventLocation } from '../types/events';
 import type { EventsFeedResponse, FeedEventItem, UserEventItem, UserEventsResponse } from '../types/events';
-import { cacheEvents, cacheFeed, cacheUserEvents, cacheEventTypes, getCachedEvent, getCachedFeedEntry, getCachedUserEvents, getCachedUserEventsEntry, getCachedEventTypesEntry, invalidateEventsCache, isFresh } from '../lib/eventsCache';
+import {
+  cacheEvents,
+  cacheFeed,
+  cacheUserEvents,
+  cacheEventTypes,
+  findFeedPublicationByEventId,
+  getCachedEvent,
+  getCachedFeedEntry,
+  getCachedUserEvents,
+  getCachedUserEventsEntry,
+  getCachedEventTypesEntry,
+  invalidateEventsCache,
+  isFresh,
+} from '../lib/eventsCache';
+import { resolveEventIdFromFeedPublication } from '../lib/feedPublicationUtils';
+import { resolveFeedPublicationImages } from '../lib/resolveFeedPublicationImages';
+import type { FeedPublication } from '../types/feed';
 import { invalidateDiscoverCache } from '../lib/discoverCache';
 import { resolveImageUrl, resolveEventVideoUrl } from '../lib/resolveImageUrl';
 import { fetchEventMedia } from './eventImagesService';
-import { googleMapsUrl } from '../lib/geocodePlace';
+import { googleMapsUrl, resolveMapSearchQuery } from '../lib/geocodePlace';
 import { resolveDisplayLocation } from '../lib/formatMapLocation';
 import { revalidateOnce } from '../lib/wallCacheRevalidate';
+import { parseFetchResponse, toUserFacingError } from '../lib/apiError';
+import { isDiscoverableFeedEvent } from '../lib/eventStatusUtils';
 
 export interface EventTypeItem {
   id: string;
@@ -57,6 +75,7 @@ export interface CreateEventPayload {
   eventDays?: Array<Record<string, unknown>>;
   salesStartAt?: string;
   salesEndAt?: string;
+  categoriaReembolso?: string;
 }
 
 export interface CreateEventResponse {
@@ -73,18 +92,59 @@ function todayFormatted(): string {
   return `${dd}/${mm}/${yyyy}`;
 }
 
-function authHeaders(): Record<string, string> {
-  const token = getAuthToken();
-  return {
-    'Content-Type': 'application/json',
-    ...(token ? { Authorization: token } : {}),
+function authHeaders(options?: { json?: boolean; token?: string }): Record<string, string> {
+  const token = (options?.token ?? getAuthToken()).trim();
+  const headers: Record<string, string> = {
+    Accept: 'application/json',
   };
+  if (options?.json !== false) {
+    headers['Content-Type'] = 'application/json';
+  }
+  if (token) {
+    headers.Authorization = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+  }
+  return headers;
+}
+
+function readAuthHeaders(token?: string): Record<string, string> {
+  return authHeaders({ json: false, token });
+}
+
+function pickRawEventImage(raw: Record<string, unknown>): string | undefined {
+  const candidates = [
+    raw.imagen,
+    raw.imagenPrincipal,
+    raw.image,
+    raw.imageUrl,
+    raw.main_image,
+    raw.coverImage,
+    raw.cover,
+  ];
+  for (const candidate of candidates) {
+    const value = typeof candidate === 'string' ? candidate.trim() : '';
+    if (value) return value;
+  }
+  if (Array.isArray(raw.images) && raw.images.length > 0) {
+    const first = raw.images.find((item) => typeof item === 'string' && item.trim());
+    if (typeof first === 'string') return first.trim();
+  }
+  return undefined;
+}
+
+function toFeedCoord(value: unknown): number | undefined {
+  if (value == null || value === '') return undefined;
+  const n = typeof value === 'number' ? value : Number(value);
+  return Number.isFinite(n) ? n : undefined;
 }
 
 function mapRawEvent(raw: Record<string, unknown>): FeedEventItem {
-  const ubicacion = raw.ubicacion as { latitude?: number; longitude?: number } | undefined;
-  const lat = ubicacion?.latitude ?? (raw.latitude as number | undefined);
-  const lon = ubicacion?.longitude ?? (raw.longitude as number | undefined);
+  const ubicacion = raw.ubicacion as { latitude?: unknown; longitude?: unknown; lat?: unknown; lng?: unknown } | undefined;
+  const lat = toFeedCoord(ubicacion?.latitude ?? ubicacion?.lat ?? raw.latitude ?? raw.lat);
+  const lon = toFeedCoord(ubicacion?.longitude ?? ubicacion?.lng ?? raw.longitude ?? raw.lon ?? raw.lng);
+  const distanciaRaw = raw.distancia;
+  const distancia = typeof distanciaRaw === 'number'
+    ? distanciaRaw
+    : toFeedCoord(distanciaRaw);
   return {
     id: String(raw.id || ''),
     nombre: String(raw.nombre || raw.name || 'Evento'),
@@ -93,7 +153,7 @@ function mapRawEvent(raw: Record<string, unknown>): FeedEventItem {
     ciudad: raw.ciudad as string | undefined,
     departamento: raw.departamento as string | undefined,
     descripcion: raw.descripcion as string | undefined,
-    imagen: resolveImageUrl(raw.imagen as string | undefined),
+    imagen: resolveImageUrl(pickRawEventImage(raw)),
     liked: Boolean(raw.liked || raw.favorite || raw.isFavorite),
     aforo: raw.aforo != null ? String(raw.aforo) : undefined,
     horaFin: raw.horaFin as string | undefined,
@@ -103,18 +163,37 @@ function mapRawEvent(raw: Record<string, unknown>): FeedEventItem {
     estatus: raw.estatus as string | undefined,
     Categoria: raw.Categoria as string | undefined,
     tipoEvento: raw.tipoEvento as string | undefined,
-    distancia: typeof raw.distancia === 'number' ? raw.distancia : undefined,
+    distancia: distancia != null && Number.isFinite(distancia) ? distancia : undefined,
     latitude: lat,
     longitude: lon,
     ubicacion: lat != null && lon != null ? { latitude: lat, longitude: lon } : undefined,
   };
 }
 
+export function normalizeFeedEventItem(raw: Record<string, unknown>): FeedEventItem {
+  return mapRawEvent(raw);
+}
+
+export function extractFeedEventItems(data: Record<string, unknown>): Record<string, unknown>[] {
+  if (Array.isArray(data.items)) return data.items as Record<string, unknown>[];
+  if (Array.isArray(data.events)) return data.events as Record<string, unknown>[];
+  if (Array.isArray(data.datosEvento)) return data.datosEvento as Record<string, unknown>[];
+  const nested = data.data;
+  if (Array.isArray(nested)) return nested as Record<string, unknown>[];
+  if (nested && typeof nested === 'object' && !Array.isArray(nested)) {
+    const obj = nested as Record<string, unknown>;
+    if (Array.isArray(obj.datosEvento)) return obj.datosEvento as Record<string, unknown>[];
+    if (Array.isArray(obj.items)) return obj.items as Record<string, unknown>[];
+    if (Array.isArray(obj.events)) return obj.events as Record<string, unknown>[];
+  }
+  return [];
+}
+
 function normalizeFeedResponse(data: Record<string, unknown>): EventsFeedResponse {
-  const itemsRaw = (data.items || data.data || []) as Record<string, unknown>[];
-  const items = Array.isArray(itemsRaw)
-    ? itemsRaw.map((item) => mapRawEvent(item))
-    : [];
+  const itemsRaw = extractFeedEventItems(data);
+  const items = itemsRaw
+    .map((item) => mapRawEvent(item))
+    .filter(isDiscoverableFeedEvent);
   return {
     items,
     nextOffset: (data.nextOffset as number | null | undefined) ?? null,
@@ -193,8 +272,14 @@ export async function fetchNearbyEvents(
 
   const data = await response.json() as Record<string, unknown>;
   const result = normalizeFeedResponse(data);
-  cacheEvents(result.items);
-  return result.items;
+  const { filterByOwnerPrivacy } = await import('../lib/privacyVisibility');
+  const visible = await filterByOwnerPrivacy(
+    result.items,
+    (item) => item.userId,
+    userId,
+  );
+  cacheEvents(visible);
+  return visible;
 }
 
 export async function fetchEventsFeed(
@@ -258,6 +343,56 @@ export async function fetchUserEvents(
   }
 }
 
+async function requestUserEventsStats(
+  userId: string,
+  allEvents = true,
+): Promise<UserEventsResponse> {
+  const env = getCurrentEnv();
+  const query = allEvents ? '?allEvents=true' : '';
+  const url = `${env.endpoints.getUserEventsStats}/${encodeURIComponent(userId)}${query}`;
+  try {
+    return await apiRequest<UserEventsResponse>({
+      method: 'GET',
+      url,
+    });
+  } catch {
+    const response = await fetch(url, {
+      headers: authHeaders(),
+    });
+    if (!response.ok) throw new Error('Error al cargar estadísticas de tus eventos');
+    return response.json() as Promise<UserEventsResponse>;
+  }
+}
+
+export async function fetchUserEventsStats(
+  userId: string,
+  options?: { forceNetwork?: boolean; allEvents?: boolean },
+): Promise<UserEventsResponse> {
+  const includeAll = options?.allEvents ?? true;
+  const cacheKey = `${includeAll ? `${userId}:all` : userId}:stats`;
+  const cachedEntry = getCachedUserEventsEntry(cacheKey, true);
+
+  if (cachedEntry && !options?.forceNetwork) {
+    if (isFresh(cachedEntry.cachedAt)) {
+      return { data: { datosEvento: cachedEntry.data } };
+    }
+    void revalidateOnce(`user-events-stats:${cacheKey}`, async () => {
+      const fresh = await requestUserEventsStats(userId, includeAll);
+      cacheUserEvents(cacheKey, fresh.data?.datosEvento || []);
+    });
+    return { data: { datosEvento: cachedEntry.data } };
+  }
+
+  try {
+    const response = await requestUserEventsStats(userId, includeAll);
+    cacheUserEvents(cacheKey, response.data?.datosEvento || []);
+    return response;
+  } catch (err) {
+    if (cachedEntry) return { data: { datosEvento: cachedEntry.data } };
+    throw err;
+  }
+}
+
 async function requestUserEvents(
   userId: string,
   allEvents = false,
@@ -279,6 +414,23 @@ async function requestUserEvents(
   }
 }
 
+function extractEventDetailPayloadFromApi(data: unknown): Record<string, unknown> | null {
+  const record = data as Record<string, unknown> | null;
+  if (!record || typeof record !== 'object') return null;
+
+  const layers: unknown[] = [record.data, record];
+  if (record.data && typeof record.data === 'object') {
+    layers.push((record.data as Record<string, unknown>).data);
+  }
+
+  for (const layer of layers) {
+    if (!layer || typeof layer !== 'object') continue;
+    const obj = layer as Record<string, unknown>;
+    if (obj.datosEvento || obj.event) return obj;
+  }
+  return null;
+}
+
 function parseEventDetailPayload(eventId: string, payload: Record<string, unknown>): EventDetailResponse | null {
   const rawEvent = (payload?.datosEvento || payload?.event) as Record<string, unknown> | undefined;
   if (!rawEvent || typeof rawEvent !== 'object') return null;
@@ -292,11 +444,15 @@ function parseEventDetailPayload(eventId: string, payload: Record<string, unknow
       user: raw.user as string | undefined,
       email: raw.email as string | undefined,
       fotoPerfilUrl: (raw.fotoPerfilUrl || raw.fotoPerfilSignedUrl) as string | undefined,
-      calificacionPromedio: Number(raw.calificacionPromedio ?? raw.calificacion ?? 0),
-      calificacion: Number(raw.calificacion ?? 0),
-      experiencia: Number(raw.experiencia ?? 0),
-      totalEventos: Number(raw.totalEventos ?? 0),
-      eventosRealizados: Number(raw.eventosRealizados ?? raw.totalEventos ?? 0),
+      calificacionPromedio: raw.calificacionPromedio != null
+        ? Number(raw.calificacionPromedio)
+        : (raw.calificacion != null ? Number(raw.calificacion) : undefined),
+      calificacion: raw.calificacion != null ? Number(raw.calificacion) : undefined,
+      experiencia: raw.experiencia != null ? Number(raw.experiencia) : undefined,
+      totalEventos: raw.totalEventos != null ? Number(raw.totalEventos) : undefined,
+      eventosRealizados: raw.eventosRealizados != null
+        ? Number(raw.eventosRealizados)
+        : (raw.totalEventos != null ? Number(raw.totalEventos) : undefined),
     };
   };
 
@@ -342,11 +498,13 @@ function parseEventDetailPayload(eventId: string, payload: Record<string, unknow
       venueId: (rawEvent.venueId || rawEvent.venue_id) as string | undefined,
       hasSeating: Boolean(rawEvent.hasSeating ?? rawEvent.has_seating),
       video: resolveEventVideoUrl((rawEvent.video || rawEvent.videoUrl) as string | undefined),
+      Hashtags: (rawEvent.Hashtags ?? rawEvent.hashtags) as string | string[] | undefined,
       itinerary: rawEvent.itinerary as EventDetailResponse['event']['itinerary'],
       eventDays: rawEvent.eventDays as EventDetailResponse['event']['eventDays'],
       ubicacion: lat != null && lon != null ? { latitude: lat, longitude: lon } as EventLocation : undefined,
       latitude: lat,
       longitude: lon,
+      Categoria: rawEvent.Categoria != null ? String(rawEvent.Categoria) : undefined,
     },
     images: images.length
       ? images
@@ -365,35 +523,89 @@ async function enrichEventDetailImages(
   detail: EventDetailResponse,
   eventId: string,
 ): Promise<EventDetailResponse> {
-  if (detail.images.length) return detail;
-
   try {
     const media = await fetchEventMedia(eventId);
     const mediaUrls = media
       .map((entry) => resolveImageUrl(entry.publicUrl || entry.s3Key))
       .filter((url): url is string => Boolean(url));
-    if (mediaUrls.length) {
-      return { ...detail, images: mediaUrls };
+    if (!mediaUrls.length) return detail;
+
+    // Merge: no cortar la galería si el detalle ya trae solo la portada.
+    const merged: string[] = [];
+    for (const url of [...detail.images, ...mediaUrls]) {
+      if (url && !merged.includes(url)) merged.push(url);
     }
+    return { ...detail, images: merged.length ? merged : detail.images };
   } catch {
-    // fallback silencioso: el detalle sigue sin imágenes
+    // fallback silencioso: el detalle sigue con las imágenes que ya tenía
   }
 
   return detail;
 }
 
-export async function fetchEventDetail(eventId: string): Promise<EventDetailResponse | null> {
-  const env = getCurrentEnv();
-  const response = await fetch(`${env.endpoints.getEvent}/${encodeURIComponent(eventId)}`, {
-    headers: authHeaders(),
-  });
-  if (!response.ok) return null;
-  const data = await response.json() as { data?: Record<string, unknown> } & Record<string, unknown>;
-  const payload = (data?.data && typeof data.data === 'object' ? data.data : data) as Record<string, unknown>;
-  const parsed = parseEventDetailPayload(eventId, payload);
-  if (!parsed) return null;
+function buildEventDetailFromFeedEvent(event: FeedEventItem): EventDetailResponse {
+  const image = resolveImageUrl(event.imagen) || event.imagen;
+  return {
+    event: {
+      id: event.id,
+      nombre: event.nombre || 'Evento',
+      descripcion: event.descripcion,
+      fechaIni: event.fechaIni,
+      horaIni: event.horaIni,
+      horaFin: event.horaFin,
+      estatus: event.estatus,
+      ciudad: event.ciudad,
+      departamento: event.departamento,
+      direccion: event.direccion,
+      pais: event.pais,
+      userId: event.userId,
+      aforo: event.aforo,
+      avaliableCapacity: event.aforo,
+      ubicacion: event.ubicacion,
+      latitude: event.latitude,
+      longitude: event.longitude,
+    },
+    images: image ? [image] : [],
+    category: null,
+    eventType: null,
+    placeType: null,
+    organizer: null,
+    host: null,
+  };
+}
 
-  const detail = await enrichEventDetailImages(parsed, eventId);
+function buildEventDetailFromFeedPublication(publication: FeedPublication): EventDetailResponse | null {
+  const resolvedId = resolveEventIdFromFeedPublication(publication);
+  if (!resolvedId) return null;
+  const images = resolveFeedPublicationImages(publication)
+    .map((url) => resolveImageUrl(url) || url)
+    .filter(Boolean);
+  const meta = (publication.metadata || {}) as Record<string, unknown>;
+  const [datePart, timePart] = String(publication.dateLabel || '').split(' - ');
+  return {
+    event: {
+      id: resolvedId,
+      nombre: publication.title || 'Evento',
+      descripcion: publication.description,
+      fechaIni: String(meta.fechaIni || datePart || ''),
+      horaIni: String(meta.horaIni || timePart || ''),
+      estatus: String(meta.estatus || meta.status || 'activo'),
+      ciudad: String(meta.city || meta.ciudad || publication.locationLabel || ''),
+      departamento: String(meta.department || meta.departamento || ''),
+      userId: publication.author?.id,
+      aforo: meta.aforo != null ? String(meta.aforo) : undefined,
+      avaliableCapacity: meta.avaliableCapacity != null ? String(meta.avaliableCapacity) : undefined,
+    },
+    images,
+    category: null,
+    eventType: null,
+    placeType: null,
+    organizer: null,
+    host: null,
+  };
+}
+
+function cacheEventDetail(detail: EventDetailResponse): void {
   cacheEvents([{
     id: detail.event.id,
     nombre: detail.event.nombre,
@@ -409,7 +621,76 @@ export async function fetchEventDetail(eventId: string): Promise<EventDetailResp
     latitude: detail.event.latitude,
     longitude: detail.event.longitude,
   }]);
-  return detail;
+}
+
+async function requestEventDetailFromApi(
+  eventId: string,
+  headers: Record<string, string>,
+): Promise<EventDetailResponse | null> {
+  const env = getCurrentEnv();
+  const url = `${env.endpoints.getEvent}/${encodeURIComponent(eventId)}`;
+  const response = await fetch(url, { headers, cache: 'no-store' });
+  if (!response.ok) return null;
+
+  const data = await response.json().catch(() => null);
+  const payload = extractEventDetailPayloadFromApi(data);
+  if (!payload) return null;
+
+  const parsed = parseEventDetailPayload(eventId, payload);
+  if (!parsed) return null;
+  return enrichEventDetailImages(parsed, eventId);
+}
+
+function eventDetailFromLocalCache(eventId: string): EventDetailResponse | null {
+  const cached = getCachedEvent(eventId);
+  if (cached) return buildEventDetailFromFeedEvent(cached);
+
+  const publication = findFeedPublicationByEventId(eventId);
+  if (publication) return buildEventDetailFromFeedPublication(publication);
+
+  return null;
+}
+
+export async function fetchEventDetail(eventId: string): Promise<EventDetailResponse | null> {
+  const trimmedId = String(eventId || '').trim();
+  if (!trimmedId) return null;
+
+  const authTokens: Array<string | undefined> = [
+    undefined,
+    getAuthToken().trim() || undefined,
+  ];
+
+  try {
+    const serviceToken = await fetchServiceToken();
+    if (serviceToken) authTokens.push(serviceToken);
+  } catch {
+    // token de servicio opcional
+  }
+
+  const seenTokens = new Set<string>();
+  for (const token of authTokens) {
+    const tokenKey = token || '__public__';
+    if (seenTokens.has(tokenKey)) continue;
+    seenTokens.add(tokenKey);
+
+    try {
+      const detail = await requestEventDetailFromApi(
+        trimmedId,
+        token ? readAuthHeaders(token) : readAuthHeaders(),
+      );
+      if (detail) {
+        cacheEventDetail(detail);
+        return detail;
+      }
+    } catch {
+      // intentar siguiente estrategia de auth
+    }
+  }
+
+  const cachedDetail = eventDetailFromLocalCache(trimmedId);
+  if (cachedDetail) return cachedDetail;
+
+  return null;
 }
 
 export function getPersonDisplayName(person?: EventPersonInfo | null, fallback = ''): string {
@@ -422,28 +703,26 @@ export function getPersonDisplayName(person?: EventPersonInfo | null, fallback =
 export function buildMapUrl(event: EventDetailResponse['event']): string | null {
   const lat = event.ubicacion?.latitude ?? event.latitude;
   const lng = event.ubicacion?.longitude ?? event.longitude;
-  if (
-    typeof lat === 'number'
-    && typeof lng === 'number'
-    && Number.isFinite(lat)
-    && Number.isFinite(lng)
-  ) {
-    return googleMapsUrl(lat, lng);
-  }
-
   const ubicacionLabel = typeof event.ubicacion === 'string' ? event.ubicacion : undefined;
-  const address = resolveDisplayLocation({
+  const fallbackAddress = resolveDisplayLocation({
     direccion: event.direccion,
     ciudad: event.ciudad,
     departamento: event.departamento,
     pais: event.pais,
     ubicacion: ubicacionLabel,
   });
-  if (address && address !== '—') {
-    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
-  }
 
-  return null;
+  const query = resolveMapSearchQuery({
+    address: event.direccion || (fallbackAddress !== '—' ? fallbackAddress : undefined),
+    name: ubicacionLabel,
+    city: event.ciudad,
+    lat,
+    lng,
+  });
+
+  if (!query) return null;
+
+  return googleMapsUrl(0, 0, query);
 }
 
 function todayCompact(): string {
@@ -473,9 +752,9 @@ export async function checkRefundEligibility(
         }),
       },
     );
-    if (!response.ok) return null;
     const body = await response.json() as {
       success?: boolean;
+      message?: string;
       data?: {
         canRequestRefund?: boolean;
         reason?: string;
@@ -485,6 +764,15 @@ export async function checkRefundEligibility(
       };
     };
     const data = body.data;
+    if (!response.ok || body.success === false) {
+      return {
+        canRequestRefund: false,
+        reason: body.message || data?.reason || 'No se pudo verificar la elegibilidad de reembolso.',
+        eventName: data?.eventName,
+        daysUntilEvent: data?.daysUntilEvent,
+        orderId,
+      };
+    }
     if (!data) return null;
     return {
       canRequestRefund: Boolean(data.canRequestRefund),
@@ -504,6 +792,8 @@ export interface RefundRequestResponse {
   orderId: string;
   ticketsRefunded: number;
   refundAmount: number;
+  platformFee?: number;
+  subtotal?: number;
   currency: string;
 }
 
@@ -533,6 +823,8 @@ export async function requestEventRefund(input: {
       orderId?: string;
       ticketsRefunded?: number;
       refundAmount?: number;
+      platformFee?: number;
+      subtotal?: number;
       currency?: string;
     };
   };
@@ -546,6 +838,8 @@ export async function requestEventRefund(input: {
     orderId: data.orderId || input.orderId,
     ticketsRefunded: data.ticketsRefunded || input.ticketInstanceIds?.length || 0,
     refundAmount: data.refundAmount || 0,
+    platformFee: data.platformFee || 0,
+    subtotal: data.subtotal || data.refundAmount || 0,
     currency: data.currency || 'COP',
   };
 }
@@ -577,15 +871,28 @@ export async function fetchEventById(eventId: string): Promise<FeedEventItem | n
 }
 
 export async function searchEvents(query: string): Promise<{ items: FeedEventItem[] }> {
+  const term = query.trim();
+  if (!term) return { items: [] };
   const env = getCurrentEnv();
-  const response = await fetch(
-    `${env.endpoints.searchEvents}?q=${encodeURIComponent(query)}`,
-    { headers: authHeaders() },
-  );
-  if (!response.ok) throw new Error('Error en la búsqueda');
-  const data = await response.json();
-  const rawItems = data?.data?.datosEvento || data?.datosEvento || data?.items || data?.events || [];
-  const items = (Array.isArray(rawItems) ? rawItems : []).map((item: Record<string, unknown>) => mapRawEvent(item));
+  let response: Response;
+  try {
+    response = await fetch(
+      `${env.endpoints.searchEvents}?q=${encodeURIComponent(term)}`,
+      { headers: authHeaders() },
+    );
+  } catch (err) {
+    throw new Error(toUserFacingError(err, 'la búsqueda de eventos'));
+  }
+
+  const data = await parseFetchResponse<Record<string, unknown>>(response, 'No se pudieron buscar eventos');
+  const nested = data.data as Record<string, unknown> | undefined;
+  const rawItems = (data.datosEvento
+    || nested?.datosEvento
+    || data.items
+    || data.events
+    || nested?.items
+    || []) as Record<string, unknown>[];
+  const items = (Array.isArray(rawItems) ? rawItems : []).map((item) => mapRawEvent(item));
   return { items };
 }
 
@@ -629,12 +936,12 @@ function buildCreateEventBody(payload: CreateEventPayload) {
   return {
     ...payload,
     TelSec: payload.TelSec || payload.TelPrin,
-    anfitrioName: payload.anfitrioName || payload.organizerName,
-    TelPrinAnf: payload.TelPrinAnf || payload.TelPrin,
+    anfitrioName: payload.anfitrioName != null ? payload.anfitrioName : (payload.organizerName || ''),
+    TelPrinAnf: payload.TelPrinAnf != null ? payload.TelPrinAnf : (payload.TelPrin || ''),
     IndicativoTelPrinAnf: payload.IndicativoTelPrinAnf || payload.IndicativoTelPrinOrg || '+57',
     IndicativoTelSecAnf: payload.IndicativoTelSecAnf || payload.IndicativoTelSecOrg || '+57',
-    TelSecAnf: payload.TelSecAnf || payload.TelSec || payload.TelPrin,
-    emailAnf: payload.emailAnf || payload.email,
+    TelSecAnf: payload.TelSecAnf != null ? payload.TelSecAnf : (payload.TelSec || payload.TelPrin || ''),
+    emailAnf: payload.emailAnf != null ? payload.emailAnf : (payload.email || ''),
     clase: payload.clase || 'general',
     video: payload.video || '',
     Hashtags: payload.Hashtags || '',
@@ -709,14 +1016,19 @@ export async function updateEvent(
   updatedBy: string,
 ): Promise<Record<string, unknown>> {
   const env = getCurrentEnv();
-  const response = await fetch(
-    `${env.apiBaseUrl}/events/updateEvent/${encodeURIComponent(eventId)}`,
-    {
-      method: 'PUT',
-      headers: authHeaders(),
-      body: JSON.stringify({ ...payload, updatedBy }),
-    },
-  );
+  let response: Response;
+  try {
+    response = await fetch(
+      `${env.apiBaseUrl}/events/updateEvent/${encodeURIComponent(eventId)}`,
+      {
+        method: 'PUT',
+        headers: authHeaders(),
+        body: JSON.stringify({ ...payload, updatedBy }),
+      },
+    );
+  } catch (err) {
+    throw new Error(toUserFacingError(err, 'la actualización del evento'));
+  }
   const body = await response.json().catch(() => ({})) as {
     success?: boolean;
     data?: Record<string, unknown>;
@@ -801,11 +1113,13 @@ export async function toggleEventLike(
 
 export function isDiscoverableFavoriteEvent(event: {
   estatus?: string;
+  fechaIni?: string;
+  fechaFin?: string;
+  horaIni?: string;
+  horaFin?: string;
   deletedAt?: string;
 }): boolean {
-  const normalized = String(event.estatus || '').trim().toUpperCase();
-  if (normalized === 'DELETED' || event.deletedAt) return false;
-  return true;
+  return isDiscoverableFeedEvent(event);
 }
 
 export async function fetchFavoriteUserEvents(userId: string, limit = 20): Promise<UserEventItem[]> {
@@ -844,7 +1158,7 @@ export interface DuplicateEventPayload {
 export async function duplicateEvent(
   eventId: string,
   schedule: DuplicateEventPayload,
-): Promise<{ newEventId?: string; message?: string }> {
+): Promise<{ newEventId?: string; newVenueId?: string; venueOccupied?: boolean; message?: string }> {
   const env = getCurrentEnv();
   const response = await fetch(
     `${env.apiBaseUrl}/events/duplicateEvent/${encodeURIComponent(eventId)}`,
@@ -854,15 +1168,40 @@ export async function duplicateEvent(
       body: JSON.stringify(schedule),
     },
   );
-  const body = await response.json().catch(() => ({})) as {
+  const body = await response.json().catch(() => ({})) as Record<string, unknown> & {
     newEventId?: string;
+    newVenueId?: string;
+    venueOccupied?: boolean;
     message?: string;
     error?: string;
+    data?: { newEventId?: string; newVenueId?: string; venueOccupied?: boolean };
+    body?: string;
   };
   if (!response.ok) {
     throw new Error(body.error || body.message || 'No se pudo duplicar el evento');
   }
-  return body;
+  let parsed = body;
+  if (typeof body.body === 'string') {
+    try {
+      parsed = { ...body, ...JSON.parse(body.body) as Record<string, unknown> };
+    } catch {
+      parsed = body;
+    }
+  }
+  return {
+    newEventId: String(
+      parsed.newEventId
+      || parsed.data?.newEventId
+      || '',
+    ).trim() || undefined,
+    newVenueId: String(
+      parsed.newVenueId
+      || parsed.data?.newVenueId
+      || '',
+    ).trim() || undefined,
+    venueOccupied: Boolean(parsed.venueOccupied || parsed.data?.venueOccupied),
+    message: typeof parsed.message === 'string' ? parsed.message : undefined,
+  };
 }
 
 export async function cancelEvent(eventId: string, reason?: string): Promise<Record<string, unknown>> {

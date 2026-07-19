@@ -2,14 +2,26 @@ import type { FeedEventItem } from '../types/events';
 import type { NearbyServiceProvider } from '../api/servicesService';
 import type { NearbyVenue } from '../api/venueService';
 
-const MAP_CACHE_KEY = 'doevents_map_cache_v1';
-const FRESH_MS = 5 * 60 * 1000;
-const STALE_MS = 30 * 60 * 1000;
+const MAP_CACHE_KEY = 'doevents_map_cache_v2';
+
+/** Duración del caché del mapa: sin reconsultar API mientras sea válido. */
+export const MAP_CACHE_TTL_MS = 15 * 60 * 1000;
 
 export interface MapCacheEntry {
   events: FeedEventItem[];
   services: NearbyServiceProvider[];
   venues: NearbyVenue[];
+  cacheKey: string;
+  lat: number;
+  lng: number;
+  distanceKm: number;
+  cachedAt: number;
+}
+
+export interface MapLastInteraction {
+  lat: number;
+  lng: number;
+  distanceKm: number;
   cacheKey: string;
   cachedAt: number;
 }
@@ -22,44 +34,66 @@ function readStore(): MapCacheEntry | null {
   try {
     const raw = localStorage.getItem(MAP_CACHE_KEY);
     if (!raw) return null;
-    return JSON.parse(raw) as MapCacheEntry;
+    const parsed = JSON.parse(raw) as MapCacheEntry;
+    if (!parsed?.cacheKey || parsed.cachedAt == null) return null;
+    return parsed;
   } catch {
     return null;
   }
 }
 
-function isFresh(cachedAt: number): boolean {
-  return Date.now() - cachedAt < FRESH_MS;
-}
-
-function isStaleButUsable(cachedAt: number): boolean {
-  const age = Date.now() - cachedAt;
-  return age >= FRESH_MS && age < STALE_MS;
+export function isMapCacheEntryFresh(cachedAt: number, nowMs = Date.now()): boolean {
+  return nowMs - cachedAt < MAP_CACHE_TTL_MS;
 }
 
 export function getCachedMapData(
   cacheKey: string,
-  allowStale = true,
+  allowStale = false,
 ): MapCacheEntry | null {
   const entry = readStore();
   if (!entry || entry.cacheKey !== cacheKey) return null;
   const normalized: MapCacheEntry = { ...entry, venues: entry.venues || [] };
-  if (isFresh(entry.cachedAt)) return normalized;
-  if (allowStale && isStaleButUsable(entry.cachedAt)) return normalized;
+  if (isMapCacheEntryFresh(entry.cachedAt)) return normalized;
+  if (allowStale) return normalized;
   return null;
 }
 
 export function isMapCacheFresh(cacheKey: string): boolean {
   const entry = readStore();
-  return Boolean(entry && entry.cacheKey === cacheKey && isFresh(entry.cachedAt));
+  return Boolean(
+    entry
+    && entry.cacheKey === cacheKey
+    && isMapCacheEntryFresh(entry.cachedAt),
+  );
+}
+
+export function getLastMapInteraction(nowMs = Date.now()): MapLastInteraction | null {
+  const entry = readStore();
+  if (!entry || !isMapCacheEntryFresh(entry.cachedAt, nowMs)) return null;
+  return {
+    lat: entry.lat,
+    lng: entry.lng,
+    distanceKm: entry.distanceKm,
+    cacheKey: entry.cacheKey,
+    cachedAt: entry.cachedAt,
+  };
 }
 
 export function cacheMapData(payload: Omit<MapCacheEntry, 'cachedAt'>): void {
   try {
     localStorage.setItem(MAP_CACHE_KEY, JSON.stringify({
       ...payload,
+      venues: payload.venues || [],
       cachedAt: Date.now(),
     }));
+  } catch {
+    // ignore
+  }
+}
+
+export function invalidateMapCache(): void {
+  try {
+    localStorage.removeItem(MAP_CACHE_KEY);
   } catch {
     // ignore
   }

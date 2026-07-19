@@ -8,6 +8,7 @@ interface CheckoutFeeBreakdownProps {
   serviceFee: number;
   total: number;
   ticketCount: number;
+  embedded?: boolean;
 }
 
 const fmt = (n: number) =>
@@ -18,12 +19,13 @@ export const CheckoutFeeBreakdown: React.FC<CheckoutFeeBreakdownProps> = ({
   serviceFee,
   total,
   ticketCount,
+  embedded = false,
 }) => {
   const [feeInfo, setFeeInfo] = useState<'with' | 'without' | null>(null);
 
-  return (
+  const content = (
     <>
-      <div className="rounded-2xl bg-card p-4 shadow-sm space-y-2">
+      <div className={`space-y-2 ${embedded ? '' : 'rounded-2xl bg-card p-4 shadow-sm space-y-2'}`}>
         <div className="flex justify-between text-sm border-b border-dashed border-border pb-2">
           <span>Boletas</span>
           <span>{ticketCount}</span>
@@ -53,6 +55,12 @@ export const CheckoutFeeBreakdown: React.FC<CheckoutFeeBreakdownProps> = ({
           <span className="text-primary text-xl">{fmt(total)}</span>
         </div>
       </div>
+    </>
+  );
+
+  return (
+    <>
+      {content}
 
       {feeInfo && (
         <div

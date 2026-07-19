@@ -1,4 +1,4 @@
-﻿export type EventModality = 'presencial' | 'virtual';
+export type EventModality = 'presencial' | 'virtual';
 export type EventClass = 'public' | 'private';
 
 export interface EventHost {
@@ -17,6 +17,17 @@ export interface EventHost {
 export type VenueMode = 'mine' | 'custom';
 export type TicketingType = 'only-tickets' | 'with-seating';
 export type SeatingLayout = 'numbered' | 'general';
+
+export interface TicketCategory {
+  id: string;
+  name: string;
+  quantity: number;
+  hasPrice: boolean;
+  price: number;
+  currency: SeatingCurrency;
+  description?: string;
+  gateId?: string;
+}
 
 export interface EventGate {
   id: string;
@@ -182,6 +193,7 @@ export interface EventLocation {
   seatingLayout?: SeatingLayout;
   gates?: EventGate[];
   seatingMap?: SeatingMap;
+  ticketCategories?: TicketCategory[];
 }
 
 export type RefundPolicy =
@@ -196,12 +208,53 @@ export type EventFormUpdater = (
 ) => void;
 
 export const REFUND_POLICY_OPTIONS: { value: RefundPolicy; label: string }[] = [
-  { value: '1-day', label: 'Hasta 1 dÃ­a antes del inicio del evento.' },
-  { value: '7-days', label: 'Hasta 7 dÃ­as antes del inicio del evento.' },
-  { value: '30-days', label: 'Hasta 30 dÃ­as antes del inicio del evento.' },
-  { value: 'case-by-case', label: 'Se evaluarÃ¡ caso a caso' },
+  { value: '1-day', label: 'Hasta 1 día antes del inicio del evento.' },
+  { value: '7-days', label: 'Hasta 7 días antes del inicio del evento.' },
+  { value: '30-days', label: 'Hasta 30 días antes del inicio del evento.' },
+  { value: 'case-by-case', label: 'Se evaluará caso a caso' },
   { value: 'none', label: 'Sin reembolsos' },
 ];
+
+export const REFUND_POLICY_REQUIRED_MESSAGE =
+  'Selecciona una política de reembolso para continuar.';
+
+export function isRefundPolicyConfigured(
+  form: Pick<EventFormData, 'refundPolicy'>,
+): boolean {
+  return Boolean(form.refundPolicy);
+}
+
+export function refundPolicyToApiCode(policy?: RefundPolicy): string | undefined {
+  const map: Record<RefundPolicy, string> = {
+    '1-day': '1',
+    '7-days': '7',
+    '30-days': '30',
+    'case-by-case': '0',
+    none: 'N',
+  };
+  return policy ? map[policy] : undefined;
+}
+
+export type PromoCurrency = 'COP' | 'USD' | 'EUR' | 'MXN' | 'DOP' | 'ARS';
+
+export type PromoCodeStatus = 'AVAILABLE' | 'SHARED' | 'CANCELLED' | 'REDEEMED';
+
+export interface PromoCodeBatch {
+  id: string;
+  currency: PromoCurrency;
+  value: number;
+  quantity: number;
+  description: string;
+  codes: string[];
+  /** Ya persistido en backend (edit event) */
+  persisted?: boolean;
+  editable?: boolean;
+  editableCount?: number;
+  redeemedCount?: number;
+  cancelledCount?: number;
+  codeStatuses?: Record<string, PromoCodeStatus | string>;
+  createdAt?: string;
+}
 
 export interface EventFaq {
   id: string;
@@ -248,6 +301,8 @@ export interface EventFormData {
   location: EventLocation;
   // Control de accesos: gateId -> array of platform user ids
   accessControl?: Record<string, string[]>;
+  /** Perfiles de usuarios asignados a puertas (userId -> host) */
+  accessStaff?: Record<string, EventHost>;
   // Reembolsos (obligatorio)
   refundPolicy?: RefundPolicy;
   // Fecha y hora de venta de boleterÃ­a (paso 4)
@@ -261,13 +316,16 @@ export interface EventFormData {
   agenda: EventDay[];
   /** ID del evento en backend cuando ya se guardÃ³ como borrador */
   persistedEventId?: string;
+  ownerUserId?: string;
   /** Paso actual del wizard (1-7) para reanudar */
   wizardStep?: number;
-  /** Ley 1493 / PULEP — obligatorio para artes escÃ©nicas (validaciÃ³n frontend) */
+  /** Ley 1493 / PULEP — obligatorio para artes escénicas (validación frontend) */
   pulepRequired?: boolean;
   pulepProducerType?: PulepProducerType;
   pulepRegistrationNumber?: string;
   pulepAcknowledged?: boolean;
+  /** Lotes de códigos promocionales (paso 4) */
+  promoCodes?: PromoCodeBatch[];
 }
 
 export const initialEventFormData: EventFormData = {
@@ -277,9 +335,9 @@ export const initialEventFormData: EventFormData = {
   category: '',
   capacity: '',
   startDate: '',
-  startTime: '',
+  startTime: '18:00',
   endDate: '',
-  endTime: '',
+  endTime: '22:00',
   modality: 'presencial',
   eventClass: 'public',
   images: [],
@@ -299,6 +357,7 @@ export const initialEventFormData: EventFormData = {
     seatingMap: { figures: [] },
   },
   accessControl: {},
+  accessStaff: {},
   refundPolicy: undefined,
   salesStartDate: '',
   salesStartTime: '',
@@ -310,6 +369,7 @@ export const initialEventFormData: EventFormData = {
   pulepProducerType: '',
   pulepRegistrationNumber: '',
   pulepAcknowledged: false,
+  promoCodes: [],
 };
 
 export const EVENT_TYPES = [

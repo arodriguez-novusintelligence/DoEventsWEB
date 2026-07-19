@@ -82,6 +82,14 @@ export function getCachedUserServices(userId: string, allowStale = true): Nearby
   return entry?.data ?? null;
 }
 
+export function getCachedUserServicesEntry(
+  userId: string,
+  allowStale = true,
+): ServicesTimedEntry<NearbyServiceProvider[]> | null {
+  const store = readStore<UserServicesCacheStore>(USER_SERVICES_CACHE_KEY, { users: {} });
+  return getEntry(store.users[userId], allowStale);
+}
+
 export function cacheUserServices(userId: string, data: NearbyServiceProvider[]): void {
   const store = readStore<UserServicesCacheStore>(USER_SERVICES_CACHE_KEY, { users: {} });
   store.users[userId] = { data, cachedAt: Date.now() };

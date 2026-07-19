@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import { ChevronLeft, ChevronDown, ChevronUp, MessageSquare, Mail, Smartphone, Bell, TrendingUp, Eye, CheckCircle, Users, Download, List, Loader2, BarChart3, AlertCircle, RefreshCw } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ChevronDown, ChevronUp, MessageSquare, Mail, Smartphone, Bell, TrendingUp, Eye, CheckCircle, Users, Download, List, Loader2, AlertCircle, RefreshCw, UserCheck } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@lovable/components/ui/avatar';
 import type { EventChatRoom } from '@lovable/data/chatData';
@@ -8,6 +8,7 @@ import { getEmptyGuestStats, resolveGuestStatsData, resolveRefundsData } from '.
 import { useLiveEventStats } from '../../../lovable-bridge/useLiveEventStats';
 import { exportGuestExcel, exportGuestBuyersExcel } from '@lovable/utils/exportGuestExcel';
 import GuestBuyerList from './GuestBuyerList';
+import StatsSectionBanner from './StatsSectionBanner';
 import { Bar, BarChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts';
 
 interface GuestStatsViewProps {
@@ -155,7 +156,13 @@ const ChannelGuestsCard = ({ channel }: { channel: ChannelData }) => {
 };
 
 const GuestStatsView = ({ event, onBack }: GuestStatsViewProps) => {
-  const { data, loading, loadError, reload } = useLiveEventStats(event, resolveGuestStatsData, getEmptyGuestStats());
+  const { data, loading, loadError, reload } = useLiveEventStats(
+    event,
+    resolveGuestStatsData,
+    getEmptyGuestStats(),
+    undefined,
+    'guests',
+  );
   const [refundedFirstNames, setRefundedFirstNames] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -190,29 +197,36 @@ const GuestStatsView = ({ event, onBack }: GuestStatsViewProps) => {
   ];
 
   return (
-    <div className="min-h-screen bg-background pt-16 pb-24">
-      {/* Top bar */}
-      <div className="fixed top-0 left-0 right-0 z-20 flex items-center gap-3 border-b border-border bg-card px-4 py-3 shadow-sm">
-        <button onClick={onBack} className="text-foreground">
-          <ChevronLeft className="h-5 w-5" />
-        </button>
-        <div className="min-w-0 flex-1 flex items-center gap-2">
-          <BarChart3 className="h-5 w-5 shrink-0 text-primary" />
-          <div className="min-w-0">
-            <h1 className="text-base font-extrabold text-foreground truncate">Estadísticas de Invitados</h1>
-            <p className="text-xs text-muted-foreground truncate">{event.eventName}</p>
-          </div>
-        </div>
-        <button
-          onClick={() => exportGuestExcel(data, event.eventName)}
-          className="flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-xs font-medium text-primary-foreground transition-opacity hover:opacity-90"
-        >
-          <Download className="h-4 w-4" />
-          Excel
-        </button>
-      </div>
+    <div className="min-h-screen bg-slate-50 pb-24">
+      <StatsSectionBanner
+        title="Gestión de Invitados"
+        subtitle={event.eventName}
+        icon={UserCheck}
+        onBack={onBack}
+        stats={[
+          { value: loading ? '…' : `${data.avgDeliveryRate}%`, label: 'Entrega' },
+          { value: loading ? '…' : `${data.avgOpenRate}%`, label: 'Apertura' },
+          { value: loading ? '…' : `${data.avgConversionRate}%`, label: 'Conversión' },
+        ]}
+        summary={
+          <>
+            Total confirmaciones:{' '}
+            <span className="font-bold">{loading ? '…' : data.totalConfirmations}</span>
+          </>
+        }
+        rightAction={(
+          <button
+            type="button"
+            onClick={() => exportGuestExcel(data, event.eventName)}
+            className="flex items-center gap-1.5 rounded-lg bg-primary-foreground/15 px-3 py-1.5 text-xs font-medium text-primary-foreground transition hover:bg-primary-foreground/25"
+          >
+            <Download className="h-3.5 w-3.5" />
+            Excel
+          </button>
+        )}
+      />
 
-      <div className="mx-auto max-w-lg px-4 py-4 space-y-8">
+      <div className="mx-auto max-w-lg space-y-8 px-4 pt-5">
         {loading && (
           <div className="space-y-3">
             <div className="flex items-center justify-center gap-2 py-4 text-sm text-muted-foreground">

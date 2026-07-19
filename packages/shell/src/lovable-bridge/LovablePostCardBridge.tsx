@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { FeedPublication } from '@doevents/shared';
 import LovablePostCard from '@lovable/components/feed/PostCard';
 import type { User } from '@doevents/shared';
@@ -18,7 +19,7 @@ export interface LovablePostCardBridgeProps {
   onFollow?: () => void;
   onAuthorClick?: () => void;
   onOpen?: () => void;
-  onMentionClick?: (mention: string) => void;
+  onMentionClick?: (mention: string, publicationId?: string) => void;
   onMenuAction?: (action: 'hide' | 'save' | 'not-interested' | 'block' | 'report') => void;
   onOpenStory?: (userId: string) => void;
 }
@@ -41,7 +42,18 @@ export const LovablePostCardBridge: React.FC<LovablePostCardBridgeProps> = ({
   onMenuAction,
   onOpenStory,
 }) => {
+  const navigate = useNavigate();
   const lovablePost = feedPublicationToLovablePost(post);
+
+  const handleOpenDetail = () => {
+    if (onOpen) {
+      onOpen();
+      return;
+    }
+    if (lovablePost.detailPath) {
+      navigate(lovablePost.detailPath);
+    }
+  };
 
   return (
     <LovablePostCard
@@ -64,8 +76,8 @@ export const LovablePostCardBridge: React.FC<LovablePostCardBridgeProps> = ({
         if (onAuthorClick) onAuthorClick();
         else if (user.id) window.location.assign(`/users/${user.id}`);
       }}
-      onOpenDetail={onOpen ? () => onOpen() : undefined}
-      onMentionClick={onMentionClick}
+      onOpenDetail={(onOpen || lovablePost.detailPath) ? handleOpenDetail : undefined}
+      onMentionClick={onMentionClick ? (mention) => onMentionClick(mention, post.id) : undefined}
       onOpenStory={onOpenStory}
     />
   );

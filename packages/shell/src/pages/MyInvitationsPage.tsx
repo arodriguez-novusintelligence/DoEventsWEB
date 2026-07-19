@@ -1,9 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {
+  extractVenueImageUrls,
   fetchEventDetail,
   fetchUserInvitations,
+  getVenueById,
+  resolveImageUrl,
   RootState,
   useToast,
 } from '@doevents/shared';
@@ -15,6 +18,8 @@ import { eventDetailToInvitationEvent } from '../lovable-bridge/eventDetailAdapt
 
 export const MyInvitationsPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const openState = (location.state || {}) as { openEventId?: string; invitationId?: string };
   const { showToast } = useToast();
   const userId = useSelector((s: RootState) => s.auth.idUser);
   const [loading, setLoading] = useState(true);
@@ -49,21 +54,66 @@ export const MyInvitationsPage: React.FC = () => {
     void loadInvitations();
   }, [loadInvitations]);
 
-  const openInvitation = async (inv: InvitationEvent) => {
+  const openInvitation = useCallback(async (inv: InvitationEvent) => {
     setSelected(inv);
-    if (!inv.id) return;
+    const eventId = String(inv.id || '').trim();
+    if (!eventId) {
+      showToast('La invitación no tiene evento asociado', 'error');
+      return;
+    }
     setDetailLoading(true);
     try {
-      const detail = await fetchEventDetail(inv.id);
-      if (detail) {
-        setSelected(eventDetailToInvitationEvent(detail));
+      const detail = await fetchEventDetail(eventId);
+      if (!detail?.event) {
+        showToast('No se pudo cargar el resumen del evento', 'error');
+        return;
       }
-    } catch {
-      // mantener vista resumida de la invitación
+
+      let venueOptions: { name?: string; address?: string; images?: string[] } | undefined;
+      const venueId = detail.event.venueId;
+      if (venueId) {
+        try {
+          const venue = await getVenueById(venueId);
+          const images = extractVenueImageUrls(venue as Record<string, unknown>)
+            .map((url) => resolveImageUrl(url) || url)
+            .filter(Boolean);
+          venueOptions = {
+            name: venue.name,
+            address: venue.address || undefined,
+            images,
+          };
+        } catch {
+          // venue opcional
+        }
+      }
+
+      const enriched = eventDetailToInvitationEvent(
+        detail,
+        venueOptions ? { venue: venueOptions } : undefined,
+      );
+      setSelected({
+        ...enriched,
+        receivedAt: inv.receivedAt || enriched.receivedAt,
+        inviter: inv.inviter || enriched.inviter,
+        status: inv.status || enriched.status,
+      });
+    } catch (err) {
+      showToast(
+        err instanceof Error ? err.message : 'No se pudo cargar el resumen del evento',
+        'error',
+      );
     } finally {
       setDetailLoading(false);
     }
-  };
+  }, [showToast]);
+
+  useEffect(() => {
+    if (!openState.openEventId || selected || loading) return;
+    const match = invitations.find((inv) => inv.id === openState.openEventId);
+    if (match) {
+      void openInvitation(match);
+    }
+  }, [openState.openEventId, invitations, loading, selected, openInvitation]);
 
   if (selected) {
     if (detailLoading) {

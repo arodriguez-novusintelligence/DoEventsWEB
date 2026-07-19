@@ -59,6 +59,16 @@ export interface AdminDashboardStats {
     ticketsSoldToday: number;
     revenueTodayCop: number;
     totalUsers: number;
+    salesTodayByCategory?: {
+      evento: number;
+      lugar: number;
+      servicio: number;
+    };
+    salesCountToday?: {
+      evento: number;
+      lugar: number;
+      servicio: number;
+    };
     changes: {
       ticketsSoldToday: number;
       revenueTodayCop: number;
@@ -84,8 +94,10 @@ export interface AdminRecentEventItem {
 export interface AdminRecentTransactionItem {
   id: string;
   event: string;
+  label?: string;
+  category?: 'evento' | 'lugar' | 'servicio';
   amount: number;
-  type: 'ingreso' | 'dispersión';
+  type: 'ingreso' | 'pendiente' | 'cancelado' | 'dispersión';
   date: string;
 }
 
@@ -129,6 +141,7 @@ export interface AdminPaymentItem {
   id: string;
   eventId: string;
   eventName: string;
+  saleCategory?: 'evento' | 'lugar' | 'servicio';
   organizer: string;
   organizerEmail: string;
   totalTickets: number;
@@ -184,6 +197,34 @@ export interface AdminOrderItem {
   createdAt?: string;
 }
 
+export interface AdminVenuePromoSummary {
+  batches: Array<{
+    id: string;
+    currency: string;
+    value: number;
+    quantity: number;
+    description: string;
+    createdAt?: string;
+  }>;
+  totalCodes: number;
+  availableCodes: number;
+  redeemedCodes: number;
+  sharedCodes: number;
+  cancelledCodes: number;
+  redemptions: Array<{
+    code: string;
+    orderId: string;
+    redeemedAt: string;
+    userId: string;
+    discount: number;
+  }>;
+  shares: Array<{
+    promo_code: string;
+    recipient_name: string;
+    created_at: string;
+  }>;
+}
+
 export interface AdminVenueItem {
   venueId: string;
   name: string;
@@ -197,6 +238,7 @@ export interface AdminVenueItem {
   status?: string;
   createdAt?: string;
   deletedAt?: string | null;
+  promoCodes?: AdminVenuePromoSummary;
 }
 
 export interface AdminServiceItem {
@@ -212,6 +254,7 @@ export interface AdminServiceItem {
   profileImageUrl?: string;
   createdAt?: string;
   deletedAt?: string | null;
+  promoCodes?: AdminVenuePromoSummary;
 }
 
 export interface AdminPlatformRole {
@@ -416,4 +459,109 @@ export async function fetchAdminStaffUsers(options?: {
   if (options?.limit) params.set('limit', String(options.limit));
   const qs = params.toString();
   return adminFetch(`/staff-users${qs ? `?${qs}` : ''}`);
+}
+
+export type AdminReportStatus = 'pending' | 'reviewing' | 'resolved' | 'dismissed';
+export type AdminReportTargetType = 'post' | 'profile';
+export type AdminReportAccountStatus = 'active' | 'warned' | 'suspended' | 'blocked';
+export type AdminReportAction =
+  | 'none'
+  | 'warning'
+  | 'suspend_24h'
+  | 'suspend_7d'
+  | 'suspend_30d'
+  | 'permanent_block'
+  | 'content_removed';
+
+export interface AdminReportNotification {
+  sent_at: string;
+  channel: 'in-app' | 'email';
+  subject: string;
+  message: string;
+}
+
+export interface AdminReportItem {
+  id: string;
+  target_type: AdminReportTargetType;
+  target_id: string;
+  target_name: string;
+  target_username: string;
+  target_user_id?: string | null;
+  reporter_name: string;
+  reporter_id?: string;
+  reasons: string[];
+  other_reason?: string;
+  status: AdminReportStatus;
+  created_at: string;
+  action_taken: AdminReportAction;
+  admin_notes?: string;
+  account_status: AdminReportAccountStatus;
+  suspended_until?: string | null;
+  notifications: AdminReportNotification[];
+  source?: string;
+}
+
+export interface AdminReportsSummary {
+  pending: number;
+  posts: number;
+  profiles: number;
+  activeSanctions: number;
+}
+
+export interface AdminDisbursementItem {
+  id: string;
+  fileName: string;
+  uploadedAt: string;
+  totalRecords: number;
+  totalAmount: number;
+  status: 'cargado' | 'procesando' | 'completado' | 'error';
+  uploadedBy?: string | null;
+}
+
+export async function fetchAdminReports(): Promise<{
+  summary: AdminReportsSummary;
+  reports: AdminReportItem[];
+}> {
+  try {
+    return await adminFetch('/reports');
+  } catch (err) {
+    throw new Error(toUserFacingError(err, 'las denuncias'));
+  }
+}
+
+export async function patchAdminReport(
+  reportId: string,
+  patch: {
+    status?: AdminReportStatus;
+    actionTaken?: AdminReportAction;
+    adminNotes?: string;
+    notifySubject?: string;
+    notifyMessage?: string;
+    notifyChannel?: 'in-app' | 'email';
+    liftSanction?: boolean;
+  },
+): Promise<AdminReportItem> {
+  const body = await adminFetch<{ report: AdminReportItem }>(`/reports/${encodeURIComponent(reportId)}`, {
+    method: 'PATCH',
+    body: JSON.stringify(patch),
+  });
+  return body.report;
+}
+
+export async function fetchAdminDisbursements(): Promise<AdminDisbursementItem[]> {
+  const body = await adminFetch<{ disbursements?: AdminDisbursementItem[] }>('/disbursements');
+  return body.disbursements || [];
+}
+
+export async function createAdminDisbursement(payload: {
+  fileName: string;
+  totalRecords: number;
+  totalAmount: number;
+  rows?: Array<Record<string, unknown>>;
+}): Promise<AdminDisbursementItem> {
+  const body = await adminFetch<{ disbursement: AdminDisbursementItem }>('/disbursements', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+  return body.disbursement;
 }

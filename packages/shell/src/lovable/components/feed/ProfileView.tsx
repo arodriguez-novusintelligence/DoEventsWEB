@@ -15,8 +15,8 @@ import {
   Camera,
   Shield,
   Briefcase,
-  DollarSign,
   PartyPopper,
+  ShoppingBag,
   TrendingUp,
   LogOut,
   Gift,
@@ -45,6 +45,8 @@ import { StoryAvatar } from '../../../components/StoryAvatar';
 
 interface ProfileViewProps {
   userId?: string;
+  isPublicProfile?: boolean;
+  onVisibilityChange?: (isPublic: boolean) => void;
   profileName?: string;
   profileUsername?: string;
   profileAvatar?: string;
@@ -52,7 +54,10 @@ interface ProfileViewProps {
   profileBio?: string;
   profileEmail?: string;
   profilePhone?: string;
+  profilePhoneNumber?: string;
+  profileCountryCode?: string;
   profileDocument?: string;
+  profileBirthDate?: string;
   profileCity?: string;
   profileAddress?: string;
   followersCount?: number;
@@ -78,6 +83,7 @@ interface ProfileViewProps {
   onViewProfile?: (user: ProfileListUser) => void;
   followersList?: ProfileListUser[];
   followingList?: ProfileListUser[];
+  onFollowersChange?: (followers: ProfileListUser[]) => void;
   favoriteEvents?: FavEventItem[];
   favoritePosts?: Post[];
   favoritePlaces?: FavPlaceItem[];
@@ -99,6 +105,9 @@ interface ProfileViewProps {
   myVenuesCount?: number;
   myServicesCount?: number;
   myInvitationsCount?: number;
+  myStatsCount?: number;
+  myPurchasesCount?: number;
+  /** @deprecated use myPurchasesCount */
   myTicketsCount?: number;
   myGuestsCount?: number;
   myPostsCount?: number;
@@ -120,6 +129,8 @@ interface ProfileViewProps {
 
 const ProfileView = ({
   userId,
+  isPublicProfile = true,
+  onVisibilityChange,
   profileName = '',
   profileUsername = '',
   profileAvatar: profileAvatarProp,
@@ -127,7 +138,10 @@ const ProfileView = ({
   profileBio = '',
   profileEmail,
   profilePhone,
+  profilePhoneNumber,
+  profileCountryCode,
   profileDocument,
+  profileBirthDate,
   profileCity,
   profileAddress,
   followersCount: followersCountProp = 0,
@@ -153,6 +167,7 @@ const ProfileView = ({
   onViewProfile,
   followersList = [],
   followingList = [],
+  onFollowersChange,
   favoriteEvents = [],
   favoritePosts = [],
   favoritePlaces = [],
@@ -168,6 +183,8 @@ const ProfileView = ({
   myVenuesCount = 0,
   myServicesCount = 0,
   myInvitationsCount = 0,
+  myStatsCount = 0,
+  myPurchasesCount = 0,
   myTicketsCount = 0,
   myGuestsCount = 0,
   myPostsCount = 0,
@@ -189,7 +206,6 @@ const ProfileView = ({
   const [bookingService, setBookingService] = useState<ServiceFormData | null>(null);
   const [bookingData, setBookingData] = useState<BookingData | null>(null);
   const [showPayment, setShowPayment] = useState(false);
-  const [showGallery, setShowGallery] = useState(false);
   const avatarSrc = profileAvatarProp || profileAvatar;
   const coverSrc = profileCoverProp || profileCover;
   const initials = profileName.split(' ').filter(Boolean).map((p) => p[0]).join('').slice(0, 2).toUpperCase() || 'DE';
@@ -222,8 +238,15 @@ const ProfileView = ({
   })();
 
   const experienceArrowLeft = experienceSegment > 0
-    ? `${((experienceSegment - 0.5) / 4) * 100}%`
+    ? `${((Math.min(experienceSegment, 4) - 0.5) / 4) * 100}%`
     : '12.5%';
+
+  const EXPERIENCE_BARS = [
+    { height: 'h-1.5', color: 'bg-rose-200' },
+    { height: 'h-2', color: 'bg-orange-200' },
+    { height: 'h-3', color: 'bg-amber-200' },
+    { height: 'h-4', color: 'bg-emerald-300' },
+  ] as const;
 
   const toggleProfileLike = () => {
     setProfileLiked((prev) => !prev);
@@ -241,15 +264,6 @@ const ProfileView = ({
     setShowPayment(false);
     setBookingData(null);
   };
-
-  if (showGallery) {
-    if (onOpenGallery) {
-      onOpenGallery();
-      setShowGallery(false);
-      return null;
-    }
-    return null;
-  }
 
   if (showPlanDetail) {
     return (
@@ -297,10 +311,16 @@ const ProfileView = ({
       <EditProfileView
         onBack={() => setShowEditProfile(false)}
         currentPlan={currentPlan}
+        userId={userId}
+        isPublicProfile={isPublicProfile}
+        onVisibilityChange={onVisibilityChange}
         profileName={profileName}
         profileEmail={profileEmail}
         profilePhone={profilePhone}
+        profilePhoneNumber={profilePhoneNumber}
+        profileCountryCode={profileCountryCode}
         profileDocument={profileDocument}
+        profileBirthDate={profileBirthDate}
         profileBio={profileBio}
         profileUsername={profileUsername.replace(/^@/, '')}
         onSaveContact={onSaveContact}
@@ -348,6 +368,7 @@ const ProfileView = ({
                 </div>
               )}
               <StoryAvatar
+                key={avatarSrc}
                 userId={userId}
                 name={profileName}
                 imageUrl={avatarSrc}
@@ -427,7 +448,8 @@ const ProfileView = ({
           {/* Quick links — modern pill buttons */}
           <div className="mt-4 grid grid-cols-2 gap-2">
             <button
-              onClick={() => setShowGallery(true)}
+              type="button"
+              onClick={() => onOpenGallery?.()}
               className="group flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-primary to-accent px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:shadow-md active:scale-[0.97]"
             >
               <Camera className="h-4 w-4" />
@@ -450,13 +472,15 @@ const ProfileView = ({
           <h3 className="text-base font-bold text-foreground mb-5">Experiencia de servicio</h3>
           <div className="relative pt-3">
             <div
-              className="absolute -top-1 flex w-2/5 -translate-x-1/2 justify-center"
+              className="absolute -top-1 flex -translate-x-1/2 justify-center"
               style={{ left: experienceArrowLeft }}
             >
               <div className="h-0 w-0 border-l-[6px] border-r-[6px] border-t-[8px] border-l-transparent border-r-transparent border-t-foreground" />
             </div>
-            <div className="flex gap-2 items-center">
-              <div className="h-3 flex-1 rounded-full bg-gradient-to-r from-primary/25 via-primary/50 to-primary/70" />
+            <div className="flex items-center gap-2">
+              {EXPERIENCE_BARS.map((bar) => (
+                <div key={bar.color} className={`flex-1 rounded-full ${bar.height} ${bar.color}`} />
+              ))}
             </div>
             <p className="mt-3 text-center text-sm font-medium text-muted-foreground">
               {experienceLabel}
@@ -610,7 +634,7 @@ const ProfileView = ({
       >
         <h3 className="text-base font-bold text-foreground">Mis publicaciones</h3>
         <div className="mt-6 flex items-end justify-between">
-          <Megaphone className="h-7 w-7 text-primary" />
+          <Megaphone className="h-7 w-7 text-orange-500" />
           <span className="text-2xl font-bold text-muted-foreground">{myPostsCount}</span>
         </div>
       </button>
@@ -619,9 +643,7 @@ const ProfileView = ({
       <button onClick={onOpenGuests} className="flex w-full flex-col rounded-2xl bg-card p-4 shadow-sm text-left transition-colors hover:bg-accent/50 active:scale-[0.99]">
         <h3 className="text-base font-bold text-foreground">Gestión de invitados</h3>
         <div className="mt-6 flex items-end justify-between">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
-            <Users className="h-5 w-5 text-primary" />
-          </div>
+          <Users className="h-7 w-7 text-foreground" />
           <span className="text-2xl font-bold text-muted-foreground">{myGuestsCount}</span>
         </div>
       </button>
@@ -630,11 +652,11 @@ const ProfileView = ({
       <div className="grid grid-cols-2 gap-3">
         {[
           { title: 'Mis Eventos', icon: PartyPopper, count: myEventsCount, color: 'text-primary', action: onOpenMyEvents },
-          { title: 'Mis lugares de eventos', icon: MapPin, count: myVenuesCount, color: 'text-primary', action: onOpenMyVenues },
-          { title: 'Mis Estadísticas', icon: BarChart3, count: myEventsCount, color: 'text-destructive', action: onNavigateStats },
-          { title: 'Mis servicios', icon: TrendingUp, count: myServicesCount || publishedServices?.length || 0, color: 'text-success', action: onOpenServices },
-          { title: 'Mis invitaciones a eventos', icon: Ticket, count: myInvitationsCount, color: 'text-accent-foreground', action: onOpenMyInvitations },
-          { title: 'Mis Boletos', icon: DollarSign, count: myTicketsCount, color: 'text-success', action: onOpenMyTickets },
+          { title: 'Mis lugares de eventos', icon: MapPin, count: myVenuesCount, color: 'text-sky-500', action: onOpenMyVenues },
+          { title: 'Mis Estadísticas', icon: BarChart3, count: myStatsCount || myEventsCount, color: 'text-destructive', action: onNavigateStats },
+          { title: 'Mis servicios', icon: TrendingUp, count: myServicesCount || publishedServices?.length || 0, color: 'text-emerald-600', action: onOpenServices },
+          { title: 'Mis invitaciones a eventos', icon: Ticket, count: myInvitationsCount, color: 'text-amber-500', action: onOpenMyInvitations },
+          { title: 'Mis Compras', icon: ShoppingBag, count: myPurchasesCount || myTicketsCount, color: 'text-emerald-500', action: onOpenMyTickets },
         ].map((item) => (
           <button
             key={item.title}
@@ -643,9 +665,7 @@ const ProfileView = ({
           >
             <h4 className="text-sm font-bold text-foreground leading-tight">{item.title}</h4>
             <div className="flex items-end justify-between">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
-                <item.icon className={`h-5 w-5 ${item.color}`} strokeWidth={2.2} />
-              </div>
+              <item.icon className={`h-7 w-7 ${item.color}`} strokeWidth={2.2} />
               <span className="text-xl font-bold text-muted-foreground">{item.count}</span>
             </div>
           </button>
@@ -687,6 +707,7 @@ const ProfileView = ({
         followingList={followingList}
         currentUserId={userId}
         onViewProfile={(u) => onViewProfile?.(u)}
+        onFollowersChange={onFollowersChange}
       />
       <SubscriptionPlanSheet
         open={planSheetOpen}

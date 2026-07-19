@@ -10,6 +10,7 @@ import {
   setAuthData,
   setAuthenticated,
   persistOAuthDisplayName,
+  persistOAuthProfilePhoto,
 } from '@doevents/shared';
 import { getEnvironment } from '@config/environments/index';
 import { resolveOAuthFromCognito } from '../services/oauthCallback';
@@ -101,6 +102,8 @@ export const OAuthCallbackPage: React.FC = () => {
             token,
             user.userId,
             payload.name || [payload.given_name, payload.family_name].filter(Boolean).join(' '),
+            payload.picture || '',
+            user.platformRole,
           );
           dispatch(setAuthData({ token, idUser: user.userId }));
           dispatch(setAuthenticated(true));
@@ -125,6 +128,9 @@ export const OAuthCallbackPage: React.FC = () => {
             user: oauthUser,
           });
           persistEnrollmentUserId(result.data.userId);
+          if (payload.picture) {
+            persistOAuthProfilePhoto(result.data.userId, payload.picture);
+          }
           dispatch(setAuthData({ token: '', idUser: result.data.userId }));
           navigate('/auth/terms', { replace: true });
         } else {

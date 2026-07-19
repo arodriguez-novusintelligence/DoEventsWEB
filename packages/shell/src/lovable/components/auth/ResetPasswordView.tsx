@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, Loader2, Lock, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Eye, EyeOff, Loader2, Lock, ShieldAlert } from 'lucide-react';
 import { resetPasswordWithToken, useToast } from '@doevents/shared';
 import AuthLogo from '@lovable/components/auth/AuthLogo';
 import { Button } from '@lovable/components/ui/button';
@@ -13,6 +13,8 @@ export const ResetPasswordView = () => {
   const { showToast } = useToast();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -95,15 +97,27 @@ export const ResetPasswordView = () => {
                   <Lock className="h-4 w-4 text-primary" />
                   Nueva contraseña
                 </Label>
-                <Input
-                  id="reset-password"
-                  type="password"
-                  autoComplete="new-password"
-                  placeholder="Mínimo 8 caracteres"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  disabled={loading}
-                />
+                <div className="relative">
+                  <Input
+                    id="reset-password"
+                    type={showPassword ? 'text' : 'password'}
+                    autoComplete="new-password"
+                    placeholder="Mínimo 8 caracteres"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={loading}
+                    className="pr-11"
+                  />
+                  <button
+                    type="button"
+                    aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-muted-foreground hover:text-foreground"
+                    onClick={() => setShowPassword((v) => !v)}
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
                 {password && !passwordLongEnough && (
                   <p className="text-xs text-destructive">La contraseña debe tener al menos 8 caracteres.</p>
                 )}
@@ -114,18 +128,30 @@ export const ResetPasswordView = () => {
                   <Lock className="h-4 w-4 text-primary" />
                   Confirmar contraseña
                 </Label>
-                <Input
-                  id="reset-confirm"
-                  type="password"
-                  autoComplete="new-password"
-                  placeholder="Repite tu contraseña"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  disabled={loading}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && isValid && !loading) void handleSubmit();
-                  }}
-                />
+                <div className="relative">
+                  <Input
+                    id="reset-confirm"
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    autoComplete="new-password"
+                    placeholder="Repite tu contraseña"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    disabled={loading}
+                    className="pr-11"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && isValid && !loading) void handleSubmit();
+                    }}
+                  />
+                  <button
+                    type="button"
+                    aria-label={showConfirmPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-muted-foreground hover:text-foreground"
+                    onClick={() => setShowConfirmPassword((v) => !v)}
+                    tabIndex={-1}
+                  >
+                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
                 {confirmPassword && !passwordsMatch && (
                   <p className="text-xs text-destructive">Las contraseñas no coinciden.</p>
                 )}

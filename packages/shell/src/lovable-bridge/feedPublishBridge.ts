@@ -1,27 +1,11 @@
+import type { NavigateFunction } from 'react-router-dom';
 import {
   invalidateEventsCache,
-  promotePublishedTargetToFeed,
-  type FeedPublication,
+  invalidateSocialFeedCache,
   type FeedPublishRedirectState,
 } from '@doevents/shared';
 
 export type { FeedPublishRedirectState };
-
-export async function sharePublishedItemToFeed(
-  targetId: string,
-  options?: { title?: string },
-): Promise<FeedPublication | null> {
-  if (!targetId?.trim()) return null;
-  try {
-    return await promotePublishedTargetToFeed(targetId, {
-      title: options?.title || '',
-      opinion: '',
-      visibility: 'PUBLIC',
-    });
-  } catch {
-    return null;
-  }
-}
 
 export function buildFeedRedirectState(highlightId?: string): FeedPublishRedirectState {
   return {
@@ -30,11 +14,37 @@ export function buildFeedRedirectState(highlightId?: string): FeedPublishRedirec
   };
 }
 
+export type FeedPublishTargetKind = 'venue' | 'event' | 'service';
+
+export function redirectToFeed(
+  navigate: NavigateFunction,
+  targetId?: string,
+): void {
+  invalidateEventsCache();
+  invalidateSocialFeedCache();
+  navigate('/', { replace: true, state: buildFeedRedirectState(targetId) });
+}
+
+/** Tras publicar, refresca el feed y navega al muro (sin repost duplicado). */
 export async function finishPublishAndGoToFeed(
   targetId: string,
-  options?: { title?: string; onNavigate: (state: FeedPublishRedirectState) => void },
+  options?: {
+    title?: string;
+    kind?: FeedPublishTargetKind;
+    onNavigate?: (state: FeedPublishRedirectState) => void;
+    navigate?: NavigateFunction;
+  },
 ): Promise<void> {
-  const repost = await sharePublishedItemToFeed(targetId, { title: options?.title });
+  void options?.title;
+  void options?.kind;
   invalidateEventsCache();
-  options?.onNavigate(buildFeedRedirectState(repost?.id || targetId));
+  invalidateSocialFeedCache();
+  const state = buildFeedRedirectState(targetId);
+  if (options?.onNavigate) {
+    options.onNavigate(state);
+    return;
+  }
+  if (options?.navigate) {
+    options.navigate('/', { replace: true, state });
+  }
 }

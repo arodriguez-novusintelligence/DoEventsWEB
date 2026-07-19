@@ -3,6 +3,13 @@ import { resolveImageUrl } from '@doevents/shared';
 import type { PublishedVenueDraft } from '@lovable/components/venues/VenueCreator';
 import type { VenueData } from '@lovable/types/venue';
 import { parseVenueAmenities, type ParsedVenueAmenities } from './venuesAdapter';
+import {
+  catalogSelectionLabels,
+  normalizeCatalogSelections,
+  VENUE_ACCESSIBILITY_CATALOG,
+  VENUE_INCLUDED_SERVICE_CATALOG,
+  VENUE_SECURITY_CATALOG,
+} from '@lovable/data/venueCatalogOptions';
 
 const REFUND_TYPES = new Set(['mismo-dia', '1-dia', '7-dias', '30-dias', 'caso-a-caso']);
 
@@ -56,7 +63,7 @@ export function buildVenueFromDetail(
     .filter(Boolean);
   const cover = draft.image || images[0] || '';
 
-  const paidFromAddons = (options.addonServices || meta.addonServices || []).map((s) => ({
+  const paidFromAddons = (meta.addonServices?.length ? meta.addonServices : (options.addonServices || [])).map((s) => ({
     name: s.name,
     price: s.price,
     serviceId: s.id,
@@ -85,9 +92,15 @@ export function buildVenueFromDetail(
     venueTypes: [draft.type || String(options.venue?.type || 'Lugar')],
     eventTypes: meta.features?.length ? meta.features : [],
     facilities: meta.features || [],
-    services: meta.features || [],
-    accessibility: meta.parking ? ['Parqueadero disponible'] : [],
-    security: [],
+    services: catalogSelectionLabels(
+      normalizeCatalogSelections(meta.includedServices, VENUE_INCLUDED_SERVICE_CATALOG),
+    ),
+    accessibility: catalogSelectionLabels(
+      normalizeCatalogSelections(meta.accessibility, VENUE_ACCESSIBILITY_CATALOG),
+    ),
+    security: catalogSelectionLabels(
+      normalizeCatalogSelections(meta.security, VENUE_SECURITY_CATALOG),
+    ),
     basePrice: Number(meta.pricing?.perDay || meta.pricing?.perMultiDay || 0),
     startTime: meta.availability?.globalStartTime || '08:00',
     endTime: meta.availability?.globalEndTime || '22:00',

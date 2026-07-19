@@ -1,6 +1,24 @@
-import type { FeedEventItem } from '@doevents/shared';
-import { mapDiscoverEventBadge } from '@doevents/shared';
-import type { DiscoverEventItem } from './discoverAdapter';
+import type { FeedEventItem, UserEventItem } from '@doevents/shared';
+import { isDiscoverableFeedEvent, mapDiscoverEventBadge } from '@doevents/shared';
+
+type DiscoverFeedEventFields = {
+  estatus?: string;
+  fechaIni?: string;
+  fechaFin?: string;
+  horaIni?: string;
+  horaFin?: string;
+  deletedAt?: string;
+};
+
+export function filterDiscoverFeedEvents<T extends DiscoverFeedEventFields>(
+  events: T[] = [],
+): T[] {
+  return events.filter((event) => isDiscoverableFeedEvent(event));
+}
+
+export function filterVisibleUserEvents(items: UserEventItem[] = []): UserEventItem[] {
+  return items.filter((ev) => String(ev.estatus || '').trim().toUpperCase() !== 'DELETED');
+}
 
 const STATUS_ORDER: Record<string, number> = {
   activo: 0,
@@ -34,9 +52,9 @@ function eventDistanceKm(
   if (event.distancia != null && Number.isFinite(event.distancia)) {
     return event.distancia;
   }
-  const elat = event.latitude ?? event.ubicacion?.latitude;
-  const elng = event.longitude ?? event.ubicacion?.longitude;
-  if (elat != null && elng != null) {
+  const elat = Number(event.latitude ?? event.ubicacion?.latitude);
+  const elng = Number(event.longitude ?? event.ubicacion?.longitude);
+  if (Number.isFinite(elat) && Number.isFinite(elng)) {
     return haversineKm(lat, lng, elat, elng);
   }
   return null;
@@ -56,25 +74,7 @@ export function filterAndSortMyPublishedEvents(
   const lng = options?.userLng;
   const nearbyDistances = options?.nearbyDistances ?? new Map<string, number>();
 
-  let filtered = events.filter(
-    (e) => {
-      const status = mapDiscoverEventBadge({
-        estatus: e.estatus,
-        fechaIni: e.fechaIni,
-        fechaFin: e.fechaFin,
-        horaIni: e.horaIni,
-        horaFin: e.horaFin,
-      });
-      return status !== 'borrador' && status !== 'inactivo';
-    },
-  );
-
-  if (lat != null && lng != null) {
-    filtered = filtered.filter((e) => {
-      const dist = eventDistanceKm(e, lat, lng, nearbyDistances);
-      return dist == null || dist <= radius;
-    });
-  }
+  let filtered = filterDiscoverFeedEvents(events);
 
   return filtered.sort((a, b) => {
     const sa = STATUS_ORDER[mapDiscoverEventBadge({
@@ -103,4 +103,41 @@ export function filterAndSortMyPublishedEvents(
 
 export function discoverStatusOrder(status?: string): number {
   return STATUS_ORDER[status || 'activo'] ?? 99;
+}
+
+/** Completa eventos cercanos usando el catálogo del feed cuando la API geo devuelve vacío o incompleto. */
+export function buildNearbyEventsFromCatalog(
+  catalog: FeedEventItem[],
+  lat: number,
+  lng: number,
+  radiusKm: number,
+  existing: FeedEventItem[] = [],
+): FeedEventItem[] {
+  const seen = new Set(existing.map((e) => e.id).filter(Boolean));
+  const merged = [...existing];
+
+  for (const event of filterDiscoverFeedEvents(catalog)) {
+    if (!event.id || seen.has(event.id)) continue;
+    const distance = eventDistanceKm(event, lat, lng, new Map());
+    if (distance == null || distance > radiusKm) continue;
+    merged.push({
+      ...event,
+      distancia: event.distancia ?? distance,
+    });
+    seen.add(event.id);
+  }
+
+  return merged.sort((a, b) => (a.distancia ?? Infinity) - (b.distancia ?? Infinity));
+}
+
+export function discoverNearbyLooksIncomplete(
+  nearby: FeedEventItem[],
+  catalog: FeedEventItem[],
+  lat?: number,
+  lng?: number,
+  radiusKm = 100,
+): boolean {
+  if (lat == null || lng == null) return false;
+  if (nearby.length > 0) return false;
+  return buildNearbyEventsFromCatalog(catalog, lat, lng, radiusKm).length > 0;
 }

@@ -1,16 +1,18 @@
 import { useState, useMemo, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, ShoppingCart, Minus, Plus, X, CalendarDays, Clock, CreditCard, Loader2, AlertCircle } from 'lucide-react';
+import {
+  ChevronLeft, ChevronRight, ShoppingCart, Plus, Check, X, CalendarDays, Clock,
+  Loader2, AlertCircle, Sparkles, Brush, Music, Camera, UtensilsCrossed, Flower2,
+  User, RotateCcw, HelpCircle, CreditCard, type LucideIcon,
+} from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@lovable/components/ui/sheet';
 import { Button } from '@lovable/components/ui/button';
 import { Switch } from '@lovable/components/ui/switch';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@lovable/components/ui/accordion';
 import { cn } from '@lovable/lib/utils';
 import { ServiceFormData } from '@lovable/data/servicesData';
 import {
-  createServiceBooking,
   fetchServiceBookingAvailability,
 } from '@doevents/shared';
-import { toast } from 'sonner';
-import BookingReviewSheet from './BookingReviewSheet';
 
 interface LiveServiceBookingConfig {
   serviceId: string;
@@ -22,6 +24,7 @@ interface BookingSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   service: ServiceFormData;
+  serviceDisplayName?: string;
   onProceedToPayment: (booking: BookingData) => void;
   liveBooking?: LiveServiceBookingConfig;
   additionalServiceOptions?: AdditionalService[];
@@ -39,6 +42,9 @@ export interface BookingData {
   commissionIva: number;
   total: number;
   serviceName: string;
+  activityKey?: string;
+  activityName?: string;
+  pricingType?: string;
   startTime: string;
   endTime: string;
   serviceId?: string;
@@ -51,6 +57,20 @@ interface AdditionalService {
   name: string;
   pricePerDay: number;
   quantity: number;
+  icon?: LucideIcon;
+  subtitle?: string;
+  unit?: 'evento' | 'dia' | 'día';
+}
+
+function resolveServiceIcon(name: string): LucideIcon {
+  const normalized = name.toLowerCase();
+  if (normalized.includes('decor')) return Sparkles;
+  if (normalized.includes('limpieza') || normalized.includes('clean')) return Brush;
+  if (normalized.includes('dj') || normalized.includes('música') || normalized.includes('musica')) return Music;
+  if (normalized.includes('foto') || normalized.includes('photo')) return Camera;
+  if (normalized.includes('cater') || normalized.includes('comida') || normalized.includes('banqu')) return UtensilsCrossed;
+  if (normalized.includes('flor')) return Flower2;
+  return ShoppingCart;
 }
 
 const MONTH_NAMES = [
@@ -73,7 +93,15 @@ function parseDateStr(ds: string): Date {
 }
 
 // Additional services come from props/API — no mock data in runtime
-const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBooking, additionalServiceOptions }: BookingSheetProps) => {
+const BookingSheet = ({
+  open,
+  onOpenChange,
+  service,
+  serviceDisplayName,
+  onProceedToPayment,
+  liveBooking,
+  additionalServiceOptions,
+}: BookingSheetProps) => {
   const isLive = Boolean(liveBooking?.serviceId && liveBooking?.userId);
   const today = new Date();
   const [viewYear, setViewYear] = useState(today.getFullYear());
@@ -85,15 +113,37 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
   useEffect(() => {
     if (!open) return;
     if (additionalServiceOptions?.length) {
-      setAdditionalServices(additionalServiceOptions.map((item) => ({ ...item, quantity: 0 })));
+      setAdditionalServices(additionalServiceOptions.map((item) => ({
+        ...item,
+        quantity: 0,
+        icon: resolveServiceIcon(item.name),
+        subtitle: item.subtitle || item.name,
+        unit: item.unit || 'dia',
+      })));
       return;
     }
     setAdditionalServices([]);
   }, [open, additionalServiceOptions]);
+
+  const allActivities = useMemo(
+    () => service.sectors.flatMap((sector) =>
+      (service.activities[sector] || []).map((activity) => ({ sector, activity })),
+    ),
+    [service.sectors, service.activities],
+  );
+  const defaultActivityKey = allActivities[0] ? `${allActivities[0].sector}::${allActivities[0].activity}` : '';
+  const [selectedActivityKey, setSelectedActivityKey] = useState(defaultActivityKey);
+
+  useEffect(() => {
+    if (!open) return;
+    setSelectedActivityKey(defaultActivityKey);
+    setStartDate(null);
+    setEndDate(null);
+    setSingleDay(false);
+  }, [open, defaultActivityKey]);
+
   const [reservedDates, setReservedDates] = useState<Set<string>>(new Set());
   const [loadingAvailability, setLoadingAvailability] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [showReview, setShowReview] = useState(false);
 
   const blockedSet = useMemo(() => {
     const set = new Set(service.blockedDates || []);
@@ -129,19 +179,14 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
     return () => { cancelled = true; };
   }, [open, isLive, liveBooking?.serviceId, viewYear, viewMonth]);
 
-  // Get base price from highest activity pricing
-  const allActivities = service.sectors.flatMap((sector) =>
-    (service.activities[sector] || []).map((act) => ({ sector, activity: act }))
-  );
-  const highestPricing = allActivities.reduce<{ cost: number; currency: string } | null>((best, { sector, activity }) => {
-    const p = service.activityPricing[`${sector}::${activity}`];
-    if (!p || !p.cost) return best;
-    const num = Number(p.cost);
-    if (!best || num > best.cost) return { cost: num, currency: p.currency };
-    return best;
-  }, null);
-  const basePrice = highestPricing?.cost || 0;
-  const currency = highestPricing?.currency || 'COP';
+  const selectedPricing = service.activityPricing[selectedActivityKey];
+  const basePrice = selectedPricing ? Number(selectedPricing.cost) || 0 : 0;
+  const currency = selectedPricing?.currency || 'COP';
+  const pricingType = selectedPricing?.pricingType || 'Por día';
+  const selectedActivityName = selectedActivityKey.includes('::')
+    ? selectedActivityKey.split('::')[1]
+    : selectedActivityKey;
+  const servicePhoto = service.servicePhoto || service.coverImageUrl || service.coverImagePreview;
 
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
   const firstDayOfWeek = new Date(viewYear, viewMonth, 1).getDay();
@@ -206,9 +251,12 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
   const commissionIva = Math.round(commission * IVA_RATE);
   const bookingTotal = subtotal + commission + commissionIva;
 
-  const updateQuantity = (idx: number, delta: number) => {
+  const toggleAdditionalService = (idx: number) => {
     setAdditionalServices((prev) =>
-      prev.map((s, i) => i === idx ? { ...s, quantity: Math.max(0, s.quantity + delta) } : s)
+      prev.map((s, i) => {
+        if (i !== idx) return s;
+        return { ...s, quantity: s.quantity > 0 ? 0 : 1 };
+      }),
     );
   };
 
@@ -221,11 +269,14 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
     else setViewMonth(viewMonth + 1);
   };
 
-  const serviceName = service.sectors.join(', ');
+  const serviceName = serviceDisplayName?.trim()
+    || service.sectors[0]
+    || service.sectors.join(', ')
+    || 'Servicio';
 
-  const handleProceed = async () => {
-    if (!startDate || !endDate) return;
-    const payload: BookingData = {
+  const handleProceed = () => {
+    if (!startDate || !endDate || !selectedActivityKey) return;
+    onProceedToPayment({
       startDate,
       endDate,
       days: totalDays,
@@ -237,48 +288,16 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
       commissionIva,
       total: bookingTotal,
       serviceName,
+      activityKey: selectedActivityKey,
+      activityName: selectedActivityName,
+      pricingType,
       startTime: service.globalStartTime,
       endTime: service.globalEndTime,
       serviceId: liveBooking?.serviceId,
-    };
-
-    if (!isLive || !liveBooking) {
-      onProceedToPayment(payload);
-      return;
-    }
-
-    const buyer = liveBooking.buyer;
-    if (!buyer?.email?.trim()) {
-      toast.error('Debes iniciar sesión con un correo válido para reservar');
-      return;
-    }
-
-    setSubmitting(true);
-    try {
-      const result = await createServiceBooking({
-        serviceId: liveBooking.serviceId,
-        userId: liveBooking.userId,
-        startDate,
-        endDate,
-        additionalServices: payload.additionalServices,
-        buyer,
-      });
-      onProceedToPayment({
-        ...payload,
-        orderId: result.orderId,
-        bookingId: result.bookingId,
-        expiredAtTs: result.expired_at_ts,
-        total: result.total_amount,
-        subtotal: result.pricing.subtotalReserva,
-        commission: result.pricing.commission,
-        commissionIva: result.pricing.commissionIva,
-      });
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'No se pudo crear la reserva');
-    } finally {
-      setSubmitting(false);
-    }
+    });
   };
+
+  const addedServicesCount = additionalServices.filter((s) => s.quantity > 0).length;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -309,18 +328,74 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
               </div>
             </div>
           )}
-          {/* Service info */}
-          <div className="rounded-2xl bg-card p-4 shadow-sm space-y-2">
-            <p className="text-xs font-semibold text-primary uppercase tracking-wide">{serviceName}</p>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Clock className="h-3.5 w-3.5" />
-              <span>{service.globalStartTime} — {service.globalEndTime}</span>
+          <div className="overflow-hidden rounded-2xl bg-card shadow-sm">
+            <div className="flex aspect-[16/9] items-center justify-center bg-accent/40">
+              {servicePhoto ? (
+                <img src={servicePhoto} alt="Foto del servicio" className="h-full w-full object-cover" />
+              ) : (
+                <div className="flex flex-col items-center gap-1 text-muted-foreground">
+                  <User className="h-8 w-8" />
+                  <span className="text-xs">Sin foto</span>
+                </div>
+              )}
             </div>
-            <div className="flex items-center justify-between border-t border-border pt-2 mt-2">
+            <div className="space-y-2 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-primary">{serviceName}</p>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Clock className="h-3.5 w-3.5" />
+                <span>{service.globalStartTime} — {service.globalEndTime}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-3 rounded-2xl bg-card p-4 shadow-sm">
+            <div>
+              <h4 className="text-sm font-bold text-foreground">Selecciona la actividad</h4>
+              <p className="text-[11px] text-muted-foreground">
+                Elige el servicio y actividad a reservar. El precio se calcula según tu elección.
+              </p>
+            </div>
+            {service.sectors.map((sector) => {
+              const acts = service.activities[sector] || [];
+              if (acts.length === 0) return null;
+              return (
+                <div key={sector}>
+                  <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-primary">{sector}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {acts.map((act) => {
+                      const k = `${sector}::${act}`;
+                      const p = service.activityPricing[k];
+                      const active = selectedActivityKey === k;
+                      return (
+                        <button
+                          key={k}
+                          type="button"
+                          onClick={() => setSelectedActivityKey(k)}
+                          className={cn(
+                            'rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors',
+                            active
+                              ? 'border-primary bg-primary text-primary-foreground'
+                              : 'border-border bg-card text-foreground hover:border-primary/40',
+                          )}
+                        >
+                          {act}
+                          {p?.cost ? (
+                            <span className={cn('ml-1.5 opacity-80', active ? 'text-primary-foreground' : 'text-primary')}>
+                              · {formatCurrency(Number(p.cost), p.currency)}
+                            </span>
+                          ) : null}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+            <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
               <span className="text-sm text-muted-foreground">Valor de la reserva</span>
               <div className="text-right">
                 <p className="text-base font-bold text-foreground">{formatCurrency(basePrice, currency)}</p>
-                <p className="text-[10px] text-muted-foreground">IVA incluido · por día</p>
+                <p className="text-[10px] text-muted-foreground">IVA incluido · {pricingType.toLowerCase()}</p>
               </div>
             </div>
           </div>
@@ -430,40 +505,84 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
             </div>
           </div>
 
-          {/* Additional services — from API/props or empty state */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <ShoppingCart className="h-4 w-4 text-primary" />
-              <h4 className="text-sm font-semibold text-foreground">Servicios adicionales (por día)</h4>
+          {/* Additional services — toggle inline (Lovable) */}
+          <div className="rounded-2xl border border-border bg-card p-4 shadow-sm space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <ShoppingCart className="h-4 w-4 text-primary" />
+                <h4 className="text-sm font-bold text-foreground">Servicios adicionales</h4>
+              </div>
+              {addedServicesCount > 0 && (
+                <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold text-primary">
+                  {addedServicesCount} agregado{addedServicesCount !== 1 ? 's' : ''}
+                </span>
+              )}
             </div>
+            <p className="text-xs text-muted-foreground">
+              Toca para agregar o quitar. El valor se suma al total de la reserva.
+            </p>
+
             {additionalServices.length > 0 ? (
-            <div className="space-y-2">
-              {additionalServices.map((as, idx) => (
-                <div key={as.name} className="flex items-center justify-between rounded-xl border border-border/60 bg-card px-4 py-3">
-                  <div>
-                    <p className="text-sm font-medium text-foreground">{as.name}</p>
-                    <p className="text-xs text-muted-foreground">{formatCurrency(as.pricePerDay, currency)} / día</p>
-                  </div>
-                  <div className="flex items-center gap-3">
+              <div className="space-y-2">
+                {additionalServices.map((as, idx) => {
+                  const Icon = as.icon ?? resolveServiceIcon(as.name);
+                  const added = as.quantity > 0;
+                  const unitLabel = as.unit === 'evento' ? 'Por evento' : 'Por día';
+                  return (
                     <button
-                      onClick={() => updateQuantity(idx, -1)}
-                      className="flex h-7 w-7 items-center justify-center rounded-full border border-border/60 bg-background text-muted-foreground hover:text-foreground transition-colors"
+                      key={as.name}
+                      type="button"
+                      onClick={() => toggleAdditionalService(idx)}
+                      className={cn(
+                        'flex w-full items-center gap-3 rounded-xl border px-3 py-3 text-left transition-all',
+                        added
+                          ? 'border-primary bg-gradient-to-r from-primary to-primary/85 text-primary-foreground shadow-sm'
+                          : 'border-border bg-card hover:border-primary/40 hover:bg-accent/40',
+                      )}
                     >
-                      <Minus className="h-3 w-3" />
+                      <div
+                        className={cn(
+                          'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl',
+                          added ? 'bg-primary-foreground/20 text-primary-foreground' : 'bg-primary/10 text-primary',
+                        )}
+                      >
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className={cn('truncate text-sm font-semibold', added ? 'text-primary-foreground' : 'text-foreground')}>
+                          {as.name}
+                        </p>
+                        <p className={cn('truncate text-[11px]', added ? 'text-primary-foreground/80' : 'text-muted-foreground')}>
+                          {as.subtitle ? `${as.subtitle} · ${unitLabel}` : unitLabel}
+                        </p>
+                      </div>
+                      <div className="flex shrink-0 flex-col items-end">
+                        <span className={cn('text-sm font-bold', added ? 'text-primary-foreground' : 'text-foreground')}>
+                          {formatCurrency(as.pricePerDay, currency)}
+                        </span>
+                        <span
+                          className={cn(
+                            'mt-0.5 inline-flex items-center gap-1 text-[11px] font-semibold',
+                            added ? 'text-primary-foreground' : 'text-primary',
+                          )}
+                        >
+                          {added ? (
+                            <>
+                              <Check className="h-3 w-3" /> Agregado
+                            </>
+                          ) : (
+                            <>
+                              <Plus className="h-3 w-3" /> Agregar
+                            </>
+                          )}
+                        </span>
+                      </div>
                     </button>
-                    <span className="w-4 text-center text-sm font-bold text-foreground">{as.quantity}</span>
-                    <button
-                      onClick={() => updateQuantity(idx, 1)}
-                      className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-                    >
-                      <Plus className="h-3 w-3" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+                  );
+                })}
+              </div>
             ) : (
-              <div className="rounded-xl border border-dashed border-primary/25 bg-card px-4 py-6 text-center">
+              <div className="rounded-xl border border-dashed border-primary/25 bg-secondary/30 px-4 py-6 text-center">
                 <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                   <ShoppingCart className="h-7 w-7 text-primary" />
                 </div>
@@ -473,88 +592,122 @@ const BookingSheet = ({ open, onOpenChange, service, onProceedToPayment, liveBoo
                 </p>
               </div>
             )}
+
+            {addedServicesCount > 0 && (
+              <div className="flex items-center justify-between border-t border-border pt-3">
+                <span className="text-sm text-muted-foreground">Subtotal servicios</span>
+                <span className="text-sm font-bold text-foreground">{formatCurrency(additionalTotal, currency)}</span>
+              </div>
+            )}
           </div>
 
-          {/* Booking summary */}
-          {startDate && endDate && (
-            <div className="rounded-2xl bg-primary/5 border border-primary/20 p-4 space-y-2">
-              <h4 className="text-sm font-bold text-foreground">Resumen de la reserva</h4>
-              <div className="space-y-1.5 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{formatCurrency(basePrice, currency)} × {totalDays} día{totalDays !== 1 ? 's' : ''}</span>
-                  <span className="font-medium">{formatCurrency(basePrice * totalDays, currency)}</span>
-                </div>
-                {additionalServices.filter((s) => s.quantity > 0).map((s) => (
-                  <div key={s.name} className="flex justify-between">
-                    <span className="text-muted-foreground">{s.name} ×{s.quantity} ×{totalDays}d</span>
-                    <span className="font-medium">{formatCurrency(s.pricePerDay * s.quantity * totalDays, currency)}</span>
+          {startDate && endDate && (() => {
+            const activeAdds = additionalServices.filter((s) => s.quantity > 0);
+            const addsTotal = activeAdds.reduce((sum, s) => sum + s.pricePerDay * s.quantity * totalDays, 0);
+            return (
+              <div className="space-y-3 rounded-2xl border border-border bg-card p-4 shadow-sm">
+                <h4 className="text-sm font-bold text-foreground">Resumen de pago</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">
+                      Reserva ({totalDays} día{totalDays !== 1 ? 's' : ''})
+                    </span>
+                    <span className="font-semibold text-foreground">{formatCurrency(basePrice * totalDays, currency)}</span>
                   </div>
-                ))}
-                <div className="flex justify-between border-t border-dashed border-border pt-2 mt-1">
-                  <span className="text-muted-foreground">Subtotal reserva</span>
-                  <span className="font-semibold text-foreground">{formatCurrency(subtotal, currency)}</span>
+                  {activeAdds.length > 0 && (
+                    <>
+                      <p className="pt-1 text-[13px] font-semibold text-foreground">Servicios adicionales</p>
+                      {activeAdds.map((s) => (
+                        <div key={s.name} className="flex justify-between">
+                          <span className="text-muted-foreground">
+                            {s.name}{s.quantity > 1 ? ` × ${s.quantity}` : ''}
+                          </span>
+                          <span className="font-medium text-foreground">
+                            {formatCurrency(s.pricePerDay * s.quantity * totalDays, currency)}
+                          </span>
+                        </div>
+                      ))}
+                      <div className="flex justify-between border-t border-dashed border-border pt-2">
+                        <span className="text-muted-foreground">Subtotal servicios</span>
+                        <span className="font-semibold text-foreground">{formatCurrency(addsTotal, currency)}</span>
+                      </div>
+                    </>
+                  )}
+                  <div className="mt-1 flex justify-between border-t border-border pt-2">
+                    <span className="text-muted-foreground">Subtotal reserva</span>
+                    <span className="font-semibold text-foreground">{formatCurrency(subtotal, currency)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Comisión del servicio (12%)</span>
+                    <span className="font-medium text-foreground">{formatCurrency(commission, currency)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">IVA sobre comisión (19%)</span>
+                    <span className="font-medium text-foreground">{formatCurrency(commissionIva, currency)}</span>
+                  </div>
+                  <div className="mt-2 flex items-center justify-between border-t border-border pt-3">
+                    <span className="text-base font-bold text-foreground">Valor total</span>
+                    <span className="text-lg font-extrabold text-primary">{formatCurrency(bookingTotal, currency)}</span>
+                  </div>
+                  <p className="text-right text-[11px] text-muted-foreground">IVA incluido</p>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Comisión del servicio (12%)</span>
-                  <span className="font-medium">{formatCurrency(commission, currency)}</span>
+              </div>
+            );
+          })()}
+
+          {service.refundPolicy && (
+            <div className="rounded-2xl bg-card p-4 shadow-sm">
+              <div className="flex items-start gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <RotateCcw className="h-4 w-4" />
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">IVA sobre comisión (19%)</span>
-                  <span className="font-medium">{formatCurrency(commissionIva, currency)}</span>
-                </div>
-                <div className="flex justify-between border-t border-border pt-2 mt-2">
-                  <span className="font-bold text-foreground">Total</span>
-                  <span className="font-bold text-primary text-base">{formatCurrency(bookingTotal, currency)}</span>
+                <div className="min-w-0">
+                  <h4 className="text-sm font-bold text-foreground">Política de reembolso</h4>
+                  <p className="mt-1 text-xs text-muted-foreground">{service.refundPolicy}</p>
                 </div>
               </div>
             </div>
           )}
 
+          {service.faqs && service.faqs.filter((f) => f.question).length > 0 && (
+            <div className="rounded-2xl bg-card p-4 shadow-sm">
+              <div className="mb-2 flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <HelpCircle className="h-4 w-4" />
+                </div>
+                <h4 className="text-sm font-bold text-foreground">Preguntas frecuentes</h4>
+              </div>
+              <Accordion type="single" collapsible className="divide-y divide-border">
+                {service.faqs
+                  .filter((f) => f.question)
+                  .map((f, i) => (
+                    <AccordionItem key={i} value={`faq-${i}`} className="border-0">
+                      <AccordionTrigger className="py-2 text-sm text-foreground hover:no-underline">
+                        {f.question}
+                      </AccordionTrigger>
+                      <AccordionContent className="text-xs text-muted-foreground">
+                        {f.answer || 'Sin respuesta.'}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+              </Accordion>
+            </div>
+          )}
 
-          {/* CTA */}
           <Button
-            className="w-full rounded-full py-6 text-base font-semibold gap-2"
-            disabled={!startDate || !endDate || submitting}
-            onClick={() => {
-              if (isLive && liveBooking) setShowReview(true);
-              else void handleProceed();
-            }}
+            className="w-full gap-2 rounded-full py-6 text-base font-semibold"
+            disabled={!startDate || !endDate || !selectedActivityKey}
+            onClick={handleProceed}
           >
             <CreditCard className="h-5 w-5" />
-            {submitting ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Creando reserva…
-              </>
-            ) : startDate && endDate
-                ? `Reservar — ${formatCurrency(bookingTotal, currency)}`
-                : 'Selecciona las fechas'}
+            {!selectedActivityKey
+              ? 'Selecciona una actividad'
+              : startDate && endDate
+              ? `Reservar — ${formatCurrency(bookingTotal, currency)}`
+              : 'Selecciona las fechas'}
           </Button>
         </div>
       </SheetContent>
-
-      <BookingReviewSheet
-        open={showReview}
-        onOpenChange={setShowReview}
-        confirming={submitting}
-        summary={{
-          title: serviceName,
-          subtitle: `${service.globalStartTime} — ${service.globalEndTime}`,
-          startDate,
-          endDate,
-          total: bookingTotal,
-          currency,
-          lines: [
-            { label: 'Días reservados', value: String(totalDays) },
-            { label: 'Subtotal', value: formatCurrency(subtotal, currency) },
-            { label: 'Comisión + IVA', value: formatCurrency(commission + commissionIva, currency) },
-          ],
-        }}
-        onConfirm={() => {
-          setShowReview(false);
-          void handleProceed();
-        }}
-      />
     </Sheet>
   );
 };

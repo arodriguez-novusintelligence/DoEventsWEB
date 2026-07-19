@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import MediaGalleryLightbox from '../../../components/MediaGalleryLightbox';
+import DetailMediaCarousel from '../common/DetailMediaCarousel';
 import {
   ChevronLeft,
   ChevronRight,
@@ -27,6 +27,7 @@ import {
   User as UserIcon,
 } from 'lucide-react';
 import { InvitationEvent, InvitationPerson } from '@lovable/data/invitationsData';
+import { UserAvatar } from '@doevents/shared';
 import { toast } from 'sonner';
 import EventFAQView from './EventFAQView';
 import RefundPolicyView from './RefundPolicyView';
@@ -52,35 +53,42 @@ interface Props {
   servicesSection?: ReactNode;
 }
 
+function resolveVideoEmbedUrl(url?: string): string | null {
+  const raw = String(url || '').trim();
+  if (!raw) return null;
+  const ytMatch = raw.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/i);
+  if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}`;
+  const vimeoMatch = raw.match(/vimeo\.com\/(?:video\/)?(\d+)/i);
+  if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+  return null;
+}
+
+function youtubeThumbnailFromUrl(videoUrl?: string): string | undefined {
+  const match = videoUrl?.trim().match(
+    /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/i,
+  );
+  return match ? `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg` : undefined;
+}
+
 const Stars = ({ value }: { value: number }) => (
   <div className="flex gap-1">
     {[1, 2, 3, 4, 5].map((i) => (
       <Star
         key={i}
-        className={`h-5 w-5 ${i <= value ? 'fill-primary text-primary' : 'text-primary'}`}
+        className={`h-5 w-5 ${i <= value ? 'fill-primary text-primary' : 'fill-transparent text-primary'}`}
       />
     ))}
   </div>
 );
 
 const PersonAvatar = ({ person }: { person: InvitationPerson }) => {
-  const [imgFailed, setImgFailed] = useState(false);
-  const initials = person.initials
-    || person.name.split(' ').filter(Boolean).map((p) => p[0]).join('').slice(0, 2).toUpperCase()
-    || 'DE';
-  if (!person.avatar || imgFailed) {
-    return (
-      <div className="h-16 w-16 rounded-full bg-primary/15 flex items-center justify-center text-lg font-bold text-primary">
-        {initials}
-      </div>
-    );
-  }
   return (
-    <img
-      src={person.avatar}
-      alt={person.name}
-      className="h-16 w-16 rounded-full object-cover"
-      onError={() => setImgFailed(true)}
+    <UserAvatar
+      name={person.name}
+      imageUrl={person.avatar}
+      userId={person.userId}
+      size={64}
+      className="shrink-0 rounded-full object-cover"
     />
   );
 };
@@ -89,58 +97,39 @@ const PersonCard = ({ person }: { person: InvitationPerson }) => {
   const navigate = useNavigate();
 
   const openProfile = () => {
-    if (!person.userId) return;
+    if (!person.userId) {
+      toast.error('Este perfil no está disponible');
+      return;
+    }
     navigate(`/users/${encodeURIComponent(person.userId)}`);
   };
 
   return (
-    <div
-      className={`rounded-2xl bg-card p-4 shadow-sm${
-        person.userId ? ' cursor-pointer transition-shadow hover:shadow-md active:scale-[0.99]' : ''
-      }`}
-      role={person.userId ? 'button' : undefined}
-      tabIndex={person.userId ? 0 : undefined}
-      onClick={person.userId ? openProfile : undefined}
-      onKeyDown={person.userId ? (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          openProfile();
-        }
-      } : undefined}
+    <button
+      type="button"
+      onClick={openProfile}
+      className="block w-full rounded-2xl bg-card p-4 text-left shadow-sm transition hover:bg-card/80 hover:shadow-md active:scale-[0.99]"
+      aria-label={`Ver perfil de ${person.name}`}
     >
-    <div className="grid grid-cols-[auto_1fr] gap-4 items-center">
-      <div className="flex flex-col items-center">
-        <PersonAvatar person={person} />
-        <p className="text-sm font-bold text-foreground mt-2">{person.name}</p>
-      </div>
-      {(person.rating > 0 || person.eventsCount > 0 || person.experiencePct > 0) && (
-      <div className="flex flex-col items-end">
-        {person.rating > 0 && (
-          <>
-            <p className="text-sm text-muted-foreground">Calificación</p>
-            <Stars value={person.rating} />
-          </>
-        )}
-        {(person.eventsCount > 0 || person.experiencePct > 0) && (
-        <div className="grid grid-cols-2 gap-6 mt-3 w-full">
-          {person.eventsCount > 0 && (
-          <div className="text-center">
-            <p className="text-lg font-bold text-foreground">{person.eventsCount}</p>
-            <p className="text-xs text-muted-foreground">Eventos realizados</p>
-          </div>
-          )}
-          {person.experiencePct > 0 && (
-          <div className="text-center">
-            <p className="text-lg font-bold text-foreground">%{person.experiencePct}</p>
-            <p className="text-xs text-muted-foreground">Experiencia</p>
-          </div>
-          )}
+      <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 sm:gap-4">
+        <div className="flex min-w-[72px] flex-col items-center">
+          <PersonAvatar person={person} />
+          <p className="mt-2 max-w-[96px] truncate text-center text-sm font-bold text-foreground">
+            {person.name}
+          </p>
         </div>
-        )}
+        <div className="min-w-0 text-center">
+          <p className="text-2xl font-bold leading-none text-foreground">{person.eventsCount ?? 0}</p>
+          <p className="mt-1 text-xs text-muted-foreground">Eventos realizados</p>
+        </div>
+        <div className="flex flex-col items-end text-right">
+          <p className="text-sm text-muted-foreground">Calificación</p>
+          <Stars value={person.rating || 0} />
+          <p className="mt-3 text-lg font-bold leading-none text-foreground">{person.experiencePct ?? 0}%</p>
+          <p className="mt-1 text-xs text-muted-foreground">Experiencia</p>
+        </div>
       </div>
-      )}
-    </div>
-    </div>
+    </button>
   );
 };
 
@@ -168,8 +157,22 @@ const InvitationEventDetailView = ({
   const agenda = event.agenda ?? [];
   const venue = event.venue ?? { name: 'Lugar del evento', address: '—', images: [] as string[] };
   const venueImages = venue.images ?? [];
+  const venueLat = Number(venue.latitude);
+  const venueLng = Number(venue.longitude);
+  const hasVenueCoords = Number.isFinite(venueLat) && Number.isFinite(venueLng);
+  const mapQuery = hasVenueCoords
+    ? `${venueLat},${venueLng}`
+    : [venue.address, venue.name]
+      .map((v) => (v || '').trim())
+      .filter((v) => v && v !== '—')
+      .join(', ');
+  const mapEmbedSrc = mapQuery
+    ? `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&z=16&output=embed`
+    : null;
+  const hasLocationInfo = Boolean(mapEmbedSrc)
+    || Boolean(venue.name && venue.name !== 'Lugar del evento')
+    || Boolean(venue.address && venue.address !== '—');
 
-  const [imgIdx, setImgIdx] = useState(0);
   const [likedLocal, setLikedLocal] = useState(false);
   const liked = likedProp ?? likedLocal;
   const [showMore, setShowMore] = useState(true);
@@ -177,8 +180,6 @@ const InvitationEventDetailView = ({
   const [showFAQ, setShowFAQ] = useState(false);
   const [showPolicy, setShowPolicy] = useState(false);
   const [showPurchase, setShowPurchase] = useState(false);
-  const [galleryOpen, setGalleryOpen] = useState(false);
-  const [galleryIndex, setGalleryIndex] = useState(0);
 
   if (showFAQ) return <EventFAQView onBack={() => setShowFAQ(false)} />;
   if (showPolicy) return <RefundPolicyView onBack={() => setShowPolicy(false)} />;
@@ -188,45 +189,32 @@ const InvitationEventDetailView = ({
 
   return (
     <div className={`mx-auto max-w-lg ${contentBottomPadding}`}>
-      <div className="px-4 pt-4">
-        <button onClick={onBack} className="flex items-center gap-1 text-primary font-medium mb-3">
+      <div className="sticky top-[60px] z-40 border-b border-border/40 bg-secondary/95 px-4 py-3 backdrop-blur-md">
+        <button
+          type="button"
+          onClick={onBack}
+          className="flex items-center gap-1 text-primary font-semibold"
+        >
           <ChevronLeft className="h-5 w-5" />
-          Atrás
+          Volver
         </button>
       </div>
 
-      {/* Image carousel */}
-      <div className="px-4">
-        {images.length > 0 ? (
-          <button
-            type="button"
-            onClick={() => { setGalleryIndex(imgIdx); setGalleryOpen(true); }}
-            className="relative block w-full overflow-hidden rounded-2xl transition active:scale-[0.99]"
-            aria-label="Ampliar imagen"
-          >
-            <img src={images[imgIdx] || images[0]} alt={event.title} className="h-56 w-full object-cover" />
-          </button>
-        ) : (
-          <div className="flex h-56 w-full flex-col items-center justify-center rounded-2xl border border-dashed border-primary/25 bg-muted">
-            <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
-              <CalendarDays className="h-7 w-7 text-primary" />
+      {/* Image carousel — swipe lateral */}
+      <div className="px-4 pt-4">
+        <DetailMediaCarousel
+          images={images}
+          alt={event.title}
+          frameClassName="h-56"
+          emptyFallback={(
+            <div className="flex h-56 w-full flex-col items-center justify-center rounded-2xl border border-dashed border-primary/25 bg-muted">
+              <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                <CalendarDays className="h-7 w-7 text-primary" />
+              </div>
+              <p className="text-sm font-semibold text-foreground">Sin imagen del evento</p>
             </div>
-            <p className="text-sm font-semibold text-foreground">Sin imagen del evento</p>
-          </div>
-        )}
-        {images.length > 1 && (
-          <div className="flex justify-center gap-2 mt-3">
-            {images.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setImgIdx(i)}
-                className={`h-1.5 rounded-full transition-all ${
-                  i === imgIdx ? 'w-8 bg-primary' : 'w-6 bg-primary/30'
-                }`}
-              />
-            ))}
-          </div>
-        )}
+          )}
+        />
       </div>
 
       {/* Title + state */}
@@ -333,6 +321,71 @@ const InvitationEventDetailView = ({
         </div>
       </div>
 
+      {/* Ubicación — siempre visible con mapa embebido */}
+      {hasLocationInfo && (
+        <div className="px-4 mt-5">
+          <div className="rounded-2xl overflow-hidden border border-border/60 bg-card shadow-sm">
+            <div className="flex items-center gap-2 px-4 pt-4 pb-2">
+              <MapPin className="h-5 w-5 text-primary" />
+              <h3 className="text-base font-bold">Ubicación</h3>
+            </div>
+            {mapEmbedSrc && (
+              <div className="relative mx-4 aspect-video overflow-hidden rounded-xl bg-secondary/30">
+                <iframe
+                  src={mapEmbedSrc}
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="absolute inset-0"
+                  title="Ubicación del evento"
+                />
+              </div>
+            )}
+            <div className="p-4">
+              <div className="flex items-start gap-3">
+                <HomeIcon className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-sm font-bold text-foreground">{venue.name}</h4>
+                  {venue.address && venue.address !== '—' && (
+                    <p className="mt-0.5 text-sm text-muted-foreground">{venue.address}</p>
+                  )}
+                </div>
+              </div>
+              {venueImages.length > 0 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setShowVenueImgs((v) => !v)}
+                    className="mt-3 flex items-center gap-1 text-sm font-semibold text-primary"
+                  >
+                    {showVenueImgs ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                    {showVenueImgs ? 'Ocultar' : 'Ver'} imágenes del lugar
+                  </button>
+                  {showVenueImgs && (
+                    <div className="mt-3 flex gap-2 flex-wrap">
+                      {venueImages.map((img, i) => (
+                        <img key={i} src={img} alt="" className="h-24 w-24 rounded-xl object-cover" />
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+              <button
+                type="button"
+                onClick={() => (onMapClick ? onMapClick() : toast.info('Abriendo mapa...'))}
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-full border border-primary/30 bg-primary/5 py-2.5 text-sm font-semibold text-primary"
+              >
+                <ExternalLink className="h-4 w-4" />
+                Ver ubicación en el mapa
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Más detalle del evento */}
       <div className="px-4 mt-5">
         <button
@@ -364,7 +417,7 @@ const InvitationEventDetailView = ({
                   </div>
                 </div>
                 <div className="mt-4 relative pl-5 space-y-3 border-l-2 border-primary/40">
-                  {day.items.map((it, ii) => (
+                  {(day.items ?? []).map((it, ii) => (
                     <div key={ii} className="relative">
                       <span className="absolute -left-[26px] top-3 h-3 w-3 rounded-full bg-primary" />
                       <div className="rounded-xl bg-muted/40 border border-border p-3">
@@ -384,67 +437,59 @@ const InvitationEventDetailView = ({
               </div>
             ))}
 
-            {/* Venue */}
-            <div className="rounded-2xl bg-card p-4 shadow-sm">
-              <div className="flex items-start gap-3">
-                <HomeIcon className="h-6 w-6 text-primary mt-1" />
-                <div className="flex-1">
-                  <h4 className="text-base font-bold">{venue.name}</h4>
-                  <p className="text-sm text-muted-foreground">{venue.address}</p>
+            {/* Hashtags */}
+            {event.tags && event.tags.length > 0 && (
+              <div>
+                <h3 className="text-base font-bold mb-2">Hashtags</h3>
+                <div className="flex flex-wrap gap-2">
+                  {event.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary"
+                    >
+                      {tag.startsWith('#') ? tag : `#${tag}`}
+                    </span>
+                  ))}
                 </div>
               </div>
-              {venueImages.length > 0 && (
-                <>
-                  <button
-                    onClick={() => setShowVenueImgs((v) => !v)}
-                    className="mt-4 flex items-center gap-1 text-sm font-semibold text-primary"
-                  >
-                    {showVenueImgs ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                    {showVenueImgs ? 'Ocultar' : 'Ver'} imágenes del lugar
-                  </button>
-                  {showVenueImgs && (
-                    <div className="mt-3 flex gap-2 flex-wrap">
-                      {venueImages.map((img, i) => (
-                        <img key={i} src={img} alt="" className="h-24 w-24 rounded-xl object-cover" />
-                      ))}
-                    </div>
-                  )}
-                </>
-              )}
-              <button
-                type="button"
-                onClick={() => (onMapClick ? onMapClick() : toast.info('Abriendo mapa...'))}
-                className="mt-4 flex items-center gap-2 text-sm font-semibold text-primary"
-              >
-                <MapPin className="h-4 w-4" />
-                Ver ubicación en el mapa
-              </button>
-            </div>
+            )}
 
             {/* Video */}
             {event.videoUrl && (
               <div>
                 <h3 className="text-base font-bold mb-2">Video del evento</h3>
-                <a
-                  href={event.videoUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="block relative rounded-2xl overflow-hidden bg-black aspect-video"
-                >
-                  <img
-                    src={event.image}
-                    alt="video"
-                    className="w-full h-full object-cover opacity-80"
-                  />
-                  <span className="absolute inset-0 flex items-center justify-center">
-                    <span className="flex h-14 w-14 items-center justify-center rounded-full bg-card/90 ring-2 ring-primary/20">
-                      <Play className="h-6 w-6 text-foreground fill-foreground ml-1" />
+                {resolveVideoEmbedUrl(event.videoUrl) ? (
+                  <div className="overflow-hidden rounded-2xl bg-black aspect-video">
+                    <iframe
+                      title={`Video de ${event.title}`}
+                      src={resolveVideoEmbedUrl(event.videoUrl) || ''}
+                      className="h-full w-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                ) : (
+                  <a
+                    href={event.videoUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="block relative rounded-2xl overflow-hidden bg-black aspect-video"
+                  >
+                    <img
+                      src={youtubeThumbnailFromUrl(event.videoUrl) || event.image}
+                      alt="Video del evento"
+                      className="w-full h-full object-cover opacity-80"
+                    />
+                    <span className="absolute inset-0 flex items-center justify-center">
+                      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-card/90 ring-2 ring-primary/20">
+                        <Play className="h-6 w-6 text-foreground fill-foreground ml-1" />
+                      </span>
                     </span>
-                  </span>
-                  <span className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 text-sm font-semibold text-white">
-                    Ver video en YouTube <ExternalLink className="h-4 w-4" />
-                  </span>
-                </a>
+                    <span className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 text-sm font-semibold text-white">
+                      Ver video <ExternalLink className="h-4 w-4" />
+                    </span>
+                  </a>
+                )}
               </div>
             )}
 
@@ -455,10 +500,15 @@ const InvitationEventDetailView = ({
             </div>
 
             {/* Host */}
-            <div>
-              <h3 className="text-base font-bold mb-2">Anfitrión del evento</h3>
-              <PersonCard person={event.host} />
-            </div>
+            {event.host?.name?.trim()
+              && event.host.name.trim().toLowerCase() !== (event.organizer?.name || '').trim().toLowerCase()
+              && event.host.name.trim().toLowerCase() !== 'anfitrión'
+              && event.host.name.trim().toLowerCase() !== 'anfitrion' && (
+              <div>
+                <h3 className="text-base font-bold mb-2">Anfitrión del evento</h3>
+                <PersonCard person={event.host} />
+              </div>
+            )}
 
             {/* FAQ */}
             <button
@@ -526,14 +576,6 @@ const InvitationEventDetailView = ({
           )}
         </div>
       </div>
-
-      <MediaGalleryLightbox
-        images={images}
-        initialIndex={galleryIndex}
-        open={galleryOpen}
-        onClose={() => setGalleryOpen(false)}
-        title={event.title}
-      />
     </div>
   );
 };

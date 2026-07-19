@@ -6,6 +6,7 @@ import {
   setAuthData,
   setAuthenticated,
   persistOAuthDisplayName,
+  persistOAuthProfilePhoto,
 } from '@doevents/shared';
 import type { AppDispatch } from '@doevents/shared';
 
@@ -174,7 +175,13 @@ async function syncGoogleUserWithBackend(
     if (body.success && body.data?.token) {
       const displayName = payload.name
         || [payload.given_name, payload.family_name].filter(Boolean).join(' ');
-      persistSession(body.data.token, body.data.user.userId, displayName);
+      persistSession(
+        body.data.token,
+        body.data.user.userId,
+        displayName,
+        payload.picture || '',
+        body.data.user.platformRole,
+      );
       dispatch(setAuthData({ token: body.data.token, idUser: body.data.user.userId }));
       dispatch(setAuthenticated(true));
       onSuccess('Inicio de sesión con Google exitoso');
@@ -198,6 +205,9 @@ async function syncGoogleUserWithBackend(
         },
       });
       persistEnrollmentUserId(body.data.userId);
+      if (payload.picture) {
+        persistOAuthProfilePhoto(body.data.userId, payload.picture);
+      }
       dispatch(setAuthData({ token: '', idUser: body.data.userId }));
       onNeedsGustos(body.data.userId);
       return true;

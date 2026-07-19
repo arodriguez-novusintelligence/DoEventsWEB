@@ -57,7 +57,7 @@ export async function ensurePersistentImageUrl(
   const raw = String(url || '').trim();
   if (!raw) return undefined;
   const persistent = toPersistentMediaUrl(raw);
-  if (persistent && !isEphemeralMediaUrl(persistent) && !isSignedS3Url(raw)) {
+  if (persistent && !isEphemeralMediaUrl(persistent)) {
     return persistent;
   }
   const file = await galleryImageUrlToFile(raw, 'gallery-import.jpg');

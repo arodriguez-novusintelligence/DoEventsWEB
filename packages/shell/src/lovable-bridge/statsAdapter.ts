@@ -4,16 +4,32 @@ import {
   fetchEventInvitationStatistics,
   fetchEventRefundsForEvent,
   fetchEventSalesStatistics,
+  fetchAvailableSeats,
   resolveDisplayEventStatus,
   resolveEventImageUrl,
+  resolveSeatLabel,
+  type AvailableSeat,
   type EventBuyerRecord,
+  type TicketCategory,
   type UserEventItem,
 } from '@doevents/shared';
 import type { EventChatRoom, EventStatus } from '@lovable/data/chatData';
 import type { EventSalesData, CategorySales, SeatInfo } from '@lovable/data/salesStatsData';
 import type { AccessControlData, CategoryAccessData, GateData, SeatAccessInfo } from '@lovable/data/accessControlData';
 import type { GuestInfo, GuestStatsData } from '@lovable/data/guestStatsData';
-import type { EventRefundsData, RefundReason, RefundRequest, RefundSource } from '@lovable/data/refundsData';
+import {
+  addBusinessDays,
+  businessDaysUntil,
+  REFUND_RESOLUTION_BUSINESS_DAYS,
+  resolveRefundPayer,
+  type EventRefundsData,
+  type PaymentTiming,
+  type RefundPolicyType,
+  type RefundReason,
+  type RefundRequest,
+  type RefundSource,
+  type RefundTicket,
+} from '@lovable/data/refundsData';
 
 function emptySalesData(event: EventChatRoom): EventSalesData {
   return {
@@ -70,16 +86,11 @@ function emptyRefundsData(event: EventChatRoom): EventRefundsData {
   return {
     eventId: event.eventId || event.id || '',
     eventName: event.eventName,
+    currency: 'COP',
     policyType: 'days_1',
-    policyLabel: '1 día antes',
+    policyLabel: 'Hasta 1 día antes del inicio del evento',
+    policyLimitDays: 1,
     requests: [],
-    summary: {
-      pending: 0,
-      approved: 0,
-      rejected: 0,
-      pendingAmount: 0,
-      processedAmount: 0,
-    },
   };
 }
 
@@ -107,11 +118,16 @@ function parseSeatParts(entry: { row?: string; seat?: string | number }): { row:
   const rawSeat = entry.seat != null ? String(entry.seat) : '';
   const rawRow = entry.row || '';
   const combined = `${rawRow}${rawSeat}`.trim();
-  const match = combined.match(/^([A-Za-z]+)\s*(\d+)?$/);
+  const cleaned = combined
+    .replace(/silla\s*-?\s*/i, '')
+    .replace(/asiento\s*-?\s*/i, '')
+    .replace(/fila\s*-?\s*/i, '')
+    .trim();
+  const match = cleaned.match(/([A-Za-z]+)\s*[-\s]?(\d+)/);
   if (match) {
     return {
       row: match[1].toUpperCase(),
-      number: Number(match[2] || rawSeat || 1) || 1,
+      number: Number(match[2]) || 1,
     };
   }
   if (rawRow) {
@@ -120,22 +136,179 @@ function parseSeatParts(entry: { row?: string; seat?: string | number }): { row:
   return { row: 'G', number: Number(rawSeat) || 1 };
 }
 
+function seatKey(row: string, number: number): string {
+  return `${String(row || '').toUpperCase()}${number}`;
+}
+
+function sortSeats(seats: SeatInfo[]): SeatInfo[] {
+  return [...seats].sort((a, b) => {
+    const rowCmp = a.row.localeCompare(b.row, 'es');
+    if (rowCmp !== 0) return rowCmp;
+    return a.number - b.number;
+  });
+}
+
+function mergeInventoryAndSoldSeats(
+  inventorySeats: AvailableSeat[],
+  soldSeats: SeatInfo[],
+): SeatInfo[] {
+  const soldMap = new Map<string, SeatInfo>();
+  const unmatchedBuyers: SeatInfo[] = [];
+  soldSeats.forEach((seat) => {
+    const key = seatKey(seat.row, seat.number);
+    // Labels genéricas (G1…) no coinciden con el mapa: se asignan después a sillas SOLD.
+    if (!seat.row || seat.row === 'G') {
+      unmatchedBuyers.push(seat);
+      return;
+    }
+    if (!soldMap.has(key)) soldMap.set(key, seat);
+    else unmatchedBuyers.push(seat);
+  });
+
+  const result: SeatInfo[] = [];
+  const seen = new Set<string>();
+  const usedBuyerKeys = new Set<string>();
+
+  inventorySeats.forEach((seat) => {
+    const label = resolveSeatLabel(seat);
+    if (!label) return;
+    const parts = parseSeatParts({ seat: label });
+    const key = seatKey(parts.row, parts.number);
+    if (seen.has(key)) return;
+    seen.add(key);
+    const sold = soldMap.get(key);
+    if (sold) {
+      usedBuyerKeys.add(key);
+      result.push({ ...sold, row: parts.row, number: parts.number, sold: true });
+      return;
+    }
+    const status = String(seat.ticketStatus || '').toUpperCase();
+    const isSold = status === 'SOLD' || status === 'USED' || status === 'RESERVED';
+    result.push({
+      row: parts.row,
+      number: parts.number,
+      sold: isSold,
+    });
+  });
+
+  soldMap.forEach((seat, key) => {
+    if (!seen.has(key)) {
+      result.push(seat);
+      usedBuyerKeys.add(key);
+    }
+  });
+
+  const leftoverBuyers = [
+    ...unmatchedBuyers,
+    ...[...soldMap.entries()]
+      .filter(([key]) => !usedBuyerKeys.has(key) && !seen.has(key))
+      .map(([, seat]) => seat),
+  ];
+
+  // Rellenar sillas marcadas vendidas sin comprador (orden sin seatLabel legible).
+  result.forEach((seat, idx) => {
+    if (!seat.sold || seat.buyerName || !leftoverBuyers.length) return;
+    const buyer = leftoverBuyers.shift()!;
+    result[idx] = {
+      ...buyer,
+      row: seat.row,
+      number: seat.number,
+      sold: true,
+    };
+  });
+
+  return sortSeats(result);
+}
+
+function synthesizeSeatGrid(soldSeats: SeatInfo[], total: number): SeatInfo[] {
+  if (total <= 0) return sortSeats(soldSeats);
+  if (soldSeats.length >= total) return sortSeats(soldSeats.slice(0, total));
+
+  const byKey = new Map(soldSeats.map((s) => [seatKey(s.row, s.number), s]));
+  const rows = [...new Set(soldSeats.map((s) => s.row).filter(Boolean))].sort();
+  const rowLetters = rows.length ? rows : ['A', 'B', 'C', 'D'];
+  const cols = Math.max(5, Math.ceil(total / rowLetters.length));
+  const result: SeatInfo[] = [];
+
+  for (const row of rowLetters) {
+    for (let n = 1; n <= cols; n += 1) {
+      if (result.length >= total) break;
+      const key = seatKey(row, n);
+      result.push(byKey.get(key) || { row, number: n, sold: false });
+      byKey.delete(key);
+    }
+    if (result.length >= total) break;
+  }
+
+  byKey.forEach((seat) => {
+    if (result.length < total) result.push(seat);
+  });
+
+  return sortSeats(result).slice(0, Math.max(total, soldSeats.length));
+}
+
+function resolveCategoryHex(
+  categoryName: string,
+  inventoryCats: TicketCategory[],
+  fallbackHex: string,
+): string {
+  const normalized = String(categoryName || '').trim().toLocaleLowerCase();
+  const match = inventoryCats.find(
+    (cat) => String(cat.categoryName || '').trim().toLocaleLowerCase() === normalized,
+  );
+  const color = match?.categoryColor;
+  if (color && /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(color)) return color;
+  return fallbackHex;
+}
+
+function inventorySeatsForCategory(
+  categoryName: string,
+  inventoryCats: TicketCategory[],
+): AvailableSeat[] {
+  const normalized = String(categoryName || '').trim().toLocaleLowerCase();
+  return inventoryCats
+    .filter((cat) => String(cat.categoryName || '').trim().toLocaleLowerCase() === normalized)
+    .flatMap((cat) => cat.seats || []);
+}
+
 function buyerEntryToSeat(buyer: EventBuyerRecord, entry: NonNullable<EventBuyerRecord['entradas']>[number], index: number): SeatInfo {
   const amount = Number(entry.precio || buyer.totalComprado || buyer.amount || 0);
   const commission = Math.round(amount * COMMISSION_RATE);
-  const { row, number } = parseSeatParts(entry);
+  const seatRaw = entry.seatLabel || entry.seat || buyer.seat;
+  const { row, number } = parseSeatParts({
+    row: entry.row,
+    seat: seatRaw,
+  });
   const timing = String(buyer.paymentTimingBucket || '').toUpperCase();
   const purchaseDate = entry.fecha_compra || buyer.fecha_compra || buyer.purchaseDate;
+  const statusLabel = String(buyer.statusPago || '').trim();
+  const isPaid = Boolean(buyer.isApproved)
+    || /pagado/i.test(statusLabel)
+    || ['APPROVED', 'PAID', 'SOLD', 'FINISHED', 'COMPLETED'].includes(
+      String(buyer.rawStatus || entry.status || '').toUpperCase(),
+    );
+  const paymentAuthorization: 'before' | 'after' =
+    timing === 'POST_EVENT' || /post-evento/i.test(statusLabel) ? 'after' : 'before';
+
+  let purchaseDateIso: string | undefined;
+  if (purchaseDate) {
+    const d = new Date(purchaseDate);
+    purchaseDateIso = Number.isNaN(d.getTime())
+      ? String(purchaseDate).slice(0, 10)
+      : d.toISOString().slice(0, 10);
+  }
 
   return {
     row,
     number: number || index + 1,
     sold: true,
-    buyerName: buyer.nombre || buyer.buyerName,
-    buyerPhone: buyer.phone || buyer.buyerPhone,
-    buyerEmail: buyer.email || buyer.buyerEmail,
-    purchaseDate: purchaseDate ? String(purchaseDate).slice(0, 10) : undefined,
-    paymentAuthorization: timing === 'POST_EVENT' ? 'after' : 'before',
+    buyerName: buyer.nombre || buyer.buyerName || 'Comprador',
+    buyerPhone: buyer.phone || buyer.buyerPhone || undefined,
+    buyerEmail: buyer.email || buyer.buyerEmail || undefined,
+    purchaseDate: purchaseDateIso,
+    paymentAuthorization,
+    paymentStatusLabel: statusLabel || undefined,
+    isPaid: paymentAuthorization === 'after' ? false : isPaid,
     amountPaid: amount,
     platformCommission: commission,
     totalWithCommission: amount + commission,
@@ -144,6 +317,7 @@ function buyerEntryToSeat(buyer: EventBuyerRecord, entry: NonNullable<EventBuyer
 
 function mapBuyersToCategorySeats(buyers: EventBuyerRecord[], categoryName: string): SeatInfo[] {
   const seats: SeatInfo[] = [];
+  const normalizedCategory = String(categoryName || '').trim().toLocaleLowerCase();
   buyers.forEach((buyer) => {
     const entries = buyer.entradas?.length
       ? buyer.entradas
@@ -156,7 +330,7 @@ function mapBuyersToCategorySeats(buyers: EventBuyerRecord[], categoryName: stri
 
     entries.forEach((entry, idx) => {
       const cat = entry.categoria || buyer.category || 'General';
-      if (cat !== categoryName) return;
+      if (String(cat || '').trim().toLocaleLowerCase() !== normalizedCategory) return;
       seats.push(buyerEntryToSeat(buyer, entry, seats.length + idx));
     });
   });
@@ -199,7 +373,7 @@ export function userEventsToStatsRooms(events: UserEventItem[]): EventChatRoom[]
     eventImage: resolveEventImageUrl(ev.imagen) || undefined,
     eventDate: formatEventDateLabel(ev.fechaIni),
     eventTime: ev.horaIni,
-    eventDescription: ev.descripcion,
+    eventDescription: ev.ciudad || ev.direccion || ev.descripcion,
     eventStatus: mapEventStatus(resolveDisplayEventStatus({
       estatus: ev.estatus,
       fechaIni: ev.fechaIni,
@@ -207,6 +381,9 @@ export function userEventsToStatsRooms(events: UserEventItem[]): EventChatRoom[]
       horaIni: ev.horaIni,
       horaFin: ev.horaFin,
     })),
+    ticketsSold: ev.ticketsAprobados ?? 0,
+    salesRevenue: ev.amountCentsAprobados ?? 0,
+    promoCodesRedeemed: ev.codigosPromoRedimidos ?? 0,
     lastMessage: '',
     lastMessageTime: '',
     unreadCount: 0,
@@ -220,12 +397,14 @@ export async function resolveSalesData(event: EventChatRoom): Promise<EventSales
   const empty = emptySalesData(event);
   if (!eventId) return empty;
 
-  const [stats, buyers] = await Promise.all([
-    fetchEventSalesStatistics(eventId),
-    fetchEventBuyers(eventId).catch(() => [] as EventBuyerRecord[]),
+  const [stats, buyers, seatsResponse] = await Promise.all([
+    fetchEventSalesStatistics(eventId, { forceNetwork: true }),
+    fetchEventBuyers(eventId, { limit: 500, forceNetwork: true }).catch(() => [] as EventBuyerRecord[]),
+    fetchAvailableSeats(eventId).catch(() => null),
   ]);
   if (!stats) return empty;
 
+  const inventoryCats = seatsResponse?.categories || [];
   const capacity = stats.boletosDisponibles != null
     ? stats.boletosVendidos + stats.boletosDisponibles
     : stats.boletosVendidos;
@@ -233,18 +412,26 @@ export async function resolveSalesData(event: EventChatRoom): Promise<EventSales
   const categories: CategorySales[] = (stats.categorias || []).map((cat, i) => {
     const palette = CATEGORY_COLORS[i % CATEGORY_COLORS.length];
     const sold = cat.vendidos || 0;
-    const total = cat.disponibles != null ? sold + (cat.disponibles || 0) : (capacity || sold);
-    const categorySeats = mapBuyersToCategorySeats(buyers, cat.nombre);
+    const inventory = inventorySeatsForCategory(cat.nombre, inventoryCats);
+    const inventoryTotal = inventory.length;
+    const total = inventoryTotal > 0
+      ? inventoryTotal
+      : (cat.disponibles != null ? sold + (cat.disponibles || 0) : (capacity || sold));
+    const soldSeats = mapBuyersToCategorySeats(buyers, cat.nombre);
+    const seats = inventory.length
+      ? mergeInventoryAndSoldSeats(inventory, soldSeats)
+      : synthesizeSeatGrid(soldSeats, total || sold);
+    const colorHex = resolveCategoryHex(cat.nombre, inventoryCats, palette.colorHex);
     return {
       name: cat.nombre,
       color: palette.color,
-      colorHex: palette.colorHex,
+      colorHex,
       total: total || sold,
       sold,
       available: Math.max(0, (total || sold) - sold),
       occupancy: total > 0 ? Math.round((sold / total) * 100) : 0,
       revenue: cat.netoVendido || 0,
-      seats: categorySeats,
+      seats,
     };
   });
 
@@ -264,8 +451,8 @@ export async function resolveSalesData(event: EventChatRoom): Promise<EventSales
 
   return {
     eventId,
-    eventName: event.eventName,
-    venueName: '',
+    eventName: stats.eventName || event.eventName,
+    venueName: stats.venueName || event.eventDescription || '',
     currency: 'COP',
     categories,
   };
@@ -341,8 +528,17 @@ function mapBoletasToCategoryAccess(
     else if (accessStatus === 'denied') cat.denied += 1;
     else cat.pending += 1;
 
-    const seatRaw = ticket.seat != null ? String(ticket.seat) : '';
-    const { row, number } = parseSeatParts({ row: seatRaw.slice(0, 1), seat: seatRaw.slice(1) || index + 1 });
+    const seatObj = ticket.seat && typeof ticket.seat === 'object'
+      ? (ticket.seat as Record<string, unknown>)
+      : null;
+    const seatLabel = seatObj
+      ? String(seatObj.seatLabel || seatObj.seat || '')
+      : (ticket.seat != null ? String(ticket.seat) : '');
+    const rowLabel = seatObj
+      ? String(seatObj.rowLabel || seatObj.row || seatLabel.slice(0, 1) || 'G')
+      : seatLabel.slice(0, 1);
+    const seatNumber = seatObj?.colNumber ?? (seatLabel.replace(/^[A-Za-z]+/, '') || index + 1);
+    const { row, number } = parseSeatParts({ row: rowLabel, seat: seatNumber as string | number });
     cat.seats.push({
       row: row || 'G',
       number,
@@ -365,56 +561,126 @@ function mapRefundStatus(raw: string): RefundRequest['status'] {
 
 function mapRefundSource(raw?: string): RefundSource {
   const s = String(raw || '').toUpperCase();
-  if (s === 'USER_REQUEST') return 'user_request';
+  if (s === 'USER_REQUEST' || s === 'ORDER_CANCELLED') return 'user_request';
   return 'event_cancellation';
+}
+
+function mapPolicyType(raw?: string): RefundPolicyType {
+  const s = String(raw || '').toLowerCase();
+  if (s === 'days_1' || s === '1') return 'days_1';
+  if (s === 'days_30' || s === '30') return 'days_30';
+  if (s === 'case_by_case' || s === '0') return 'case_by_case';
+  if (s === 'no_refund' || s === 'n') return 'no_refund';
+  return 'days_7';
+}
+
+function mapTicketInstances(
+  raw: unknown,
+  fallbackAmount: number,
+): RefundTicket[] {
+  if (!Array.isArray(raw) || raw.length === 0) {
+    return fallbackAmount > 0
+      ? [{ category: 'General', row: '—', seat: 1, amount: fallbackAmount }]
+      : [];
+  }
+
+  return raw.map((entry, i) => {
+    if (typeof entry === 'string' || typeof entry === 'number') {
+      return {
+        category: 'General',
+        row: '—',
+        seat: i + 1,
+        amount: fallbackAmount,
+      };
+    }
+    const t = (entry || {}) as Record<string, unknown>;
+    const seatObj = t.seat && typeof t.seat === 'object' ? (t.seat as Record<string, unknown>) : null;
+    const row = String(t.row || seatObj?.rowLabel || '—');
+    const seatNum = Number(t.seatNumber ?? seatObj?.colNumber ?? (typeof t.seat === 'number' ? t.seat : i + 1)) || i + 1;
+    return {
+      category: String(t.category || t.categoria || 'General'),
+      row,
+      seat: seatNum,
+      amount: Number(t.amount || t.precio || t.price || t.total_amount || fallbackAmount) || 0,
+    };
+  });
 }
 
 function mapRefundRecord(
   r: Record<string, unknown>,
   eventDateLabel: string,
+  groupPolicy?: {
+    policyType?: string;
+    policyLabel?: string;
+    policyLimitDays?: number;
+  },
 ): RefundRequest {
   const status = mapRefundStatus(String(r.refundStatus || r.status || 'PENDING'));
   const createdAt = String(r.createdAt || new Date().toISOString());
   const requestDate = createdAt.slice(0, 10);
-  const instances = Array.isArray(r.ticketInstances) ? r.ticketInstances : [];
-  const tickets = instances.map((t: Record<string, unknown>, i: number) => {
-    const seatParts = parseSeatParts({ row: String(t.row || ''), seat: t.seat as string | number | undefined });
-    return {
-      category: String(t.category || t.categoria || 'General'),
-      row: seatParts.row,
-      seat: seatParts.number || i + 1,
-      amount: Number(t.amount || t.precio || r.refundAmount || 0),
-    };
-  });
   const totalAmount = Number(r.refundAmount || r.refund_amount || r.originalTotal || 0);
+  const tickets = mapTicketInstances(r.ticketInstances || r.ticket_instances, totalAmount);
+  const ticketSum = tickets.reduce((s, t) => s + t.amount, 0);
+  const amount = totalAmount || ticketSum;
+
   const buyerName = String(
     r.buyerName || r.userName || r.nombre || `Comprador ${String(r.userId || '').slice(0, 8)}`,
   );
+  const buyerEmail = String(r.buyerEmail || r.email || '—');
+  const buyerPhoneRaw = String(r.buyerPhone || r.phone || '').trim();
+  const buyerPhone = !buyerPhoneRaw || buyerPhoneRaw.toLowerCase() === 'n/a' ? '—' : buyerPhoneRaw;
+
+  const policyType = mapPolicyType(String(r.policyType || groupPolicy?.policyType || 'days_7'));
+  const policyLimitDays = Number(
+    r.policyLimitDays ?? groupPolicy?.policyLimitDays ?? (policyType === 'days_1' ? 1 : policyType === 'days_30' ? 30 : 7),
+  );
+  const withinPolicy = r.withinPolicy != null
+    ? Boolean(r.withinPolicy)
+    : status !== 'rejected';
+  const paymentTiming: PaymentTiming = String(r.paymentTiming || '').toLowerCase().includes('post')
+    ? 'post_event'
+    : 'pre_event';
+  const payerFromApi = String(r.payer || r.assumedBy || '').toLowerCase();
+  const resolvedPayer = payerFromApi.includes('platform') || payerFromApi.includes('plataform')
+    ? { payer: 'platform' as const, requiresOrganizerReview: Boolean(r.requiresOrganizerReview) }
+    : payerFromApi.includes('org')
+      ? { payer: 'organizer' as const, requiresOrganizerReview: Boolean(r.requiresOrganizerReview) }
+      : resolveRefundPayer(policyType, withinPolicy, paymentTiming);
+
+  const safeRequestDate = /^\d{4}-\d{2}-\d{2}$/.test(requestDate)
+    ? requestDate
+    : new Date().toISOString().slice(0, 10);
+  const deadlineDate = addBusinessDays(safeRequestDate, REFUND_RESOLUTION_BUSINESS_DAYS);
+  const resolutionDeadline = Number.isNaN(deadlineDate.getTime())
+    ? safeRequestDate
+    : deadlineDate.toISOString().slice(0, 10);
+  const businessDaysRemaining = businessDaysUntil(deadlineDate);
+  const isOverdue = businessDaysRemaining < 0 && (status === 'pending' || status === 'approved');
 
   return {
-    id: String(r.id || r.refundId || Math.random()),
+    id: String(r.id || r.refundId || `${r.orderId || 'rf'}-${safeRequestDate}`),
     orderId: String(r.orderId || '—'),
     buyerName,
-    buyerEmail: String(r.buyerEmail || r.email || ''),
-    buyerPhone: String(r.buyerPhone || r.phone || ''),
+    buyerEmail,
+    buyerPhone,
     buyerAvatar: r.buyerAvatar ? String(r.buyerAvatar) : undefined,
-    requestDate,
+    requestDate: safeRequestDate,
     eventDate: eventDateLabel,
-    daysBeforeEvent: 0,
-    tickets,
-    totalAmount,
+    daysBeforeEvent: Number(r.daysBeforeEvent || 0),
+    tickets: tickets.length ? tickets : [{ category: 'General', row: '—', seat: 1, amount }],
+    totalAmount: amount,
     reason: (String(r.reason || 'Otro') as RefundReason),
     comment: r.comment ? String(r.comment) : undefined,
     status,
-    policyLimitDays: 7,
-    policyType: 'days_7',
-    withinPolicy: status !== 'rejected',
-    paymentTiming: 'pre_event',
-    payer: 'platform',
-    requiresOrganizerReview: false,
-    resolutionDeadline: requestDate,
-    businessDaysRemaining: 5,
-    isOverdue: false,
+    policyLimitDays,
+    policyType,
+    withinPolicy,
+    paymentTiming,
+    payer: resolvedPayer.payer,
+    requiresOrganizerReview: resolvedPayer.requiresOrganizerReview || Boolean(r.requiresOrganizerReview),
+    resolutionDeadline,
+    businessDaysRemaining,
+    isOverdue,
     source: mapRefundSource(String(r.refundSource || '')),
   };
 }
@@ -427,7 +693,33 @@ export async function resolveGuestStatsData(event: EventChatRoom) {
   const stats = await fetchEventInvitationStatistics(eventId);
   if (!stats) return empty;
 
+  const invitees = (stats.invitadosDetalle || []) as Array<Record<string, unknown>>;
   if (!stats.canales?.length) {
+    if (invitees.length) {
+      const confirmed = invitees.filter((inv) => Boolean(inv.comproBoleta)).length;
+      return {
+        channels: [{
+          id: 'ch-all',
+          name: 'Todas las invitaciones',
+          icon: 'campaign' as const,
+          sent: stats.totalEnviados || invitees.length,
+          confirmedCount: stats.totalConfirmados ?? confirmed,
+          conversionRate: parsePercent(stats.conversionRateAvg, invitees.length > 0 ? Math.round((confirmed / invitees.length) * 100) : 0),
+          guests: invitees.map(mapInviteeToGuest),
+          funnel: [
+            { label: 'Enviados', value: stats.totalEnviados || invitees.length, percentage: 100 },
+            { label: 'Entregados', value: stats.totalDelivered || 0, percentage: 0 },
+            { label: 'Abiertos', value: stats.totalOpened || 0, percentage: 0 },
+            { label: 'Clics', value: stats.totalClicked || 0, percentage: 0 },
+            { label: 'Confirmados', value: stats.totalConfirmados ?? confirmed, percentage: 0 },
+          ],
+        }],
+        totalConfirmations: stats.totalConfirmados ?? confirmed,
+        avgDeliveryRate: parsePercent(stats.deliveryRateAvg, 0),
+        avgOpenRate: parsePercent(stats.openRateAvg, 0),
+        avgConversionRate: parsePercent(stats.conversionRateAvg, 0),
+      };
+    }
     return {
       channels: [],
       totalConfirmations: stats.totalConfirmados ?? 0,
@@ -436,8 +728,6 @@ export async function resolveGuestStatsData(event: EventChatRoom) {
       avgConversionRate: parsePercent(stats.conversionRateAvg, 0),
     };
   }
-
-  const invitees = (stats.invitadosDetalle || []) as Array<Record<string, unknown>>;
 
   const channels = stats.canales.map((ch, i) => {
     const sent = ch.enviados || 0;
@@ -518,11 +808,20 @@ export async function resolveAccessData(event: EventChatRoom) {
   const attendeesByType = (stats.asistentesAlEvento || []).map((row) => ({
     type: row.categoria,
     grantedCount: row.asistidos || 0,
-    attendees: (row.asistentes || []).map((a) => ({
-      name: a.nombre,
-      avatar: a.avatar || '',
-      status: (a.estado === 'ASISTIO' ? 'granted' : 'denied') as 'granted' | 'denied' | 'pending',
-    })),
+    attendees: (row.asistentes || []).map((a) => {
+      const estado = String(a.estado || '').toUpperCase();
+      const status: 'granted' | 'denied' | 'pending' =
+        estado === 'ASISTIO' || estado === 'GRANTED'
+          ? 'granted'
+          : estado === 'DENIED' || estado === 'DENEGADO'
+            ? 'denied'
+            : 'pending';
+      return {
+        name: a.nombre,
+        avatar: a.avatar || '',
+        status,
+      };
+    }),
   }));
 
   const gates: GateData[] = ((stats as { estadoAccesoPorPuerta?: Array<Record<string, unknown>> }).estadoAccesoPorPuerta || []).map((row) => {
@@ -569,55 +868,48 @@ export async function resolveAccessData(event: EventChatRoom) {
   };
 }
 
-export async function resolveRefundsData(event: EventChatRoom) {
+export async function resolveRefundsData(event: EventChatRoom): Promise<EventRefundsData> {
   const empty = emptyRefundsData(event);
   const eventId = event.eventId || event.id;
   if (!eventId) return empty;
 
-  const groups = await fetchEventRefundsForEvent(eventId);
-  const group = groups?.[0];
-  if (!group) return empty;
+  try {
+    const groups = await fetchEventRefundsForEvent(eventId);
+    const group = (groups || []).find(
+      (g) => String(g.eventId || g.reservationId || '') === String(eventId),
+    ) || groups?.[0];
 
-  const eventDateLabel = event.eventDate || '—';
-  const requests: RefundRequest[] = (group.refunds || []).map((r) =>
-    mapRefundRecord(r as Record<string, unknown>, eventDateLabel),
-  );
+    if (!group) return empty;
 
-  if (!requests.length) {
-    return {
-      ...empty,
-      eventName: group.eventName || event.eventName,
-      summary: {
-        pending: group.pendingCount ?? 0,
-        approved: 0,
-        rejected: group.rejectedCount ?? 0,
-        pendingAmount: group.pendingAmount ?? 0,
-        processedAmount: group.completedAmount ?? 0,
-      },
+    const eventDateLabel = event.eventDate || group.eventStartDate || '—';
+    const groupPolicy = {
+      policyType: String((group as { policyType?: string }).policyType || ''),
+      policyLabel: String((group as { policyLabel?: string }).policyLabel || ''),
+      policyLimitDays: Number((group as { policyLimitDays?: number }).policyLimitDays || 0),
     };
+    const requests: RefundRequest[] = (group.refunds || []).map((r) =>
+      mapRefundRecord(r as Record<string, unknown>, eventDateLabel, groupPolicy),
+    );
+
+    const policyType = mapPolicyType(groupPolicy.policyType || requests[0]?.policyType || 'days_7');
+    const policyLimitDays = groupPolicy.policyLimitDays ||
+      requests[0]?.policyLimitDays ||
+      (policyType === 'days_1' ? 1 : policyType === 'days_30' ? 30 : policyType === 'case_by_case' || policyType === 'no_refund' ? 0 : 7);
+    const policyLabel = groupPolicy.policyLabel
+      || String((group.refunds?.[0] as { policyLabel?: string } | undefined)?.policyLabel || '')
+      || 'Según política del evento';
+
+    return {
+      eventId,
+      eventName: group.eventName || event.eventName,
+      currency: 'COP',
+      policyType,
+      policyLabel,
+      policyLimitDays,
+      requests,
+    };
+  } catch (err) {
+    console.warn('[resolveRefundsData] error cargando reembolsos:', err);
+    return empty;
   }
-
-  const pending = requests.filter((r) => r.status === 'pending').length;
-  const approved = requests.filter((r) => r.status === 'approved').length;
-  const rejected = requests.filter((r) => r.status === 'rejected').length;
-  const processed = requests.filter((r) => r.status === 'processed').length;
-
-  return {
-    eventId,
-    eventName: group.eventName || event.eventName,
-    policyType: 'days_7' as const,
-    policyLabel: 'Según política del evento',
-    requests,
-    summary: {
-      pending,
-      approved: approved + processed,
-      rejected,
-      pendingAmount: group.pendingAmount ?? requests
-        .filter((r) => r.status === 'pending')
-        .reduce((s, r) => s + r.totalAmount, 0),
-      processedAmount: group.completedAmount ?? requests
-        .filter((r) => r.status === 'processed' || r.status === 'approved')
-        .reduce((s, r) => s + r.totalAmount, 0),
-    },
-  };
 }

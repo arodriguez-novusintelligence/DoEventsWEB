@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { resolveImageUrl } from '../lib/resolveImageUrl';
+import React, { useEffect, useState } from 'react';
+import { resolveUserAvatarUrl } from '../lib/userAvatarUtils';
 
 export interface UserAvatarProps {
   name?: string;
   imageUrl?: string;
+  userId?: string | null;
   size?: number;
   className?: string;
 }
@@ -26,12 +27,17 @@ function PersonIcon({ size }: { size: number }) {
 export const UserAvatar: React.FC<UserAvatarProps> = ({
   name,
   imageUrl,
+  userId,
   size = 40,
   className = '',
 }) => {
-  const resolved = resolveImageUrl(imageUrl);
+  const resolved = resolveUserAvatarUrl(imageUrl, userId);
   const [broken, setBroken] = useState(false);
   const style = { width: size, height: size, fontSize: Math.max(11, Math.round(size * 0.34)) };
+
+  useEffect(() => {
+    setBroken(false);
+  }, [resolved]);
 
   if (resolved && !broken) {
     return (

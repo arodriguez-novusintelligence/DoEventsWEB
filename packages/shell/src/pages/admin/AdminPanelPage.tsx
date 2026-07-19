@@ -5,22 +5,26 @@ import { fetchAdminDashboard, RootState, useToast, type AdminDashboardStats } fr
 import AdminLayout, { type AdminTabId } from './AdminLayout';
 import { AdminLoading, useAdminGuard } from './useAdminGuard';
 import { AdminHomeTab } from './tabs/AdminHomeTab';
-import { AdminContentTab } from './tabs/AdminContentTab';
-import { AdminAITab } from './tabs/AdminAITab';
+import { AdminReportsTab } from './tabs/AdminReportsTab';
 import AdminUsersPanel from '@lovable/components/admin/AdminUsersPanel';
 import PaymentsPanel from '@lovable/components/admin/PaymentsPanel';
 import NewUsersPanel from '@lovable/components/admin/NewUsersPanel';
 import SupportSearchPanel from '@lovable/components/admin/SupportSearchPanel';
+import AdminRefundsPanel from '@lovable/components/admin/AdminRefundsPanel';
 
-const TAB_IDS: AdminTabId[] = ['home', 'content', 'ai', 'support', 'payments', 'admin', 'newusers'];
+const TAB_IDS: AdminTabId[] = ['home', 'reports', 'refunds', 'support', 'payments', 'admin', 'newusers'];
 
 const LEGACY_TAB_MAP: Record<string, AdminTabId> = {
   users: 'admin',
   orders: 'payments',
-  events: 'content',
-  venues: 'content',
-  services: 'content',
+  events: 'home',
+  venues: 'home',
+  services: 'home',
   activity: 'home',
+  content: 'home',
+  ai: 'home',
+  reports: 'reports',
+  refunds: 'refunds',
 };
 
 export const AdminPanelPage: React.FC = () => {
@@ -53,8 +57,8 @@ export const AdminPanelPage: React.FC = () => {
   return (
     <AdminLayout activeTab={activeTab} onTabChange={handleTabChange}>
       {activeTab === 'home' && <AdminHomeTab stats={stats} />}
-      {activeTab === 'content' && <AdminContentTab />}
-      {activeTab === 'ai' && <AdminAITab />}
+      {activeTab === 'reports' && <AdminReportsTab />}
+      {activeTab === 'refunds' && <AdminRefundsPanel embedded />}
       {activeTab === 'support' && <SupportSearchPanel />}
       {activeTab === 'payments' && <PaymentsPanel />}
       {activeTab === 'admin' && <AdminUsersPanel />}
@@ -70,6 +74,13 @@ export function AdminLegacyRedirect({ section }: { section: string }) {
     navigate(`/admin?tab=${tab}`, { replace: true });
   }, [navigate, section]);
   return <AdminLoading />;
+}
+
+export function AdminGuardedLegacyRedirect({ section }: { section: string }) {
+  const userId = useSelector((s: RootState) => s.auth.idUser);
+  const { ready } = useAdminGuard(userId);
+  if (!ready) return <AdminLoading />;
+  return <AdminLegacyRedirect section={section} />;
 }
 
 export default AdminPanelPage;

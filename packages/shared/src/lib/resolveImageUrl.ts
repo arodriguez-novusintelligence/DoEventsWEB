@@ -1,28 +1,43 @@
 import { getCurrentEnv } from '../api/client';
-import { isEphemeralMediaUrl, toPersistentMediaUrl } from './persistentMediaUrl';
+import { isEphemeralMediaUrl, isExternalProfileUrl, isSignedS3Url, toPersistentMediaUrl } from './persistentMediaUrl';
 
 const DEFAULT_EVENT_IMAGE =
   'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80';
 
+const DEVAWS_PROFILE_BUCKET = { bucket: 'doevents-profile-media-dev', region: 'sa-east-1' };
+const DEVAWS_FEED_MEDIA_BUCKET = {
+  bucket: 'aws-lambda-wall-social-media-dev-media-519010577666',
+  region: 'us-east-1',
+};
+
 const PROFILE_BUCKETS: Record<string, { bucket: string; region: string }> = {
   qa: { bucket: 'doevents-profile-media-qa', region: 'us-east-2' },
-  dev: { bucket: 'doevents-profile-media-qa', region: 'us-east-2' },
+  dev: DEVAWS_PROFILE_BUCKET,
+  devaws: DEVAWS_PROFILE_BUCKET,
   prod: { bucket: 'doeventprofileimagesbucket', region: 'us-east-1' },
 };
 
 const CHAT_MEDIA_BUCKETS: Record<string, { bucket: string; region: string }> = {
   qa: { bucket: 'doeventschatroombucket', region: 'us-east-2' },
-  dev: { bucket: 'doeventschatroombucket', region: 'us-east-2' },
+  dev: { bucket: 'doeventschatroombucket', region: 'us-east-1' },
+  devaws: { bucket: 'doeventschatroombucket', region: 'us-east-1' },
   prod: { bucket: 'doeventschatroombucket', region: 'us-east-1' },
 };
 
 const EVENT_IMAGE_BUCKET = 'doeventimageeventbucket';
 const EVENT_IMAGE_REGION = 'us-east-1';
+const VENUE_IMAGE_BUCKET = 'doevent-venue-images';
 
 const FEED_MEDIA_BUCKETS: Record<string, { bucket: string; region: string }> = {
   qa: { bucket: 'doevent-feed-media', region: 'us-east-2' },
-  dev: { bucket: 'doevent-feed-media', region: 'us-east-2' },
+  dev: DEVAWS_FEED_MEDIA_BUCKET,
+  devaws: DEVAWS_FEED_MEDIA_BUCKET,
   prod: { bucket: 'doevent-feed-media', region: 'us-east-1' },
+};
+
+const QA_TO_DEVAWS_MEDIA_HOSTS: Record<string, { bucket: string; region: string }> = {
+  'aws-lambda-wall-social-media-qa-media-519010577666': DEVAWS_FEED_MEDIA_BUCKET,
+  'doevents-profile-media-qa': DEVAWS_PROFILE_BUCKET,
 };
 
 const FEED_MEDIA_KEY_PREFIXES = ['feed-media/', 'wall-media/', 'media/'];
@@ -72,6 +87,15 @@ function looksLikeFeedMediaKey(raw: string): boolean {
   return FEED_MEDIA_KEY_PREFIXES.some((prefix) => raw.startsWith(prefix));
 }
 
+function looksLikeVenueImageKey(raw: string): boolean {
+  if (raw.includes('://') || raw.startsWith('data:')) return false;
+  return raw.startsWith('venues/');
+}
+
+function venuePublicUrl(key: string): string {
+  return bucketPublicUrl(VENUE_IMAGE_BUCKET, EVENT_IMAGE_REGION, key);
+}
+
 export function chatMediaPublicUrl(key: string): string {
   const envName = getCurrentEnv().name;
   const cfg = CHAT_MEDIA_BUCKETS[envName] || CHAT_MEDIA_BUCKETS.qa;
@@ -105,12 +129,27 @@ function rewriteProfileBucketUrl(url: string): string {
   const cfg = PROFILE_BUCKETS[envName] || PROFILE_BUCKETS.qa;
   const prodBucket = PROFILE_BUCKETS.prod.bucket;
 
-  if (!url.includes(prodBucket)) return url;
+  if (!url.includes(prodBucket) && !url.includes('doevents-profile-media-qa')) return url;
 
   const key = extractS3ObjectKey(url);
   if (!key) return url;
 
   return bucketPublicUrl(cfg.bucket, cfg.region, key);
+}
+
+function rewriteQaMediaHostForDev(url: string): string {
+  const envName = getCurrentEnv().name;
+  if (envName !== 'devaws' && envName !== 'dev') return url;
+
+  const key = extractS3ObjectKey(url);
+  if (!key) return url;
+
+  for (const [qaHost, cfg] of Object.entries(QA_TO_DEVAWS_MEDIA_HOSTS)) {
+    if (url.includes(qaHost)) {
+      return bucketPublicUrl(cfg.bucket, cfg.region, key);
+    }
+  }
+  return url;
 }
 
 function looksLikeBareS3Key(raw: string): boolean {
@@ -142,20 +181,30 @@ export function resolveImageUrl(url?: string | null): string | undefined {
   if (!raw) return undefined;
   if (raw.startsWith('//')) return `https:${raw}`;
   if (raw.startsWith('data:')) return raw;
+  if (isSignedS3Url(raw)) return raw;
+  if (isExternalProfileUrl(raw)) return raw;
 
   if (raw.startsWith('http://') || raw.startsWith('https://')) {
     const persistent = toPersistentMediaUrl(raw);
     if (persistent) {
-      if (persistent.includes('doeventprofileimagesbucket') || persistent.includes('doevents-profile-media')) {
-        return rewriteProfileBucketUrl(persistent);
+      const rewritten = rewriteQaMediaHostForDev(persistent);
+      if (rewritten.includes('doeventprofileimagesbucket') || rewritten.includes('doevents-profile-media')) {
+        return rewriteProfileBucketUrl(rewritten);
       }
-      return persistent;
+      if (rewritten.includes('doevent-venue-images')) {
+        return rewritten;
+      }
+      return rewritten;
     }
     if (isEphemeralMediaUrl(raw)) return undefined;
-    if (raw.includes('doeventprofileimagesbucket') || raw.includes('doevents-profile-media')) {
-      return rewriteProfileBucketUrl(raw);
+    const rewritten = rewriteQaMediaHostForDev(raw);
+    if (rewritten.includes('doeventprofileimagesbucket') || rewritten.includes('doevents-profile-media')) {
+      return rewriteProfileBucketUrl(rewritten);
     }
-    return raw;
+    if (rewritten.includes('doevent-venue-images')) {
+      return rewritten;
+    }
+    return rewritten;
   }
 
   if (looksLikeChatMediaKey(raw)) {
@@ -164,6 +213,10 @@ export function resolveImageUrl(url?: string | null): string | undefined {
 
   if (looksLikeFeedMediaKey(raw)) {
     return feedMediaPublicUrl(raw);
+  }
+
+  if (looksLikeVenueImageKey(raw)) {
+    return venuePublicUrl(raw);
   }
 
   if (raw.includes('doevent-feed-media')) {
@@ -198,7 +251,10 @@ export function appendImageCacheBuster(
   url?: string | null,
   version?: string | number | null,
 ): string | undefined {
-  const resolved = resolveImageUrl(url);
+  const raw = String(url || '').trim();
+  if (!raw) return undefined;
+  if (isSignedS3Url(raw)) return raw;
+  const resolved = resolveImageUrl(raw);
   if (!resolved) return undefined;
   if (version == null || version === '') return resolved;
   const token = encodeURIComponent(String(version));

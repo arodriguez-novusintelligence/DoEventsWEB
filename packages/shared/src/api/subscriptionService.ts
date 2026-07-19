@@ -1,9 +1,9 @@
 import { getAuthToken, getCurrentEnv } from './client';
-import type { PlanUsageSnapshot } from '../lib/planLimits';
+import type { PlanUsageSnapshot, PlatformRole } from '../lib/planLimits';
 
 export interface SubscriptionStatus {
   plan: 'free' | 'pro';
-  platformRole: 'user' | 'admin';
+  platformRole: PlatformRole;
   usage: PlanUsageSnapshot;
   proExpiresAt?: string | null;
   proStartedAt?: string | null;

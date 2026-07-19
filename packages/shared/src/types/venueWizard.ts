@@ -30,6 +30,9 @@ export interface WizardCategory {
   height: number;
   geometry: FloorPlanGeometry;
   rotation: number;
+  labelDx?: number;
+  labelDy?: number;
+  labelRotation?: number;
   zIndex: number;
   ringThickness: number;
   locked: boolean;
@@ -44,6 +47,8 @@ export interface WizardCategory {
   colOrder: SeatOrder;
   rowOrder: SeatOrder;
   disableSeatsEnabled: boolean;
+  /** Códigos de butacas deshabilitadas cuando la grilla es grande y no se materializan en `seats`. */
+  disabledSeats?: string[];
 }
 
 export interface WizardFloor {
@@ -68,7 +73,10 @@ export interface SavedVenueSummary {
   name: string;
   capacity?: number;
   city?: string;
+  address?: string;
   isTemplate?: boolean;
+  mainImage?: string;
+  imageUrls?: string[];
 }
 
 export interface EventWizardState {

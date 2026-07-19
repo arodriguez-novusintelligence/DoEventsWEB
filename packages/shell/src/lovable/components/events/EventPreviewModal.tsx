@@ -1,6 +1,13 @@
-import { useState } from 'react';
-import { X, ChevronLeft, Calendar, Clock, Tag, Users, MapPin, Home as HomeIcon, ShieldCheck, ArrowRight, Star, Play, Eye } from 'lucide-react';
-import { EventFormData, REFUND_POLICY_OPTIONS } from '@lovable/data/eventFormData';
+import { useEffect, useRef, useState } from 'react';
+import { X, ChevronLeft, Calendar, Clock, Tag, Users, MapPin, Home as HomeIcon, ShieldCheck, ArrowRight, Play, Eye } from 'lucide-react';
+import {
+  fetchUserById,
+  getPersistedUserDisplayName,
+  resolveCategoryDisplayLabel,
+  resolveUserDisplayName,
+  resolveVenueTypeDisplayLabel,
+} from '@doevents/shared';
+import { EventFormData, EventHost, REFUND_POLICY_OPTIONS } from '@lovable/data/eventFormData';
 
 interface EventPreviewModalProps {
   open: boolean;
@@ -14,7 +21,7 @@ const Field = ({ icon: Icon, label, value }: { icon: any; label: string; value: 
       <Icon className="h-4 w-4 text-primary" />
       <span className="font-extrabold">{label}</span>
     </div>
-    <div className="mt-1 text-sm font-extrabold text-foreground">{value || '—'}</div>
+    <div className="mt-1 whitespace-pre-line text-sm font-extrabold text-foreground">{value || '—'}</div>
   </div>
 );
 
@@ -27,30 +34,121 @@ const formatDate = (d: string) => {
   } catch { return d; }
 };
 
+function resolvePreviewAnfitriones(
+  hosts: EventHost[],
+  organizer: EventHost | null,
+  ownerUserId?: string,
+): EventHost[] {
+  const organizerIds = new Set(
+    [organizer?.id, ownerUserId].filter(Boolean).map(String),
+  );
+  return (hosts || []).filter((host) => {
+    if (host.role === 'organizer') return false;
+    if (organizerIds.has(String(host.id))) return false;
+    return Boolean(host.name || host.email);
+  });
+}
+
 const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
-  const [showDetail, setShowDetail] = useState(true);
+  const [showDetail, setShowDetail] = useState(false);
   const [showVenueImgs, setShowVenueImgs] = useState(true);
+  const [organizerProfile, setOrganizerProfile] = useState<EventHost | null>(null);
+  const detailRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    setShowDetail(false);
+    setShowVenueImgs(true);
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const fromHosts = (data.hosts || []).find((host) => host.role === 'organizer') || null;
+    const organizerId = data.ownerUserId || fromHosts?.id;
+    if (!organizerId) {
+      setOrganizerProfile(fromHosts);
+      return;
+    }
+    if (fromHosts?.name?.trim()) {
+      setOrganizerProfile(fromHosts);
+      return;
+    }
+    let cancelled = false;
+    void fetchUserById(organizerId)
+      .then((profile) => {
+        if (cancelled) return;
+        if (!profile) {
+          setOrganizerProfile({
+            id: organizerId,
+            name: getPersistedUserDisplayName() || 'Organizador',
+            role: 'organizer',
+          });
+          return;
+        }
+        setOrganizerProfile({
+          id: organizerId,
+          name: resolveUserDisplayName(profile) || getPersistedUserDisplayName() || 'Organizador',
+          email: profile.email,
+          phone: profile.phone,
+          countryCode: profile.countryCode,
+          avatar: profile.avatarUrl,
+          role: 'organizer',
+        });
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setOrganizerProfile({
+            id: organizerId,
+            name: getPersistedUserDisplayName() || 'Organizador',
+            role: 'organizer',
+          });
+        }
+      });
+    return () => { cancelled = true; };
+  }, [open, data.hosts, data.ownerUserId]);
+
   if (!open) return null;
 
-  const heroImg = data.images[0];
+  const organizer = organizerProfile
+    || (data.hosts || []).find((host) => host.role === 'organizer')
+    || null;
+  const anfitriones = resolvePreviewAnfitriones(data.hosts || [], organizer, data.ownerUserId);
+
+  const heroImg = (data.images || [])[0];
   const refundLabel = data.refundPolicy
     ? REFUND_POLICY_OPTIONS.find((o) => o.value === data.refundPolicy)?.label
     : '—';
-  const venueImgs = data.location.customImages ?? [];
-  const seatingFigures = data.location.seatingMap?.figures ?? [];
+  const venueImgs = data.location?.customImages ?? [];
+  const seatingFigures = data.location?.seatingMap?.figures ?? [];
+  const agenda = data.agenda || [];
+  const faqs = data.faqs || [];
+  const categoryLabel = resolveCategoryDisplayLabel(data.category);
+  const venueTypeLabel = resolveVenueTypeDisplayLabel(data.location?.customType);
+
+  const toggleDetail = () => {
+    setShowDetail((prev) => {
+      const next = !prev;
+      if (next) {
+        queueMicrotask(() => {
+          detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      }
+      return next;
+    });
+  };
 
   return (
     <div className="fixed inset-0 z-[250] bg-black/50 overflow-y-auto">
       <div className="mx-auto min-h-screen max-w-lg bg-secondary">
         {/* Top bar */}
         <div className="sticky top-0 z-10 flex items-center justify-between bg-secondary px-4 pt-4 pb-3 shadow-sm">
-          <button onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20 text-primary">
+          <button type="button" onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20 text-primary">
             <ChevronLeft className="h-5 w-5" />
           </button>
           <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
             <Eye className="h-5 w-5 text-primary" />
           </span>
-          <button onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-xl bg-card ring-2 ring-primary/20 text-muted-foreground shadow-sm">
+          <button type="button" onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-xl bg-card ring-2 ring-primary/20 text-muted-foreground shadow-sm">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -95,20 +193,24 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
             </div>
             <div className="my-4 border-t border-border/60" />
             <div className="grid grid-cols-2 gap-4">
-              <Field icon={Tag} label="Categoría" value={data.category} />
+              <Field icon={Tag} label="Categoría" value={categoryLabel} />
               <Field icon={Tag} label="Clase de evento" value={data.eventClass === 'public' ? 'Público' : 'Privado'} />
-              <Field icon={Users} label="Aforo" value={data.capacity} />
-              <Field icon={HomeIcon} label="Tipo de lugar" value={data.location.customType || '—'} />
+              <Field icon={Users} label="Aforo" value={String(data.capacity || '—')} />
+              <Field icon={HomeIcon} label="Tipo de lugar" value={venueTypeLabel} />
             </div>
             <div className="mt-4 text-center">
-              <button onClick={() => setShowDetail((v) => !v)} className="text-sm font-extrabold text-primary">
+              <button
+                type="button"
+                onClick={toggleDetail}
+                className="inline-flex min-h-11 items-center justify-center px-4 py-2 text-sm font-extrabold text-primary"
+              >
                 {showDetail ? 'Más detalle del evento  -' : 'Más detalle del evento  +'}
               </button>
             </div>
           </div>
 
           {showDetail && (
-            <>
+            <div ref={detailRef} className="scroll-mt-4">
               {/* Descripción */}
               <div className="mt-4">
                 <h3 className="text-sm font-extrabold text-foreground">Descripción de evento</h3>
@@ -116,10 +218,10 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
               </div>
 
               {/* Agenda */}
-              {data.agenda.length > 0 && (
+              {agenda.length > 0 && (
                 <div className="mt-6 space-y-4">
-                  {data.agenda.map((day, i) => (
-                    <div key={day.id} className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
+                  {agenda.map((day, i) => (
+                    <div key={day.id || i} className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
                       <div className="flex items-center gap-2">
                         <Calendar className="h-5 w-5 text-primary" />
                         <div>
@@ -128,8 +230,8 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
                         </div>
                       </div>
                       <div className="mt-4 space-y-3 border-l-2 border-primary/30 pl-4">
-                        {day.activities.map((a) => (
-                          <div key={a.id} className="rounded-xl border border-border/60 bg-secondary p-3 shadow-sm">
+                        {(day.activities || []).map((a, ai) => (
+                          <div key={a.id || ai} className="rounded-xl border border-border/60 bg-secondary p-3 shadow-sm">
                             <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 px-3 py-1 text-xs font-extrabold text-primary">
                               <Clock className="h-3 w-3" /> {a.startTime} - {a.endTime}
                             </span>
@@ -154,12 +256,12 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
                     <HomeIcon className="h-5 w-5" />
                   </div>
                   <div className="flex-1">
-                    <div className="font-extrabold text-foreground">{data.location.customName || '—'}</div>
-                    <div className="text-xs text-muted-foreground">{data.location.customAddress || data.location.detectedCity}</div>
+                    <div className="font-extrabold text-foreground">{data.location?.customName || '—'}</div>
+                    <div className="text-xs text-muted-foreground">{data.location?.customAddress || data.location?.detectedCity}</div>
                   </div>
                 </div>
                 {(venueImgs.length > 0 || seatingFigures.length > 0) && (
-                  <button onClick={() => setShowVenueImgs((v) => !v)} className="mt-3 flex items-center gap-1 text-sm font-extrabold text-primary">
+                  <button type="button" onClick={() => setShowVenueImgs((v) => !v)} className="mt-3 flex min-h-10 items-center gap-1 text-sm font-extrabold text-primary">
                     {showVenueImgs ? '∧ Ocultar imágenes del lugar' : '∨ Ver imágenes del lugar'}
                   </button>
                 )}
@@ -203,10 +305,13 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
                 <div className="mt-2 rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
                   <div className="flex items-center gap-3">
                     <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/15 ring-2 ring-primary/20 text-base font-extrabold text-primary">
-                      {(data.hosts[0]?.initials || 'TU').slice(0, 2)}
+                      {(organizer?.initials || organizer?.name?.slice(0, 2) || 'TU').slice(0, 2).toUpperCase()}
                     </div>
                     <div className="flex-1">
-                      <div className="font-extrabold text-foreground">{data.hosts[0]?.name || 'Organizador'}</div>
+                      <div className="font-extrabold text-foreground">{organizer?.name || 'Organizador'}</div>
+                      {organizer?.email && (
+                        <p className="mt-1 text-xs text-muted-foreground">{organizer.email}</p>
+                      )}
                       <p className="mt-1 text-xs text-muted-foreground">
                         Estadísticas del organizador disponibles tras publicar el evento.
                       </p>
@@ -215,17 +320,18 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
                 </div>
               </div>
 
-              {/* Anfitriones */}
-              {data.hosts.length > 0 && (
+              {anfitriones.length > 0 && (
                 <div className="mt-4">
                   <h3 className="text-sm font-extrabold text-foreground">Anfitrión del evento</h3>
-                  {data.hosts.map((h) => (
-                    <div key={h.id} className="mt-2 rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
+                  {anfitriones.map((host) => (
+                    <div key={host.id} className="mt-2 rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/15 ring-2 ring-primary/20 text-base font-extrabold text-primary">{h.initials || h.name?.slice(0,2).toUpperCase()}</div>
+                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/15 ring-2 ring-primary/20 text-base font-extrabold text-primary">
+                          {(host.initials || host.name?.slice(0, 2) || 'AN').slice(0, 2).toUpperCase()}
+                        </div>
                         <div className="flex-1">
-                          <div className="font-extrabold text-foreground">{h.name}</div>
-                          {h.role && <div className="text-xs text-muted-foreground">{h.role}</div>}
+                          <div className="font-extrabold text-foreground">{host.name}</div>
+                          {host.email && <div className="text-xs text-muted-foreground">{host.email}</div>}
                         </div>
                       </div>
                     </div>
@@ -234,7 +340,7 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
               )}
 
               {/* FAQs */}
-              {data.faqs.length > 0 && (
+              {faqs.length > 0 && (
                 <div className="mt-6 rounded-2xl border border-border/60 bg-card p-4 shadow-sm flex items-center justify-between">
                   <span className="font-extrabold text-foreground">Preguntas frecuentes</span>
                   <ArrowRight className="h-4 w-4 text-primary" />
@@ -248,11 +354,11 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
                   <span className="font-extrabold">Solicita tu reembolso</span>
                 </div>
                 <p className="mt-2 text-sm font-extrabold text-foreground">{refundLabel}</p>
-                <button className="mt-3 w-full rounded-full bg-card py-2.5 text-sm font-extrabold text-primary shadow-sm">
+                <button type="button" className="mt-3 w-full rounded-full bg-card py-2.5 text-sm font-extrabold text-primary shadow-sm">
                   Ver política de reembolsos →
                 </button>
               </div>
-            </>
+            </div>
           )}
         </div>
       </div>
@@ -261,3 +367,4 @@ const EventPreviewModal = ({ open, onClose, data }: EventPreviewModalProps) => {
 };
 
 export default EventPreviewModal;
+

@@ -1,5 +1,6 @@
 import { getAuthToken, getCurrentEnv } from './client';
 import { toUserFacingError } from '../lib/apiError';
+import { adjustPurchaseCountsCache } from '../lib/purchasesCountsCache';
 
 export type VenueDayStatus = 'available' | 'reserved' | 'unavailable';
 
@@ -13,6 +14,7 @@ export interface VenueBookingAvailability {
   year: number;
   month: number;
   pricePerDay: number;
+  rentalUnit?: 'day' | 'month';
   checkIn: string;
   checkOut: string;
   days: Record<string, VenueAvailabilityDay>;
@@ -66,6 +68,10 @@ export interface UserVenueBooking {
   bookingId: string;
   venueId: string;
   venueName: string;
+  venueImage?: string;
+  venueCoverImage?: string;
+  venueCity?: string;
+  venueAddress?: string;
   orderId: string;
   status: string;
   selectedDates: string[];
@@ -138,6 +144,7 @@ export async function createVenueBooking(
   if (!response.ok) {
     throw new Error(toUserFacingError(body.error || body.message || 'No se pudo crear la reserva', 'reserva del lugar'));
   }
+  adjustPurchaseCountsCache(input.userId, { venueCount: 1 });
   return body;
 }
 

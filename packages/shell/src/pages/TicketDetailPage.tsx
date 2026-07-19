@@ -9,27 +9,40 @@ import {
   fetchOrderById,
   fetchEventDetail,
   fetchGroupedUserTickets,
+  formatDisplayOrderId,
+  formatDisplayTicketId,
+  computeTicketServiceFee,
+  emitNotificationsUpdated,
+  formatTransferredAt,
+  getPersistedUserDisplayName,
+  isTicketReceivedByTransfer,
+  isTicketTransferredOut,
   Loader,
   requestEventRefund,
   resolveEventImageUrl,
   resolveEventVideoUrl,
+  resolveOrderExpiresAtTs,
+  resolveTransferredAt,
+  resolveTransferredFromName,
+  resolveTransferredToName,
   isPlaceholderEventImage,
   listStoredReservationsForUser,
   RootState,
-  resolveOrderExpiresAtTs,
   transferTicketsToUser,
   useToast,
 } from '@doevents/shared';
 import type { TicketEventGroup, TicketWithOrderRef } from '@doevents/shared';
 import type { Ticket } from '@lovable/data/ticketsData';
 import TicketDetailView from '@lovable/components/tickets/TicketDetailView';
-import { groupedTicketsToLovable, lovableTicketsToOrderRefs } from '../lovable-bridge/ticketsAdapter';
+import { groupedTicketsToLovable, enrichTicketsCategoryColors, lovableTicketsToOrderRefs, extractSeatLabel } from '../lovable-bridge/ticketsAdapter';
 import type { BoletaEntry } from '@lovable/components/tickets/TransferTicketFlow';
 import type { TransferRecipient } from '@lovable/components/tickets/TransferTicketFlow';
 
 interface TicketDetailLocationState {
   group?: TicketEventGroup;
   ticketId?: string;
+  from?: string;
+  openAction?: 'transfer' | 'refund';
   preloadedTickets?: Ticket[];
   eventMeta?: {
     eventId?: string;
@@ -51,7 +64,7 @@ async function loadEventTicketsForUser(
   status?: Ticket['status'],
 ): Promise<TicketWithOrderRef[]> {
   const grouped = await fetchGroupedUserTickets(userId);
-  const lovable = groupedTicketsToLovable(grouped);
+  const lovable = await enrichTicketsCategoryColors(groupedTicketsToLovable(grouped));
   const filtered = lovable.filter((ticket) => {
     if (ticket.eventId !== eventId) return false;
     if (status && ticket.status !== status) return false;
@@ -72,6 +85,9 @@ export const TicketDetailPage: React.FC = () => {
   const preferredTicketId = locationState?.ticketId;
   const eventMeta = locationState?.eventMeta;
   const preloadedTickets = locationState?.preloadedTickets;
+  const openAction = locationState?.openAction;
+  const ticketsBackPath = '/tickets';
+  const [displayOrderId, setDisplayOrderId] = useState<string | undefined>();
 
   const [loading, setLoading] = useState(true);
   const [tickets, setTickets] = useState<TicketWithOrderRef[]>([]);
@@ -83,21 +99,55 @@ export const TicketDetailPage: React.FC = () => {
   const [refundEligibilityMessage, setRefundEligibilityMessage] = useState('');
   const [resolvedEventImage, setResolvedEventImage] = useState(eventMeta?.eventImage || '');
   const [resolvedEventVideo, setResolvedEventVideo] = useState(eventMeta?.eventVideo || '');
+  const [orderUserId, setOrderUserId] = useState<string | undefined>();
+  const [orderIsRefunded, setOrderIsRefunded] = useState(false);
 
   const decodedOrderId = decodeURIComponent(orderId);
+
+  const applyOrderDetail = async (
+    detail: NonNullable<Awaited<ReturnType<typeof fetchOrderById>>>,
+    preferredId?: string,
+  ) => {
+    const enriched = await enrichOrderWithQrUrls(detail);
+    const ownerId = (enriched as { user_id?: string }).user_id;
+    const orderTransferFrom = (enriched as {
+      transferred_from?: TicketWithOrderRef['transferred_from'];
+    }).transferred_from;
+    setOrderUserId(ownerId);
+    setDisplayOrderId((enriched as { display_order_id?: string }).display_order_id);
+    const refundFlag = Boolean(
+      (enriched as { is_refunded?: boolean }).is_refunded
+      || ['COMPLETED', 'PENDING', 'PENDING_REFUND'].includes(
+        String((enriched as { refund_status?: string }).refund_status || '').toUpperCase(),
+      )
+      || String(enriched.payment_status || '').toUpperCase() === 'REFUNDED',
+    );
+    setOrderIsRefunded(refundFlag);
+    const orderTickets = (enriched.tickets || []).map((ticket) => ({
+      ...ticket,
+      orderRef: decodedOrderId,
+      paymentStatus: enriched.payment_status,
+      transferred_from: ticket.transferred_from || orderTransferFrom,
+    })) as TicketWithOrderRef[];
+    setTickets(orderTickets);
+    setPaymentStatus(enriched.payment_status);
+    setOrderExpiresAtTs(resolveOrderExpiresAtTs(enriched) || undefined);
+    setOrderCreatedAt(
+      enriched.created_at
+      || enriched.metadata?.created_at
+      || (enriched as { order_date?: string }).order_date,
+    );
+    const preferredIdx = preferredId
+      ? orderTickets.findIndex((t) => (t.ticket_id || t.ticketInstanceId) === preferredId)
+      : -1;
+    if (preferredIdx >= 0) setActiveIndex(preferredIdx);
+  };
 
   const reloadTickets = async () => {
     if (!orderId) return;
     const detail = await fetchOrderById(decodedOrderId);
     if (!detail) return;
-    const enriched = await enrichOrderWithQrUrls(detail);
-    const orderTickets = (enriched.tickets || []).map((ticket) => ({
-      ...ticket,
-      orderRef: decodedOrderId,
-      paymentStatus: enriched.payment_status,
-    })) as TicketWithOrderRef[];
-    setTickets(orderTickets);
-    setPaymentStatus(enriched.payment_status);
+    await applyOrderDetail(detail);
   };
 
   useEffect(() => {
@@ -106,11 +156,17 @@ export const TicketDetailPage: React.FC = () => {
 
     const load = async () => {
       try {
+        const detail = await fetchOrderById(decodedOrderId);
+        if (detail?.tickets?.length) {
+          await applyOrderDetail(detail, preferredTicketId);
+          return;
+        }
+
         if (group) {
           const eventTickets = collectTicketsFromGroup(group);
           const orderTickets = eventTickets.filter((t) => t.orderRef === decodedOrderId);
           if (orderTickets.length > 0) {
-            const enriched = await enrichTicketsWithQrUrls(orderTickets);
+            const enriched = await enrichTicketsWithQrUrls(orderTickets, orderUserId);
             setTickets(enriched);
             setPaymentStatus(enriched[0]?.paymentStatus);
             const preferredIdx = enriched.findIndex(
@@ -123,12 +179,14 @@ export const TicketDetailPage: React.FC = () => {
 
         if (preloadedTickets?.length) {
           const scopedTickets = preloadedTickets.filter((t) => {
+            const sameOrder = (t.orderId || t.orderRef) === decodedOrderId;
+            if (!sameOrder) return false;
             if (eventMeta?.eventId && t.eventId !== eventMeta.eventId) return false;
             return true;
           });
           const orderTickets = lovableTicketsToOrderRefs(scopedTickets);
           if (orderTickets.length > 0) {
-            const enriched = await enrichTicketsWithQrUrls(orderTickets);
+            const enriched = await enrichTicketsWithQrUrls(orderTickets, orderUserId);
             setTickets(enriched);
             setPaymentStatus(enriched[0]?.paymentStatus);
             const preferredIdx = enriched.findIndex(
@@ -141,8 +199,9 @@ export const TicketDetailPage: React.FC = () => {
 
         if (userId && eventMeta?.eventId) {
           const eventTickets = await loadEventTicketsForUser(userId, eventMeta.eventId);
-          if (eventTickets.length > 0) {
-            const enriched = await enrichTicketsWithQrUrls(eventTickets);
+          const orderTickets = eventTickets.filter((t) => t.orderRef === decodedOrderId);
+          if (orderTickets.length > 0) {
+            const enriched = await enrichTicketsWithQrUrls(orderTickets, orderUserId);
             setTickets(enriched);
             setPaymentStatus(enriched[0]?.paymentStatus);
             const preferredIdx = enriched.findIndex(
@@ -153,28 +212,8 @@ export const TicketDetailPage: React.FC = () => {
           }
         }
 
-        const detail = await fetchOrderById(decodedOrderId);
         if (detail) {
-          const enriched = await enrichOrderWithQrUrls(detail);
-          const orderTickets = (enriched.tickets || []).map((ticket) => ({
-            ...ticket,
-            orderRef: decodedOrderId,
-            paymentStatus: enriched.payment_status,
-          })) as TicketWithOrderRef[];
-          setTickets(orderTickets);
-          setPaymentStatus(enriched.payment_status);
-          setOrderExpiresAtTs(resolveOrderExpiresAtTs(enriched) || undefined);
-          setOrderCreatedAt(
-            enriched.created_at
-            || enriched.metadata?.created_at
-            || (enriched as { order_date?: string }).order_date,
-          );
-          if (preferredTicketId) {
-            const preferredIdx = orderTickets.findIndex(
-              (t) => (t.ticket_id || t.ticketInstanceId) === preferredTicketId,
-            );
-            if (preferredIdx >= 0) setActiveIndex(preferredIdx);
-          }
+          await applyOrderDetail(detail, preferredTicketId);
         }
       } catch (err) {
         showToast(err instanceof Error ? err.message : 'No se pudo cargar la boleta', 'error');
@@ -246,6 +285,7 @@ export const TicketDetailPage: React.FC = () => {
 
   const ticketMeta: Ticket = useMemo(() => {
     const active = tickets[activeIndex] || tickets[0];
+    const seatLabel = active ? extractSeatLabel(active) : '';
     const pendingReservation = !isPaid && userId
       ? listStoredReservationsForUser(userId).find((r) => r.orderId === decodedOrderId)
       : undefined;
@@ -254,7 +294,7 @@ export const TicketDetailPage: React.FC = () => {
       : eventDate;
     return {
       id: active?.ticket_id || active?.ticketInstanceId || decodedOrderId,
-      orderNumber: decodedOrderId.slice(-6).toUpperCase(),
+      orderNumber: formatDisplayOrderId(decodedOrderId, displayOrderId),
       orderDate: purchaseDate,
       eventTitle: eventName,
       eventImage,
@@ -262,10 +302,10 @@ export const TicketDetailPage: React.FC = () => {
       eventDate,
       startTime: eventTime,
       category: active?.category || 'General',
-      seat: active?.seatLabel || '',
-      seatLabel: active?.seatLabel,
+      seat: seatLabel || '—',
+      seatLabel: seatLabel || undefined,
       entrance: 'Entrada principal',
-      qrCode: active?.qr_code || active?.qrCodeKey || active?.ticket_id || active?.ticketInstanceId || '',
+      qrCode: active ? formatDisplayTicketId(active) : '',
       qrUrl: active?.qr_url,
       orderRef: decodedOrderId,
       orderId: decodedOrderId,
@@ -279,6 +319,7 @@ export const TicketDetailPage: React.FC = () => {
     tickets,
     activeIndex,
     decodedOrderId,
+    displayOrderId,
     orderCreatedAt,
     eventDate,
     eventName,
@@ -293,32 +334,98 @@ export const TicketDetailPage: React.FC = () => {
 
   const entries: BoletaEntry[] = useMemo(() => {
     return tickets.map((t, i) => {
-      const id = t.ticket_id || t.ticketInstanceId || `${decodedOrderId}-${i}`;
-      const code = (t.seatLabel || t.seat_code || `A${i + 1}`).replace(/^Silla\s*-?\s*/i, '');
+      const id =
+        t.ticketInstanceId ||
+        t.ticket_id ||
+        t.display_ticket_id ||
+        `${decodedOrderId}-${i}`;
+      const seatLabel = extractSeatLabel(t);
+      const code = seatLabel || `General ${i + 1}`;
+      const transferredOut = isTicketTransferredOut(t, orderUserId);
+      const receivedByTransfer = isTicketReceivedByTransfer(t);
+      const transferredAtRaw = resolveTransferredAt(t);
+      const faceValue = Number(
+        t.price ?? t.purchasePrice ?? t.ticket_amount ?? 0,
+      ) || 0;
+      const explicitFee = Number(t.additional_charges_amount);
+      const feeFromCharges = Array.isArray(t.additional_charges)
+        ? t.additional_charges.reduce((sum, c) => sum + (Number(c.amount) || 0), 0)
+        : 0;
+      const platformFee = Number.isFinite(explicitFee) && explicitFee > 0
+        ? explicitFee
+        : feeFromCharges > 0
+          ? feeFromCharges
+          : computeTicketServiceFee(faceValue);
+      const refundStatus = String(t.refund_status || '').toUpperCase();
+      const ticketStatus = String(t.ticket_status || '').toUpperCase();
+      const isRefunded = Boolean(
+        orderIsRefunded
+        || (t as { is_refunded?: boolean }).is_refunded === true
+        || refundStatus === 'REFUNDED'
+        || refundStatus === 'PENDING_REFUND'
+        || refundStatus === 'PENDING'
+        || refundStatus === 'COMPLETED'
+        || ticketStatus === 'REFUNDED'
+        || ticketStatus === 'PENDING_REFUND',
+      );
       return {
         id,
         code,
         date: eventDate,
-        qrData: t.qr_code || t.qrCodeKey || t.ticketInstanceId || t.ticket_id || id,
-        qrUrl: t.qr_url,
-        value: typeof t.price === 'number' ? t.price : 0,
+        qrData: transferredOut || isRefunded ? '' : formatDisplayTicketId(t),
+        qrUrl: transferredOut || isRefunded ? undefined : t.qr_url,
+        value: faceValue,
+        platformFee,
         ticketInstanceId: t.ticketInstanceId || t.ticket_id || id,
+        seatLabel: seatLabel || undefined,
+        category: t.category,
+        isTransferredOut: transferredOut,
+        isReceivedByTransfer: receivedByTransfer,
+        isTransferred: transferredOut || receivedByTransfer,
+        isRefunded,
+        transferredAt: transferredAtRaw ? formatTransferredAt(transferredAtRaw) : undefined,
+        transferredToName: resolveTransferredToName(t)
+          || (receivedByTransfer ? getPersistedUserDisplayName() || undefined : undefined),
+        transferredFromName: resolveTransferredFromName(t),
       };
     });
-  }, [tickets, decodedOrderId, eventDate]);
+  }, [tickets, decodedOrderId, eventDate, orderUserId, orderIsRefunded]);
 
-  const orderCode = `N°${decodedOrderId.slice(-6).toUpperCase()}`;
+  const activeTicketsCount = useMemo(
+    () => tickets.filter((t) => !isTicketTransferredOut(t, orderUserId)).length,
+    [tickets, orderUserId],
+  );
+
+  const orderCode = `N°${formatDisplayOrderId(decodedOrderId, displayOrderId)}`;
 
   const handleTransfer = async (ticketInstanceIds: string[], recipient: TransferRecipient) => {
     if (!userId) throw new Error('Debes iniciar sesión para compartir');
+    const resolveTicketInstanceId = (selectedId: string) => {
+      const entry = entries.find(
+        (e) => e.id === selectedId || e.ticketInstanceId === selectedId,
+      );
+      if (entry?.ticketInstanceId) return entry.ticketInstanceId;
+      const ticket = tickets.find(
+        (t) =>
+          t.ticketInstanceId === selectedId ||
+          t.ticket_id === selectedId ||
+          t.display_ticket_id === selectedId,
+      );
+      return ticket?.ticketInstanceId || ticket?.ticket_id || selectedId;
+    };
+
     const byOrder = new Map<string, string[]>();
     ticketInstanceIds.forEach((id) => {
+      const resolvedId = resolveTicketInstanceId(id);
       const ticket = tickets.find(
-        (t) => (t.ticket_id || t.ticketInstanceId) === id,
+        (t) =>
+          t.ticketInstanceId === resolvedId ||
+          t.ticket_id === resolvedId ||
+          t.display_ticket_id === resolvedId,
       );
       const orderRef = ticket?.orderRef || decodedOrderId;
       if (!byOrder.has(orderRef)) byOrder.set(orderRef, []);
-      byOrder.get(orderRef)!.push(id);
+      byOrder.get(orderRef)!.push(resolvedId);
     });
 
     for (const [orderRef, ids] of byOrder) {
@@ -333,16 +440,15 @@ export const TicketDetailPage: React.FC = () => {
     }
 
     showToast('Boleta(s) compartida(s). Se generó un nuevo código QR para el destinatario.', 'success');
-    if (userId && eventIdResolved) {
-      const refreshed = await loadEventTicketsForUser(userId, eventIdResolved);
-      const enriched = await enrichTicketsWithQrUrls(refreshed);
-      setTickets(enriched);
-      setPaymentStatus(enriched[0]?.paymentStatus);
-    } else {
-      await reloadTickets();
-    }
-    if (ticketInstanceIds.length >= tickets.length) {
-      navigate('/tickets', { replace: true });
+    emitNotificationsUpdated();
+    await reloadTickets();
+    const detail = await fetchOrderById(decodedOrderId);
+    const ownerId = detail ? (detail as { user_id?: string }).user_id : orderUserId;
+    const remaining = (detail?.tickets || []).filter(
+      (t) => !isTicketTransferredOut(t, ownerId),
+    ).length;
+    if (remaining === 0) {
+      navigate(ticketsBackPath, { replace: true });
     }
   };
 
@@ -354,9 +460,18 @@ export const TicketDetailPage: React.FC = () => {
       reason: 'Solicitud desde detalle de boleta',
       ticketInstanceIds,
     });
-    showToast(`Reembolso radicado. ID: ${result.filingId}`, 'success');
+    showToast(
+      `Reembolso radicado por $${result.refundAmount.toLocaleString('es-CO')}. ID: ${result.filingId}`,
+      'success',
+    );
+    emitNotificationsUpdated();
     await reloadTickets();
   };
+
+  const refundableCount = useMemo(
+    () => entries.filter((e) => !e.isTransferredOut && !e.isRefunded).length,
+    [entries],
+  );
 
   if (loading) {
     return (
@@ -372,7 +487,7 @@ export const TicketDetailPage: React.FC = () => {
         <p className="text-sm text-muted-foreground">No se encontraron boletas para esta orden.</p>
         <button
           type="button"
-          onClick={() => navigate('/tickets')}
+          onClick={() => navigate(ticketsBackPath)}
           className="mt-4 rounded-full bg-primary px-6 py-2 text-sm font-bold text-primary-foreground"
         >
           Volver a mis boletas
@@ -386,17 +501,19 @@ export const TicketDetailPage: React.FC = () => {
       ticket={ticketMeta}
       entries={entries}
       orderCode={orderCode}
+      orderDate={ticketMeta.orderDate}
       activeIndex={activeIndex}
       onActiveIndexChange={setActiveIndex}
-      onBack={() => navigate('/tickets')}
+      onBack={() => navigate(ticketsBackPath)}
       onViewEventDetail={eventIdResolved ? () => navigate(`/events/${eventIdResolved}`) : undefined}
       onTransfer={userId && isPaid ? handleTransfer : undefined}
-      onRefund={userId && isPaid ? handleRefund : undefined}
-      canTransfer={Boolean(userId && isPaid)}
-      canRefund={Boolean(userId && isPaid)}
+      onRefund={userId && isPaid && refundableCount > 0 ? handleRefund : undefined}
+      canTransfer={Boolean(userId && isPaid && activeTicketsCount > 0)}
+      canRefund={Boolean(userId && isPaid && refundableCount > 0)}
       refundEligible={refundEligible}
       refundEligibilityMessage={refundEligibilityMessage}
       currentUserId={userId || undefined}
+      initialAction={openAction}
     />
   );
 };

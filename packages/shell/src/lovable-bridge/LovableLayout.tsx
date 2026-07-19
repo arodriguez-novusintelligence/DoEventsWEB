@@ -1,13 +1,15 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { Suspense, useEffect, useMemo, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {
   clearSession,
   fetchUserById,
   fetchUserChatRooms,
-  isPlatformAdmin,
+  fetchSubscriptionStatus,
+  canAccessAdminPanel,
+  getPersistedPlatformRole,
+  persistPlatformRole,
   PROFILE_PAGE_CACHE_INVALIDATED_EVENT,
-  resolveImageUrl,
   RootState,
   getPersistedUserDisplayName,
   resolveUserDisplayName,
@@ -22,6 +24,7 @@ import { StoriesProvider } from '../contexts/StoriesContext';
 import { Toaster } from '@lovable/components/ui/sonner';
 import CreateFAB from '@lovable/components/feed/CreateFAB';
 import AIAssistantFAB from '@lovable/components/ai/AIAssistantFAB';
+import PageFallback from '../components/PageFallback';
 
 const BOTTOM_NAV_ROUTES = ['/', '/events', '/map', '/profile'];
 
@@ -33,6 +36,7 @@ const PROFILE_SUB_ROUTES = [
   '/profile/refunds',
   '/my-events',
   '/tickets',
+  '/purchases',
   '/guests',
   '/access',
 ];
@@ -41,7 +45,8 @@ const PROFILE_SUB_ROUTES = [
 function shouldHideHeader(pathname: string): boolean {
   return pathname.startsWith('/chat')
     || pathname.includes('/checkout')
-    || pathname.startsWith('/assistant');
+    || pathname.startsWith('/assistant')
+    || /^\/places\/[^/]+$/.test(pathname);
 }
 
 /** Ocultar FAB de creación en flujos de creación/edición/detalle. */
@@ -72,41 +77,59 @@ export const LovableLayout: React.FC = () => {
   const [profileUsername, setProfileUsername] = useState('@eventer');
   const [profileAvatar, setProfileAvatar] = useState<string | undefined>();
   const [chatUnread, setChatUnread] = useState(0);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(() => canAccessAdminPanel(getPersistedPlatformRole()));
 
-  const fullBleedRoute = useMemo(
-    () => location.pathname.startsWith('/chat')
-      || location.pathname.startsWith('/events/create')
-      || location.pathname.includes('/checkout')
-      || location.pathname.startsWith('/guests')
-      || location.pathname.startsWith('/access')
-      || location.pathname.startsWith('/tickets')
-      || location.pathname.startsWith('/admin')
-      || location.pathname.startsWith('/assistant')
-      || location.pathname === '/my-events'
-      || /^\/events\/[^/]+$/.test(location.pathname),
+  /**
+   * Columna móvil centrada en toda la app (mismo formato que detalle de servicio).
+   * Solo los wizards de lugares usan un poco más de ancho en desktop.
+   */
+  const appShellWidthClass = 'max-w-lg shadow-sm';
+  const placeWizardWidthClass = 'max-w-lg sm:max-w-xl md:max-w-2xl lg:max-w-3xl shadow-sm';
+
+  const isPlaceWizardRoute = useMemo(
+    () => location.pathname.startsWith('/places/publish')
+      || location.pathname.startsWith('/sites/publish')
+      || /^\/places\/[^/]+\/edit$/.test(location.pathname),
     [location.pathname],
   );
 
+  const shellWidthClass = isPlaceWizardRoute ? placeWizardWidthClass : appShellWidthClass;
+  const headerWidthClass = isPlaceWizardRoute
+    ? 'max-w-lg sm:max-w-xl md:max-w-2xl lg:max-w-3xl'
+    : 'max-w-lg';
+
   useEffect(() => {
     if (!userId) return;
+
     const loadProfile = () => {
-      fetchUserById(userId)
-        .then((profile) => {
-          if (!profile) return;
+      Promise.all([
+        fetchUserById(userId).catch(() => null),
+        fetchSubscriptionStatus(userId).catch(() => null),
+      ]).then(([profile, subscription]) => {
+        if (profile) {
           const name = resolveUserDisplayName(profile) || getPersistedUserDisplayName() || 'Usuario';
           setProfileName(name);
-          setProfileUsername(profile.username ? `@${profile.username}` : '@usuario');
-          setProfileAvatar(resolveImageUrl(profile.imagen) || undefined);
-          setIsAdmin(isPlatformAdmin(profile.platformRole));
-        })
-        .catch(() => undefined);
+          setProfileUsername(profile.username ? `@${profile.username.replace(/^@/, '')}` : '@usuario');
+          setProfileAvatar(profile.imagen || undefined);
+        }
+        const adminFromProfile = canAccessAdminPanel(profile?.platformRole);
+        const adminFromSubscription = canAccessAdminPanel(subscription?.platformRole);
+        const role = profile?.platformRole || subscription?.platformRole;
+        if (role) persistPlatformRole(role);
+        setIsAdmin(adminFromProfile || adminFromSubscription);
+      }).catch(() => undefined);
     };
+
     loadProfile();
     const onProfileUpdated = () => { loadProfile(); };
     window.addEventListener(PROFILE_PAGE_CACHE_INVALIDATED_EVENT, onProfileUpdated);
+    window.addEventListener('focus', onProfileUpdated);
+    const intervalId = window.setInterval(loadProfile, 60_000);
+
     return () => {
       window.removeEventListener(PROFILE_PAGE_CACHE_INVALIDATED_EVENT, onProfileUpdated);
+      window.removeEventListener('focus', onProfileUpdated);
+      window.clearInterval(intervalId);
     };
   }, [userId]);
 
@@ -115,12 +138,39 @@ export const LovableLayout: React.FC = () => {
       setChatUnread(0);
       return;
     }
-    fetchUserChatRooms(userId)
-      .then((rooms) => {
-        const total = rooms.reduce((acc, room) => acc + (room.unreadCount || 0), 0);
-        setChatUnread(total);
-      })
-      .catch(() => setChatUnread(0));
+
+    let cancelled = false;
+    let inFlight = false;
+    const refreshUnread = (skipCache = false) => {
+      if (inFlight) return;
+      inFlight = true;
+      fetchUserChatRooms(userId, { skipCache })
+        .then((rooms) => {
+          if (cancelled) return;
+          const total = rooms.reduce((acc, room) => acc + (Number(room.unreadCount) || 0), 0);
+          setChatUnread(total);
+        })
+        .catch(() => {
+          // Mantener el último valor conocido; no forzar 0 ante un fallo puntual.
+        })
+        .finally(() => {
+          inFlight = false;
+        });
+    };
+
+    refreshUnread(true);
+    const onFocus = () => refreshUnread(true);
+    const onUnreadUpdated = () => refreshUnread(true);
+    window.addEventListener('focus', onFocus);
+    window.addEventListener('doevents:chat-unread-updated', onUnreadUpdated);
+    const intervalId = window.setInterval(() => refreshUnread(true), 30_000);
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener('focus', onFocus);
+      window.removeEventListener('doevents:chat-unread-updated', onUnreadUpdated);
+      window.clearInterval(intervalId);
+    };
   }, [userId, location.pathname]);
 
   const showHeader = useMemo(
@@ -185,20 +235,14 @@ export const LovableLayout: React.FC = () => {
     <NotificationsProvider userId={userId || undefined}>
       <PrivacyProvider>
         <div className="min-h-screen bg-background overflow-x-hidden">
-          <div className={`relative mx-auto min-h-screen w-full bg-background ${fullBleedRoute ? '' : 'max-w-lg shadow-sm'}`}>
+          <div className={`relative mx-auto min-h-screen w-full bg-background ${shellWidthClass}`}>
             {showHeader && (
-              <div className="fixed inset-x-0 top-0 z-[100] mx-auto w-full max-w-lg">
+              <div className={`fixed inset-x-0 top-0 z-[100] mx-auto w-full ${headerWidthClass}`}>
                 <TopHeader
-                  onGoHome={() => navigate('/')}
                   onNavigate={handleNavigate}
-                  onGoToTickets={() => navigate('/tickets')}
-                  onGoToEvent={(eventName) => navigate('/search', { state: { q: eventName } })}
-                  onGoToEventById={(id) => navigate(`/events/${id}`)}
-                  onGoToPlace={(venueId) => navigate(`/places/${venueId}`)}
-                  onGoToService={(serviceId) => navigate(`/services/${serviceId}`)}
-                  onGoToPost={() => navigate('/')}
+                  onNavigateTo={(target) => navigate(target.path, { state: target.state })}
+                  onGoToTickets={() => navigate('/purchases')}
                   onViewProfile={() => navigate(userId ? '/profile' : '/auth/login')}
-                  onSearch={() => navigate('/search')}
                   onGoToAdmin={() => navigate('/admin')}
                   onLogout={() => {
                     clearSession();
@@ -214,7 +258,9 @@ export const LovableLayout: React.FC = () => {
               </div>
             )}
             <main className={`${showHeader ? 'pt-[60px]' : ''} ${showBottomNav ? 'pb-28' : 'pb-4'} overflow-x-hidden`}>
-              <Outlet />
+              <Suspense fallback={<PageFallback />}>
+                <Outlet />
+              </Suspense>
             </main>
             {showBottomNav && (
               <BottomNav

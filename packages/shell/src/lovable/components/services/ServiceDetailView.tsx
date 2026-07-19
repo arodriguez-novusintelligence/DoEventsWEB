@@ -11,10 +11,13 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import BookingSheet, { BookingData } from '@lovable/components/services/BookingSheet';
-import PaymentGatewaySheet from '@lovable/components/services/PaymentGatewaySheet';
+import BookingReviewSheet from '@lovable/components/services/BookingReviewSheet';
+import { createServiceBooking } from '@doevents/shared';
 import { toast } from 'sonner';
+import { buildServicePaymentNavigation } from '../../../lovable-bridge/serviceReservationBridge';
+import { useNavigate } from 'react-router-dom';
 import DetailSocialActions from '../../../components/DetailSocialActions';
-import MediaGalleryLightbox from '../../../components/MediaGalleryLightbox';
+import DetailMediaCarousel from '@lovable/components/common/DetailMediaCarousel';
 
 interface Props {
   service: ServiceFormData;
@@ -35,6 +38,8 @@ interface Props {
     providerUserId?: string;
   };
   canReserve?: boolean;
+  onEditService?: () => void;
+  initialOpenBooking?: boolean;
   onRequireLogin?: () => void;
   onOpenProvider?: () => void;
   onLike?: () => void;
@@ -58,6 +63,8 @@ const ServiceDetailView = ({
   onRate,
   liveBooking,
   canReserve = false,
+  onEditService,
+  initialOpenBooking = false,
   onRequireLogin,
   onOpenProvider,
   onLike,
@@ -66,11 +73,18 @@ const ServiceDetailView = ({
   onShare,
   liked,
 }: Props) => {
-  const [openBooking, setOpenBooking] = useState(false);
+  const navigate = useNavigate();
+  const [openBooking, setOpenBooking] = useState(initialOpenBooking);
   const [bookingData, setBookingData] = useState<BookingData | null>(null);
-  const [showPayment, setShowPayment] = useState(false);
-  const [activeImage, setActiveImage] = useState(0);
-  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [showReview, setShowReview] = useState(false);
+  const [confirmingBooking, setConfirmingBooking] = useState(false);
+
+  const providerInitials = (providerName || 'Proveedor')
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() || '')
+    .join('') || 'PR';
 
   const images = [
     ...(coverImageUrl ? [coverImageUrl] : []),
@@ -112,20 +126,16 @@ const ServiceDetailView = ({
       </div>
 
       <div className="px-4">
-        <div className="relative rounded-2xl overflow-hidden border border-border/60 shadow-sm">
-          {images.length > 0 ? (
-            <button
-              type="button"
-              className="block w-full"
-              onClick={() => setGalleryOpen(true)}
-            >
-              <img
-                src={images[activeImage] || images[0]}
-                alt={providerName || sector}
-                className="w-full h-56 object-cover"
-              />
-            </button>
-          ) : (
+        <DetailMediaCarousel
+          images={images}
+          alt={providerName || sector}
+          frameClassName="h-56"
+          badge={(
+            <span className="absolute left-3 top-3 z-10 rounded-full bg-primary px-3 py-1 text-xs font-extrabold text-primary-foreground shadow-sm">
+              Servicio
+            </span>
+          )}
+          emptyFallback={(
             <div className="flex h-56 w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-primary/25 border-border/60 bg-muted text-sm text-muted-foreground shadow-sm">
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
                 <Briefcase className="h-7 w-7 text-primary" />
@@ -133,24 +143,7 @@ const ServiceDetailView = ({
               <span className="font-extrabold text-foreground">Sin foto del servicio</span>
             </div>
           )}
-          <span className="absolute left-3 top-3 rounded-full bg-primary px-3 py-1 text-xs font-extrabold text-primary-foreground shadow-sm">
-            Servicio
-          </span>
-        </div>
-        {images.length > 1 && (
-          <div className="mt-2 flex gap-2 overflow-x-auto pb-1">
-            {images.map((url, i) => (
-              <button
-                key={url}
-                type="button"
-                onClick={() => setActiveImage(i)}
-                className={`h-14 w-14 shrink-0 overflow-hidden rounded-lg border-2 shadow-sm ${i === activeImage ? 'border-primary ring-2 ring-primary/20' : 'border-border/60'}`}
-              >
-                <img src={url} alt="" className="h-full w-full object-cover" />
-              </button>
-            ))}
-          </div>
-        )}
+        />
       </div>
 
       <div className="px-4 mt-4">
@@ -166,15 +159,6 @@ const ServiceDetailView = ({
             <MapPin className="h-3.5 w-3.5 shrink-0 text-primary/70" />
             {locationLabel}
           </p>
-        )}
-        {providerUserId && onOpenProvider && (
-          <button
-            type="button"
-            onClick={onOpenProvider}
-            className="mt-2 rounded-full px-2 py-0.5 text-xs font-extrabold text-primary hover:bg-primary/5 transition-colors"
-          >
-            Ver perfil del proveedor
-          </button>
         )}
 
         <DetailSocialActions
@@ -267,32 +251,88 @@ const ServiceDetailView = ({
             </div>
           )}
         </div>
+
+        {/* Perfil del Proveedor */}
+        <div>
+          <h3 className="mb-2 text-base font-bold text-foreground">Perfil del Proveedor</h3>
+          <button
+            type="button"
+            onClick={() => onOpenProvider?.()}
+            disabled={!onOpenProvider}
+            className="block w-full rounded-2xl border border-border/60 bg-card p-4 text-left shadow-sm transition hover:shadow-md active:scale-[0.99] disabled:cursor-default"
+            aria-label="Ver perfil del proveedor"
+          >
+            <div className="grid grid-cols-[auto_1fr] items-center gap-4">
+              <div className="flex flex-col items-center">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-lg font-bold text-primary">
+                  {providerInitials}
+                </div>
+                <p className="mt-2 text-sm font-bold text-foreground">{providerName || 'Proveedor'}</p>
+              </div>
+              <div className="flex flex-col items-end">
+                <p className="text-sm text-muted-foreground">Calificación</p>
+                <div className="mt-1 flex items-center gap-0.5">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <Star
+                      key={i}
+                      className={`h-4 w-4 ${i <= Math.round(rating) ? 'fill-primary text-primary' : 'text-primary'}`}
+                    />
+                  ))}
+                </div>
+                <div className="mt-3 grid w-full grid-cols-2 gap-6">
+                  <div className="text-center">
+                    <p className="text-lg font-bold text-foreground">{reviewCount > 0 ? reviewCount : '—'}</p>
+                    <p className="text-xs text-muted-foreground">Reseñas</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-lg font-bold text-foreground">{rating > 0 ? rating.toFixed(1) : 'Nuevo'}</p>
+                    <p className="text-xs text-muted-foreground">Calificación</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </button>
+        </div>
       </div>
 
       {/* Sticky CTA */}
-      {canReserve && (
+      {(canReserve || onEditService) && (
       <div className="fixed bottom-20 left-0 right-0 px-4 z-20">
-        <div className="mx-auto max-w-lg flex items-center gap-3 rounded-full bg-primary px-5 py-3 shadow-sm ring-2 ring-primary/20">
-          {cheapest && (
-            <div className="text-primary-foreground text-sm">
+        <div className="mx-auto max-w-lg flex items-center gap-2 rounded-full bg-primary px-4 py-3 shadow-sm ring-2 ring-primary/20">
+          {cheapest && canReserve && (
+            <div className="text-primary-foreground text-sm shrink-0">
               <p className="text-[10px] uppercase opacity-80">Desde</p>
               <p className="font-extrabold">
                 {cheapest.currency} {cheapest.cost.toLocaleString()}
               </p>
             </div>
           )}
-          <button
-            onClick={() => {
-              if (!liveBooking) {
-                onRequireLogin?.();
-                return;
-              }
-              setOpenBooking(true);
-            }}
-            className="ml-auto rounded-full bg-primary-foreground px-5 py-2.5 text-sm font-extrabold text-primary shadow-sm"
-          >
-            {liveBooking ? 'Reservar servicio' : 'Inicia sesión para reservar'}
-          </button>
+          <div className="ml-auto flex items-center gap-2">
+            {onEditService && (
+              <button
+                type="button"
+                onClick={onEditService}
+                className="rounded-full border-2 border-primary-foreground/80 bg-transparent px-4 py-2.5 text-sm font-extrabold text-primary-foreground"
+              >
+                Editar
+              </button>
+            )}
+            {canReserve && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (!liveBooking) {
+                    onRequireLogin?.();
+                    return;
+                  }
+                  setOpenBooking(true);
+                }}
+                className="rounded-full bg-primary-foreground px-5 py-2.5 text-sm font-extrabold text-primary shadow-sm"
+              >
+                {liveBooking ? 'Contratar servicio' : 'Inicia sesión'}
+              </button>
+            )}
+          </div>
         </div>
       </div>
       )}
@@ -301,31 +341,66 @@ const ServiceDetailView = ({
         open={openBooking}
         onOpenChange={setOpenBooking}
         service={service}
+        serviceDisplayName={providerName}
         liveBooking={liveBooking}
         onProceedToPayment={(data) => {
           setBookingData(data);
           setOpenBooking(false);
-          setShowPayment(true);
+          setShowReview(true);
         }}
       />
-      <PaymentGatewaySheet
-        open={showPayment}
-        onOpenChange={(o) => { setShowPayment(o); if (!o) setBookingData(null); }}
+      <BookingReviewSheet
+        open={showReview}
+        onOpenChange={(open) => {
+          setShowReview(open);
+          if (!open) setBookingData(null);
+        }}
         booking={bookingData}
-        sellerName={providerName}
-        onSuccess={() => {
-          toast.success('¡Reserva confirmada!');
-          setShowPayment(false);
-          setBookingData(null);
+        address={locationLabel || service.locationLabel}
+        defaultBuyer={liveBooking?.buyer}
+        confirming={confirmingBooking}
+        onBack={() => {
+          setShowReview(false);
+          setOpenBooking(true);
         }}
-      />
-
-      <MediaGalleryLightbox
-        images={images}
-        initialIndex={activeImage}
-        open={galleryOpen}
-        onClose={() => setGalleryOpen(false)}
-        title={providerName || sector}
+        onConfirm={(buyer) => {
+          if (!liveBooking?.serviceId || !liveBooking.userId || !bookingData) {
+            onRequireLogin?.();
+            return;
+          }
+          setConfirmingBooking(true);
+          void createServiceBooking({
+            serviceId: liveBooking.serviceId,
+            userId: liveBooking.userId,
+            startDate: bookingData.startDate,
+            endDate: bookingData.endDate,
+            additionalServices: bookingData.additionalServices,
+            activityKey: bookingData.activityKey,
+            activityName: bookingData.activityName,
+            buyer,
+          })
+            .then((result) => {
+              setShowReview(false);
+              setBookingData(null);
+              buildServicePaymentNavigation(navigate, {
+                orderId: result.orderId,
+                bookingId: result.bookingId,
+                totalAmount: result.total_amount,
+                expiredAtTs: result.expired_at_ts,
+                startDate: bookingData.startDate,
+                endDate: bookingData.endDate,
+                serviceId: liveBooking.serviceId,
+                serviceName: providerName || bookingData.serviceName,
+                additionalServices: bookingData.additionalServices,
+                days: bookingData.days,
+                currency: bookingData.currency,
+              });
+            })
+            .catch((err) => {
+              toast.error(err instanceof Error ? err.message : 'No se pudo crear la reserva');
+            })
+            .finally(() => setConfirmingBooking(false));
+        }}
       />
     </div>
   );

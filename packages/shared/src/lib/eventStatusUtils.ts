@@ -1,5 +1,23 @@
 import { parseEventDate } from './eventDateUtils';
 
+/** Estatus que indican evento publicado y visible en feed/descubre/mapa. */
+export const PUBLISHED_EVENT_STATUSES = new Set([
+  'activo',
+  'active',
+  'published',
+  'publicado',
+  '1',
+  'en_ejecucion',
+  'en ejecucion',
+  'ejecucion',
+]);
+
+export function isPublishedEventStatus(estatus?: string | null): boolean {
+  const normalized = String(estatus || '').trim().toLowerCase();
+  if (!normalized) return false;
+  return PUBLISHED_EVENT_STATUSES.has(normalized);
+}
+
 export type DisplayEventStatus =
   | 'activo'
   | 'inactivo'
@@ -64,7 +82,7 @@ export function resolveDisplayEventStatus(input: {
   }
   if (['cancelado', 'cancelled', 'canceled'].includes(normalized)) return 'cancelado';
   if (['reagendado', 'rescheduled'].includes(normalized)) return 'reagendado';
-  if (['inactivo', 'inactive', 'draft'].includes(normalized)) return 'inactivo';
+  if (['inactivo', 'inactive', 'draft', 'borrador'].includes(normalized)) return 'inactivo';
   if (['finalizado', 'finished', 'completed'].includes(normalized)) return 'finalizado';
 
   if (isEventPast(input)) return 'finalizado';
@@ -98,10 +116,30 @@ export function mapDiscoverEventBadge(input: {
   horaFin?: string;
 }): string {
   const status = resolveDisplayEventStatus(input);
-  if (input.estatus === 'draft' || input.estatus === 'inactivo' && status === 'inactivo') {
+  if (input.estatus === 'draft' || input.estatus === 'inactivo' || String(input.estatus || '').toLowerCase() === 'borrador') {
     return 'borrador';
-  }
-  if (status === 'finalizado') return 'finalizado';
+  }  if (status === 'finalizado') return 'finalizado';
   if (status === 'inactivo') return 'inactivo';
   return 'activo';
+}
+
+export function isDiscoverableFeedEvent(input: {
+  estatus?: string;
+  fechaIni?: string;
+  fechaFin?: string;
+  horaIni?: string;
+  horaFin?: string;
+  deletedAt?: string;
+}): boolean {
+  if (String(input.estatus || '').trim().toUpperCase() === 'DELETED' || input.deletedAt) {
+    return false;
+  }
+  if (!isPublishedEventStatus(input.estatus)) {
+    return false;
+  }
+  const badge = mapDiscoverEventBadge(input);
+  if (['finalizado', 'cancelado', 'borrador', 'inactivo'].includes(badge)) {
+    return false;
+  }
+  return true;
 }

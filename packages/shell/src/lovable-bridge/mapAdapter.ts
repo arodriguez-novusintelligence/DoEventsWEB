@@ -1,6 +1,22 @@
 import type { FeedEventItem, NearbyServiceProvider, NearbyVenue } from '@doevents/shared';
-import { resolveDisplayLocation, resolveEventImageUrl } from '@doevents/shared';
-import { resolveImageUrl } from '@doevents/shared';
+import {
+  extractVenueImageUrls,
+  isDiscoverableFeedEvent,
+  resolveDisplayLocation,
+  resolveEventImageUrl,
+  resolveImageUrl,
+} from '@doevents/shared';
+import { getEventCoordinates, getServiceCoordinates, getVenueCoordinates } from './mapGeoUtils';
+
+function resolveVenueMapImage(venue: NearbyVenue): string {
+  const fromRecord = extractVenueImageUrls(venue as unknown as Record<string, unknown>);
+  const candidate = venue.mainImage || venue.imageUrls?.[0] || fromRecord[0];
+  return resolveImageUrl(candidate) || '';
+}
+
+function resolveServiceMapImage(service: NearbyServiceProvider): string {
+  return resolveEventImageUrl(resolveImageUrl(service.profileImageUrl || service.gallery?.[0]));
+}
 
 export interface MapItemData {
   id: string;
@@ -18,26 +34,12 @@ export interface MapItemData {
   refId?: string;
 }
 
-const DEFAULT_CENTER = { lat: 6.2442, lng: -75.5812 };
-
-function offsetPosition(index: number, total: number, base = DEFAULT_CENTER): { lat: number; lng: number } {
-  const angle = (index / Math.max(total, 1)) * Math.PI * 2;
-  const radius = 0.008 + (index % 3) * 0.004;
-  return {
-    lat: base.lat + Math.sin(angle) * radius,
-    lng: base.lng + Math.cos(angle) * radius,
-  };
-}
-
 export function feedEventsToMapItems(events: FeedEventItem[]): MapItemData[] {
   return events
-    .filter((e) => e.id && e.nombre)
-    .map((event, index) => {
-      const lat = event.latitude ?? event.ubicacion?.latitude;
-      const lng = event.longitude ?? event.ubicacion?.longitude;
-      const pos = lat != null && lng != null
-        ? { lat, lng }
-        : offsetPosition(index, events.length);
+    .filter((e) => e.id && e.nombre && isDiscoverableFeedEvent(e))
+    .map((event) => {
+      const coords = getEventCoordinates(event);
+      if (!coords) return null;
       const location = resolveDisplayLocation({
         direccion: event.direccion,
         ciudad: event.ciudad,
@@ -48,9 +50,9 @@ export function feedEventsToMapItems(events: FeedEventItem[]): MapItemData[] {
         category: 'eventos' as const,
         title: event.nombre,
         subtitle: event.fechaIni || event.ciudad || 'Evento',
-        image: resolveEventImageUrl(event.imagen) || '',
-        lat: pos.lat,
-        lng: pos.lng,
+        image: resolveEventImageUrl(event.imagen),
+        lat: coords.lat,
+        lng: coords.lng,
         date: event.fechaIni,
         timeRange: event.horaIni && event.horaFin
           ? `${event.horaIni} - ${event.horaFin}`
@@ -58,18 +60,16 @@ export function feedEventsToMapItems(events: FeedEventItem[]): MapItemData[] {
         location,
         refId: event.id,
       };
-    });
+    })
+    .filter((item): item is MapItemData => item != null);
 }
 
 export function venuesToMapItems(venues: NearbyVenue[]): MapItemData[] {
   return venues
     .filter((v) => v.venueId)
-    .map((venue, index) => {
-      const lat = venue.latitude;
-      const lng = venue.longitude;
-      const pos = lat != null && lng != null
-        ? { lat, lng }
-        : offsetPosition(index, venues.length);
+    .map((venue) => {
+      const coords = getVenueCoordinates(venue);
+      if (!coords) return null;
       const location = resolveDisplayLocation({
         address: venue.address,
         city: venue.city,
@@ -79,36 +79,35 @@ export function venuesToMapItems(venues: NearbyVenue[]): MapItemData[] {
         category: 'lugares' as const,
         title: venue.name,
         subtitle: venue.type || venue.tags || 'Lugar para alquilar',
-        image: resolveImageUrl(venue.mainImage || venue.imageUrls?.[0]) || '',
-        lat: pos.lat,
-        lng: pos.lng,
+        image: resolveVenueMapImage(venue),
+        lat: coords.lat,
+        lng: coords.lng,
         location,
         refId: venue.venueId,
       };
-    });
+    })
+    .filter((item): item is MapItemData => item != null);
 }
 
 export function servicesToMapItems(services: NearbyServiceProvider[]): MapItemData[] {
   return services
     .filter((s) => s.serviceId)
-    .map((service, index) => {
-      const lat = service.latitude;
-      const lng = service.longitude;
-      const pos = lat != null && lng != null
-        ? { lat, lng }
-        : offsetPosition(index, services.length);
+    .map((service) => {
+      const coords = getServiceCoordinates(service);
+      if (!coords) return null;
       const sector = service.category || service.role || 'Servicio';
       return {
         id: `service-${service.serviceId}`,
         category: 'servicios' as const,
         title: service.name || sector,
         subtitle: sector,
-        image: resolveImageUrl(service.profileImageUrl || service.gallery?.[0]) || '',
-        lat: pos.lat,
-        lng: pos.lng,
+        image: resolveServiceMapImage(service),
+        lat: coords.lat,
+        lng: coords.lng,
         location: resolveDisplayLocation({ city: service.city }),
         rating: service.rating,
         refId: service.serviceId,
       };
-    });
+    })
+    .filter((item): item is MapItemData => item != null);
 }

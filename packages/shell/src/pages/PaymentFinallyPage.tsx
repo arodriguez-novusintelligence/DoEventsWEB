@@ -6,12 +6,19 @@ import {
   confirmTicketPayment,
   fetchOrderById,
   getWompiTransaction,
-  invalidateProfilePageCache,
+  invalidateProfileHeaderCache,
   invalidateEventsCache,
+  invalidateDiscoverCache,
+  isAuthenticated,
   Loader,
+  redeemEventPromoCode,
   RootState,
+  resolveWompiPaymentError,
   useToast,
 } from '@doevents/shared';
+import { loadOrderIsReferred } from '@lovable/components/checkout/OrganizerPaymentAuthView';
+
+const PENDING_PAYMENT_REF_KEY = 'doevents_pending_payment_ref';
 
 export const PaymentFinallyPage: React.FC = () => {
   const navigate = useNavigate();
@@ -22,14 +29,33 @@ export const PaymentFinallyPage: React.FC = () => {
   const [message, setMessage] = useState('Procesando tu pago…');
 
   useEffect(() => {
-    const reference = params.get('reference') || params.get('id') || '';
-    const wompiStatus = (params.get('status') || '').toUpperCase();
-    const transactionId = params.get('transaction_id') || params.get('id_tx') || '';
+    const reference = params.get('reference')
+      || params.get('order_id')
+      || params.get('orderId')
+      || sessionStorage.getItem(PENDING_PAYMENT_REF_KEY)
+      || '';
+    const wompiStatus = (
+      params.get('status')
+      || params.get('transaction_status')
+      || params.get('payment_status')
+      || ''
+    ).toUpperCase();
+    const transactionId = params.get('transaction_id')
+      || params.get('id_tx')
+      || params.get('transactionId')
+      || params.get('id')
+      || '';
     const freeCheckout = params.get('freeCheckout') === 'true';
 
     if (!reference) {
       setStatus('error');
       setMessage('No se recibió la referencia del pago.');
+      return;
+    }
+
+    if (!isAuthenticated()) {
+      setStatus('error');
+      setMessage('Inicia sesión para confirmar tu pago.');
       return;
     }
 
@@ -57,14 +83,84 @@ export const PaymentFinallyPage: React.FC = () => {
             transactionId: transactionId || undefined,
             status: wompiStatus || undefined,
           });
-          if (userId) invalidateProfilePageCache(userId);
+          if (userId) invalidateProfileHeaderCache(userId);
 
           setStatus('success');
           setMessage('¡Plan PRO activado! Ya puedes disfrutar de todos los beneficios.');
           showToast('Plan PRO activado correctamente', 'success');
+          sessionStorage.removeItem(PENDING_PAYMENT_REF_KEY);
 
           window.setTimeout(() => {
             navigate('/profile/plan/detail', { replace: true });
+          }, 1500);
+          return;
+        }
+
+        const isVenueRental = reference.startsWith('VEN-');
+        const isServiceRental = reference.startsWith('SVC-');
+
+        if (isVenueRental) {
+          const approved = freeCheckout
+            || wompiStatus === 'APPROVED'
+            || wompiStatus === 'PAID'
+            || !wompiStatus;
+
+          if (!approved) {
+            setStatus('error');
+            setMessage('El pago de la reserva no fue aprobado. Intenta nuevamente.');
+            return;
+          }
+
+          await confirmTicketPayment(reference, userId, {
+            transactionId: transactionId || undefined,
+            status: wompiStatus || undefined,
+            freeCheckout,
+          });
+          if (userId) invalidateProfileHeaderCache(userId);
+
+          setStatus('success');
+          setMessage('¡Pago confirmado! Tu reserva del lugar está lista.');
+          showToast('Reserva confirmada correctamente', 'success');
+          sessionStorage.removeItem(PENDING_PAYMENT_REF_KEY);
+
+          window.setTimeout(() => {
+            navigate('/purchases/venues', {
+              replace: true,
+              state: { from: 'payment-success', orderId: reference },
+            });
+          }, 1500);
+          return;
+        }
+
+        if (isServiceRental) {
+          const approved = freeCheckout
+            || wompiStatus === 'APPROVED'
+            || wompiStatus === 'PAID'
+            || !wompiStatus;
+
+          if (!approved) {
+            setStatus('error');
+            setMessage('El pago de la reserva no fue aprobado. Intenta nuevamente.');
+            return;
+          }
+
+          await confirmTicketPayment(reference, userId, {
+            transactionId: transactionId || undefined,
+            status: wompiStatus || undefined,
+            freeCheckout,
+          });
+          if (userId) invalidateProfileHeaderCache(userId);
+
+          setStatus('success');
+          setMessage('¡Pago confirmado! Tu reserva del servicio está lista.');
+          showToast('Reserva de servicio confirmada correctamente', 'success');
+          sessionStorage.removeItem(PENDING_PAYMENT_REF_KEY);
+
+          window.setTimeout(() => {
+            navigate('/purchases/services', {
+              replace: true,
+              state: { from: 'payment-success', orderId: reference },
+            });
           }, 1500);
           return;
         }
@@ -80,16 +176,36 @@ export const PaymentFinallyPage: React.FC = () => {
           return;
         }
 
-        await confirmTicketPayment(reference);
+        await confirmTicketPayment(reference, userId, {
+          transactionId: transactionId || undefined,
+          status: wompiStatus || undefined,
+          freeCheckout,
+          isReferred: loadOrderIsReferred(reference),
+        });
         const order = await fetchOrderById(reference);
+        const meta = order?.metadata as {
+          eventId?: string;
+          promoCode?: string;
+          promoDiscount?: number;
+        } | undefined;
+        const eventId = meta?.eventId || (order as { event_id?: string } | undefined)?.event_id;
+        if (eventId && meta?.promoCode) {
+          await redeemEventPromoCode(eventId, meta.promoCode, {
+            orderId: reference,
+            discount: meta.promoDiscount,
+            total: order?.total_amount,
+          }).catch(() => undefined);
+        }
         if (userId) {
-          invalidateProfilePageCache(userId);
           invalidateEventsCache();
+          invalidateDiscoverCache();
+          invalidateProfileHeaderCache(userId);
         }
 
         setStatus('success');
         setMessage('¡Pago confirmado! Tus boletas están listas.');
         showToast('Pago confirmado correctamente', 'success');
+        sessionStorage.removeItem(PENDING_PAYMENT_REF_KEY);
 
         window.setTimeout(() => {
           navigate('/tickets', {
@@ -99,13 +215,13 @@ export const PaymentFinallyPage: React.FC = () => {
         }, 1500);
       } catch (err) {
         setStatus('error');
-        setMessage(err instanceof Error ? err.message : 'Error al confirmar el pago');
+        setMessage(resolveWompiPaymentError(err));
       }
     })();
   }, [params, navigate, showToast, userId]);
 
   return (
-    <div className="flex min-h-[60vh] flex-col items-center justify-center px-6 text-center">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-[#EEF0FB] px-6 text-center">
       {status === 'loading' ? <Loader /> : null}
       <h1 className="mt-4 text-xl font-bold text-foreground">
         {status === 'success' ? 'Pago exitoso' : status === 'error' ? 'Pago no completado' : 'Procesando'}
@@ -115,9 +231,28 @@ export const PaymentFinallyPage: React.FC = () => {
         <button
           type="button"
           className="mt-6 rounded-full bg-primary px-6 py-2 text-sm font-semibold text-primary-foreground"
-          onClick={() => navigate('/tickets')}
+          onClick={() => {
+            const reference = params.get('reference')
+              || params.get('order_id')
+              || sessionStorage.getItem(PENDING_PAYMENT_REF_KEY)
+              || '';
+            if (!isAuthenticated()) {
+              const returnUrl = `${window.location.pathname}${window.location.search}`;
+              navigate(`/auth/login?returnUrl=${encodeURIComponent(returnUrl)}`, { replace: true });
+              return;
+            }
+            if (reference.startsWith('VEN-')) navigate('/purchases/venues');
+            else if (reference.startsWith('SVC-')) navigate('/purchases/services');
+            else navigate('/tickets');
+          }}
         >
-          Ir a mis boletos
+          {!isAuthenticated()
+            ? 'Iniciar sesión'
+            : params.get('reference')?.startsWith('VEN-')
+              ? 'Ir a mis reservas de lugares'
+              : params.get('reference')?.startsWith('SVC-')
+                ? 'Ir a mis reservas de servicios'
+                : 'Ir a mis boletos'}
         </button>
       )}
     </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import GlobalSearchView from '@lovable/components/feed/GlobalSearchView';
 
 type SearchLocationState = {
@@ -9,13 +9,11 @@ type SearchLocationState = {
 
 /** Búsqueda global — delega en componente Lovable empalado (eventos, usuarios, publicaciones). */
 export const SearchEventsPage: React.FC = () => {
-  const navigate = useNavigate();
   const location = useLocation();
   const state = (location.state as SearchLocationState | null) ?? {};
   return (
     <div className="min-h-screen bg-secondary pb-24">
       <GlobalSearchView
-        onBack={() => navigate(-1)}
         initialQuery={state.q}
         initialTab={state.tab ?? (state.q ? 'events' : undefined)}
       />

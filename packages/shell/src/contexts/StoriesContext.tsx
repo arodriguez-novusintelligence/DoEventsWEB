@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { fetchNearbyStories, fetchUserStories, getStoredUserLocation } from '@doevents/shared';
+import { fetchNearbyStories, fetchUserStories, getStoredUserLocation, userIdsMatch } from '@doevents/shared';
 
 interface StoriesContextValue {
   activeAuthorIds: Set<string>;
@@ -85,7 +85,14 @@ export const StoriesProvider: React.FC<StoriesProviderProps> = ({ children, curr
 
   const value = useMemo<StoriesContextValue>(() => ({
     activeAuthorIds,
-    hasActiveStory: (userId: string) => activeAuthorIds.has(userId),
+    hasActiveStory: (userId: string) => {
+      if (!userId) return false;
+      if (activeAuthorIds.has(userId)) return true;
+      for (const id of activeAuthorIds) {
+        if (userIdsMatch(id, userId)) return true;
+      }
+      return false;
+    },
     refreshStories,
     loading,
     loadError,

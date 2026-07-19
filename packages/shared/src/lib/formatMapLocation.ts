@@ -105,7 +105,31 @@ export function buildLabelFromNominatim(
   return '—';
 }
 
+export function formatGpsLocationLabel(parts: {
+  label?: string | null;
+  city?: string | null;
+  departamento?: string | null;
+  lat: number;
+  lng: number;
+}): string {
+  const direct = (parts.label || '').trim();
+  if (direct && direct !== '—' && !isPlaceholderLocation(direct)) {
+    return direct;
+  }
+  const built = formatMapLocationLabel({
+    city: parts.city,
+    departamento: parts.departamento,
+  });
+  if (built !== '—') return built;
+  return `${parts.lat.toFixed(4)}, ${parts.lng.toFixed(4)}`;
+}
+
 export function resolveDisplayLocation(parts: MapLocationParts): string {
+  const compositeLabel = [parts.label, parts.locationLabel]
+    .map((value) => (value || '').trim())
+    .find((value) => value && !isPlaceholderLocation(value) && value.includes(','));
+  if (compositeLabel) return compositeLabel;
+
   const city = parts.ciudad || parts.city;
   const departamento = parts.departamento || parts.department;
   const country = parts.pais || parts.country;

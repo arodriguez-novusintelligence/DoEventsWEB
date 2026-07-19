@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {
   createServiceProvider,
@@ -9,9 +9,13 @@ import {
   checkCanPublishService,
   fetchUserById,
   getStoredUserLocation,
+  invalidateDiscoverCache,
+  invalidateProfileHeaderCache,
+  invalidateServicesCache,
   resolveDisplayLocation,
   resolveImageUrl,
   RootState,
+  syncServicePromoCodes,
   uploadServiceProviderImage,
   uploadProfileGalleryImages,
   useToast,
@@ -21,7 +25,7 @@ import type { ServiceFormData } from '@lovable/data/servicesData';
 import { initialFormData } from '@lovable/data/servicesData';
 import { finishPublishAndGoToFeed } from '../lovable-bridge/feedPublishBridge';
 import { confirmLeaveWithSave, isJsonDifferent } from '../lib/leaveConfirm';
-import { saveLocalWizardDraft } from '../lib/wizardDraftBridge';
+import { saveLocalWizardDraft, loadLocalWizardDraft, clearLocalWizardDraft } from '../lib/wizardDraftBridge';
 import type { AIEventDraft } from '@doevents/shared';
 
 function buildServiceFormFromDraft(draft: AIEventDraft): ServiceFormData {
@@ -97,6 +101,7 @@ function formToApiPayload(
 
 export const ServiceCreatePage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { showToast } = useToast();
   const userId = useSelector((s: RootState) => s.auth.idUser);
   const publishLock = useRef(false);
@@ -104,6 +109,14 @@ export const ServiceCreatePage: React.FC = () => {
   const [initialForm, setInitialForm] = React.useState<ServiceFormData | undefined>();
 
   React.useEffect(() => {
+    const duplicate = (location.state as { duplicateFrom?: ServiceFormData } | null)?.duplicateFrom;
+    if (duplicate) {
+      setInitialForm({
+        ...duplicate,
+        serviceId: undefined,
+      });
+      return;
+    }
     try {
       const raw = sessionStorage.getItem('doevents.ai-service-draft');
       if (!raw) return;
@@ -114,7 +127,15 @@ export const ServiceCreatePage: React.FC = () => {
     } catch {
       /* ignore malformed draft */
     }
-  }, [showToast]);
+  }, [location.state, showToast]);
+
+  React.useEffect(() => {
+    if (!userId || initialForm) return;
+    const draft = loadLocalWizardDraft<ServiceFormData>(userId, 'service');
+    if (!draft?.sectors?.length && !draft?.description?.trim()) return;
+    setInitialForm(draft);
+    showToast('Reanudamos tu borrador local de servicio', 'success');
+  }, [userId, initialForm, showToast]);
 
   React.useEffect(() => {
     if (!userId) return;
@@ -170,10 +191,21 @@ export const ServiceCreatePage: React.FC = () => {
       }
 
       const service = await createServiceProvider(formToApiPayload(form, userId, imageUrl, galleryUrls));
+      invalidateServicesCache();
+      invalidateDiscoverCache();
+      if (userId) invalidateProfileHeaderCache(userId);
+      if (form.promoCodes?.length) {
+        try {
+          await syncServicePromoCodes(service.serviceId, form.promoCodes);
+        } catch {
+          showToast('Servicio publicado. Los códigos promo no se sincronizaron.', 'error');
+        }
+      }
       showToast('¡Servicio publicado en el Feed!', 'success');
+      if (userId) clearLocalWizardDraft(userId, 'service');
       await finishPublishAndGoToFeed(service.serviceId, {
         title: form.sectors[0] || form.sectorOther || 'Servicio',
-        onNavigate: (state) => navigate('/', { replace: true, state }),
+        navigate,
       });
     } finally {
       publishLock.current = false;

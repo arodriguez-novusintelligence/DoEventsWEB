@@ -27,6 +27,7 @@ export interface ApiEndpoints {
   userPreferences: string;
   eventsFeed: string;
   getUserEvents: string;
+  getUserEventsStats: string;
   getEvent: string;
   createEvent: string;
   publishEvent: string;
@@ -144,6 +145,7 @@ const buildEndpoints = (baseUrl: string): ApiEndpoints => ({
   userPreferences: `${baseUrl}/auth/userPreference`,
   eventsFeed: `${baseUrl}/events-feed/eventsFeed`,
   getUserEvents: `${baseUrl}/events/getUserEvents`,
+  getUserEventsStats: `${baseUrl}/events/getUserEventsStats`,
   getEvent: `${baseUrl}/events/getEvents`,
   createEvent: `${baseUrl}/events/createEvent`,
   publishEvent: `${baseUrl}/events/publishEvent`,

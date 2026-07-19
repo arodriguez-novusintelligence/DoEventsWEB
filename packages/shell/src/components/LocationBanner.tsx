@@ -62,7 +62,7 @@ export const LocationBanner: React.FC<LocationBannerProps> = ({
     try {
       const resolved = await resolveManualUserLocation(city);
       if (!resolved) {
-        showToast('No pudimos interpretar esa ubicación. Prueba: Girardot, Melgar, Bogotá…', 'error');
+        showToast('No pudimos interpretar esa ubicación. Incluye ciudad y país.', 'error');
         return;
       }
       onLocationResolved(resolved);

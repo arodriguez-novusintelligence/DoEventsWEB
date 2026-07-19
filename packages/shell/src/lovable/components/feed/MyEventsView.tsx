@@ -189,7 +189,7 @@ const Card = ({
 const ACTIONS_BY_STATUS: Record<MyEventStatus, ActionKey[]> = {
   activo: ['editar', 'cancelar', 'reprogramar', 'invitar', 'eliminar', 'duplicar'],
   borrador: ['editar', 'eliminar'],
-  finalizado: ['duplicar', 'eliminar'],
+  finalizado: ['duplicar'],
   reagendado: ['duplicar'],
   cancelado: ['duplicar'],
   inactivo: ['editar', 'eliminar', 'duplicar'],
@@ -236,13 +236,7 @@ const MyEventsView = ({
   };
 
   const availableActions = selected
-    ? ACTIONS.filter((a) => {
-        const allowed = ACTIONS_BY_STATUS[selected.status];
-        if (!allowed.includes(a.key)) return false;
-        if (a.key === 'editar' && selected.canEdit === false) return false;
-        if (a.key === 'cancelar' && selected.canCancel === false) return false;
-        return true;
-      })
+    ? ACTIONS.filter((a) => ACTIONS_BY_STATUS[selected.status].includes(a.key))
     : [];
 
   const reviewsList = reviewsFor?.reviews ?? [];

@@ -1,7 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Calendar, CalendarDays, Clock, Pencil, Plus, User, X } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
-import { Input } from '@lovable/components/ui/input';
 import {
   EventActivity,
   EventDay,
@@ -9,25 +8,78 @@ import {
   EventHost,
 } from '@lovable/data/eventFormData';
 import UserSearchPickerModal, { type UserSearchResult } from '../../../components/UserSearchPickerModal';
+import { UserAvatar } from '@doevents/shared';
 
 interface Props {
   formData: EventFormData;
   updateForm: (partial: Partial<EventFormData>) => void;
 }
 
-const newActivity = (): EventActivity => ({
-  id: `act-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-  startTime: '17:00',
-  endTime: '17:00',
+const newId = (prefix: string) =>
+  `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+
+const addCalendarDays = (isoDate: string, days: number): string => {
+  const d = new Date(`${isoDate}T12:00:00`);
+  if (Number.isNaN(d.getTime())) return isoDate;
+  d.setDate(d.getDate() + days);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+};
+
+const enumerateDatesInclusive = (startDate: string, endDate: string): string[] => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(startDate)) return [];
+  const end = /^\d{4}-\d{2}-\d{2}$/.test(endDate) && endDate >= startDate
+    ? endDate
+    : startDate;
+  const dates: string[] = [];
+  let cursor = startDate;
+  let guard = 0;
+  while (cursor <= end && guard < 31) {
+    dates.push(cursor);
+    cursor = addCalendarDays(cursor, 1);
+    guard += 1;
+  }
+  return dates.length ? dates : [startDate];
+};
+
+const formatDisplayDate = (isoDate: string): string => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) return isoDate;
+  const d = new Date(`${isoDate}T12:00:00`);
+  if (Number.isNaN(d.getTime())) return isoDate;
+  return d.toLocaleDateString('es-CO', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+};
+
+const newActivity = (startTime?: string, endTime?: string): EventActivity => ({
+  id: newId('act'),
+  startTime: startTime?.trim() || '17:00',
+  endTime: endTime?.trim() || startTime?.trim() || '17:00',
   description: '',
 });
 
-const newDay = (idx: number): EventDay => ({
-  id: `day-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-  name: `Día ${idx}`,
-  date: '',
-  activities: [newActivity()],
-});
+const buildDaysFromEventDates = (
+  startDate: string,
+  endDate: string,
+  startTime: string,
+  endTime: string,
+): EventDay[] => {
+  const dates = startDate.trim()
+    ? enumerateDatesInclusive(startDate.trim(), (endDate || startDate).trim())
+    : [''];
+
+  return dates.map((date, idx) => ({
+    id: newId('day'),
+    name: `Día ${idx + 1}`,
+    date,
+    activities: [newActivity(startTime, endTime)],
+  }));
+};
 
 const isTimeRangeValid = (start: string, end: string): boolean => {
   if (!start || !end) return true;
@@ -35,25 +87,89 @@ const isTimeRangeValid = (start: string, end: string): boolean => {
 };
 
 const StepAgenda = ({ formData, updateForm }: Props) => {
-  const days: EventDay[] = formData.agenda?.length
-    ? formData.agenda
-    : [newDay(1)];
-
-  const [selectedDayId, setSelectedDayId] = useState<string>(days[0].id);
+  const [selectedDayId, setSelectedDayId] = useState<string>('');
   const [editingDayId, setEditingDayId] = useState<string | null>(null);
   const [pickerActivityId, setPickerActivityId] = useState<string | null>(null);
 
+  // Prediligenciar agenda con las fechas/horas del paso de creación del evento.
+  useEffect(() => {
+    const startDate = formData.startDate?.trim() || '';
+    const endDate = formData.endDate?.trim() || startDate;
+    const startTime = formData.startTime?.trim() || '';
+    const endTime = formData.endTime?.trim() || '';
+    const agenda = formData.agenda ?? [];
 
+    if (!agenda.length) {
+      const seeded = buildDaysFromEventDates(startDate, endDate, startTime, endTime);
+      updateForm({ agenda: seeded });
+      setSelectedDayId(seeded[0]?.id || '');
+      return;
+    }
 
+    // Si hay un solo día sin fecha y el evento ya tiene fecha, rellenarla.
+    if (
+      agenda.length === 1
+      && !agenda[0].date?.trim()
+      && startDate
+    ) {
+      const next = [{
+        ...agenda[0],
+        date: startDate,
+        activities: agenda[0].activities?.length
+          ? agenda[0].activities
+          : [newActivity(startTime, endTime)],
+      }];
+      updateForm({ agenda: next });
+      if (!selectedDayId) setSelectedDayId(next[0].id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.startDate, formData.endDate, formData.startTime, formData.endTime, formData.agenda?.length]);
+
+  const days: EventDay[] = formData.agenda?.length
+    ? formData.agenda
+    : buildDaysFromEventDates(
+      formData.startDate || '',
+      formData.endDate || '',
+      formData.startTime || '',
+      formData.endTime || '',
+    );
+
+  useEffect(() => {
+    if (!selectedDayId && days[0]?.id) {
+      setSelectedDayId(days[0].id);
+    } else if (selectedDayId && !days.some((d) => d.id === selectedDayId) && days[0]) {
+      setSelectedDayId(days[0].id);
+    }
+  }, [days, selectedDayId]);
 
   const selectedDay = days.find((d) => d.id === selectedDayId) ?? days[0];
+
+  const eventDateHint = useMemo(() => {
+    const start = formData.startDate?.trim();
+    if (!start) return null;
+    const end = formData.endDate?.trim();
+    if (end && end !== start) {
+      return `${formatDisplayDate(start)} → ${formatDisplayDate(end)}`;
+    }
+    return formatDisplayDate(start);
+  }, [formData.startDate, formData.endDate]);
 
   const updateDays = (next: EventDay[]) => updateForm({ agenda: next });
 
   const addDay = () => {
-    const next = [...days, newDay(days.length + 1)];
+    const lastDate = days[days.length - 1]?.date;
+    const nextDate = lastDate && /^\d{4}-\d{2}-\d{2}$/.test(lastDate)
+      ? addCalendarDays(lastDate, 1)
+      : (formData.startDate || '');
+    const nextDay: EventDay = {
+      id: newId('day'),
+      name: `Día ${days.length + 1}`,
+      date: nextDate,
+      activities: [newActivity(formData.startTime, formData.endTime)],
+    };
+    const next = [...days, nextDay];
     updateDays(next);
-    setSelectedDayId(next[next.length - 1].id);
+    setSelectedDayId(nextDay.id);
   };
 
   const updateDay = (id: string, patch: Partial<EventDay>) =>
@@ -61,8 +177,16 @@ const StepAgenda = ({ formData, updateForm }: Props) => {
 
   const removeDay = (id: string) => {
     const next = days.filter((d) => d.id !== id);
-    updateDays(next.length ? next : [newDay(1)]);
-    if (selectedDayId === id && next[0]) setSelectedDayId(next[0].id);
+    const fallback = next.length
+      ? next
+      : buildDaysFromEventDates(
+        formData.startDate || '',
+        formData.endDate || formData.startDate || '',
+        formData.startTime || '',
+        formData.endTime || '',
+      );
+    updateDays(fallback);
+    if (selectedDayId === id && fallback[0]) setSelectedDayId(fallback[0].id);
   };
 
   const updateActivity = (
@@ -87,7 +211,12 @@ const StepAgenda = ({ formData, updateForm }: Props) => {
   const addActivity = (dayId: string) => {
     updateDays(
       days.map((d) =>
-        d.id === dayId ? { ...d, activities: [...d.activities, newActivity()] } : d,
+        d.id === dayId
+          ? {
+              ...d,
+              activities: [...d.activities, newActivity(formData.startTime, formData.endTime)],
+            }
+          : d,
       ),
     );
   };
@@ -103,9 +232,11 @@ const StepAgenda = ({ formData, updateForm }: Props) => {
   };
 
   const pickerActivity = useMemo(() => {
-    if (!pickerActivityId) return null;
+    if (!pickerActivityId || !selectedDay) return null;
     return selectedDay.activities.find((a) => a.id === pickerActivityId) ?? null;
   }, [pickerActivityId, selectedDay]);
+
+  if (!selectedDay) return null;
 
   return (
     <div className="space-y-4">
@@ -120,6 +251,13 @@ const StepAgenda = ({ formData, updateForm }: Props) => {
           Itinerario de actividades.{' '}
           <span className="text-muted-foreground">(Opcional)</span>
         </p>
+        {eventDateHint && (
+          <p className="mt-2 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 text-xs font-semibold text-primary">
+            Fecha parametrizada del evento: {eventDateHint}
+            {formData.startTime ? ` · ${formData.startTime}` : ''}
+            {formData.endTime ? ` – ${formData.endTime}` : ''}
+          </p>
+        )}
       </div>
 
       {/* Days picker */}
@@ -197,6 +335,11 @@ const StepAgenda = ({ formData, updateForm }: Props) => {
             />
             <Calendar className="h-4 w-4 text-primary" />
           </div>
+          {selectedDay.date && (
+            <p className="mt-1 text-xs text-muted-foreground">
+              {formatDisplayDate(selectedDay.date)}
+            </p>
+          )}
         </div>
       </div>
 
@@ -352,21 +495,15 @@ const ResponsibleCard = ({
   onRemove: () => void;
 }) => (
   <div className="mt-2 flex items-center gap-3 rounded-2xl bg-secondary/60 p-3">
-    {host.avatar ? (
-      <img src={host.avatar} alt={host.name} className="h-10 w-10 rounded-full object-cover" />
-    ) : (
-      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-sm font-bold text-primary">
-        {host.initials || host.name.charAt(0)}
-      </div>
-    )}
+    <UserAvatar name={host.name} imageUrl={host.avatar} userId={host.id} size={40} />
     <div className="min-w-0 flex-1">
       <p className="truncate text-sm font-bold text-foreground">{host.name}</p>
       <p className="truncate text-xs text-muted-foreground">{host.email}</p>
     </div>
-    <button onClick={onChange} className="text-sm font-semibold text-primary">
+    <button type="button" onClick={onChange} className="text-sm font-semibold text-primary">
       Cambiar
     </button>
-    <button onClick={onRemove} className="text-muted-foreground">
+    <button type="button" onClick={onRemove} className="text-muted-foreground">
       <X className="h-4 w-4" />
     </button>
   </div>

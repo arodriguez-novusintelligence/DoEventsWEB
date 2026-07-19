@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { geocodePlaceQuery, reverseGeocodePlace, type GeocodedPlace } from '@doevents/shared';
+import { loadLeaflet } from '../../lib/loadLeaflet';
+
 interface EventLocationFieldProps {
   ubicacion: string;
   direccion: string;
@@ -60,48 +62,51 @@ export const EventLocationField: React.FC<EventLocationFieldProps> = ({
 
   useEffect(() => {
     if (!showMap) return;
-    const L = window.L as {
-      map: (el: HTMLElement, opts?: object) => { setView: (c: [number, number], z: number) => void; on: (e: string, cb: (ev: { latlng: { lat: number; lng: number } }) => void) => void };
-      tileLayer: (url: string, opts: object) => { addTo: (map: unknown) => void };
-      marker: (coords: [number, number], opts?: object) => { addTo: (map: unknown) => void; on: (e: string, cb: () => void) => void; getLatLng: () => { lat: number; lng: number }; setLatLng: (c: [number, number]) => void };
-    } | undefined;
-    if (!L || !mapRef.current) return;
+    let cancelled = false;
 
-    const start = coords || { lat: 4.711, lng: -74.0721 };
-    if (!mapInstance.current) {
-      const map = L.map(mapRef.current, { zoomControl: true });
-      map.setView([start.lat, start.lng], 12);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap',
-      }).addTo(map);
-      const marker = L.marker([start.lat, start.lng], { draggable: true });
-      marker.addTo(map);
-      marker.on('dragend', async () => {
-        const pos = marker.getLatLng();
-        const place = await reverseGeocodePlace(pos.lat, pos.lng);
-        if (place) applyPlace(place);
-        else onPlaceResolved({
-          lat: pos.lat,
-          lng: pos.lng,
-          label: `${pos.lat.toFixed(4)}, ${pos.lng.toFixed(4)}`,
+    void loadLeaflet().then((L) => {
+      if (cancelled || !mapRef.current) return;
+
+      const start = coords || { lat: 4.711, lng: -74.0721 };
+      if (!mapInstance.current) {
+        const map = L.map(mapRef.current, { zoomControl: true });
+        map.setView([start.lat, start.lng], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap',
+        }).addTo(map);
+        const marker = L.marker([start.lat, start.lng], { draggable: true });
+        marker.addTo(map);
+        marker.on('dragend', async () => {
+          const pos = marker.getLatLng();
+          const place = await reverseGeocodePlace(pos.lat, pos.lng);
+          if (place) applyPlace(place);
+          else onPlaceResolved({
+            lat: pos.lat,
+            lng: pos.lng,
+            label: `${pos.lat.toFixed(4)}, ${pos.lng.toFixed(4)}`,
+          });
         });
-      });
-      map.on('click', async (ev) => {
-        marker.setLatLng([ev.latlng.lat, ev.latlng.lng]);
-        const place = await reverseGeocodePlace(ev.latlng.lat, ev.latlng.lng);
-        if (place) applyPlace(place);
-        else onPlaceResolved({
-          lat: ev.latlng.lat,
-          lng: ev.latlng.lng,
-          label: `${ev.latlng.lat.toFixed(4)}, ${ev.latlng.lng.toFixed(4)}`,
+        map.on('click', async (ev) => {
+          marker.setLatLng([ev.latlng.lat, ev.latlng.lng]);
+          const place = await reverseGeocodePlace(ev.latlng.lat, ev.latlng.lng);
+          if (place) applyPlace(place);
+          else onPlaceResolved({
+            lat: ev.latlng.lat,
+            lng: ev.latlng.lng,
+            label: `${ev.latlng.lat.toFixed(4)}, ${ev.latlng.lng.toFixed(4)}`,
+          });
         });
-      });
-      mapInstance.current = map;
-      markerRef.current = marker;
-    } else if (coords) {
-      mapInstance.current.setView([coords.lat, coords.lng], 13);
-      markerRef.current?.setLatLng([coords.lat, coords.lng]);
-    }
+        mapInstance.current = map;
+        markerRef.current = marker;
+      } else if (coords) {
+        mapInstance.current.setView([coords.lat, coords.lng], 13);
+        markerRef.current?.setLatLng([coords.lat, coords.lng]);
+      }
+    }).catch(() => undefined);
+
+    return () => {
+      cancelled = true;
+    };
   }, [showMap, coords, applyPlace, onPlaceResolved]);
 
   useEffect(() => {

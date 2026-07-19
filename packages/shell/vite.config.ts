@@ -43,7 +43,25 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       target: 'esnext',
-      minify: mode === 'production',
+      minify: mode === 'development' ? false : 'esbuild',
+      cssMinify: mode !== 'development',
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (!id.includes('node_modules')) return;
+            if (id.includes('react-dom') || id.includes('react-router') || id.includes('/react/')) {
+              return 'vendor-react';
+            }
+            if (id.includes('@radix-ui') || id.includes('lucide-react')) {
+              return 'vendor-ui';
+            }
+            if (id.includes('date-fns') || id.includes('embla-carousel')) {
+              return 'vendor-misc';
+            }
+            return 'vendor';
+          },
+        },
+      },
     },
     define: {
       'import.meta.env.VITE_DOEVENTS_ENV': JSON.stringify(doeventsEnv),

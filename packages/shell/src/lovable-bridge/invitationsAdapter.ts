@@ -9,8 +9,19 @@ function mapInvitationStatus(status?: string): InvitationEvent['status'] {
   return 'pendiente';
 }
 
+/** Corrige firmas generadas con región incorrecta (sa-east-1) del bucket de eventos (us-east-1). */
+function normalizeInvitationImageUrl(url?: string | null): string {
+  const raw = String(url || '').trim();
+  if (!raw) return resolveEventImageUrl();
+  const fixed = raw.replace(
+    /\.s3\.sa-east-1\.amazonaws\.com\//i,
+    '.s3.us-east-1.amazonaws.com/',
+  );
+  return resolveEventImageUrl(fixed) || resolveEventImageUrl();
+}
+
 export function apiInvitationToLovable(inv: EventInvitation): InvitationEvent {
-  const image = resolveEventImageUrl(inv.eventImageSigned || undefined) || '';
+  const image = normalizeInvitationImageUrl(inv.eventImageSigned);
   return {
     id: inv.eventId || inv.invitationId || inv.id || '',
     title: inv.eventName || 'Evento',

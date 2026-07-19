@@ -8,6 +8,7 @@ export interface FeedAuthor {
 export interface FeedMedia {
   url: string;
   kind?: string;
+  mediaId?: string;
 }
 
 export interface FeedStats {
@@ -31,6 +32,7 @@ export interface FeedMention {
   userId?: string | null;
   eventId?: string | null;
   tag?: string;
+  username?: string | null;
   name?: string | null;
   title?: string | null;
   dateLabel?: string;
@@ -71,6 +73,9 @@ export interface FeedPublication {
   sourceImageUrl?: string | null;
   metadata?: Record<string, unknown>;
   isRepost?: boolean;
+  visibility?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface FeedHomeResponse {
@@ -115,6 +120,7 @@ export interface FeedStoryItem {
   mediaIds?: string[];
   latitude?: number;
   longitude?: number;
+  views?: number;
 }
 
 export interface FeedStoryRing {

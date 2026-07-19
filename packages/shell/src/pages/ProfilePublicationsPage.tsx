@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {
   deletePublication,
+  fetchPublicationById,
   fetchUserPublications,
-  resolvePublicationDetailPath,
+  resolvePublicationDetailPathAsync,
   RootState,
   type FeedPublication,
 } from '@doevents/shared';
@@ -62,8 +63,12 @@ export const ProfilePublicationsPage: React.FC = () => {
       onOpenDetail={(post) => {
         const pub = publications.find((p) => p.id === post.id);
         if (!pub) return;
-        const path = resolvePublicationDetailPath(pub);
-        if (path) navigate(path);
+        void resolvePublicationDetailPathAsync(pub, {
+          fetchPublication: (publicationId) => fetchPublicationById(publicationId, userId || undefined),
+        }).then((path) => {
+          if (path) navigate(path);
+          else if (post.detailPath) navigate(post.detailPath);
+        });
       }}
     />
   );

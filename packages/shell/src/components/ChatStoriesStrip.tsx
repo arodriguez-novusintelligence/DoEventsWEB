@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { userIdsMatch } from '@doevents/shared';
 import FeedStoriesSection from './FeedStoriesSection';
 import { CreateStorySheet } from './CreateStorySheet';
 import { StoryViewer } from './StoryViewer';
@@ -14,9 +16,19 @@ export const ChatStoriesStrip: React.FC<ChatStoriesStripProps> = ({
   currentUserName,
   currentUserAvatar,
 }) => {
+  const navigate = useNavigate();
   const [refreshKey, setRefreshKey] = useState(0);
   const [createOpen, setCreateOpen] = useState(false);
   const [viewerUserId, setViewerUserId] = useState<string | null>(null);
+
+  const openAuthorProfile = useCallback((targetUserId: string) => {
+    if (!targetUserId) return;
+    if (currentUserId && userIdsMatch(targetUserId, currentUserId)) {
+      navigate('/profile');
+      return;
+    }
+    navigate(`/users/${encodeURIComponent(targetUserId)}`);
+  }, [currentUserId, navigate]);
 
   return (
     <>
@@ -39,7 +51,10 @@ export const ChatStoriesStrip: React.FC<ChatStoriesStripProps> = ({
       <StoryViewer
         open={Boolean(viewerUserId)}
         authorUserId={viewerUserId}
+        currentUserId={currentUserId}
+        currentUserAvatar={currentUserAvatar}
         onClose={() => setViewerUserId(null)}
+        onOpenProfile={openAuthorProfile}
       />
     </>
   );

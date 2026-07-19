@@ -4,14 +4,18 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@lovable/components/ui
 import { Avatar, AvatarFallback, AvatarImage } from '@lovable/components/ui/avatar';
 import { Button } from '@lovable/components/ui/button';
 import { Input } from '@lovable/components/ui/input';
-import { Search, UserPlus, Check, Shield, X, Loader2 } from 'lucide-react';
+import { Search, UserPlus, Check, Shield, X, Loader2, MoreVertical, UserMinus, Ban } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   followUser,
   unfollowUser,
   fetchPendingFollowRequests,
+  fetchFollowersList,
   respondFollowRequest,
-  resolveImageUrl,
+  removeFollower,
+  blockFollower,
+  resolveUserAvatarUrl,
+  SOCIAL_GRAPH_UPDATED_EVENT,
   type FollowRequestItem,
 } from '@doevents/shared';
 
@@ -31,6 +35,7 @@ interface FollowersSheetProps {
   followingList?: ProfileListUser[];
   currentUserId?: string;
   onViewProfile?: (user: ProfileListUser) => void;
+  onFollowersChange?: (followers: ProfileListUser[]) => void;
 }
 
 function filterUsers(list: ProfileListUser[], query: string): ProfileListUser[] {
@@ -47,7 +52,7 @@ function toSheetUser(request: FollowRequestItem): ProfileListUser {
     id: request.userId || request.id,
     name,
     initials: name.split(' ').filter(Boolean).map((p) => p[0]).join('').slice(0, 2).toUpperCase() || 'DE',
-    avatarUrl: resolveImageUrl(request.avatarUrl) || undefined,
+    avatarUrl: resolveUserAvatarUrl(request.avatarUrl, request.userId || request.id) || undefined,
   };
 }
 
@@ -55,17 +60,24 @@ const UserRow = ({
   user,
   initiallyFollowing,
   canToggleFollow,
+  canManageFollower,
   onToggleFollow,
+  onRemoveFollower,
+  onBlockFollower,
   onOpen,
 }: {
   user: ProfileListUser;
   initiallyFollowing: boolean;
   canToggleFollow: boolean;
+  canManageFollower?: boolean;
   onToggleFollow?: (userId: string, nextFollowing: boolean) => Promise<void>;
+  onRemoveFollower?: (userId: string) => Promise<void>;
+  onBlockFollower?: (userId: string) => Promise<void>;
   onOpen?: () => void;
 }) => {
   const [following, setFollowing] = useState(initiallyFollowing);
   const [busy, setBusy] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     setFollowing(initiallyFollowing);
@@ -85,10 +97,24 @@ const UserRow = ({
     }
   };
 
-  const avatarSrc = user.avatarUrl ? resolveImageUrl(user.avatarUrl) : undefined;
+  const runManage = async (action: 'remove' | 'block') => {
+    if (busy) return;
+    setBusy(true);
+    setMenuOpen(false);
+    try {
+      if (action === 'remove') await onRemoveFollower?.(user.id);
+      else await onBlockFollower?.(user.id);
+    } catch {
+      // toast handled upstream
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const avatarSrc = resolveUserAvatarUrl(user.avatarUrl, user.id);
 
   return (
-    <div className="flex items-center gap-3 py-2.5">
+    <div className="relative flex items-center gap-3 py-2.5">
       <button
         type="button"
         onClick={onOpen}
@@ -110,7 +136,41 @@ const UserRow = ({
           )}
         </div>
       </button>
-      {canToggleFollow && (
+      {canManageFollower && (
+        <div className="relative">
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-8 w-8 shrink-0 rounded-full"
+            disabled={busy}
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-label="Opciones del seguidor"
+          >
+            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <MoreVertical className="h-4 w-4" />}
+          </Button>
+          {menuOpen && (
+            <div className="absolute right-0 top-9 z-20 w-48 overflow-hidden rounded-xl border border-border bg-card shadow-lg">
+              <button
+                type="button"
+                className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm hover:bg-accent"
+                onClick={() => void runManage('remove')}
+              >
+                <UserMinus className="h-4 w-4 text-primary" />
+                Eliminar seguidor
+              </button>
+              <button
+                type="button"
+                className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-destructive hover:bg-destructive/10"
+                onClick={() => void runManage('block')}
+              >
+                <Ban className="h-4 w-4" />
+                Bloquear
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+      {canToggleFollow && !canManageFollower && (
         <Button
           size="sm"
           variant={following ? 'outline' : 'default'}
@@ -197,12 +257,18 @@ const FollowersSheet = ({
   followingList = [],
   currentUserId,
   onViewProfile,
+  onFollowersChange,
 }: FollowersSheetProps) => {
   const [query, setQuery] = useState('');
   const [requests, setRequests] = useState<ProfileListUser[]>([]);
   const [loadingRequests, setLoadingRequests] = useState(false);
   const [busyRequestId, setBusyRequestId] = useState<string | null>(null);
   const [localFollowingIds, setLocalFollowingIds] = useState<Set<string>>(new Set());
+  const [localFollowers, setLocalFollowers] = useState<ProfileListUser[]>(followersList);
+
+  useEffect(() => {
+    setLocalFollowers(followersList);
+  }, [followersList]);
 
   const followingIds = useMemo(() => {
     const ids = new Set(followingList.map((u) => u.id));
@@ -231,13 +297,26 @@ const FollowersSheet = ({
     void loadRequests();
   }, [open, loadRequests]);
 
+  useEffect(() => {
+    if (!open || !currentUserId) return;
+    const refreshLists = () => {
+      void loadRequests();
+    };
+    window.addEventListener(SOCIAL_GRAPH_UPDATED_EVENT, refreshLists);
+    return () => window.removeEventListener(SOCIAL_GRAPH_UPDATED_EVENT, refreshLists);
+  }, [open, currentUserId, loadRequests]);
+
   const handleToggleFollow = async (targetId: string, shouldFollow: boolean) => {
     if (!currentUserId || currentUserId === targetId) return;
     try {
       if (shouldFollow) {
         const result = await followUser(currentUserId, targetId);
-        setLocalFollowingIds((prev) => new Set(prev).add(targetId));
-        toast.success(result.message || 'Ahora sigues a este usuario');
+        if (result.status === 'pending') {
+          toast.success(result.message || 'Solicitud de seguimiento enviada');
+        } else {
+          setLocalFollowingIds((prev) => new Set(prev).add(targetId));
+          toast.success(result.message || 'Ahora sigues a este usuario');
+        }
       } else {
         await unfollowUser(currentUserId, targetId);
         setLocalFollowingIds((prev) => {
@@ -259,12 +338,43 @@ const FollowersSheet = ({
     try {
       await respondFollowRequest(currentUserId, user.id, 'accept');
       setRequests((prev) => prev.filter((x) => x.id !== user.id));
+      const freshFollowers = await fetchFollowersList(currentUserId).catch(() => []);
+      const next = freshFollowers.map((entry) => toSheetUser({
+        id: entry.id,
+        userId: entry.id,
+        name: entry.name,
+        avatarUrl: entry.avatarUrl,
+      }));
+      setLocalFollowers(next);
+      onFollowersChange?.(next);
       toast.success(`Aceptaste a ${user.name} como seguidor`);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'No se pudo aceptar la solicitud');
     } finally {
       setBusyRequestId(null);
     }
+  };
+
+  const handleRemoveFollower = async (followerId: string) => {
+    if (!currentUserId) return;
+    await removeFollower(currentUserId, followerId);
+    setLocalFollowers((prev) => {
+      const next = prev.filter((f) => f.id !== followerId);
+      onFollowersChange?.(next);
+      return next;
+    });
+    toast.success('Seguidor eliminado');
+  };
+
+  const handleBlockFollower = async (followerId: string) => {
+    if (!currentUserId) return;
+    await blockFollower(currentUserId, followerId);
+    setLocalFollowers((prev) => {
+      const next = prev.filter((f) => f.id !== followerId);
+      onFollowersChange?.(next);
+      return next;
+    });
+    toast.success('Usuario bloqueado');
   };
 
   const rejectRequest = async (user: ProfileListUser) => {
@@ -286,7 +396,7 @@ const FollowersSheet = ({
     onViewProfile?.(user);
   };
 
-  const filteredFollowers = filterUsers(followersList, query);
+  const filteredFollowers = filterUsers(localFollowers, query);
   const filteredFollowing = filterUsers(followingList, query);
   const filteredRequests = filterUsers(requests, query);
 
@@ -300,7 +410,7 @@ const FollowersSheet = ({
         <Tabs defaultValue={defaultTab} className="flex h-full flex-col">
           <TabsList className="mx-5 grid grid-cols-3 bg-muted">
             <TabsTrigger value="followers" className="text-xs font-semibold">
-              Seguidores ({followersList.length})
+              Seguidores ({localFollowers.length})
             </TabsTrigger>
             <TabsTrigger value="following" className="text-xs font-semibold">
               Seguidos ({followingList.length})
@@ -333,8 +443,10 @@ const FollowersSheet = ({
                   key={u.id}
                   user={u}
                   initiallyFollowing={followingIds.has(u.id)}
-                  canToggleFollow={Boolean(currentUserId && currentUserId !== u.id)}
-                  onToggleFollow={handleToggleFollow}
+                  canToggleFollow={false}
+                  canManageFollower={Boolean(currentUserId && currentUserId !== u.id)}
+                  onRemoveFollower={handleRemoveFollower}
+                  onBlockFollower={handleBlockFollower}
                   onOpen={() => openProfile(u)}
                 />
               ))

@@ -24,6 +24,21 @@ export interface BoletaEntry {
   qrUrl?: string;
   value: number;
   ticketInstanceId: string;
+  seatLabel?: string;
+  category?: string;
+  /** Enviada por el dueño original: QR deshabilitado. */
+  isTransferredOut?: boolean;
+  /** Recibida por transferencia: QR usable + indicador. */
+  isReceivedByTransfer?: boolean;
+  /** Mostrar badge Transferida (enviada o recibida). */
+  isTransferred?: boolean;
+  /** Ya reembolsada. */
+  isRefunded?: boolean;
+  /** Comisión de plataforma asociada (no reembolsable). */
+  platformFee?: number;
+  transferredAt?: string;
+  transferredToName?: string;
+  transferredFromName?: string;
 }
 
 export interface TransferRecipient {
@@ -39,6 +54,7 @@ interface Props {
   ticket: Ticket;
   entries: BoletaEntry[];
   currentUserId?: string;
+  initialSelectedIds?: string[];
   onClose: () => void;
   onCompleted: (transferredIds: string[], recipient: TransferRecipient) => Promise<void>;
 }
@@ -72,14 +88,32 @@ const initialsFrom = (name: string) =>
     .map((p) => p[0]?.toUpperCase() || '')
     .join('') || '?';
 
-const TransferTicketFlow = ({ ticket, entries, currentUserId, onClose, onCompleted }: Props) => {
+const TransferTicketFlow = ({
+  ticket,
+  entries,
+  currentUserId,
+  initialSelectedIds,
+  onClose,
+  onCompleted,
+}: Props) => {
+  const defaultSelected = useMemo(() => {
+    const preferred = (initialSelectedIds || []).filter(Boolean);
+    if (preferred.length) {
+      const valid = preferred.filter((id) => entries.some((e) => e.id === id || e.ticketInstanceId === id));
+      if (valid.length) return new Set(valid);
+    }
+    const first = entries[0];
+    return new Set(first?.id ? [first.id] : []);
+  }, [entries, initialSelectedIds]);
+
   const [step, setStep] = useState<Step>('select');
-  const [selected, setSelected] = useState<Set<string>>(new Set(entries[0]?.id ? [entries[0].id] : []));
+  const [selected, setSelected] = useState<Set<string>>(defaultSelected);
   const [recipient, setRecipient] = useState<TransferRecipient | null>(null);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<TransferRecipient[]>([]);
   const [searching, setSearching] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [brokenAvatars, setBrokenAvatars] = useState<Set<string>>(new Set());
 
   const selectedEntries = useMemo(() => entries.filter((e) => selected.has(e.id)), [entries, selected]);
   const totalValue = selectedEntries.reduce((s, e) => s + e.value, 0);
@@ -144,7 +178,10 @@ const TransferTicketFlow = ({ ticket, entries, currentUserId, onClose, onComplet
     if (!recipient || submitting) return;
     setSubmitting(true);
     try {
-      await onCompleted(Array.from(selected), recipient);
+      const transferredIds = selectedEntries.map(
+        (entry) => entry.ticketInstanceId || entry.id,
+      );
+      await onCompleted(transferredIds, recipient);
       setStep('success');
       toast.success('Boletas compartidas correctamente', {
         description: 'Se generó un nuevo código QR asociado al perfil del destinatario.',
@@ -172,7 +209,8 @@ const TransferTicketFlow = ({ ticket, entries, currentUserId, onClose, onComplet
 
   if (entries.length === 0) {
     return (
-      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-secondary px-6 text-center">
+      <div className="fixed inset-0 z-50 flex justify-center bg-background">
+      <div className="flex h-full w-full max-w-lg flex-col items-center justify-center bg-secondary px-6 text-center shadow-sm">
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
           <Ticket className="h-7 w-7 text-primary" />
         </div>
@@ -188,11 +226,13 @@ const TransferTicketFlow = ({ ticket, entries, currentUserId, onClose, onComplet
           Volver
         </button>
       </div>
+      </div>
     );
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-secondary overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex justify-center bg-background">
+    <div className="h-full w-full max-w-lg overflow-y-auto bg-secondary shadow-sm">
       <TransferStepProgress current={step} />
       {step === 'select' && (
         <div className="min-h-screen flex flex-col pb-40">
@@ -447,8 +487,13 @@ const TransferTicketFlow = ({ ticket, entries, currentUserId, onClose, onComplet
                   }`}>
                     {isSel && <Check className="h-4 w-4 text-primary-foreground" />}
                   </div>
-                  {u.avatar ? (
-                    <img src={u.avatar} alt="" className="h-12 w-12 rounded-full object-cover" />
+                  {u.avatar && !brokenAvatars.has(u.id) ? (
+                    <img
+                      src={u.avatar}
+                      alt=""
+                      className="h-12 w-12 rounded-full object-cover"
+                      onError={() => setBrokenAvatars((prev) => new Set(prev).add(u.id))}
+                    />
                   ) : (
                     <div className="h-12 w-12 rounded-full bg-primary text-primary-foreground grid place-items-center font-bold">
                       {u.initials}
@@ -630,6 +675,7 @@ const TransferTicketFlow = ({ ticket, entries, currentUserId, onClose, onComplet
           </button>
         </div>
       )}
+    </div>
     </div>
   );
 };

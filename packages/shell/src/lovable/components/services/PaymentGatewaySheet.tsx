@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { X, CreditCard, Building2, CheckCircle2, Lock, ChevronDown, Loader2, ShieldCheck, AlertCircle } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@lovable/components/ui/sheet';
 import { Button } from '@lovable/components/ui/button';
@@ -6,7 +7,7 @@ import { Input } from '@lovable/components/ui/input';
 import { cn } from '@lovable/lib/utils';
 import { BookingData } from './BookingSheet';
 import { useNotifyPurchase } from '@lovable/lib/useNotifyPurchase';
-import { confirmTicketPayment } from '@doevents/shared';
+import { confirmTicketPayment, RootState } from '@doevents/shared';
 import { toast } from 'sonner';
 
 interface PaymentGatewaySheetProps {
@@ -31,6 +32,7 @@ const BANKS = [
 
 const PaymentGatewaySheet = ({ open, onOpenChange, booking, onSuccess, sellerName }: PaymentGatewaySheetProps) => {
   const notifyPurchase = useNotifyPurchase();
+  const userId = useSelector((s: RootState) => s.auth.idUser);
   const [step, setStep] = useState<Step>('method');
   const [method, setMethod] = useState<PaymentMethod>('card');
   const [paying, setPaying] = useState(false);
@@ -83,7 +85,7 @@ const PaymentGatewaySheet = ({ open, onOpenChange, booking, onSuccess, sellerNam
 
     setPaying(true);
     setStep('processing');
-    confirmTicketPayment(booking.orderId)
+    confirmTicketPayment(booking.orderId, userId || undefined)
       .then(() => completeSuccess())
       .catch((err) => {
         setStep('form');

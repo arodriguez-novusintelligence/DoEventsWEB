@@ -11,7 +11,6 @@ import {
   fetchOtherContacts,
   removeFavoriteContact,
   searchUsers,
-  toggleContactFavorite,
   updateContact,
   updateGuestGroup,
 } from '@doevents/shared';
@@ -35,6 +34,7 @@ import {
   pickSearchUserMatch,
   resolveGuestFavoriteId,
   resolveGuestGroupId,
+  normalizeGuestCategory,
   searchUserToGuest,
 } from './guestsAdapter';
 
@@ -148,10 +148,9 @@ export function useApiGuests(userId?: string) {
 
   const favoriteGuests = filteredGuests.filter((g) => g.isFavorite);
   const regularGuests = filteredGuests.filter((g) => !g.groupId && !g.isFavorite);
-  const favoritesWithoutGroup = favoriteGuests.filter((g) => !g.groupId);
 
   const guestsByGroup = filteredGuests.reduce((acc, guest) => {
-    if (!guest.groupId) return acc;
+    if (guest.isFavorite || !guest.groupId) return acc;
     if (!acc[guest.groupId]) acc[guest.groupId] = [];
     acc[guest.groupId].push(guest);
     return acc;
@@ -169,7 +168,11 @@ export function useApiGuests(userId?: string) {
     const composedPhone = phoneNumber
       ? `${phoneIndicative.replace(/\D/g, '')}${phoneNumber.replace(/\D/g, '')}`
       : data.phone;
-    const groupId = resolveGuestGroupId(data.groupId, groups);
+    const groupId = data.isFavorite ? undefined : resolveGuestGroupId(data.groupId, groups);
+    const category = normalizeGuestCategory({
+      isFavorite: data.isFavorite,
+      groupId,
+    });
     const existing = findMatchingGuest(guests, guestProbeFromCreateRequest(data));
 
     if (existing) {
@@ -187,8 +190,8 @@ export function useApiGuests(userId?: string) {
         phoneIndicative,
         phoneNumber,
         phone: composedPhone,
-        isFavorite: data.isFavorite ?? existing.isFavorite,
-        groupIds: groupId ? [groupId] : [],
+        isFavorite: category.isFavorite,
+        groupIds: category.groupId ? [category.groupId] : [],
       });
       if (!options?.skipReload) {
         await reload();
@@ -205,8 +208,8 @@ export function useApiGuests(userId?: string) {
                 phone: composedPhone || g.phone,
                 phoneIndicative,
                 phoneNumber,
-                isFavorite: data.isFavorite ?? g.isFavorite,
-                groupId,
+                isFavorite: category.isFavorite,
+                groupId: category.groupId,
               }
               : g
           ));
@@ -227,8 +230,8 @@ export function useApiGuests(userId?: string) {
       phoneIndicative,
       phoneNumber,
       username: data.username,
-      isFavorite: data.isFavorite,
-      groupIds: groupId ? [groupId] : undefined,
+      isFavorite: category.isFavorite,
+      groupIds: category.groupId ? [category.groupId] : undefined,
     });
     if (!options?.skipReload) {
       await reload();
@@ -243,8 +246,8 @@ export function useApiGuests(userId?: string) {
         phone: composedPhone,
         phoneIndicative,
         phoneNumber,
-        isFavorite: Boolean(data.isFavorite),
-        groupId,
+        isFavorite: category.isFavorite,
+        groupId: category.groupId,
         createdAt: new Date(),
       }, ...prev]));
     }
@@ -274,16 +277,55 @@ export function useApiGuests(userId?: string) {
     if (!userId) return;
     const guest = guests.find((g) => g.id === guestId || g.favoriteId === guestId);
     if (!guest) return;
-    const contactId = resolveGuestFavoriteId(guest);
-    await updateContact(userId, contactId, {
-      groupIds: newGroupId ? [newGroupId] : [],
-    });
-    setGuests((prev) => prev.map((g) => (g.id === guestId ? { ...g, groupId: newGroupId } : g)));
-    await reload();
+
+    if (newGroupId && String(newGroupId).startsWith('local-group-')) {
+      throw new Error('Los grupos aún no están sincronizados. Recarga e intenta de nuevo.');
+    }
+
+    let contactId = guest.favoriteId;
+    if (!contactId && guest.invitedUserId) {
+      const result = await addRegisteredUserToFavorites(userId, guest.invitedUserId);
+      contactId = result.favoriteId;
+      if (!contactId) {
+        throw new Error('No se pudo crear el contacto para moverlo de grupo.');
+      }
+      await updateContact(userId, contactId, {
+        name: guest.name,
+        lastName: guest.lastName,
+        email: guest.email,
+        username: guest.username,
+        phone: guest.phone,
+        phoneIndicative: guest.phoneIndicative,
+        phoneNumber: guest.phoneNumber,
+        groupIds: newGroupId ? [newGroupId] : [],
+        isFavorite: false,
+      });
+    } else {
+      contactId = contactId || resolveGuestFavoriteId(guest);
+      if (!contactId) {
+        throw new Error('No se pudo mover el invitado. Agrégalo primero a tus contactos.');
+      }
+      await updateContact(userId, contactId, {
+        groupIds: newGroupId ? [newGroupId] : [],
+        isFavorite: false,
+      });
+    }
+
+    setGuests((prev) => prev.map((g) => (
+      (g.id === guestId || g.favoriteId === guestId || g.favoriteId === contactId)
+        ? {
+          ...g,
+          favoriteId: contactId || g.favoriteId,
+          groupId: newGroupId,
+          isFavorite: false,
+        }
+        : g
+    )));
+    await reload({ silent: true });
   }, [userId, guests, reload]);
 
   const getGroupGuestCount = useCallback(
-    (groupId: string) => guests.filter((g) => g.groupId === groupId).length,
+    (groupId: string) => guests.filter((g) => g.groupId === groupId && !g.isFavorite).length,
     [guests],
   );
 
@@ -293,6 +335,10 @@ export function useApiGuests(userId?: string) {
     const contactId = guest ? resolveGuestFavoriteId(guest) : data.id;
     const phoneIndicative = data.phoneIndicative || '+57';
     const phoneNumber = data.phoneNumber || '';
+    const category = normalizeGuestCategory({
+      isFavorite: data.isFavorite ?? guest?.isFavorite,
+      groupId: data.groupId !== undefined ? data.groupId : guest?.groupId,
+    });
     await updateContact(userId, contactId, {
       name: data.name,
       lastName: data.lastName,
@@ -303,8 +349,8 @@ export function useApiGuests(userId?: string) {
       phone: phoneNumber
         ? `${phoneIndicative.replace(/\D/g, '')}${phoneNumber.replace(/\D/g, '')}`
         : data.phone,
-      isFavorite: data.isFavorite,
-      groupIds: data.groupId ? [resolveGuestGroupId(data.groupId, groups) || data.groupId] : undefined,
+      isFavorite: category.isFavorite,
+      groupIds: category.groupId ? [category.groupId] : [],
     });
     await reload();
   }, [userId, reload, groups, guests]);
@@ -350,8 +396,15 @@ export function useApiGuests(userId?: string) {
     if (!guest) return;
     const contactId = resolveGuestFavoriteId(guest);
     const next = !guest.isFavorite;
-    await toggleContactFavorite(userId, contactId, next);
-    setGuests((prev) => prev.map((g) => (g.id === guestId ? { ...g, isFavorite: next } : g)));
+    await updateContact(userId, contactId, {
+      isFavorite: next,
+      groupIds: next ? [] : (guest.groupId ? [guest.groupId] : []),
+    });
+    setGuests((prev) => prev.map((g) => (
+      g.id === guestId
+        ? { ...g, isFavorite: next, groupId: next ? undefined : g.groupId }
+        : g
+    )));
   }, [userId, guests]);
 
   const searchUserByUsername = useCallback(async (username: string): Promise<Guest | null> => {
@@ -383,7 +436,13 @@ export function useApiGuests(userId?: string) {
   ): Promise<string | undefined> => {
     if (!userId) throw new Error('Debes iniciar sesión para agregar invitados');
     const profile = options?.profile;
-    const groupId = resolveGuestGroupId(options?.groupId ?? profile?.groupId, groups);
+    const groupId = options?.isFavorite
+      ? undefined
+      : resolveGuestGroupId(options?.groupId ?? profile?.groupId, groups);
+    const category = normalizeGuestCategory({
+      isFavorite: options?.isFavorite ?? true,
+      groupId,
+    });
     const existing = findMatchingGuest(guests, {
       invitedUserId: targetUserId,
       id: targetUserId,
@@ -403,8 +462,8 @@ export function useApiGuests(userId?: string) {
         lastName: mergedLastName,
         username: profile?.username || existing.username,
         email: profile?.email || existing.email,
-        isFavorite: options?.isFavorite ?? true,
-        groupIds: groupId ? [groupId] : [],
+        isFavorite: category.isFavorite,
+        groupIds: category.groupId ? [category.groupId] : [],
       });
       if (!options?.skipReload) {
         await reload();
@@ -420,8 +479,8 @@ export function useApiGuests(userId?: string) {
                 username: profile?.username || g.username,
                 email: profile?.email || g.email,
                 avatar: profile?.avatar || g.avatar,
-                isFavorite: options?.isFavorite ?? true,
-                groupId,
+                isFavorite: category.isFavorite,
+                groupId: category.groupId,
                 originType: 'REGISTERED' as const,
               }
               : g
@@ -442,8 +501,8 @@ export function useApiGuests(userId?: string) {
         lastName: profile?.lastName,
         username: profile?.username,
         email: profile?.email,
-        isFavorite: options?.isFavorite ?? true,
-        groupIds: groupId ? [groupId] : [],
+        isFavorite: category.isFavorite,
+        groupIds: category.groupId ? [category.groupId] : [],
       });
     }
     if (!options?.skipReload) {
@@ -458,8 +517,8 @@ export function useApiGuests(userId?: string) {
         username: profile?.username,
         email: profile?.email,
         avatar: profile?.avatar,
-        isFavorite: options?.isFavorite ?? true,
-        groupId,
+        isFavorite: category.isFavorite,
+        groupId: category.groupId,
         originType: 'REGISTERED',
         createdAt: new Date(),
       }, ...prev]));
@@ -471,7 +530,6 @@ export function useApiGuests(userId?: string) {
     allGuests: guests,
     guests: filteredGuests,
     favoriteGuests,
-    favoritesWithoutGroup,
     regularGuests,
     guestsByGroup,
     ungroupedGuests,

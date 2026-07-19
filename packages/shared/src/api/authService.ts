@@ -12,8 +12,10 @@ import type {
 } from '../types/auth';
 import { invalidateWallCache } from '../lib/eventsCache';
 import {
+  clearPersistedOAuthProfilePhotos,
   clearPersistedUserDisplayName,
   persistOAuthDisplayName,
+  persistOAuthProfilePhoto,
 } from '../lib/userDisplayName';
 
 function endpoints() {
@@ -98,26 +100,29 @@ export async function resetPasswordWithToken(
   userId: string,
   token: string,
   newPassword: string,
+  otp?: string,
 ): Promise<ApiResponse> {
   return requestAuthAction({
     action: 'resetPasswordWithToken',
     email,
     userId,
-    token,
+    token: token || undefined,
+    otp: otp || undefined,
     newPassword,
   });
 }
 
-async function requestAuthAction(payload: OtpAction): Promise<ApiResponse> {
-  const data = await apiRequest<{ message?: string; success?: boolean }>({
+async function requestAuthAction(payload: OtpAction): Promise<ApiResponse & { sentVia?: string[] }> {
+  const data = await apiRequest<{ message?: string; success?: boolean; sentVia?: string[] }>({
     method: 'POST',
     url: endpoints().generateOtp,
     data: payload,
   });
   return {
-    success: data.success ?? true,
+    success: data.success === true,
     message: data.message || 'Operación completada',
     data,
+    sentVia: data.sentVia,
   };
 }
 
@@ -394,17 +399,43 @@ export function getEnrollmentUserId(): string {
     || '';
 }
 
-export function persistSession(token: string, userId: string, displayName?: string): void {
+export function persistSession(
+  token: string,
+  userId: string,
+  displayName?: string,
+  profilePhoto?: string,
+  platformRole?: string,
+): void {
   setAuthToken(token);
   localStorage.setItem('doevents_user_id', userId);
   if (displayName?.trim()) {
     persistOAuthDisplayName(displayName);
+  }
+  if (profilePhoto?.trim()) {
+    persistOAuthProfilePhoto(userId, profilePhoto);
+  }
+  if (platformRole?.trim()) {
+    localStorage.setItem('doevents_platform_role', platformRole.trim().toLowerCase());
+  }
+}
+
+export function getPersistedPlatformRole(): string | null {
+  return localStorage.getItem('doevents_platform_role');
+}
+
+export function persistPlatformRole(platformRole?: string | null): void {
+  const role = String(platformRole || '').trim().toLowerCase();
+  if (role) {
+    localStorage.setItem('doevents_platform_role', role);
+  } else {
+    localStorage.removeItem('doevents_platform_role');
   }
 }
 
 export function clearSession(): void {
   setAuthToken('');
   localStorage.removeItem('doevents_user_id');
+  localStorage.removeItem('doevents_platform_role');
   localStorage.removeItem('doevents_enrollment_user_id');
   localStorage.removeItem('doevents_secure_email');
   localStorage.removeItem('doevents_secure_phone');
@@ -412,6 +443,7 @@ export function clearSession(): void {
   clearPendingOAuthUser();
   invalidateWallCache();
   clearPersistedUserDisplayName();
+  clearPersistedOAuthProfilePhotos();
 }
 
 export function getStoredUserId(): string {

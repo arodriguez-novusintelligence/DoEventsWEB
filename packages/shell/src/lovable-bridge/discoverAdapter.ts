@@ -81,6 +81,8 @@ export function feedEventToDiscoverItem(event: FeedEventItem | {
       direccion: event.direccion,
       ciudad: event.ciudad,
       departamento: (event as { departamento?: string }).departamento,
+      pais: (event as { pais?: string }).pais,
+      ubicacion: (event as { ubicacion?: string | { label?: string } }).ubicacion,
     }),
     description: event.descripcion || event.tipoEvento,
     category: raw.Categoria || event.tipoEvento,

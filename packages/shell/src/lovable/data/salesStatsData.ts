@@ -7,6 +7,9 @@ export interface SeatInfo {
   buyerEmail?: string;
   purchaseDate?: string;
   paymentAuthorization?: 'before' | 'after';
+  /** Etiqueta exacta del backend, p. ej. "Pre-evento (pagado)" */
+  paymentStatusLabel?: string;
+  isPaid?: boolean;
   amountPaid?: number;
   platformCommission?: number;
   totalWithCommission?: number;

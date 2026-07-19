@@ -1,144 +1,336 @@
-import { useState } from 'react';
-import { ChevronLeft, Ticket as TicketIcon, Eye, Calendar } from 'lucide-react';
-import { useTickets, Ticket, TicketStatus } from '@lovable/data/ticketsData';
-import TicketDetailView from './TicketDetailView';
+import { useMemo, useState } from 'react';
 
-import { groupTicketsForListView } from '../../../lovable-bridge/ticketsAdapter';
-import { useReservationTimer, isPlaceholderEventImage } from '@doevents/shared';
+import { ChevronLeft, ChevronRight, Calendar, AlertCircle, Loader2, RefreshCw } from 'lucide-react';
+
+import { useTickets, Ticket, TicketStatus } from '@lovable/data/ticketsData';
+
+import EventTicketOrdersView from './EventTicketOrdersView';
+
+import { groupTicketsByEventForListView } from '../../../lovable-bridge/ticketsAdapter';
+
+import type { PurchaseTabStatus } from '../../../lovable-bridge/purchasesAdapter';
+
+import PurchaseStatusTabs from '@lovable/components/purchases/PurchaseStatusTabs';
+
+import { Button } from '@lovable/components/ui/button';
+
+
+
 interface MyTicketsViewProps {
+
   onBack: () => void;
+
+  tickets?: Ticket[];
+
+  loading?: boolean;
+
+  loadError?: string | null;
+
+  onRetry?: () => void;
+
+  initialTab?: TicketStatus;
+
   onViewEventDetail?: (eventId: string, ticket: Ticket) => void;
+
+  onOpenTicketDetail?: (ticket: Ticket, action?: 'transfer' | 'refund') => void;
+
   initialSelectedTicketId?: string | null;
+
   onSelectedTicketChange?: (ticketId: string | null) => void;
+
 }
 
-const TABS: { key: TicketStatus; label: string; dot: string }[] = [
-  { key: 'aprobada', label: 'Aprobadas', dot: 'bg-emerald-500' },
-  { key: 'pendiente', label: 'Pendientes', dot: 'bg-amber-500' },
-  { key: 'cancelada', label: 'Canceladas', dot: 'bg-destructive' },
-  { key: 'finalizada', label: 'Finalizadas', dot: 'bg-muted-foreground' },
-];
 
-const MyTicketsView = ({ onBack, onViewEventDetail, initialSelectedTicketId, onSelectedTicketChange }: MyTicketsViewProps) => {
-  const [activeTab, setActiveTab] = useState<TicketStatus>('aprobada');
-  const allTicketsForInit = useTickets();
-  const [selected, setSelected] = useState<Ticket | null>(() => {
-    if (!initialSelectedTicketId) return null;
-    return allTicketsForInit.find((t) => t.id === initialSelectedTicketId) ?? null;
-  });
 
-  const setSelectedAndNotify = (t: Ticket | null) => {
-    setSelected(t);
-    onSelectedTicketChange?.(t ? t.id : null);
-  };
-  
-  const allTickets = useTickets();
+const TAB_MAP: Record<TicketStatus, PurchaseTabStatus> = {
 
-  if (selected) {
-    return (
-      <TicketDetailView
-        ticket={selected}
-        onBack={() => setSelected(null)}
-        onViewEventDetail={() => {
-          if (onViewEventDetail) onViewEventDetail(selected.eventId || selected.id, selected);
-        }}
-      />
-    );
-  }
+  aprobada: 'aprobada',
 
-  const counts: Record<TicketStatus, number> = {
-    aprobada: allTickets.filter((t) => t.status === 'aprobada').length,
-    pendiente: 0,
-    cancelada: 2,
-    finalizada: 32,
-  };
+  pendiente: 'pendiente',
 
-  const tickets = allTickets.filter((t) => t.status === activeTab);
+  cancelada: 'cancelada',
 
-  return (
-    <div className="min-h-screen bg-secondary pb-36">
-      {/* Header */}
-      <div className="bg-gradient-to-br from-primary via-primary to-accent px-4 pt-5 pb-10 rounded-b-3xl">
-        <div className="mx-auto max-w-lg">
-          <button onClick={onBack} className="flex items-center gap-1 text-primary-foreground/90 font-medium mb-3 text-sm">
-            <ChevronLeft className="h-5 w-5" /> Atrás
-          </button>
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-foreground/15 backdrop-blur">
-              <TicketIcon className="h-6 w-6 text-primary-foreground" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-extrabold text-primary-foreground leading-tight">Mis boletas</h1>
-              <p className="text-xs text-primary-foreground/80">{allTickets.length} boletas en total</p>
-            </div>
-          </div>
-        </div>
-      </div>
+  finalizada: 'finalizada',
 
-      <div className="mx-auto max-w-lg px-4 -mt-6">
-        {/* Tabs card */}
-        <div className="rounded-2xl bg-card p-2 shadow-md grid grid-cols-4 gap-1">
-          {TABS.map((tab) => {
-            const active = tab.key === activeTab;
-            return (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={`flex flex-col items-center gap-0.5 rounded-xl py-2 text-[11px] font-semibold transition-all ${
-                  active ? 'bg-primary text-primary-foreground shadow' : 'text-muted-foreground hover:bg-accent/40'
-                }`}
-              >
-                <span className={`h-1.5 w-1.5 rounded-full ${active ? 'bg-primary-foreground' : tab.dot}`} />
-                {tab.label}
-                <span className="text-[10px] opacity-80">({counts[tab.key]})</span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* List */}
-        <div className="mt-5 space-y-4">
-          {tickets.length === 0 ? (
-            <div className="rounded-2xl bg-card p-10 text-center text-sm text-muted-foreground shadow-sm">
-              No tienes boletas en esta categoría.
-            </div>
-          ) : (
-            tickets.map((t) => (
-              <article
-                key={t.id}
-                className="overflow-hidden rounded-2xl bg-card shadow-md border border-border/40"
-              >
-                <div className="relative h-32 w-full overflow-hidden">
-                  <img src={t.eventImage} alt={t.eventTitle} className="h-full w-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-3">
-                    <span className="inline-block rounded-full bg-primary/90 px-2 py-0.5 text-[10px] font-bold text-primary-foreground mb-1">
-                      {t.category}
-                    </span>
-                    <h3 className="text-base font-extrabold text-primary-foreground leading-tight line-clamp-2">{t.eventTitle}</h3>
-                  </div>
-                </div>
-                <div className="p-4 space-y-3">
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <Calendar className="h-3.5 w-3.5 text-primary" />
-                    <span className="font-medium text-foreground">{t.eventDate}</span>
-                  </div>
-                  <div className="pt-1">
-                    <button
-                      onClick={() => setSelected(t)}
-                      className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary px-3 py-2.5 text-xs font-bold text-primary-foreground shadow hover:bg-primary/90"
-                    >
-                      <Eye className="h-3.5 w-3.5" /> Ver boletos
-                    </button>
-                  </div>
-                </div>
-              </article>
-            ))
-          )}
-        </div>
-      </div>
-    </div>
-  );
 };
 
+
+
+const MyTicketsView = ({
+
+  onBack,
+
+  tickets: ticketsProp,
+
+  loading = false,
+
+  loadError = null,
+
+  onRetry,
+
+  initialTab = 'aprobada',
+
+  onViewEventDetail,
+
+  onOpenTicketDetail,
+
+}: MyTicketsViewProps) => {
+
+  const storeTickets = useTickets();
+
+  const allTickets = ticketsProp ?? storeTickets;
+
+  const [activeTab, setActiveTab] = useState<PurchaseTabStatus>(TAB_MAP[initialTab] || 'aprobada');
+
+  const [selectedEventGroupId, setSelectedEventGroupId] = useState<string | null>(null);
+
+
+
+  const counts = useMemo(() => ({
+
+    aprobada: allTickets.filter((t) => t.status === 'aprobada').length,
+
+    pendiente: allTickets.filter((t) => t.status === 'pendiente').length,
+
+    cancelada: allTickets.filter((t) => t.status === 'cancelada').length,
+
+    finalizada: allTickets.filter((t) => t.status === 'finalizada').length,
+
+  }), [allTickets]);
+
+
+
+  const statusFilter: TicketStatus = activeTab as TicketStatus;
+
+
+
+  const groupedEvents = useMemo(
+
+    () => groupTicketsByEventForListView(allTickets.filter((t) => t.status === statusFilter)),
+
+    [allTickets, statusFilter],
+
+  );
+
+
+
+  const selectedEventGroup = useMemo(
+
+    () => groupedEvents.find((group) => group.id === selectedEventGroupId) ?? null,
+
+    [groupedEvents, selectedEventGroupId],
+
+  );
+
+
+
+  const openEventOrders = (eventGroupId: string) => {
+
+    setSelectedEventGroupId(eventGroupId);
+
+  };
+
+
+
+  const openOrder = (ticket: Ticket, action?: 'transfer' | 'refund') => {
+
+    if (onOpenTicketDetail) {
+
+      onOpenTicketDetail(ticket, action);
+
+    }
+
+  };
+
+
+
+  if (selectedEventGroup) {
+
+    return (
+
+      <EventTicketOrdersView
+
+        eventGroup={selectedEventGroup}
+
+        onBack={() => setSelectedEventGroupId(null)}
+
+        onOpenOrder={openOrder}
+
+        onCompletePayment={activeTab === 'pendiente' ? openOrder : undefined}
+
+        onViewEventDetail={onViewEventDetail
+
+          ? () => onViewEventDetail(selectedEventGroup.eventId, selectedEventGroup.representativeTicket)
+
+          : undefined}
+
+      />
+
+    );
+
+  }
+
+
+
+  return (
+
+    <div className="min-h-screen bg-secondary pb-36">
+
+      <div className="mx-auto max-w-lg px-4 pt-4">
+
+        <button
+
+          type="button"
+
+          onClick={onBack}
+
+          className="mb-4 flex items-center gap-1 text-sm font-semibold text-primary"
+
+        >
+
+          <ChevronLeft className="h-5 w-5" />
+
+          Atrás
+
+        </button>
+
+
+
+        <PurchaseStatusTabs
+
+          activeTab={activeTab}
+
+          counts={counts}
+
+          onChange={(tab) => {
+
+            setSelectedEventGroupId(null);
+
+            setActiveTab(tab);
+
+          }}
+
+        />
+
+
+
+        <div className="mt-4 space-y-2">
+
+          {loading ? (
+
+            <div className="flex flex-col items-center gap-3 rounded-2xl bg-card py-12 shadow-sm">
+
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+
+              <p className="text-sm text-muted-foreground">Cargando boletas…</p>
+
+            </div>
+
+          ) : loadError ? (
+
+            <div className="rounded-2xl border border-destructive/30 bg-card p-8 text-center shadow-sm">
+
+              <AlertCircle className="mx-auto h-10 w-10 text-destructive" />
+
+              <p className="mt-3 text-sm font-medium text-destructive">{loadError}</p>
+
+              {onRetry && (
+
+                <Button type="button" variant="outline" className="mt-4 rounded-full" onClick={onRetry}>
+
+                  <RefreshCw className="mr-2 h-4 w-4" />
+
+                  Reintentar
+
+                </Button>
+
+              )}
+
+            </div>
+
+          ) : groupedEvents.length === 0 ? (
+
+            <div className="rounded-2xl bg-card p-10 text-center text-sm text-muted-foreground shadow-sm">
+
+              No tienes boletas en esta categoría.
+
+            </div>
+
+          ) : (
+
+            groupedEvents.map((eventGroup) => (
+
+              <button
+
+                key={eventGroup.id}
+
+                type="button"
+
+                onClick={() => openEventOrders(eventGroup.id)}
+
+                className="flex w-full items-center gap-3 rounded-2xl border border-border/40 bg-card p-3 text-left shadow-sm transition-all hover:border-primary/30 hover:shadow-md active:scale-[0.99]"
+
+              >
+
+                <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-muted">
+
+                  {eventGroup.eventImage ? (
+
+                    <img
+
+                      src={eventGroup.eventImage}
+
+                      alt={eventGroup.eventTitle}
+
+                      className="h-full w-full object-cover"
+
+                    />
+
+                  ) : (
+
+                    <div className="flex h-full w-full items-center justify-center bg-primary/10 text-[10px] font-bold text-primary">
+
+                      Evento
+
+                    </div>
+
+                  )}
+
+                </div>
+
+                <div className="min-w-0 flex-1">
+
+                  <h3 className="truncate text-sm font-extrabold text-foreground">{eventGroup.eventTitle}</h3>
+
+                  <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
+
+                    <Calendar className="h-3.5 w-3.5 text-primary" />
+
+                    <span>{eventGroup.eventDate}</span>
+
+                  </div>
+
+                </div>
+
+                <ChevronRight className="h-5 w-5 shrink-0 text-primary" />
+
+              </button>
+
+            ))
+
+          )}
+
+        </div>
+
+      </div>
+
+    </div>
+
+  );
+
+};
+
+
+
 export default MyTicketsView;
+

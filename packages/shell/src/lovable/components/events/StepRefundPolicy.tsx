@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Calendar, Clock, Ticket as TicketIcon, Plus, Trash2, Copy, Check, ChevronDown } from 'lucide-react';
+import { Calendar, Clock, Ticket as TicketIcon, Plus, Trash2, Copy, Check, ChevronDown, Pencil } from 'lucide-react';
 import {
   EventFormData,
   REFUND_POLICY_OPTIONS,
@@ -9,6 +9,12 @@ import {
 } from '@lovable/data/eventFormData';
 import { generateUniquePromoCodes } from '@lovable/data/promoCodesData';
 import { toast } from 'sonner';
+import { TimePicker } from '@lovable/components/ui/time-picker';
+import {
+  isSalesEndBeforeSalesStart,
+  isSalesWindowAfterEventEnd,
+  SALES_AFTER_EVENT_MESSAGE,
+} from '@lovable/lib/eventDateValidation';
 
 
 interface Props {
@@ -31,6 +37,10 @@ const nowHM = () => {
 
 const StepRefundPolicy = ({ formData, updateForm, showErrors }: Props) => {
   const selected = formData.refundPolicy;
+  const salesAfterEvent = isSalesWindowAfterEventEnd(formData);
+  const salesRangeInvalid = isSalesEndBeforeSalesStart(formData);
+  const salesDateError = salesAfterEvent || salesRangeInvalid;
+  const eventEndDateMax = formData.endDate || undefined;
 
   // Auto-populate sales window: start = now (publish moment), end = event end
   useEffect(() => {
@@ -67,19 +77,24 @@ const StepRefundPolicy = ({ formData, updateForm, showErrors }: Props) => {
             <input
               type="date"
               value={formData.salesStartDate ?? ''}
+              max={eventEndDateMax}
               onChange={(e) => updateForm({ salesStartDate: e.target.value })}
-              className="mt-1 w-full rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none"
+              className={`mt-1 w-full rounded-xl border bg-card px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none ${
+                showErrors && salesDateError ? 'border-destructive' : 'border-border'
+              }`}
             />
           </div>
           <div>
             <label className="flex items-center gap-1 text-xs font-semibold text-foreground">
               <Clock className="h-3.5 w-3.5 text-primary" /> Hora de inicio
             </label>
-            <input
-              type="time"
+            <TimePicker
               value={formData.salesStartTime ?? ''}
-              onChange={(e) => updateForm({ salesStartTime: e.target.value })}
-              className="mt-1 w-full rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none"
+              onChange={(salesStartTime) => updateForm({ salesStartTime })}
+              placeholder="00:00"
+              className={`mt-1 rounded-xl ${
+                showErrors && salesDateError ? 'border-destructive' : ''
+              }`}
             />
           </div>
           <div>
@@ -89,28 +104,47 @@ const StepRefundPolicy = ({ formData, updateForm, showErrors }: Props) => {
             <input
               type="date"
               value={formData.salesEndDate ?? ''}
+              max={eventEndDateMax}
               onChange={(e) => updateForm({ salesEndDate: e.target.value })}
-              className="mt-1 w-full rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none"
+              className={`mt-1 w-full rounded-xl border bg-card px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none ${
+                showErrors && salesDateError ? 'border-destructive' : 'border-border'
+              }`}
             />
           </div>
           <div>
             <label className="flex items-center gap-1 text-xs font-semibold text-foreground">
               <Clock className="h-3.5 w-3.5 text-primary" /> Hora de finalización
             </label>
-            <input
-              type="time"
+            <TimePicker
               value={formData.salesEndTime ?? ''}
-              onChange={(e) => updateForm({ salesEndTime: e.target.value })}
-              className="mt-1 w-full rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none"
+              onChange={(salesEndTime) => updateForm({ salesEndTime })}
+              placeholder="00:00"
+              className={`mt-1 rounded-xl ${
+                showErrors && salesDateError ? 'border-destructive' : ''
+              }`}
             />
           </div>
         </div>
+        {showErrors && salesAfterEvent && (
+          <p className="mt-3 text-xs font-semibold text-destructive">
+            {SALES_AFTER_EVENT_MESSAGE}
+          </p>
+        )}
+        {showErrors && !salesAfterEvent && salesRangeInvalid && (
+          <p className="mt-3 text-xs font-semibold text-destructive">
+            La fecha de finalización de venta no puede ser anterior al inicio.
+          </p>
+        )}
       </div>
 
       {/* Política de reembolso */}
       <div className="rounded-2xl bg-card p-5 shadow-sm">
-        <p className="mb-4 text-base font-bold text-foreground">
+        <p className="mb-1 text-base font-bold text-foreground">
           ¿Cuándo pueden los asistentes solicitar reembolsos?
+          <span className="ml-1 text-destructive">*</span>
+        </p>
+        <p className="mb-4 text-xs text-muted-foreground">
+          Campo obligatorio para publicar el evento.
         </p>
         <div className="space-y-3">
           {REFUND_POLICY_OPTIONS.map((opt) => {
@@ -157,8 +191,17 @@ interface PromoSectionProps {
   updateForm: Props['updateForm'];
 }
 
+const codeStatusLabel = (status?: string) => {
+  const normalized = String(status || 'AVAILABLE').toUpperCase();
+  if (normalized === 'REDEEMED') return 'Redimido';
+  if (normalized === 'CANCELLED') return 'Cancelado';
+  if (normalized === 'SHARED') return 'Compartido';
+  return 'Activo';
+};
+
 const PromoCodesSection = ({ formData, updateForm }: PromoSectionProps) => {
   const batches = formData.promoCodes ?? [];
+  const hasPersisted = batches.some((batch) => batch.persisted);
   const [enabled, setEnabled] = useState(batches.length > 0);
   const [draft, setDraft] = useState<{
     currency: PromoCurrency;
@@ -168,8 +211,22 @@ const PromoCodesSection = ({ formData, updateForm }: PromoSectionProps) => {
   }>({ currency: 'COP', value: '', quantity: '10', description: '' });
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [openBatch, setOpenBatch] = useState<string | null>(null);
+  const [editingBatchId, setEditingBatchId] = useState<string | null>(null);
+  const [editDraft, setEditDraft] = useState<{
+    currency: PromoCurrency;
+    value: string;
+    description: string;
+  }>({ currency: 'COP', value: '', description: '' });
+
+  useEffect(() => {
+    if (batches.length > 0) setEnabled(true);
+  }, [batches.length]);
 
   const handleToggle = (next: boolean) => {
+    if (!next && hasPersisted) {
+      toast.error('No puedes desactivar códigos ya publicados. Cancélalos desde Estadísticas si aplica.');
+      return;
+    }
     setEnabled(next);
     if (!next) updateForm({ promoCodes: [] });
   };
@@ -194,15 +251,60 @@ const PromoCodesSection = ({ formData, updateForm }: PromoSectionProps) => {
       quantity,
       description: draft.description.trim(),
       codes,
+      persisted: false,
+      editable: true,
+      editableCount: codes.length,
+      redeemedCount: 0,
+      cancelledCount: 0,
     };
     updateForm({ promoCodes: [...batches, batch] });
     setDraft({ currency: 'COP', value: '', quantity: '10', description: '' });
     setOpenBatch(batch.id);
-    toast.success(`${quantity} códigos generados`);
+    toast.success(`${quantity} códigos generados. Se guardarán al actualizar el evento.`);
   };
 
   const removeBatch = (id: string) => {
+    const target = batches.find((batch) => batch.id === id);
+    if (target?.persisted) {
+      toast.error('Los lotes ya guardados no se eliminan aquí. Solo puedes editar códigos activos no redimidos.');
+      return;
+    }
     updateForm({ promoCodes: batches.filter((b) => b.id !== id) });
+  };
+
+  const startEditBatch = (batch: PromoCodeBatch) => {
+    const editable = batch.editable !== false && (batch.editableCount ?? batch.codes.length) > 0;
+    if (!editable) {
+      toast.error('Este lote no tiene códigos activos para editar.');
+      return;
+    }
+    setEditingBatchId(batch.id);
+    setEditDraft({
+      currency: batch.currency,
+      value: String(batch.value || ''),
+      description: batch.description || '',
+    });
+  };
+
+  const saveEditBatch = (batchId: string) => {
+    const value = parseInt(editDraft.value || '0', 10);
+    if (!Number.isFinite(value) || value <= 0) {
+      toast.error('Ingresa un valor válido para el código.');
+      return;
+    }
+    updateForm({
+      promoCodes: batches.map((batch) => {
+        if (batch.id !== batchId) return batch;
+        return {
+          ...batch,
+          currency: editDraft.currency,
+          value,
+          description: editDraft.description.trim(),
+        };
+      }),
+    });
+    setEditingBatchId(null);
+    toast.success('Cambios aplicados. Guarda el evento para persistirlos.');
   };
 
   const copy = async (text: string, id: string) => {
@@ -233,7 +335,7 @@ const PromoCodesSection = ({ formData, updateForm }: PromoSectionProps) => {
           <span>
             <span className="block text-base font-bold text-foreground">Código promocional</span>
             <span className="block text-xs text-muted-foreground">
-              Genera códigos únicos con un valor de descuento que tus clientes podrán redimir al comprar.
+              Crea lotes nuevos o edita valor/descripción de códigos activos no redimidos. Se aplican al guardar el evento.
             </span>
           </span>
         </button>
@@ -244,31 +346,112 @@ const PromoCodesSection = ({ formData, updateForm }: PromoSectionProps) => {
 
       {enabled && (
         <div className="mt-5 space-y-5">
-          {/* Lotes ya creados */}
           {batches.map((b) => {
             const open = openBatch === b.id;
+            const isEditing = editingBatchId === b.id;
+            const redeemedCount = b.redeemedCount ?? 0;
+            const cancelledCount = b.cancelledCount ?? 0;
+            const editableCount = b.editableCount ?? Math.max(0, b.codes.length - redeemedCount - cancelledCount);
+            const canEdit = b.editable !== false && editableCount > 0;
             return (
               <div key={b.id} className="rounded-2xl border border-border bg-background/50 p-4">
-                <div className="flex items-center justify-between gap-3">
+                <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-xs text-muted-foreground">Valor por código</p>
                     <p className="text-base font-bold text-foreground">{fmtMoney(b.value, b.currency)}</p>
+                    {b.persisted && (
+                      <p className="mt-1 text-[11px] text-muted-foreground">
+                        {editableCount} editables · {redeemedCount} redimidos
+                        {cancelledCount ? ` · ${cancelledCount} cancelados` : ''}
+                      </p>
+                    )}
                   </div>
                   <div className="text-right">
                     <p className="text-xs text-muted-foreground">Cantidad</p>
                     <p className="text-base font-bold text-foreground">{b.quantity}</p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => removeBatch(b.id)}
-                    className="flex items-center gap-1 text-xs font-semibold text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4" /> Quitar
-                  </button>
+                  <div className="flex flex-col items-end gap-2">
+                    {canEdit && (
+                      <button
+                        type="button"
+                        onClick={() => (isEditing ? setEditingBatchId(null) : startEditBatch(b))}
+                        className="flex items-center gap-1 text-xs font-semibold text-primary"
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                        {isEditing ? 'Cerrar' : 'Editar'}
+                      </button>
+                    )}
+                    {!b.persisted && (
+                      <button
+                        type="button"
+                        onClick={() => removeBatch(b.id)}
+                        className="flex items-center gap-1 text-xs font-semibold text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" /> Quitar
+                      </button>
+                    )}
+                  </div>
                 </div>
-                {b.description && (
-                  <p className="mt-2 text-xs text-muted-foreground">{b.description}</p>
+
+                {!canEdit && b.persisted && (
+                  <p className="mt-2 rounded-lg bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
+                    Este lote no se puede editar porque todos sus códigos están redimidos o cancelados.
+                  </p>
                 )}
+
+                {isEditing && canEdit ? (
+                  <div className="mt-3 space-y-3 rounded-xl border border-primary/30 bg-card p-3">
+                    <p className="text-xs text-muted-foreground">
+                      Se actualizarán solo los códigos activos/no redimidos ({editableCount}).
+                    </p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-xs font-semibold text-muted-foreground">Moneda</label>
+                        <select
+                          value={editDraft.currency}
+                          onChange={(e) => setEditDraft({ ...editDraft, currency: e.target.value as PromoCurrency })}
+                          className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm"
+                        >
+                          {PROMO_CURRENCIES.map((c) => (
+                            <option key={c} value={c}>{c}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-xs font-semibold text-muted-foreground">Valor</label>
+                        <input
+                          type="number"
+                          inputMode="numeric"
+                          min={1}
+                          value={editDraft.value}
+                          onChange={(e) => setEditDraft({ ...editDraft, value: e.target.value })}
+                          className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm"
+                        />
+                      </div>
+                      <div className="col-span-2">
+                        <label className="text-xs font-semibold text-muted-foreground">Descripción</label>
+                        <textarea
+                          rows={2}
+                          value={editDraft.description}
+                          onChange={(e) => setEditDraft({ ...editDraft, description: e.target.value })}
+                          className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm"
+                        />
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => saveEditBatch(b.id)}
+                      className="w-full rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground"
+                    >
+                      Aplicar cambios al lote
+                    </button>
+                  </div>
+                ) : (
+                  b.description && (
+                    <p className="mt-2 text-xs text-muted-foreground">{b.description}</p>
+                  )
+                )}
+
                 <button
                   type="button"
                   onClick={() => setOpenBatch(open ? null : b.id)}
@@ -288,21 +471,29 @@ const PromoCodesSection = ({ formData, updateForm }: PromoSectionProps) => {
                       Copiar todos
                     </button>
                     <div className="grid grid-cols-2 gap-2">
-                      {b.codes.map((code) => (
-                        <button
-                          key={code}
-                          type="button"
-                          onClick={() => copy(code, code)}
-                          className="flex items-center justify-between rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs"
-                        >
-                          <span className="font-mono font-semibold text-foreground">{code}</span>
-                          {copiedId === code ? (
-                            <Check className="h-3.5 w-3.5 text-primary" />
-                          ) : (
-                            <Copy className="h-3.5 w-3.5 text-muted-foreground" />
-                          )}
-                        </button>
-                      ))}
+                      {b.codes.map((code) => {
+                        const status = b.codeStatuses?.[code];
+                        return (
+                          <button
+                            key={code}
+                            type="button"
+                            onClick={() => copy(code, code)}
+                            className="flex flex-col gap-0.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-left text-xs"
+                          >
+                            <span className="flex items-center justify-between gap-2">
+                              <span className="font-mono font-semibold text-foreground">{code}</span>
+                              {copiedId === code ? (
+                                <Check className="h-3.5 w-3.5 text-primary" />
+                              ) : (
+                                <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+                              )}
+                            </span>
+                            {b.persisted && (
+                              <span className="text-[10px] text-muted-foreground">{codeStatusLabel(status)}</span>
+                            )}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -310,8 +501,8 @@ const PromoCodesSection = ({ formData, updateForm }: PromoSectionProps) => {
             );
           })}
 
-          {/* Form para crear nuevo lote */}
           <div className="rounded-2xl border border-dashed border-primary/40 p-4">
+            <p className="mb-3 text-sm font-semibold text-foreground">Crear nuevo lote</p>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-xs font-semibold text-muted-foreground">Tipo de moneda</label>
@@ -365,7 +556,7 @@ const PromoCodesSection = ({ formData, updateForm }: PromoSectionProps) => {
               onClick={addBatch}
               className="mt-3 flex w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground"
             >
-              <Plus className="h-4 w-4" /> Agregar código
+              <Plus className="h-4 w-4" /> Agregar nuevo lote
             </button>
           </div>
         </div>

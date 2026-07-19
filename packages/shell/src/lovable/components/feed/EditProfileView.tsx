@@ -32,29 +32,42 @@ import { Textarea } from '@lovable/components/ui/textarea';
 import PlanDetailView, { type PlanId } from '@lovable/components/legal/PlanDetailView';
 import BankingHub from '@lovable/components/banking/BankingHub';
 import { toast } from 'sonner';
-import { usePrivacy } from '@lovable/contexts/PrivacyContext';
+import { updateProfileVisibility, getPreferences, saveUserPreferences } from '@doevents/shared';
 import { useCompany } from '@lovable/contexts/CompanyContext';
+import { useKyc } from '@lovable/contexts/KycContext';
+import KycCertificationView from '@lovable/components/feed/KycCertificationView';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   onBack: () => void;
   currentPlan?: PlanId;
   onUpgradePlan?: () => void;
+  userId?: string;
+  isPublicProfile?: boolean;
+  onVisibilityChange?: (isPublic: boolean) => void;
   profileName?: string;
   profileEmail?: string;
   profilePhone?: string;
+  profilePhoneNumber?: string;
+  profileCountryCode?: string;
   profileDocument?: string;
   profileBio?: string;
   profileUsername?: string;
+  profileBirthDate?: string;
   onSaveContact?: (data: {
     nombres: string;
     apellidos: string;
     phone: string;
     username: string;
     bio: string;
+    fecha?: string;
+    phonePrefix?: string;
   }) => Promise<void>;
 }
 
-type SubView = null | 'password-email' | 'password-sent' | 'password-token' | 'gustos' | 'bancarios' | 'plan-detail';
+type SubView = null | 'password-email' | 'password-sent' | 'password-token' | 'gustos' | 'bancarios' | 'plan-detail' | 'kyc';
+
+import { PhoneCountryFields, splitGuestPhone } from '@lovable/components/guests/PhoneCountryFields';
 
 const INTEREST_TAGS = [
   'Salud y bienestar', 'Artes escénicas', 'Educación', 'Comunidad y cultura',
@@ -69,28 +82,63 @@ const EditProfileView = ({
   onBack,
   currentPlan = 'free',
   onUpgradePlan,
+  userId,
+  isPublicProfile = true,
+  onVisibilityChange,
   profileName = '',
   profileEmail = '',
   profilePhone = '',
+  profilePhoneNumber = '',
+  profileCountryCode = '',
   profileDocument = '',
   profileBio = '',
   profileUsername = '',
+  profileBirthDate = '',
   onSaveContact,
 }: Props) => {
+  const navigate = useNavigate();
   const [subView, setSubView] = useState<SubView>(null);
   const [saving, setSaving] = useState(false);
   const [contactOpen, setContactOpen] = useState(true);
   const [subOpen, setSubOpen] = useState(false);
-  const { privateProfile, setPrivateProfile } = usePrivacy();
+  const [privateProfile, setPrivateProfile] = useState(!isPublicProfile);
+  const [visibilityBusy, setVisibilityBusy] = useState(false);
   const { company, loading: companyLoading } = useCompany();
+  const { status: kycStatus } = useKyc();
+
+  useEffect(() => {
+    setPrivateProfile(!isPublicProfile);
+  }, [isPublicProfile]);
+
+  const handleVisibilityToggle = async (nextPrivate: boolean) => {
+    if (!userId || visibilityBusy) return;
+    setVisibilityBusy(true);
+    const previous = privateProfile;
+    setPrivateProfile(nextPrivate);
+    try {
+      await updateProfileVisibility(userId, !nextPrivate);
+      onVisibilityChange?.(!nextPrivate);
+      toast.success(
+        nextPrivate
+          ? 'Perfil privado: solo tus seguidores verán tu contenido'
+          : 'Perfil público: todos pueden ver tu contenido',
+      );
+    } catch (err) {
+      setPrivateProfile(previous);
+      toast.error(err instanceof Error ? err.message : 'No se pudo actualizar la visibilidad');
+    } finally {
+      setVisibilityBusy(false);
+    }
+  };
 
   // Contact form
   const nameParts = profileName.split(' ').filter(Boolean);
+  const phoneParts = splitGuestPhone(profilePhone, profileCountryCode, profilePhoneNumber);
   const [nombres, setNombres] = useState(nameParts[0] || '');
   const [apellidos, setApellidos] = useState(nameParts.slice(1).join(' ') || '');
-  const [fecha, setFecha] = useState('');
-  const [phonePrefix, setPhonePrefix] = useState('+57');
-  const [phone, setPhone] = useState(profilePhone || '');
+  const [fecha, setFecha] = useState(profileBirthDate || '');
+  const [phonePrefix, setPhonePrefix] = useState(phoneParts.phoneIndicative);
+  const [phone, setPhone] = useState(phoneParts.phoneNumber);
   const [email] = useState(profileEmail || '');
   const [username, setUsername] = useState(profileUsername || '');
   const usernameOk = username.trim().length >= 3 && /^[a-zA-Z0-9_.-]+$/.test(username.trim());
@@ -104,6 +152,30 @@ const EditProfileView = ({
   const tokenRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
+    if (subView !== 'gustos') return;
+    let cancelled = false;
+    setGustosLoading(true);
+    void getPreferences()
+      .then((res) => {
+        if (cancelled) return;
+        const catalog = (res.data || [])
+          .map((p) => ({ id: Number(p.id), name: p.name }))
+          .filter((p) => Number.isFinite(p.id) && p.id > 0 && p.name);
+        setPreferenceCatalog(catalog);
+        if (!interests.length && catalog.length) {
+          setInterests(catalog.slice(0, 3).map((p) => p.name));
+        }
+      })
+      .catch(() => {
+        if (!cancelled) toast.error('No se pudieron cargar las preferencias');
+      })
+      .finally(() => {
+        if (!cancelled) setGustosLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, [subView]);
+
+  useEffect(() => {
     if (subView !== 'password-token') return;
     setSecondsLeft(139);
     const id = setInterval(() => setSecondsLeft((s) => (s > 0 ? s - 1 : 0)), 1000);
@@ -111,7 +183,10 @@ const EditProfileView = ({
   }, [subView]);
 
   // Interests
-  const [interests, setInterests] = useState<string[]>(['Música', 'Comida y bebida', 'Festivales y actividades de temporada']);
+  const [preferenceCatalog, setPreferenceCatalog] = useState<Array<{ id: number; name: string }>>([]);
+  const [interests, setInterests] = useState<string[]>([]);
+  const [gustosLoading, setGustosLoading] = useState(false);
+  const [gustosSaving, setGustosSaving] = useState(false);
   const [createsEvents, setCreatesEvents] = useState<'si' | 'no'>('si');
   const [providesServices, setProvidesServices] = useState<'si' | 'no'>('si');
   const [hasVenue, setHasVenue] = useState<'si' | 'no'>('si');
@@ -285,18 +360,18 @@ const EditProfileView = ({
           <p className="text-right text-xs text-primary mt-1">60%</p>
         </div>
         <h1 className="text-2xl font-bold text-primary mb-2">Gustos y servicios</h1>
-        <div className="mb-4 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-left">
-          <p className="text-xs font-semibold text-primary">Persistencia pendiente (BACKEND_REQUIRED)</p>
-          <p className="mt-1 text-[11px] text-muted-foreground">
-            Guardar intereses y preferencias requiere endpoint de preferencias en DoEventsBack.
-          </p>
-        </div>
         <p className="text-sm font-medium text-foreground mb-4">
           Selecciona algunos eventos a los cuales te gusta ir o participar
         </p>
+        {gustosLoading ? (
+          <div className="flex items-center justify-center py-10">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        ) : (
+        <>
         <div className="rounded-2xl bg-card shadow-sm p-4">
           <div className="flex flex-wrap gap-2">
-            {INTEREST_TAGS.map((tag) => {
+            {(preferenceCatalog.length ? preferenceCatalog.map((p) => p.name) : INTEREST_TAGS).map((tag) => {
               const active = interests.includes(tag);
               return (
                 <button
@@ -337,17 +412,56 @@ const EditProfileView = ({
             </div>
           ))}
         </div>
+        </>
+        )}
         <Button
+          disabled={gustosSaving || gustosLoading || !userId || interests.length === 0}
           onClick={() => {
-            toast.info('Guardar intereses requiere endpoint de preferencias (BACKEND_REQUIRED).');
-            setSubView(null);
+            void (async () => {
+              if (!userId) return;
+              const catalog = preferenceCatalog.length
+                ? preferenceCatalog
+                : INTEREST_TAGS.map((name, index) => ({ id: index + 1, name }));
+              const selectedIds = catalog
+                .filter((p) => interests.includes(p.name))
+                .map((p) => p.id);
+              if (!selectedIds.length) {
+                toast.error('Selecciona al menos un gusto');
+                return;
+              }
+              setGustosSaving(true);
+              try {
+                const result = await saveUserPreferences({
+                  userId,
+                  preferences: selectedIds,
+                  createEvents: createsEvents,
+                  provideServices: providesServices,
+                  havePlace: hasVenue,
+                });
+                toast.success(result.message || 'Gustos guardados');
+                setSubView(null);
+              } catch (err) {
+                toast.error(err instanceof Error ? err.message : 'No se pudieron guardar los gustos');
+              } finally {
+                setGustosSaving(false);
+              }
+            })();
           }}
           className="mt-8 w-full rounded-full"
         >
-          Continuar
+          {gustosSaving ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Guardando…
+            </>
+          ) : 'Guardar gustos'}
         </Button>
       </div>
     );
+  }
+
+  if (subView === 'kyc') {
+    return <KycCertificationView onBack={() => setSubView(null)} />;
   }
 
   if (subView === 'bancarios') {
@@ -388,28 +502,18 @@ const EditProfileView = ({
                   type="date"
                   value={fecha}
                   onChange={(e) => setFecha(e.target.value)}
-                  className="flex-1 bg-transparent py-2 text-sm focus:outline-none"
-                />
-                <CalendarDays className="h-4 w-4 text-primary" />
-              </div>
-            </div>
-            <div>
-              <Label className="text-sm font-semibold">Número de celular</Label>
-              <div className="mt-1 flex gap-3">
-                <input
-                  value={phonePrefix}
-                  onChange={(e) => setPhonePrefix(e.target.value)}
-                  className="w-16 border-b border-muted-foreground/20 bg-transparent py-2 text-center text-sm focus:border-primary focus:outline-none"
-                />
-                <input
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="8495129045"
-                  inputMode="numeric"
-                  className="flex-1 border-b border-muted-foreground/20 bg-transparent py-2 text-sm focus:border-primary focus:outline-none"
+                  className="flex-1 bg-transparent py-2 text-sm focus:outline-none [color-scheme:light]"
                 />
               </div>
             </div>
+            <PhoneCountryFields
+              indicative={phonePrefix}
+              number={phone}
+              onIndicativeChange={setPhonePrefix}
+              onNumberChange={setPhone}
+              indicativeLabel="Código de país"
+              numberLabel="Número de celular"
+            />
             <div>
               <Label className="text-sm font-semibold text-muted-foreground">Correo electrónico</Label>
               <input
@@ -556,18 +660,44 @@ const EditProfileView = ({
         <Lock className="h-6 w-6 text-primary shrink-0" />
         <div className="flex-1">
           <p className="font-bold text-foreground">Perfil privado</p>
-          <p className="text-xs text-muted-foreground">Solo tú puedes ver tu perfil y eventos</p>
+          <p className="text-xs text-muted-foreground">
+            {privateProfile
+              ? 'Solo tus seguidores pueden ver tu perfil, eventos, lugares y servicios'
+              : 'Tu perfil y publicaciones son visibles para todos'}
+          </p>
         </div>
-        <Switch checked={privateProfile} onCheckedChange={setPrivateProfile} />
+        <Switch
+          checked={privateProfile}
+          disabled={!userId || visibilityBusy}
+          onCheckedChange={(v) => void handleVisibilityToggle(v)}
+        />
       </div>
 
       {/* Action rows */}
       <ActionRow icon={<KeyRound className="h-5 w-5 text-primary" />} label="Cambiar Contraseña"
-        onClick={() => setSubView('password-email')} />
+        onClick={() => navigate('/auth/forgot-password')} />
       <ActionRow icon={<Smile className="h-5 w-5 text-primary" />} label="Editar gustos"
         onClick={() => setSubView('gustos')} />
       <ActionRow icon={<HandCoins className="h-5 w-5 text-primary" />} label="Editar / Agregar datos bancarios"
         onClick={() => setSubView('bancarios')} />
+      <button
+        type="button"
+        onClick={() => setSubView('kyc')}
+        className="flex w-full items-center gap-3 rounded-2xl bg-primary/5 px-4 py-4 shadow-sm border border-primary/20"
+      >
+        <ShieldCheck className="h-5 w-5 text-primary shrink-0" />
+        <div className="flex-1 text-left">
+          <p className="font-bold text-foreground">Certificar mi identidad</p>
+          <p className="text-xs text-muted-foreground">
+            {kycStatus === 'verified' ? 'Identidad verificada' : 'Verifica tu identidad para mayor confianza'}
+          </p>
+        </div>
+        {kycStatus === 'verified' ? (
+          <span className="rounded-full bg-primary/15 px-3 py-1 text-xs font-semibold text-primary">Activo</span>
+        ) : (
+          <ChevronRight className="h-5 w-5 text-primary" />
+        )}
+      </button>
 
       <div className="pt-3">
         <Button
@@ -580,9 +710,11 @@ const EditProfileView = ({
                   await onSaveContact({
                     nombres,
                     apellidos,
-                    phone: `${phonePrefix}${phone}`.trim(),
+                    phone,
+                    phonePrefix,
                     username,
                     bio: descripcion,
+                    fecha,
                   });
                 } else {
                   toast.success('Cambios guardados');

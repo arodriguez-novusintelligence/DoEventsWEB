@@ -3,7 +3,7 @@ import type {
   ChatParticipant,
   ChatRoom,
 } from '@doevents/shared';
-import { resolveImageUrl } from '@doevents/shared';
+import { resolveUserAvatarUrl } from '@doevents/shared';
 import {
   isAnnouncementMessage,
   isEventInProgress,
@@ -26,6 +26,7 @@ import {
   resolveMessageSenderId,
   resolveMessageText,
   resolveRoomAvatar,
+  normalizeChatReactions,
   resolveRoomEventId,
   resolveRoomId,
   resolveRoomTitle,
@@ -48,6 +49,49 @@ function initialsFromName(name: string): string {
     .join('')
     .slice(0, 2)
     .toUpperCase() || 'DE';
+}
+
+type ParticipantProfile = {
+  id?: string;
+  name?: string;
+  avatar?: string;
+};
+
+function normalizedParticipantId(value?: string): string {
+  return String(value || '').trim().toLowerCase();
+}
+
+function addParticipantToMap(
+  participantMap: Map<string, ParticipantProfile>,
+  participant: ChatParticipant,
+): void {
+  const id = participant.id?.trim();
+  if (!id) return;
+
+  const profile = { id, name: participant.name, avatar: participant.avatar };
+  participantMap.set(id, profile);
+
+  const shortId = id.length === 36 && id.includes('-') ? id.substring(0, 10) : undefined;
+  if (shortId) participantMap.set(shortId, profile);
+}
+
+function findParticipantProfile(
+  participantMap: Map<string, ParticipantProfile>,
+  senderId: string,
+): ParticipantProfile | undefined {
+  const direct = participantMap.get(senderId);
+  if (direct || !senderId) return direct;
+
+  const normalizedSenderId = normalizedParticipantId(senderId);
+  for (const [participantId, profile] of participantMap) {
+    if (
+      userIdsMatch(participantId, senderId)
+      || normalizedParticipantId(participantId) === normalizedSenderId
+    ) {
+      return profile;
+    }
+  }
+  return undefined;
 }
 
 function formatChatTime(value?: string): string {
@@ -120,11 +164,13 @@ function participantToAttendee(
   onlineUserIds: Record<string, boolean>,
 ): ChatAttendee {
   const name = participant.name?.trim() || 'Usuario';
+  const username = participant.username?.trim() || undefined;
   return {
     id: participant.id,
     name,
+    username,
     initials: initialsFromName(name),
-    avatar: resolveImageUrl(participant.avatar) || undefined,
+    avatar: resolveUserAvatarUrl(participant.avatar, participant.id) || undefined,
     isAdmin: isRoomAdmin(room, participant.id),
     isOnline: Boolean(onlineUserIds[participant.id]),
   };
@@ -133,11 +179,12 @@ function participantToAttendee(
 export function apiMessageToLovable(
   message: ApiChatMessage,
   currentUserId: string,
-  participantMap: Map<string, { name?: string; avatar?: string }>,
+  participantMap: Map<string, ParticipantProfile>,
 ): LovableChatMessage {
   const senderId = resolveMessageSenderId(message) || '';
   const isOwn = Boolean(currentUserId && userIdsMatch(senderId, currentUserId));
-  const profile = participantMap.get(senderId);
+  const profile = findParticipantProfile(participantMap, senderId);
+  const avatarFromSender = typeof message.sender === 'object' ? message.sender?.avatar : undefined;
   const senderName = message.senderName
     || (typeof message.sender === 'object' ? message.sender?.name : undefined)
     || profile?.name
@@ -155,12 +202,25 @@ export function apiMessageToLovable(
   else if (isLocationMessage(message)) messageType = 'location';
   else if (isEventShareMessage(message)) messageType = 'event-share';
 
+  const replyMeta = message.replyMeta;
+  let replyTo: LovableChatMessage['replyTo'];
+  if (replyMeta?.reply) {
+    const replySenderId = String(replyMeta.reply.sender || '').trim();
+    const replyProfile = replySenderId ? findParticipantProfile(participantMap, replySenderId) : undefined;
+    replyTo = {
+      id: replyMeta.reply.id || replyMeta.replyToId || '',
+      text: replyMeta.reply.text || '',
+      senderName: replyProfile?.name || 'Usuario',
+      senderId: replySenderId || undefined,
+    };
+  }
+
   return {
     id: message.id || message.messageId || message.clientMessageId || `msg-${Date.now()}`,
     senderId,
     senderName,
     senderInitials: initialsFromName(senderName),
-    senderAvatar: resolveImageUrl(profile?.avatar) || undefined,
+    senderAvatar: resolveUserAvatarUrl(avatarFromSender || profile?.avatar, senderId || profile?.id) || undefined,
     text,
     timestamp: formatChatTime(message.createdAt || message.timestamp),
     isOwn,
@@ -179,6 +239,8 @@ export function apiMessageToLovable(
         date: message.sharedEvent.date,
       }
       : undefined,
+    replyTo,
+    reactions: normalizeChatReactions(message.reactions),
   };
 }
 
@@ -189,9 +251,9 @@ export function chatRoomToEventChatRoom(
   onlineUserIds: Record<string, boolean>,
 ): EventChatRoom {
   const participants = resolveAllChatMembers(room);
-  const participantMap = new Map<string, { name?: string; avatar?: string }>();
+  const participantMap = new Map<string, ParticipantProfile>();
   participants.forEach((p) => {
-    if (p.id) participantMap.set(p.id, { name: p.name, avatar: p.avatar });
+    addParticipantToMap(participantMap, p);
   });
 
   const eventId = resolveRoomEventId(room);
@@ -260,11 +322,11 @@ export function chatRoomToPrivateChat(
         isOnline: Boolean(peerId && onlineUserIds[peerId]),
       };
 
-  const participantMap = new Map<string, { name?: string; avatar?: string }>();
+  const participantMap = new Map<string, ParticipantProfile>();
   resolveAllChatMembers(room).forEach((p) => {
-    if (p.id) participantMap.set(p.id, { name: p.name, avatar: p.avatar });
+    addParticipantToMap(participantMap, p);
   });
-  if (peer?.id) participantMap.set(peer.id, { name: peer.name, avatar: peer.avatar });
+  if (peer?.id) addParticipantToMap(participantMap, peer);
 
   return {
     id: resolveRoomId(room),

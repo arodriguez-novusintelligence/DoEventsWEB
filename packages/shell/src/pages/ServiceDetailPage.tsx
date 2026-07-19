@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {
   canEditEntity,
@@ -7,6 +7,7 @@ import {
   fetchServiceById,
   fetchServiceLikedByUser,
   fetchUserById,
+  getPersistedPlatformRole,
   invalidateServicesCache,
   isEntityOwner,
   Loader,
@@ -26,10 +27,12 @@ import {
   buildDetailShareHandler,
   buildServiceLikeHandler,
 } from '../lovable-bridge/entityDetailSocial';
+import PublicationPromoCodesPanel, { canViewPublicationPromoCodes } from '../components/PublicationPromoCodesPanel';
 
 export const ServiceDetailPage: React.FC = () => {
   const { serviceId } = useParams<{ serviceId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const userId = useSelector((s: RootState) => s.auth.idUser);
   const { showToast } = useToast();
   const [service, setService] = useState<ServiceFormData | null>(null);
@@ -95,12 +98,21 @@ export const ServiceDetailPage: React.FC = () => {
 
   const isOwner = isEntityOwner(userId, meta.userId);
   const canEdit = canEditEntity(userId, meta.userId, meta.coAdminIds);
+  const platformRole = getPersistedPlatformRole();
+  const canViewPromoCodes = canViewPublicationPromoCodes(userId, meta.userId, platformRole);
+  const openBookingOnMount = Boolean(
+    (location.state as { openBooking?: boolean } | null)?.openBooking,
+  );
 
   return (
     <div className="mx-auto max-w-lg pb-52">
       <ServiceDetailView
         service={service}
-        onBack={() => navigate(-1)}
+        onBack={() => {
+          const fromDiscover = (location.state as { fromDiscover?: boolean } | null)?.fromDiscover;
+          if (fromDiscover) navigate('/events');
+          else navigate(-1);
+        }}
         coverImageUrl={serviceCoverUrl(meta)}
         galleryUrls={meta.gallery}
         description={meta.description}
@@ -125,7 +137,7 @@ export const ServiceDetailPage: React.FC = () => {
           showToast,
         )}
         liveBooking={
-          userId && !isOwner
+          userId
             ? {
                 serviceId: meta.serviceId,
                 userId,
@@ -134,7 +146,9 @@ export const ServiceDetailPage: React.FC = () => {
               }
             : undefined
         }
-        canReserve={!isOwner}
+        canReserve
+        initialOpenBooking={openBookingOnMount}
+        onEditService={canEdit ? () => navigate(`/services/${meta.serviceId}/edit`) : undefined}
         onRequireLogin={() => {
           showToast('Debes iniciar sesión para reservar', 'error');
           navigate('/auth/login', { state: { from: `/services/${meta.serviceId}` } });
@@ -144,28 +158,16 @@ export const ServiceDetailPage: React.FC = () => {
           showToast('Gracias por tu calificación', 'success');
         } : undefined}
       />
-      {(canEdit || isOwner) && (
+      {(isOwner && userId) && (
         <div className="px-4 pb-8 space-y-4">
-          {canEdit && (
-            <button
-              type="button"
-              onClick={() => navigate(`/services/${meta.serviceId}/edit`)}
-              className="w-full rounded-full border border-primary py-3 text-sm font-semibold text-primary"
-            >
-              Editar servicio
-            </button>
-          )}
-          {isOwner && userId && (
-            <CoAdminSection
-              entityType="SERVICE"
-              entityId={meta.serviceId}
-              ownerUserId={meta.userId}
-              currentUserId={userId}
-              coAdminIds={meta.coAdminIds}
-              entityName={meta.name}
-            />
-          )}
-          {isOwner && userId && (
+          <CoAdminSection
+            entityType="SERVICE"
+            entityId={meta.serviceId}
+            ownerUserId={meta.userId}
+            currentUserId={userId}
+            coAdminIds={meta.coAdminIds}
+            entityName={meta.name}
+          />
           <DeleteOwnItemButton
             label="este servicio"
             onDelete={async () => {
@@ -175,8 +177,19 @@ export const ServiceDetailPage: React.FC = () => {
               navigate('/profile');
             }}
           />
-          )}
         </div>
+      )}
+      {canViewPromoCodes && (
+        <PublicationPromoCodesPanel
+          className="px-4 pb-8"
+          entityType="service"
+          entityId={meta.serviceId}
+          entityName={meta.name || service.name || 'Servicio'}
+          ownerUserId={meta.userId}
+          userId={userId}
+          platformRole={platformRole}
+          imageUrl={serviceCoverUrl(meta)}
+        />
       )}
     </div>
   );

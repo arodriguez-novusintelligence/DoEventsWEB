@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
   fetchNearbyVenues,
+  extractVenueImageUrls,
+  resolveEventImageUrl,
+  resolveImageUrl,
   getStoredUserLocation,
   resolveEventImageUrl,
   resolveImageUrl,
@@ -21,11 +24,13 @@ export interface FeedVenueCard {
 }
 
 function venueToCard(v: NearbyVenue): FeedVenueCard {
+  const parsed = extractVenueImageUrls(v as unknown as Record<string, unknown>);
+  const candidate = v.mainImage || v.imageUrls?.[0] || parsed[0];
   return {
     id: v.venueId,
     name: v.name,
     type: v.type || v.tags || 'Lugar',
-    image: resolveEventImageUrl(resolveImageUrl(v.mainImage || v.imageUrls?.[0])),
+    image: resolveEventImageUrl(resolveImageUrl(candidate)),
     city: v.city,
     capacity: v.capacity,
     distanceKm: v.distance,

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Loader2, MoreHorizontal, X, Eye } from 'lucide-react';
 import {
   FeedStoryItem,
@@ -6,10 +7,14 @@ import {
   cacheUserStories,
   deletePublication,
   dispatchStoriesCacheInvalidated,
+  fetchStoryViewers,
   fetchUserStories,
   getCachedUserStories,
+  getPersistedOAuthProfilePhoto,
+  recordStoryView,
   resolveImageUrl,
   shareStoryAsPublication,
+  userIdsMatch,
   useToast,
 } from '@doevents/shared';
 import { StoryViewersSheet } from './StoryViewersSheet';
@@ -20,9 +25,13 @@ export interface StoryViewerProps {
   /** Alias Lovable / FeedHero */
   startUserId?: string | null;
   currentUserId?: string | null;
+  /** Avatar del usuario logueado (fallback en "Tu historia") */
+  currentUserAvatar?: string | null;
   onClose: () => void;
   onStoriesChanged?: () => void;
   onOpenViewers?: (userId: string, itemId: string) => void;
+  /** Override: abrir perfil del autor (por defecto /users/:id o /profile) */
+  onOpenProfile?: (userId: string) => void;
 }
 
 const STORY_DURATION_MS = 5000;
@@ -60,11 +69,14 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   authorUserId,
   startUserId,
   currentUserId,
+  currentUserAvatar,
   onClose,
   onStoriesChanged,
   onOpenViewers,
+  onOpenProfile,
 }) => {
   const resolvedAuthorId = authorUserId ?? startUserId ?? null;
+  const navigate = useNavigate();
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -75,6 +87,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   const [mediaFailed, setMediaFailed] = useState(false);
   const [progressKey, setProgressKey] = useState(0);
   const [progress, setProgress] = useState(0);
+  const [views, setViews] = useState(0);
   const rafRef = useRef<number | null>(null);
   const startRef = useRef(0);
 
@@ -138,13 +151,33 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   const isVideo = mediaKind === 'video';
   const storyAuthorId = current?.authorId || resolvedAuthorId || '';
   const canManage = Boolean(
-    currentUserId && current && storyAuthorId === currentUserId,
+    currentUserId && current && userIdsMatch(storyAuthorId, currentUserId),
   );
 
   useEffect(() => {
     setMediaFailed(false);
     setProgressKey((k) => k + 1);
+    setViews(current?.views || 0);
   }, [current?.id, mediaUrl]);
+
+  useEffect(() => {
+    if (!open || !current?.id) return;
+    let cancelled = false;
+    if (canManage) {
+      void fetchStoryViewers(current.id)
+        .then((viewers) => {
+          if (!cancelled) setViews(viewers.length);
+        })
+        .catch(() => undefined);
+      return () => { cancelled = true; };
+    }
+    void recordStoryView(current.id)
+      .then((count) => {
+        if (!cancelled && count != null) setViews(count);
+      })
+      .catch(() => undefined);
+    return () => { cancelled = true; };
+  }, [open, current?.id, canManage]);
 
   const toggleMenu = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -201,7 +234,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   };
 
   useEffect(() => {
-    if (!open || loading || !current || isVideo || busyAction || menuOpen || mediaFailed) return;
+    if (!open || loading || !current || isVideo || busyAction || menuOpen || viewersOpen || mediaFailed) return;
     startRef.current = performance.now();
     setProgress(0);
 
@@ -220,7 +253,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [open, loading, current, isVideo, index, goNext, busyAction, menuOpen, mediaFailed, progressKey]);
+  }, [open, loading, current, isVideo, index, goNext, busyAction, menuOpen, viewersOpen, mediaFailed, progressKey]);
 
   if (!open || !resolvedAuthorId) return null;
 
@@ -258,7 +291,27 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   if (!current) return null;
 
   const displayName = canManage ? 'Tu historia' : current.authorName;
-  const avatarUrl = current.authorAvatar ? resolveImageUrl(current.authorAvatar) : undefined;
+  const avatarUrl = resolveImageUrl(current.authorAvatar)
+    || (canManage
+      ? resolveImageUrl(currentUserAvatar) || resolveImageUrl(getPersistedOAuthProfilePhoto(currentUserId))
+      : undefined);
+  const profileTargetId = (storyAuthorId || resolvedAuthorId || '').trim();
+
+  const openAuthorProfile = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!profileTargetId) return;
+    onClose();
+    if (onOpenProfile) {
+      onOpenProfile(profileTargetId);
+      return;
+    }
+    if (canManage || (currentUserId && userIdsMatch(profileTargetId, currentUserId))) {
+      navigate('/profile');
+      return;
+    }
+    navigate(`/users/${encodeURIComponent(profileTargetId)}`);
+  };
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black">
@@ -275,13 +328,21 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
         ))}
       </div>
 
-      <div className="absolute left-0 right-0 top-6 z-10 flex items-center justify-between px-4 pt-3">
-        <div className="flex min-w-0 items-center gap-2">
-          {avatarUrl ? (
-            <img src={avatarUrl} alt="" className="h-8 w-8 rounded-full border-2 border-white object-cover" />
-          ) : (
-            <UserAvatar name={displayName} size={32} className="border-2 border-white" />
-          )}
+      <div className="absolute left-0 right-0 top-6 z-40 flex items-center justify-between px-4 pt-3">
+        <button
+          type="button"
+          onClick={openAuthorProfile}
+          onPointerUp={(e) => e.stopPropagation()}
+          disabled={!profileTargetId}
+          className="relative z-40 flex min-w-0 max-w-[70%] items-center gap-2 rounded-md text-left disabled:opacity-60"
+          aria-label={canManage ? 'Ver mi perfil' : `Ver perfil de ${current.authorName || 'usuario'}`}
+        >
+          <UserAvatar
+            name={displayName}
+            imageUrl={avatarUrl}
+            size={32}
+            className="border-2 border-white pointer-events-none"
+          />
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold text-white">{displayName}</p>
             {(() => {
@@ -289,8 +350,8 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
               return ago ? <p className="text-[10px] text-white/70">hace {ago}</p> : null;
             })()}
           </div>
-        </div>
-        <div className="flex items-center gap-1">
+        </button>
+        <div className="relative z-40 flex items-center gap-1">
           {canManage && (
             <button
               type="button"
@@ -349,13 +410,13 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
 
       <button
         type="button"
-        className="absolute bottom-0 left-0 top-0 w-1/3"
+        className="absolute bottom-0 left-0 top-20 z-0 w-1/3"
         aria-label="Historia anterior"
         onClick={goPrev}
       />
       <button
         type="button"
-        className="absolute bottom-0 right-0 top-0 w-1/3"
+        className="absolute bottom-0 right-0 top-20 z-0 w-1/3"
         aria-label="Siguiente historia"
         onClick={goNext}
       />
@@ -363,11 +424,14 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
       {canManage && (
         <button
           type="button"
-          onClick={openViewers}
-          className="absolute bottom-6 left-1/2 z-10 inline-flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/60 px-4 py-2 text-xs font-semibold text-white backdrop-blur"
+          onClick={(e) => {
+            e.stopPropagation();
+            openViewers();
+          }}
+          className="absolute bottom-6 left-1/2 z-20 inline-flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/60 px-4 py-2 text-xs font-semibold text-white backdrop-blur"
         >
           <Eye className="h-4 w-4" />
-          0 vistas
+          {views} {views === 1 ? 'vista' : 'vistas'}
         </button>
       )}
 
@@ -449,6 +513,21 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
         open={viewersOpen}
         onOpenChange={setViewersOpen}
         storyId={current?.id || null}
+        onViewProfile={(viewerUserId) => {
+          const targetId = String(viewerUserId || '').trim();
+          if (!targetId) return;
+          setViewersOpen(false);
+          onClose();
+          if (onOpenProfile) {
+            onOpenProfile(targetId);
+            return;
+          }
+          if (currentUserId && userIdsMatch(targetId, currentUserId)) {
+            navigate('/profile');
+            return;
+          }
+          navigate(`/users/${encodeURIComponent(targetId)}`);
+        }}
       />
     </div>
   );

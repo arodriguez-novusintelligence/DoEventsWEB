@@ -182,10 +182,14 @@ export const UserServicesPage: React.FC = () => {
 
           }}
 
+          onDuplicateService={(service) => {
+
+            navigate('/services/create', { state: { duplicateFrom: service } });
+
+          }}
+
           onOpenService={(service) => {
-
             if (service.serviceId) navigate(`/services/${service.serviceId}`);
-
           }}
 
         />

@@ -8,14 +8,13 @@ import {
   invalidateDiscoverCache,
   Loader,
   RootState,
-  updateEvent,
   useToast,
 } from '@doevents/shared';
 import type { EventFormData } from '@lovable/data/eventFormData';
 import CreateEventView from '@lovable/components/events/CreateEventView';
 import { eventDetailToFormData } from '../lovable-bridge/eventEditBridge';
-import { syncEventMediaFromForm } from '../lovable-bridge/createEventBridge';
-import { finishPublishAndGoToFeed } from '../lovable-bridge/feedPublishBridge';
+import { updateLovableEventFromEdit } from '../lovable-bridge/createEventBridge';
+import { isAccessControlDirty } from '../lovable-bridge/eventLocationDirty';
 import { confirmLeaveWithSave, isJsonDifferent } from '../lib/leaveConfirm';
 
 export const EventEditPage: React.FC = () => {
@@ -62,23 +61,22 @@ export const EventEditPage: React.FC = () => {
   }, [eventId, userId, navigate, showToast]);
 
   const handleSave = async (data: EventFormData): Promise<string> => {
-    if (!userId || !eventId) throw new Error('Sesión inválida');
-    await updateEvent(eventId, {
-      nombre: data.name,
-      descripcion: data.description,
-      fechaIni: data.startDate,
-      fechaFin: data.endDate,
-      horaIni: data.startTime,
-      horaFin: data.endTime,
-      aforo: data.capacity,
-      ciudad: data.location.detectedCity || data.location.customAddress || '',
-      direccion: data.location.customAddress || data.location.customName || '',
-      skipVenue: true,
-    }, userId);
-    await syncEventMediaFromForm(eventId, data, userId);
+    if (!userId || !eventId || !initialData) throw new Error('Sesión inválida');
+    const accessDirty = isAccessControlDirty(data.accessControl, initialData.accessControl);
+    const { eventId: savedId } = await updateLovableEventFromEdit(
+      eventId,
+      data,
+      userId,
+      {
+        skipVenueSync: false,
+        includeLayoutUpdate: true,
+        persistStaffAccess: accessDirty || Object.values(data.accessControl || {}).some((ids) => ids?.length),
+      },
+    );
     invalidateEventsCache();
     invalidateDiscoverCache();
-    return eventId;
+    setInitialData(data);
+    return savedId;
   };
 
   if (loading || !initialData) {
@@ -95,7 +93,8 @@ export const EventEditPage: React.FC = () => {
       headerTitle="Editar evento"
       publishLabel="Guardar cambios"
       initialData={initialData}
-      initialStep={7}
+      initialStep={2}
+      userId={userId || undefined}
       onBack={(formData) => {
         const dirty = isJsonDifferent(formData, initialData);
         void confirmLeaveWithSave({
@@ -105,12 +104,8 @@ export const EventEditPage: React.FC = () => {
       }}
       onPublish={handleSave}
       onPublished={() => {
-        void finishPublishAndGoToFeed(eventId, {
-          onNavigate: (state) => {
-            showToast('Evento actualizado en el Feed', 'success');
-            navigate('/', { replace: true, state });
-          },
-        });
+        showToast('Evento actualizado', 'success');
+        navigate(`/events/${eventId}`, { replace: true });
       }}
     />
   );

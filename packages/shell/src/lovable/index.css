@@ -329,7 +329,7 @@
 
 @layer components {
   .form-section {
-    @apply bg-card rounded-xl p-6 shadow-sm border border-border;
+    @apply rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5;
   }
   .form-label {
     @apply text-sm font-medium text-foreground mb-2 block;

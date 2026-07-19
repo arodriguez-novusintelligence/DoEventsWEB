@@ -1,6 +1,7 @@
 import { getAuthToken, getCurrentEnv } from './client';
 import { getStoredUserId } from './authService';
 import { parseFetchResponse, toUserFacingError } from '../lib/apiError';
+import { putBlobToPresignedUrl } from '../lib/presignedUpload';
 import type {
   FeedComment,
   FeedCommentsResponse,
@@ -13,21 +14,86 @@ import type {
 } from '../types/feed';
 import { getStoredUserLocation } from '../lib/userLocation';
 import { resolveImageUrl } from '../lib/resolveImageUrl';
+import { resolveUserMediaDisplayUrl } from '../lib/persistentMediaUrl';
 import {
   cacheSocialFeed,
   getCachedSocialFeedEntry,
+  invalidateEventsCache,
   invalidateSocialFeedCache,
   isFresh,
 } from '../lib/eventsCache';
 import { revalidateOnce } from '../lib/wallCacheRevalidate';
+import { dedupeFeedPublications } from '../lib/feedPublicationUtils';
+import { enrichVenueFeedPublicationImages } from '../lib/resolveFeedPublicationImages';
+import { extractVenueImageUrls } from './venueService';
+import {
+  dispatchStoriesCacheInvalidated,
+  invalidateUserStoriesCache,
+} from '../lib/storiesCache';
 
-function authHeaders(): Record<string, string> {
-  const token = getAuthToken();
-  return {
-    'Content-Type': 'application/json',
+/** Invalida cachés de privacidad, feed, discover y mapa tras cualquier cambio de seguimiento. */
+async function applyFollowGraphSideEffects(...userIds: string[]): Promise<void> {
+  const uniqueIds = [...new Set(userIds.map((id) => String(id || '').trim()).filter(Boolean))];
+  const { invalidatePrivacyCaches } = await import('../lib/privacyVisibility');
+  uniqueIds.forEach((id) => invalidatePrivacyCaches(id));
+  invalidateEventsCache();
+  invalidateSocialFeedCache();
+  const { emitSocialGraphUpdated } = await import('../lib/notificationsEvents');
+  emitSocialGraphUpdated();
+}
+
+function authHeaders(options?: { json?: boolean }): Record<string, string> {
+  const token = getAuthToken().trim();
+  const headers: Record<string, string> = {
     Accept: 'application/json',
-    ...(token ? { Authorization: token } : {}),
+    ...(token ? { Authorization: token.startsWith('Bearer ') ? token : `Bearer ${token}` } : {}),
   };
+  if (options?.json !== false) {
+    headers['Content-Type'] = 'application/json';
+  }
+  return headers;
+}
+
+function wallHomeFeedUrls(): string[] {
+  const legacy = getCurrentEnv().endpoints.wallFeed;
+  const primary = `${wallV1Base()}/home`;
+  return primary === legacy ? [legacy] : [primary, legacy];
+}
+
+async function sleep(ms: number): Promise<void> {
+  await new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function fetchWallHomeFeed(
+  params: URLSearchParams,
+  includeServices: boolean,
+): Promise<Response> {
+  const requestParams = new URLSearchParams(params);
+  if (!includeServices) {
+    requestParams.delete('include');
+  }
+
+  const urls = wallHomeFeedUrls();
+  let lastError: unknown;
+
+  for (const baseUrl of urls) {
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        const response = await fetch(`${baseUrl}?${requestParams}`, {
+          headers: authHeaders({ json: false }),
+          cache: 'no-store',
+        });
+        return response;
+      } catch (err) {
+        lastError = err;
+        if (attempt === 0) await sleep(400);
+      }
+    }
+  }
+
+  throw lastError instanceof Error
+    ? lastError
+    : new Error('No se pudo conectar con el muro social');
 }
 
 function clientRequestId(prefix: string): string {
@@ -73,7 +139,8 @@ function normalizeFeedMediaItem(raw: unknown): FeedMedia | null {
     const item = raw as Record<string, unknown>;
     const url = String(item.url || item.signedUrl || item.publicUrl || '').trim();
     if (!url) return null;
-    return { url, kind: String(item.kind || item.type || 'image') };
+    const mediaId = String(item.mediaId || item.id || '').trim() || undefined;
+    return { url, kind: String(item.kind || item.type || 'image'), mediaId };
   }
   return null;
 }
@@ -82,7 +149,16 @@ function normalizeFeedPublication(item: FeedPublication): FeedPublication {
   const media = (item.media || [])
     .map((entry) => normalizeFeedMediaItem(entry))
     .filter((entry): entry is FeedMedia => Boolean(entry?.url));
-  const images = (item.images || []).filter(Boolean);
+  const parsedImages = extractVenueImageUrls({
+    images: item.images,
+    imageUrls: item.metadata?.imageUrls,
+    mainImage: item.imageUrl || item.metadata?.mainImage,
+    amenities: item.metadata?.amenities,
+  } as Record<string, unknown>);
+  const images = [
+    ...(Array.isArray(item.images) ? item.images.filter(Boolean).map(String) : []),
+    ...parsedImages,
+  ].filter((url, index, list) => list.indexOf(url) === index);
   const imageUrl = item.imageUrl || images[0] || media[0]?.url;
   return {
     ...item,
@@ -92,10 +168,19 @@ function normalizeFeedPublication(item: FeedPublication): FeedPublication {
   };
 }
 
-function normalizeFeedResponse(payload: FeedHomeResponse): FeedHomeResponse {
+async function normalizeFeedResponse(payload: FeedHomeResponse): Promise<FeedHomeResponse> {
+  const normalized = (payload.items || []).map((item) => normalizeFeedPublication(item));
+  const deduped = dedupeFeedPublications(normalized);
+  const enriched = await enrichVenueFeedPublicationImages(deduped);
+  const { filterByOwnerPrivacy } = await import('../lib/privacyVisibility');
+  const visible = await filterByOwnerPrivacy(
+    enriched,
+    (item) => item.author?.id || (item.metadata?.userId as string | undefined),
+    getStoredUserId(),
+  );
   return {
     ...payload,
-    items: (payload.items || []).map((item) => normalizeFeedPublication(item)),
+    items: visible,
   };
 }
 
@@ -113,9 +198,16 @@ async function requestSocialFeed(
   if (stored?.lat != null) params.set('lat', String(stored.lat));
   if (stored?.lng != null) params.set('lng', String(stored.lng));
 
-  const response = await fetch(`${getCurrentEnv().endpoints.wallFeed}?${params}`, {
-    headers: authHeaders(),
-  });
+  let response: Response;
+  try {
+    response = await fetchWallHomeFeed(params, true);
+  } catch (err) {
+    try {
+      response = await fetchWallHomeFeed(params, false);
+    } catch {
+      throw new Error(toUserFacingError(err, 'el muro social'));
+    }
+  }
 
   if (response.status === 304) {
     return { items: [], hasMore: false, nextCursor: null };
@@ -128,7 +220,9 @@ async function requestSocialFeed(
       const errBody = JSON.parse(rawText) as { error?: { message?: string }; message?: string };
       message = errBody.error?.message || errBody.message || message;
     } catch {
-      // usar mensaje genérico
+      if (response.status === 502 || response.status === 503) {
+        message = 'El muro social no está disponible temporalmente. Intenta en unos minutos.';
+      }
     }
     throw new Error(message);
   }
@@ -137,9 +231,15 @@ async function requestSocialFeed(
     return { items: [], hasMore: false, nextCursor: null };
   }
 
-  const parsed = JSON.parse(rawText) as FeedHomeResponse & { data?: FeedHomeResponse };
+  let parsed: FeedHomeResponse & { data?: FeedHomeResponse };
+  try {
+    parsed = JSON.parse(rawText) as FeedHomeResponse & { data?: FeedHomeResponse };
+  } catch {
+    throw new Error('Respuesta inválida del muro social. Intenta de nuevo.');
+  }
+
   const payload = (parsed.data && Array.isArray(parsed.data.items) ? parsed.data : parsed) as FeedHomeResponse;
-  return normalizeFeedResponse({
+  return await normalizeFeedResponse({
     items: Array.isArray(payload.items) ? payload.items : [],
     nextCursor: payload.nextCursor ?? null,
     hasMore: Boolean(payload.hasMore),
@@ -174,7 +274,9 @@ export async function fetchSocialFeed(
   } catch (err) {
     if (options?.forceNetwork) invalidateSocialFeedCache();
     if (cachedEntry) return cachedEntry.data;
-    throw err;
+    throw err instanceof Error
+      ? err
+      : new Error(toUserFacingError(err, 'el muro social'));
   }
 }
 
@@ -205,6 +307,7 @@ export async function createPublication(input: {
         latitude: input.latitude ?? null,
         longitude: input.longitude ?? null,
         clientRequestId: clientRequestId('web-post'),
+        ...(getStoredUserId() ? { userId: getStoredUserId() } : {}),
       }),
     });
   } catch (err) {
@@ -216,7 +319,35 @@ export async function createPublication(input: {
     throw new Error(body.error?.message || 'No se pudo crear la publicación');
   }
   invalidateSocialFeedCache();
-  return body.publication!;
+  const normalized = normalizeFeedPublication(body.publication!);
+  const [enriched] = await enrichVenueFeedPublicationImages([normalized]);
+  return enriched;
+}
+
+export async function fetchPublicationById(
+  publicationId: string,
+  userId?: string,
+): Promise<FeedPublication | null> {
+  const params = new URLSearchParams();
+  const viewerId = userId || getStoredUserId();
+  if (viewerId) params.set('viewerId', viewerId);
+
+  const query = params.toString();
+  const response = await fetch(
+    `${wallBase()}/publications/${encodeURIComponent(publicationId)}${query ? `?${query}` : ''}`,
+    {
+      headers: authHeaders({ json: false }),
+      cache: 'no-store',
+    },
+  );
+
+  if (!response.ok) return null;
+
+  const body = await response.json() as { publication?: FeedPublication };
+  if (!body.publication) return null;
+  const normalized = normalizeFeedPublication(body.publication);
+  const [enriched] = await enrichVenueFeedPublicationImages([normalized]);
+  return enriched;
 }
 
 export async function togglePublicationLike(
@@ -242,12 +373,45 @@ export async function togglePublicationLike(
   return body;
 }
 
+export async function toggleCommentLike(
+  commentId: string,
+  liked: boolean,
+): Promise<{ stats?: { likes?: number }; viewerState?: { liked?: boolean } }> {
+  const viewerId = getStoredUserId();
+  const response = await fetch(`${wallBase()}/comments/${encodeURIComponent(commentId)}/like`, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify({
+      liked,
+      viewerId,
+      userId: viewerId,
+      clientRequestId: clientRequestId('web-comment-like'),
+    }),
+  });
+
+  const body = await response.json() as {
+    stats?: { likes?: number };
+    viewerState?: { liked?: boolean };
+    error?: { message?: string };
+  };
+  if (!response.ok) {
+    throw new Error(body.error?.message || 'Error al actualizar like del comentario');
+  }
+  return body;
+}
+
 export async function fetchPublicationComments(
   publicationId: string,
   limit = 20,
+  options?: { parentCommentId?: string | null },
 ): Promise<FeedCommentsResponse> {
+  const params = new URLSearchParams({ limit: String(limit) });
+  if (options && Object.prototype.hasOwnProperty.call(options, 'parentCommentId')) {
+    const parent = options.parentCommentId;
+    params.set('parentCommentId', parent == null || parent === '' ? 'null' : String(parent));
+  }
   const response = await fetch(
-    `${wallBase()}/publications/${encodeURIComponent(publicationId)}/comments?limit=${limit}`,
+    `${wallBase()}/publications/${encodeURIComponent(publicationId)}/comments?${params.toString()}`,
     { headers: authHeaders() },
   );
 
@@ -341,12 +505,21 @@ export async function updatePublication(
     dateLabel?: string;
     priceLabel?: string;
     mentions?: import('../types/feed').FeedMention[];
+    mediaIds?: string[];
+    replaceMedia?: boolean;
+    clearMedia?: boolean;
+    latitude?: number | null;
+    longitude?: number | null;
   },
 ): Promise<FeedPublication> {
   const response = await fetch(`${wallBase()}/publications/${encodeURIComponent(publicationId)}`, {
     method: 'PUT',
     headers: authHeaders(),
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      ...payload,
+      ...(getStoredUserId() ? { userId: getStoredUserId() } : {}),
+      clientRequestId: clientRequestId('web-update-publication'),
+    }),
   });
   const body = await response.json().catch(() => ({})) as {
     publication?: FeedPublication;
@@ -358,7 +531,8 @@ export async function updatePublication(
   if (!body.publication) {
     throw new Error('Respuesta inválida al actualizar la publicación');
   }
-  return body.publication;
+  invalidateSocialFeedCache();
+  return normalizeFeedPublication(body.publication);
 }
 
 export async function shareStoryAsPublication(input: {
@@ -487,30 +661,69 @@ export async function sharePublication(publicationId: string): Promise<{ shares?
   return { shares: body.stats?.shares, shareUrl: body.shareUrl };
 }
 
+export type FollowRelationStatus = 'none' | 'pending' | 'accepted';
+
+type ApiSocialUser = {
+  id?: string;
+  name?: string;
+  lastName?: string;
+  nombre?: string;
+  apellido?: string;
+  user?: string;
+  avatarUrl?: string | null;
+  fotoPerfilUrl?: string | null;
+};
+
+type ApiSocialListEntry = ApiSocialUser & {
+  user?: ApiSocialUser;
+};
+
+function mapSocialListUser(item: ApiSocialListEntry): { id: string; name: string; avatarUrl?: string | null } {
+  const u = item.user ?? item;
+  const id = String(u.id || item.id || '').trim();
+  const name = [u.name || u.nombre, u.lastName || u.apellido]
+    .filter(Boolean)
+    .join(' ')
+    .trim()
+    || String(u.user || '').trim()
+    || 'Usuario';
+  const avatarUrl = u.avatarUrl ?? u.fotoPerfilUrl ?? null;
+  return { id, name, avatarUrl };
+}
+
 export type FollowersCountResult = {
   count: number;
   isFollowing: boolean;
+  followStatus: FollowRelationStatus;
 };
 
 export async function fetchFollowersCount(
   userId: string,
   viewerId?: string,
 ): Promise<FollowersCountResult> {
-  const params = viewerId ? `?viewerId=${encodeURIComponent(viewerId)}` : '';
-  const response = await fetch(
-    `${getCurrentEnv().apiBaseUrl}/wall/client/${encodeURIComponent(userId)}/followers/count${params}`,
-    { headers: authHeaders() },
-  );
-  if (!response.ok) return { count: 0, isFollowing: false };
-  const body = await response.json() as {
-    followers_count?: number;
-    count?: number;
-    isFollowing?: boolean;
-  };
-  return {
-    count: body.followers_count ?? body.count ?? 0,
-    isFollowing: Boolean(body.isFollowing),
-  };
+  try {
+    const params = viewerId ? `?viewerId=${encodeURIComponent(viewerId)}` : '';
+    const response = await fetch(
+      `${getCurrentEnv().apiBaseUrl}/wall/client/${encodeURIComponent(userId)}/followers/count${params}`,
+      { headers: authHeaders() },
+    );
+    if (!response.ok) return { count: 0, isFollowing: false, followStatus: 'none' };
+    const body = await response.json() as {
+      followers_count?: number;
+      count?: number;
+      isFollowing?: boolean;
+      followStatus?: FollowRelationStatus;
+    };
+    const followStatus = body.followStatus
+      || (body.isFollowing ? 'accepted' : 'none');
+    return {
+      count: body.followers_count ?? body.count ?? 0,
+      isFollowing: followStatus === 'accepted' || Boolean(body.isFollowing),
+      followStatus,
+    };
+  } catch {
+    return { count: 0, isFollowing: false, followStatus: 'none' };
+  }
 }
 
 export async function fetchFollowingList(userId: string, limit = 50): Promise<Array<{ id: string; name: string; avatarUrl?: string | null }>> {
@@ -519,12 +732,9 @@ export async function fetchFollowingList(userId: string, limit = 50): Promise<Ar
     { headers: authHeaders() },
   );
   if (!response.ok) return [];
-  const body = await response.json() as { following?: Array<{ id: string; name: string; lastName?: string; avatarUrl?: string | null }> };
-  return (body.following || []).map((item) => ({
-    id: item.id,
-    name: [item.name, item.lastName].filter(Boolean).join(' ') || 'Usuario',
-    avatarUrl: item.avatarUrl,
-  }));
+  const body = await response.json() as { following?: ApiSocialListEntry[]; items?: ApiSocialListEntry[] };
+  const rows = body.following || body.items || [];
+  return rows.map(mapSocialListUser).filter((item) => Boolean(item.id));
 }
 
 export async function fetchFollowersList(userId: string, limit = 50): Promise<Array<{ id: string; name: string; avatarUrl?: string | null }>> {
@@ -533,12 +743,9 @@ export async function fetchFollowersList(userId: string, limit = 50): Promise<Ar
     { headers: authHeaders() },
   );
   if (!response.ok) return [];
-  const body = await response.json() as { followers?: Array<{ id: string; name: string; lastName?: string; avatarUrl?: string | null }> };
-  return (body.followers || []).map((item) => ({
-    id: item.id,
-    name: [item.name, item.lastName].filter(Boolean).join(' ') || 'Usuario',
-    avatarUrl: item.avatarUrl,
-  }));
+  const body = await response.json() as { followers?: ApiSocialListEntry[]; items?: ApiSocialListEntry[] };
+  const rows = body.followers || body.items || [];
+  return rows.map(mapSocialListUser).filter((item) => Boolean(item.id));
 }
 
 export async function fetchFollowingCount(userId: string): Promise<number> {
@@ -568,6 +775,7 @@ export async function followUser(followerId: string, targetUserId: string): Prom
     throw new Error(toUserFacingError(err, 'la solicitud de seguimiento'));
   }
   if (response.status === 409) {
+    await applyFollowGraphSideEffects(followerId, targetUserId);
     return { status: 'accepted', message: 'Ya sigues a este usuario' };
   }
   if (response.status === 404) {
@@ -578,6 +786,7 @@ export async function followUser(followerId: string, targetUserId: string): Prom
     response,
     'No se pudo enviar la solicitud de seguimiento',
   );
+  await applyFollowGraphSideEffects(followerId, targetUserId);
   return { status: body.status, message: body.message };
 }
 
@@ -601,6 +810,11 @@ export async function fetchPendingFollowRequests(userId: string): Promise<Follow
   }
   if (!response.ok) return [];
   const body = await response.json() as {
+    pending_requests?: Array<{
+      follow_id?: string;
+      user?: ApiSocialUser;
+      requested_at?: string;
+    }>;
     requests?: Array<{
       userId?: string;
       id?: string;
@@ -608,15 +822,24 @@ export async function fetchPendingFollowRequests(userId: string): Promise<Follow
       lastName?: string;
       avatarUrl?: string | null;
       timestamp?: string;
+      user?: ApiSocialUser;
     }>;
   };
-  return (body.requests || []).map((item) => ({
-    id: item.userId || item.id || '',
-    userId: item.userId || item.id || '',
-    name: [item.name, item.lastName].filter(Boolean).join(' ').trim() || 'Usuario',
-    avatarUrl: item.avatarUrl,
-    requestedAt: item.timestamp,
-  }));
+  const rows = body.pending_requests?.length
+    ? body.pending_requests
+    : (body.requests || []);
+  return rows.map((item) => {
+    const mapped = mapSocialListUser(item as ApiSocialListEntry);
+    const userIdValue = mapped.id;
+    return {
+      id: userIdValue,
+      userId: userIdValue,
+      name: mapped.name,
+      avatarUrl: mapped.avatarUrl,
+      requestedAt: (item as { requested_at?: string }).requested_at
+        || (item as { timestamp?: string }).timestamp,
+    };
+  }).filter((item) => Boolean(item.userId));
 }
 
 export async function respondFollowRequest(
@@ -624,21 +847,32 @@ export async function respondFollowRequest(
   followerUserId: string,
   action: 'accept' | 'reject',
 ): Promise<void> {
+  // follow_id = follower_target (quien solicita _ dueño del perfil)
+  const followId = `${followerUserId}_${userId}`;
   let response: Response;
   try {
     response = await fetch(`${getCurrentEnv().apiBaseUrl}/wall/client/follow/respond`, {
       method: 'POST',
       headers: authHeaders(),
       body: JSON.stringify({
+        follow_id: followId,
+        action,
         userId,
         follow_userId: followerUserId,
-        action,
       }),
     });
   } catch (err) {
     throw new Error(toUserFacingError(err, 'la respuesta a la solicitud'));
   }
-  await parseFetchResponse(response, 'No se pudo responder la solicitud');
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({})) as { message?: string };
+    const alreadyProcessed = response.status === 400
+      && String(body.message || '').toLowerCase().includes('ya fue procesada');
+    if (!alreadyProcessed) {
+      throw new Error(body.message || 'No se pudo responder la solicitud');
+    }
+  }
+  await applyFollowGraphSideEffects(followerUserId, userId);
 }
 
 export async function unfollowUser(followerId: string, targetUserId: string): Promise<void> {
@@ -651,6 +885,49 @@ export async function unfollowUser(followerId: string, targetUserId: string): Pr
   if (!response.ok) {
     throw new Error(body.error?.message || body.message || 'No se pudo dejar de seguir');
   }
+  await applyFollowGraphSideEffects(followerId, targetUserId);
+}
+
+/** El dueño del perfil elimina a un seguidor (followerId deja de seguir a userId). */
+export async function removeFollower(userId: string, followerId: string): Promise<void> {
+  const response = await fetch(`${getCurrentEnv().apiBaseUrl}/wall/client/follower/remove`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify({ userId, followerId }),
+  });
+  const body = await response.json().catch(() => ({})) as { message?: string; error?: string };
+  if (!response.ok) {
+    throw new Error(body.message || body.error || 'No se pudo eliminar el seguidor');
+  }
+  await applyFollowGraphSideEffects(userId, followerId);
+}
+
+/** El dueño del perfil bloquea a un seguidor. */
+export async function blockFollower(userId: string, followerId: string): Promise<void> {
+  const response = await fetch(`${getCurrentEnv().apiBaseUrl}/wall/client/follower/block`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify({ userId, followerId }),
+  });
+  const body = await response.json().catch(() => ({})) as { message?: string; error?: string };
+  if (!response.ok) {
+    throw new Error(body.message || body.error || 'No se pudo bloquear al usuario');
+  }
+  await applyFollowGraphSideEffects(userId, followerId);
+}
+
+/** El dueño del perfil desbloquea a un usuario. */
+export async function unblockFollower(userId: string, followerId: string): Promise<void> {
+  const response = await fetch(`${getCurrentEnv().apiBaseUrl}/wall/client/follower/unblock`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify({ userId, followerId }),
+  });
+  const body = await response.json().catch(() => ({})) as { message?: string; error?: string };
+  if (!response.ok) {
+    throw new Error(body.message || body.error || 'No se pudo desbloquear al usuario');
+  }
+  await applyFollowGraphSideEffects(userId, followerId);
 }
 
 export async function requestMediaUploadUrl(input: {
@@ -666,6 +943,7 @@ export async function requestMediaUploadUrl(input: {
         fileName: input.fileName,
         contentType: input.contentType,
         clientRequestId: clientRequestId('web-media'),
+        ...(getStoredUserId() ? { userId: getStoredUserId() } : {}),
       }),
     });
   } catch (err) {
@@ -711,6 +989,7 @@ export async function createStory(input: {
       longitude: input.longitude,
       locationLabel: input.locationLabel || '',
       clientRequestId: clientRequestId('web-story'),
+      ...(getStoredUserId() ? { userId: getStoredUserId() } : {}),
     }),
   });
 
@@ -718,24 +997,35 @@ export async function createStory(input: {
   if (!response.ok) {
     throw new Error(body.error?.message || 'No se pudo crear la historia');
   }
+  const authorId = body.publication?.author?.id || getStoredUserId();
+  if (authorId) {
+    invalidateUserStoriesCache(authorId);
+    dispatchStoriesCacheInvalidated(authorId);
+  }
   return body.publication!;
 }
 
 export async function updateStoryLivePlayback(input: {
   publicationId: string;
-  mediaIds: string[];
+  mediaIds?: string[];
   isLive?: boolean;
   description?: string;
 }): Promise<void> {
+  const hasNewMedia = Boolean(input.mediaIds?.length);
   const response = await fetch(`${wallBase()}/publications/${encodeURIComponent(input.publicationId)}`, {
     method: 'PUT',
     headers: authHeaders(),
     body: JSON.stringify({
-      replaceMedia: true,
-      mediaIds: input.mediaIds,
-      mediaKind: 'video',
-      isLive: input.isLive ?? true,
-      description: input.description,
+      ...(hasNewMedia
+        ? {
+            replaceMedia: true,
+            mediaIds: input.mediaIds,
+            mediaKind: 'video',
+          }
+        : {}),
+      ...(input.isLive !== undefined ? { isLive: input.isLive } : {}),
+      ...(input.description !== undefined ? { description: input.description } : {}),
+      ...(getStoredUserId() ? { userId: getStoredUserId() } : {}),
     }),
   });
   const body = await response.json() as { error?: { message?: string } };
@@ -772,7 +1062,7 @@ export async function fetchNearbyStories(options?: {
   const body = await response.json() as FeedStoriesResponse;
   return (body.items || []).map((item) => ({
     ...item,
-    avatarUrl: resolveImageUrl(item.avatarUrl),
+    avatarUrl: resolveUserMediaDisplayUrl(item.avatarUrl) || resolveImageUrl(item.avatarUrl),
     previewUrl: resolveImageUrl(item.previewUrl),
   }));
 }
@@ -824,11 +1114,60 @@ export async function fetchUserStories(authorUserId: string): Promise<FeedStoryI
       || /\.(mp4|mov|webm|m4v)(\?|$)/i.test(rawUrl);
     return {
       ...item,
-      authorAvatar: resolveImageUrl(item.authorAvatar),
+      authorAvatar: resolveUserMediaDisplayUrl(item.authorAvatar) || resolveImageUrl(item.authorAvatar),
       mediaUrl: resolvedUrl || undefined,
       mediaKind: kindFromApi || (isVideo ? 'video' : resolvedUrl ? 'image' : 'text'),
     };
   });
+}
+
+export type StoryViewer = {
+  id: string;
+  name: string;
+  avatarUrl?: string | null;
+  viewedAt?: string;
+};
+
+export async function recordStoryView(publicationId: string): Promise<number | undefined> {
+  const viewerId = getStoredUserId();
+  if (!publicationId || !viewerId) return undefined;
+  const response = await fetch(
+    `${storiesEndpoint()}/${encodeURIComponent(publicationId)}/view`,
+    {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({ userId: viewerId, viewerId, clientRequestId: clientRequestId('web-story-view') }),
+    },
+  );
+  if (!response.ok) return undefined;
+  const body = await response.json() as { views?: number };
+  return body.views;
+}
+
+export async function fetchStoryViewers(publicationId: string): Promise<StoryViewer[]> {
+  if (!publicationId) return [];
+  const viewerId = getStoredUserId();
+  const params = new URLSearchParams();
+  if (viewerId) {
+    params.set('viewerId', viewerId);
+    params.set('userId', viewerId);
+  }
+  const query = params.toString();
+  const response = await fetch(
+    `${storiesEndpoint()}/${encodeURIComponent(publicationId)}/viewers${query ? `?${query}` : ''}`,
+    {
+      headers: {
+        ...authHeaders({ json: false }),
+        ...(viewerId ? { 'X-User-Id': viewerId, 'x-user-id': viewerId } : {}),
+      },
+    },
+  );
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({})) as { error?: { message?: string } };
+    throw new Error(body.error?.message || 'No se pudo cargar quién vio la historia');
+  }
+  const body = await response.json() as { viewers?: StoryViewer[] };
+  return body.viewers || [];
 }
 
 export async function uploadMediaFile(file: File): Promise<string> {
@@ -837,7 +1176,7 @@ export async function uploadMediaFile(file: File): Promise<string> {
   try {
     const presign = await requestMediaUploadUrl({
       fileName: file.name || (file.type.startsWith('video/') ? 'video.webm' : 'image.jpg'),
-      contentType: file.type || 'image/jpeg',
+      contentType: file.type || (file.name.match(/\.(mp4|mov|webm|m4v)$/i) ? 'video/mp4' : 'image/jpeg'),
     });
     uploadUrl = presign.uploadUrl;
     mediaId = presign.mediaId;
@@ -848,14 +1187,8 @@ export async function uploadMediaFile(file: File): Promise<string> {
     throw new Error('No se recibió el identificador del archivo. Intenta de nuevo.');
   }
   try {
-    const uploadResponse = await fetch(uploadUrl, {
-      method: 'PUT',
-      headers: { 'Content-Type': file.type || 'image/jpeg' },
-      body: file,
-    });
-    if (!uploadResponse.ok) {
-      throw new Error(`Error al subir el archivo (${uploadResponse.status})`);
-    }
+    const contentType = file.type || (file.name.match(/\.(mp4|mov|webm|m4v)$/i) ? 'video/mp4' : 'image/jpeg');
+    await putBlobToPresignedUrl(uploadUrl, file, contentType);
   } catch (err) {
     throw new Error(toUserFacingError(err, 'la subida del archivo'));
   }

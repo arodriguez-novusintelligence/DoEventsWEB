@@ -1,7 +1,9 @@
 /** Límites y beneficios por plan — alineado con Lovable SubscriptionPlanSheet. */
 
 export type UserPlanId = 'free' | 'pro';
-export type PlatformRole = 'user' | 'admin';
+export type PlatformRole = 'user' | 'admin' | 'support' | 'operation';
+
+export const ADMIN_PANEL_ROLES = new Set<PlatformRole>(['admin', 'support', 'operation']);
 
 export const PLAN_LIMITS = {
   free: {
@@ -31,11 +33,20 @@ export function normalizePlan(plan?: string | null): UserPlanId {
 }
 
 export function normalizePlatformRole(role?: string | null): PlatformRole {
-  return String(role || 'user').toLowerCase() === 'admin' ? 'admin' : 'user';
+  const key = String(role || 'user').toLowerCase();
+  if (key === 'admin') return 'admin';
+  if (key === 'support') return 'support';
+  if (key === 'operation') return 'operation';
+  return 'user';
 }
 
 export function isPlatformAdmin(role?: string | null): boolean {
   return normalizePlatformRole(role) === 'admin';
+}
+
+/** Roles con acceso al panel de administración en la app. */
+export function canAccessAdminPanel(role?: string | null): boolean {
+  return ADMIN_PANEL_ROLES.has(normalizePlatformRole(role));
 }
 
 /** Los administradores no tienen límites de plan. */
@@ -68,6 +79,9 @@ export function checkCanPublishEvent(
   platformRole?: string | null,
   usage?: Partial<PlanUsageSnapshot>,
 ): PlanLimitCheck {
+  if (isPlatformAdmin(platformRole)) {
+    return { allowed: true, plan: 'pro', limit: Infinity, current: usage?.eventsThisYear ?? 0 };
+  }
   const p = effectivePlan(plan, platformRole);
   const limits = PLAN_LIMITS[p];
   const current = usage?.eventsThisYear ?? 0;

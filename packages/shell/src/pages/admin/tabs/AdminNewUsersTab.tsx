@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   BarChart,
   Bar,
@@ -14,13 +14,72 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { Calendar, Download, Search, Star, TrendingDown, TrendingUp, UserPlus, Users, BarChart3 } from 'lucide-react';
+import { Calendar, Download, Loader2, Search, Star, TrendingDown, TrendingUp, UserPlus, Users, BarChart3 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { fetchAdminNewUsers, useToast, type AdminNewUserItem } from '@doevents/shared';
+import {
+  AUTH_SOURCE_ORDER,
+  authSourceBadgeStyle,
+  getAuthSourceColor,
+  normalizeAuthSourceLabel,
+} from '../adminAuthSourceTheme';
 
 type Period = 'today' | 'yesterday' | '7d' | 'all';
 
-const COLORS = ['#6979F8', '#8B97FA', '#f59e0b', '#ef4444'];
+function buildChartSources(
+  sources: Array<{ name: string; value: number }>,
+  users: AdminNewUserItem[],
+): Array<{ name: string; value: number }> {
+  const map: Record<string, number> = {};
+  if (sources.length > 0) {
+    sources.forEach((item) => {
+      const key = normalizeAuthSourceLabel(item.name);
+      map[key] = (map[key] || 0) + item.value;
+    });
+  } else {
+    users.forEach((user) => {
+      const key = normalizeAuthSourceLabel(user.authSource);
+      map[key] = (map[key] || 0) + 1;
+    });
+  }
+  const ordered = AUTH_SOURCE_ORDER
+    .filter((name) => (map[name] || 0) > 0)
+    .map((name) => ({ name, value: map[name] }));
+  const extras = Object.entries(map)
+    .filter(([name]) => !AUTH_SOURCE_ORDER.includes(name as typeof AUTH_SOURCE_ORDER[number]))
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value);
+  return [...ordered, ...extras];
+}
+
+function renderSourceLabel(props: {
+  name?: string;
+  value?: number;
+  cx?: number;
+  cy?: number;
+  midAngle?: number;
+  outerRadius?: number;
+}) {
+  const { name = '', value = 0, cx = 0, cy = 0, midAngle = 0, outerRadius = 0 } = props;
+  const label = normalizeAuthSourceLabel(name);
+  const color = getAuthSourceColor(label);
+  const RADIAN = Math.PI / 180;
+  const radius = Number(outerRadius) + 20;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+  return (
+    <text
+      x={x}
+      y={y}
+      fill={color}
+      textAnchor={x > cx ? 'start' : 'end'}
+      dominantBaseline="central"
+      className="text-xs font-extrabold"
+    >
+      {`${label}: ${value}`}
+    </text>
+  );
+}
 
 export const AdminNewUsersTab: React.FC = () => {
   const { showToast } = useToast();
@@ -53,6 +112,18 @@ export const AdminNewUsersTab: React.FC = () => {
     return `${user.fullName || ''} ${user.email || ''}`.toLowerCase().includes(q);
   });
 
+  const chartSources = useMemo(
+    () => buildChartSources(sources, users),
+    [sources, users],
+  );
+
+  const formatRegisteredAt = (value?: string | null) => {
+    if (!value) return '—';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return date.toLocaleString('es-CO', { dateStyle: 'short', timeStyle: 'short' });
+  };
+
   const currentTotal = dailySeries.reduce((sum, row) => sum + row.current, 0);
   const previousTotal = dailySeries.reduce((sum, row) => sum + row.previous, 0);
   const delta = previousTotal > 0 ? Math.round(((currentTotal - previousTotal) / previousTotal) * 100) : 0;
@@ -79,7 +150,7 @@ export const AdminNewUsersTab: React.FC = () => {
         <UserPlus className="h-7 w-7 text-primary" />
         <div>
           <h2 className="text-2xl font-bold">Nuevos usuarios</h2>
-          <p className="text-sm text-muted-foreground">Registro diario desde la tabla de clientes</p>
+          <p className="text-sm text-muted-foreground">Registro diario y actividad</p>
         </div>
       </div>
 
@@ -122,14 +193,49 @@ export const AdminNewUsersTab: React.FC = () => {
         <section className="rounded-2xl border border-border bg-card p-4">
           <h3 className="mb-3 text-lg font-bold">Origen</h3>
           <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={sources} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} innerRadius={40} label={(e) => `${e.name}: ${e.value}`}>
-                  {sources.map((_, index) => <Cell key={index} fill={COLORS[index % COLORS.length]} />)}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
+            {loading ? (
+              <div className="flex h-full items-center justify-center">
+                <Loader2 className="h-7 w-7 animate-spin text-primary" />
+              </div>
+            ) : chartSources.length === 0 ? (
+              <div className="flex h-full flex-col items-center justify-center gap-1 text-center text-sm text-muted-foreground">
+                <p>Sin registros en el período seleccionado.</p>
+                <p className="text-xs">Prueba con «7 días» o «Todos» para ver el desglose por plataforma.</p>
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={chartSources}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={72}
+                    innerRadius={42}
+                    paddingAngle={2}
+                    label={renderSourceLabel}
+                    labelLine={false}
+                  >
+                    {chartSources.map((entry) => {
+                      const label = normalizeAuthSourceLabel(entry.name);
+                      return (
+                        <Cell key={entry.name} fill={getAuthSourceColor(label)} stroke="#fff" strokeWidth={2} />
+                      );
+                    })}
+                  </Pie>
+                  <Tooltip
+                    formatter={(value: number, _name: string, item: { payload?: { name?: string } }) => [
+                      `${value} usuarios`,
+                      normalizeAuthSourceLabel(item.payload?.name),
+                    ]}
+                    itemStyle={(item: { color?: string; payload?: { name?: string } }) => ({
+                      color: getAuthSourceColor(item.payload?.name),
+                    })}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </section>
       </div>
@@ -217,8 +323,15 @@ export const AdminNewUsersTab: React.FC = () => {
                       <p className="text-xs text-muted-foreground">{user.username || user.userId}</p>
                     </td>
                     <td className="py-3 text-xs text-muted-foreground">{user.email}</td>
-                    <td className="py-3 text-xs whitespace-nowrap">{user.createdAt || '—'}</td>
-                    <td className="py-3"><span className="rounded-full border border-border px-2 py-0.5 text-xs">{user.authSource || 'Email'}</span></td>
+                    <td className="py-3 text-xs whitespace-nowrap">{formatRegisteredAt(user.createdAt)}</td>
+                    <td className="py-3">
+                      <span
+                        className="rounded-full border px-2 py-0.5 text-xs font-semibold"
+                        style={authSourceBadgeStyle(user.authSource)}
+                      >
+                        {normalizeAuthSourceLabel(user.authSource)}
+                      </span>
+                    </td>
                     <td className="py-3">
                       <div className="flex items-center justify-center gap-1">
                         <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />

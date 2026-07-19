@@ -1,5 +1,6 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { CheckCircle2, DoorOpen, MapPin, Trash2, UserPlus, Users, HelpCircle } from 'lucide-react';
+import { UserAvatar, resolveUserAvatarUrl } from '@doevents/shared';
 import { EventFormData, EventGate, EventHost, EventFormUpdater } from '@lovable/data/eventFormData';
 import UserSearchPickerModal, { type UserSearchResult } from '../../../components/UserSearchPickerModal';
 
@@ -8,33 +9,12 @@ interface Props {
   updateForm: EventFormUpdater;
 }
 
-const Avatar = ({ user, size = 40 }: { user: { name: string; avatar?: string; initials?: string }; size?: number }) => {
-  if (user.avatar) {
-    return (
-      <img
-        src={user.avatar}
-        alt={user.name}
-        className="rounded-full object-cover"
-        style={{ width: size, height: size }}
-      />
-    );
-  }
-  return (
-    <div
-      className="flex items-center justify-center rounded-full bg-primary text-sm font-extrabold text-primary-foreground"
-      style={{ width: size, height: size }}
-    >
-      {user.initials || user.name.charAt(0)}
-    </div>
-  );
-};
-
 const toEventHost = (user: UserSearchResult): EventHost => ({
   id: user.id,
   name: user.name,
   username: user.username,
   email: user.email,
-  avatar: user.avatarUrl,
+  avatar: resolveUserAvatarUrl(user.avatarUrl, user.id),
   initials: user.initials,
   source: 'platform',
 });
@@ -42,18 +22,8 @@ const toEventHost = (user: UserSearchResult): EventHost => ({
 const StepAccessControl = ({ formData, updateForm }: Props) => {
   const gates: EventGate[] = formData.location.gates ?? [];
   const assignments = formData.accessControl ?? {};
+  const staffById = formData.accessStaff ?? {};
   const [pickerGateId, setPickerGateId] = useState<string | null>(null);
-  const [userCache, setUserCache] = useState<Record<string, EventHost>>({});
-
-  useEffect(() => {
-    const fromHosts: Record<string, EventHost> = {};
-    (formData.hosts || []).forEach((host) => {
-      fromHosts[host.id] = host;
-    });
-    if (Object.keys(fromHosts).length) {
-      setUserCache((prev) => ({ ...fromHosts, ...prev }));
-    }
-  }, [formData.hosts]);
 
   const totalAssigned = useMemo(
     () => gates.reduce((s, g) => s + (assignments[g.id]?.length ?? 0), 0),
@@ -75,16 +45,18 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
   };
 
   const addUsers = (gateId: string, users: UserSearchResult[]) => {
-    setUserCache((prev) => {
-      const next = { ...prev };
-      users.forEach((u) => { next[u.id] = toEventHost(u); });
-      return next;
-    });
     updateForm((prev) => {
       const ac = prev.accessControl ?? {};
+      const staff = { ...(prev.accessStaff ?? {}) };
       const existing = new Set(ac[gateId] ?? []);
-      users.forEach((u) => existing.add(u.id));
-      return { accessControl: { ...ac, [gateId]: Array.from(existing) } };
+      users.forEach((u) => {
+        existing.add(u.id);
+        staff[u.id] = toEventHost(u);
+      });
+      return {
+        accessControl: { ...ac, [gateId]: Array.from(existing) },
+        accessStaff: staff,
+      };
     });
   };
 
@@ -163,7 +135,7 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
       <div className="space-y-4">
         {gates.map((gate) => {
           const userIds = assignments[gate.id] ?? [];
-          const assigned = userIds.map((id) => userCache[id] || {
+          const assigned = userIds.map((id) => staffById[id] || {
             id,
             name: 'Usuario',
             initials: 'U',
@@ -197,7 +169,7 @@ const StepAccessControl = ({ formData, updateForm }: Props) => {
                       className="flex items-center justify-between gap-3 rounded-xl border border-border/60 bg-card px-3 py-2 shadow-sm"
                     >
                       <div className="flex min-w-0 items-center gap-3">
-                        <Avatar user={u} />
+                        <UserAvatar name={u.name} imageUrl={u.avatar} userId={u.id} size={40} />
                         <div className="min-w-0">
                           <p className="truncate text-sm font-extrabold text-foreground">{u.name}</p>
                           <p className="truncate text-xs font-extrabold text-muted-foreground">

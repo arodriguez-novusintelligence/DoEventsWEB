@@ -1,5 +1,6 @@
-import type { FeedHomeResponse } from '../types/feed';
+import type { FeedHomeResponse, FeedPublication } from '../types/feed';
 import type { FeedEventItem, EventsFeedResponse, UserEventItem } from '../types/events';
+import { resolveEventIdFromFeedPublication } from './feedPublicationUtils';
 
 interface CachedEventType {
   id: string;
@@ -128,6 +129,19 @@ export function cacheSocialFeed(userKey: string, feed: FeedHomeResponse): void {
   const store = readStore<SocialFeedCacheStore>(SOCIAL_FEED_CACHE_KEY, { feeds: {} });
   store.feeds[userKey] = { data: feed, cachedAt: Date.now() };
   writeStore(SOCIAL_FEED_CACHE_KEY, store);
+}
+
+/** Busca una publicación del muro social que referencia un evento (fallback offline). */
+export function findFeedPublicationByEventId(eventId: string): FeedPublication | null {
+  const store = readStore<SocialFeedCacheStore>(SOCIAL_FEED_CACHE_KEY, { feeds: {} });
+  for (const entry of Object.values(store.feeds)) {
+    for (const item of entry.data?.items || []) {
+      if (resolveEventIdFromFeedPublication(item) === eventId) return item;
+      const source = item.sourcePublication;
+      if (source && resolveEventIdFromFeedPublication(source) === eventId) return source;
+    }
+  }
+  return null;
 }
 
 export function getCachedEventTypesEntry(allowStale = true): TimedEntry<CachedEventType[]> | null {

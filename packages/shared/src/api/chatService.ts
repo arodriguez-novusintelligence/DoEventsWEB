@@ -1,11 +1,15 @@
 import { getAuthToken, getCurrentEnv } from './client';
 import { toUserFacingError } from '../lib/apiError';
+import { putBlobToPresignedUrl } from '../lib/presignedUpload';
+import { prepareImageForUpload } from '../lib/imageUtils';
+import { fileToBase64 } from './profileMediaService';
 import {
   chatMediaPublicUrl,
   isPlaceholderEventImage,
   resolveEventImageUrl,
   resolveImageUrl,
 } from '../lib/resolveImageUrl';
+import { resolveUserAvatarUrl } from '../lib/userAvatarUtils';
 import {
   cacheChatMessages,
   cacheChatRooms,
@@ -18,6 +22,7 @@ import { resolveDisplayEventStatus } from '../lib/eventStatusUtils';
 export interface ChatParticipant {
   id: string;
   name?: string;
+  username?: string;
   avatar?: string;
 }
 
@@ -107,6 +112,20 @@ export interface ChatMessage {
   type?: string;
   status?: string;
   deletedAt?: string;
+  replyMeta?: {
+    replyToId?: string;
+    reply?: {
+      id?: string;
+      text?: string;
+      sender?: string;
+      type?: string;
+    };
+  };
+  reactions?: Array<{
+    userId?: string;
+    emoji?: string;
+    createdAt?: string;
+  }>;
 }
 
 export interface SendChatMessageInput {
@@ -116,6 +135,13 @@ export interface SendChatMessageInput {
   media?: ChatMessage['media'];
   location?: ChatMessageLocation;
   sharedEvent?: ChatSharedEvent;
+  replyToId?: string;
+  reply?: {
+    id: string;
+    text: string;
+    sender: string;
+    type?: string;
+  };
 }
 
 function authHeaders(): Record<string, string> {
@@ -161,8 +187,20 @@ export function normalizeDirectRoomForUser(room: ChatRoom, userId: string): Chat
   const participantIds = extractParticipantIds(room.participants);
   const isInvitee = pending.some((id) => userIdsMatch(id, userId));
   const isActive = participantIds.length >= 2 && pending.length === 0;
-  const isRequester = participantIds.some((id) => userIdsMatch(id, userId)) && pending.length > 0;
   const directPeer = room.directPeer || resolveDirectPeerParticipant(room, userId);
+
+  if (room.directChatStatus === 'active' && room.canMessage !== false) {
+    return {
+      ...room,
+      roomId: room.roomId || room.id,
+      chatType: room.chatType || 'direct',
+      directChatStatus: 'active',
+      invitationPending: false,
+      canMessage: true,
+      directPeer,
+      eventName: undefined,
+    };
+  }
 
   return {
     ...room,
@@ -170,7 +208,7 @@ export function normalizeDirectRoomForUser(room: ChatRoom, userId: string): Chat
     chatType: room.chatType || 'direct',
     directChatStatus: isActive ? 'active' : 'pending',
     invitationPending: isInvitee,
-    canMessage: isActive || isRequester,
+    canMessage: isActive ? true : room.canMessage === true,
     directPeer,
     eventName: undefined,
   };
@@ -226,17 +264,19 @@ async function requestUserChatRooms(userId: string): Promise<ChatRoom[]> {
       eventImage: isDirect ? undefined : (room.eventImage || room.event?.image),
       lastMessage: room.lastMessage || room.messages?.[room.messages.length - 1]?.text,
       lastMessageAt: room.lastMessageAt || room.messages?.[room.messages.length - 1]?.createdAt,
+      unreadCount: Number(room.unreadCount || 0) || 0,
     };
     if (isDirect) {
       return normalizeDirectRoomForUser({ ...normalized, chatType: 'direct' }, userId);
     }
     const pending = room.pendingParticipants || [];
     const participants = extractParticipantIds(room.participants);
+    const isInvitee = pending.some((id) => userIdsMatch(id, userId));
     return {
       ...normalized,
-      directChatStatus: room.directChatStatus || (pending.length > 0 ? 'pending' : 'active'),
-      canMessage: room.canMessage ?? (participants.length >= 2 && pending.length === 0),
-      invitationPending: room.invitationPending ?? false,
+      directChatStatus: room.directChatStatus || (isInvitee ? 'pending' : 'active'),
+      canMessage: room.canMessage ?? (!isInvitee && participants.length > 0),
+      invitationPending: room.invitationPending ?? isInvitee,
     };
   });
 }
@@ -444,6 +484,197 @@ export async function initChatMediaUpload(input: {
   };
 }
 
+function resolvePresignedContentType(uploadUrl: string, fallback: string): string {
+  try {
+    const parsed = new URL(uploadUrl);
+    const fromQuery = parsed.searchParams.get('Content-Type')
+      || parsed.searchParams.get('content-type');
+    if (fromQuery) return decodeURIComponent(fromQuery);
+  } catch {
+    // ignore malformed URL
+  }
+  return fallback;
+}
+
+export function normalizeChatMediaMime(file: File): string {
+  const normalized = String(file.type || '').trim().toLowerCase();
+  if (normalized === 'image/jpg') return 'image/jpeg';
+  if (normalized) return normalized;
+  const ext = file.name.split('.').pop()?.toLowerCase() || '';
+  const byExt: Record<string, string> = {
+    jpg: 'image/jpeg',
+    jpeg: 'image/jpeg',
+    png: 'image/png',
+    gif: 'image/gif',
+    webp: 'image/webp',
+    heic: 'image/heic',
+    heif: 'image/heif',
+    mp4: 'video/mp4',
+    mov: 'video/quicktime',
+    webm: 'video/webm',
+    m4v: 'video/x-m4v',
+    pdf: 'application/pdf',
+    doc: 'application/msword',
+    docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    xls: 'application/vnd.ms-excel',
+    xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ppt: 'application/vnd.ms-powerpoint',
+    pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    txt: 'text/plain',
+    zip: 'application/zip',
+  };
+  return byExt[ext] || 'application/octet-stream';
+}
+
+const MAX_DIRECT_CHAT_UPLOAD_BYTES = 8 * 1024 * 1024;
+
+async function prepareChatMediaFile(file: File): Promise<File> {
+  const contentType = normalizeChatMediaMime(file);
+  if (!contentType.startsWith('image/') || contentType === 'image/gif') {
+    return file;
+  }
+  try {
+    return await prepareImageForUpload(file, {
+      maxWidth: 1920,
+      maxHeight: 1920,
+      maxOutputBytes: 3 * 1024 * 1024,
+      forceProcess: file.size > 1_500_000,
+    });
+  } catch {
+    return file;
+  }
+}
+
+async function uploadChatMediaDirect(input: {
+  roomId: string;
+  userId: string;
+  file: File;
+}): Promise<{
+  mediaUrl: string;
+  mediaKey: string;
+  media: NonNullable<ChatMessage['media']>;
+}> {
+  const file = await prepareChatMediaFile(input.file);
+  const contentType = normalizeChatMediaMime(file);
+  if (file.size > MAX_DIRECT_CHAT_UPLOAD_BYTES) {
+    throw new Error('Archivo demasiado grande para subida directa');
+  }
+
+  const contentBase64 = await fileToBase64(file);
+  let response: Response;
+  try {
+    response = await fetch(`${chatRestBase()}/chat-media-upload/direct`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({
+        roomId: input.roomId,
+        senderId: input.userId,
+        fileName: file.name || 'archivo',
+        fileType: contentType,
+        size: file.size,
+        contentBase64,
+      }),
+    });
+  } catch (err) {
+    throw new Error(toUserFacingError(err, 'el servicio de imágenes del chat'));
+  }
+
+  const body = await response.json().catch(() => ({})) as {
+    mediaUrl?: string;
+    url?: string;
+    mediaKey?: string;
+    media?: ChatMessage['media'];
+    error?: string;
+    message?: string;
+  };
+
+  if (!response.ok) {
+    throw new Error(body.error || body.message || 'No se pudo guardar el archivo en el servidor.');
+  }
+
+  const mediaUrl = body.mediaUrl || body.url || body.media?.url || '';
+  const mediaKey = body.mediaKey || body.media?.key || '';
+  if (!mediaUrl || !mediaKey) {
+    throw new Error('No se obtuvo URL del archivo');
+  }
+
+  return {
+    mediaUrl,
+    mediaKey,
+    media: {
+      ...body.media,
+      key: mediaKey,
+      url: mediaUrl,
+      fileType: contentType,
+      fileName: file.name,
+    },
+  };
+}
+
+async function uploadChatMediaPresigned(input: {
+  roomId: string;
+  userId: string;
+  file: File;
+}): Promise<{
+  mediaUrl: string;
+  mediaKey: string;
+  media: NonNullable<ChatMessage['media']>;
+}> {
+  const contentType = normalizeChatMediaMime(input.file);
+  const init = await initChatMediaUpload({
+    roomId: input.roomId,
+    userId: input.userId,
+    fileName: input.file.name || 'archivo',
+    contentType,
+    size: input.file.size,
+  });
+  const signedContentType = resolvePresignedContentType(init.uploadUrl, contentType);
+  try {
+    await putBlobToPresignedUrl(
+      init.uploadUrl,
+      input.file,
+      signedContentType || contentType,
+    );
+  } catch (err) {
+    const message = err instanceof Error ? err.message : '';
+    if (message.includes('respondió')) {
+      throw new Error('No se pudo guardar el archivo en el servidor.');
+    }
+    throw err;
+  }
+  const completed = await completeChatMediaUpload({ mediaKey: init.mediaKey || '' });
+  const mediaUrl = completed.url || completed.mediaUrl || init.mediaUrl || '';
+  if (!mediaUrl) throw new Error('No se obtuvo URL del archivo');
+  return {
+    mediaUrl,
+    mediaKey: init.mediaKey || completed.media?.key || '',
+    media: {
+      ...completed.media,
+      key: init.mediaKey || completed.media?.key,
+      url: mediaUrl,
+      fileType: signedContentType || contentType,
+      fileName: input.file.name,
+    },
+  };
+}
+
+export async function uploadChatMediaFile(input: {
+  roomId: string;
+  userId: string;
+  file: File;
+}): Promise<{
+  mediaUrl: string;
+  mediaKey: string;
+  media: NonNullable<ChatMessage['media']>;
+}> {
+  const prepared = await prepareChatMediaFile(input.file);
+  const payload = { ...input, file: prepared };
+  if (prepared.size <= MAX_DIRECT_CHAT_UPLOAD_BYTES) {
+    return uploadChatMediaDirect(payload);
+  }
+  return uploadChatMediaPresigned(payload);
+}
+
 export async function completeChatMediaUpload(input: {
   mediaKey: string;
 }): Promise<{ url?: string; mediaUrl?: string; media?: ChatMessage['media'] }> {
@@ -611,9 +842,11 @@ export function resolveRoomTitle(room: ChatRoom, userId?: string): string {
   return 'Sala de chat';
 }
 
-function resolveParticipantAvatar(avatar?: string): string | undefined {
-  if (!avatar || /default\.jpg/i.test(avatar)) return undefined;
-  return resolveImageUrl(avatar);
+function resolveParticipantAvatar(avatar?: string, userId?: string): string | undefined {
+  if (!avatar || /default\.jpg/i.test(avatar)) {
+    return resolveUserAvatarUrl(undefined, userId);
+  }
+  return resolveUserAvatarUrl(avatar, userId);
 }
 
 export function resolveRoomEventId(room: ChatRoom): string | undefined {
@@ -641,7 +874,7 @@ export function resolveRoomAvatar(room: ChatRoom, userId?: string): string | und
   }
   if (isDirectChatRoom(room) && userId) {
     const peer = resolveDirectPeerParticipant(room, userId);
-    const resolved = resolveParticipantAvatar(peer?.avatar);
+    const resolved = resolveParticipantAvatar(peer?.avatar, peer?.id);
     if (resolved) return resolved;
     return undefined;
   }
@@ -652,13 +885,13 @@ export function resolveRoomAvatar(room: ChatRoom, userId?: string): string | und
   }
   if (userId) {
     const peer = resolveDirectPeerParticipant(room, userId);
-    const resolved = resolveParticipantAvatar(peer?.avatar);
+    const resolved = resolveParticipantAvatar(peer?.avatar, peer?.id);
     if (resolved) return resolved;
   }
   const other = normalizeParticipants(room).find(
     (p) => p.id && userId && !userIdsMatch(p.id, userId),
   );
-  return resolveParticipantAvatar(other?.avatar);
+  return resolveParticipantAvatar(other?.avatar, other?.id);
 }
 
 export function isRoomArchivedForUser(room: ChatRoom, userId?: string): boolean {
@@ -774,7 +1007,7 @@ export function normalizeParticipants(room: ChatRoom): ChatParticipant[] {
   if (!Array.isArray(room.participants)) return [];
   return room.participants.map((p) => {
     if (typeof p === 'string') return { id: p, name: p };
-    return { id: p.id, name: p.name, avatar: p.avatar };
+    return { id: p.id, name: p.name, username: p.username, avatar: p.avatar };
   });
 }
 
@@ -787,6 +1020,33 @@ export async function archiveChatRoom(userId: string, roomId: string): Promise<v
   const body = await response.json().catch(() => ({})) as { error?: string; message?: string };
   if (!response.ok) {
     throw new Error(body.error || body.message || 'No se pudo archivar el chat');
+  }
+}
+
+export async function markChatRoomRead(userId: string, roomId: string): Promise<void> {
+  const response = await fetch(`${chatRestBase()}/mark-chat-room-read`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify({ userId, roomId }),
+  });
+  const body = await response.json().catch(() => ({})) as { error?: string; message?: string };
+  if (!response.ok) {
+    throw new Error(body.error || body.message || 'No se pudo marcar el chat como leído');
+  }
+  try {
+    const cached = getCachedChatRooms(userId);
+    if (cached?.length) {
+      cacheChatRooms(
+        userId,
+        cached.map((room) => (
+          String(room.roomId || room.id) === String(roomId)
+            ? { ...room, unreadCount: 0 }
+            : room
+        )),
+      );
+    }
+  } catch {
+    // cache best-effort
   }
 }
 

@@ -68,9 +68,14 @@ function inferElementType(name: string): WizardElement['type'] {
   return 'other';
 }
 
+const LARGE_SEATING_GRID = 256;
+
 function buildSeatsForCategory(cat: SeatingFigure): WizardSeat[] {
   const rows = Math.max(1, cat.rows || 1);
   const seatsPerRow = Math.max(1, cat.seatsPerRow || 1);
+  if (rows * seatsPerRow > LARGE_SEATING_GRID) {
+    return [];
+  }
   const disabled = new Set(cat.disabledSeats || []);
   return buildSeatGrid(rows, seatsPerRow).map((seat) => ({
     ...seat,
@@ -114,6 +119,9 @@ function categoryToFigure(cat: WizardCategory, floorNumber = 1): SeatingFigure {
     w: cat.width,
     h: cat.height,
     rotation: cat.rotation,
+    labelDx: cat.labelDx,
+    labelDy: cat.labelDy,
+    labelRotation: cat.labelRotation,
     color: cat.color || '#6366F1',
     locked: cat.locked,
     gateId: cat.gateId,
@@ -166,6 +174,9 @@ function figureToCategory(cat: SeatingFigure, defaultGateId: string): WizardCate
     height: cat.h,
     geometry: mapGeometry(cat.shape),
     rotation: cat.rotation || 0,
+    labelDx: cat.labelDx,
+    labelDy: cat.labelDy,
+    labelRotation: cat.labelRotation,
     zIndex: 0,
     ringThickness: cat.arcInner ?? 55,
     locked: Boolean(cat.locked),
@@ -180,6 +191,7 @@ function figureToCategory(cat: SeatingFigure, defaultGateId: string): WizardCate
     colOrder: orders.colOrder,
     rowOrder: orders.rowOrder,
     disableSeatsEnabled: Boolean(cat.disabledSeats?.length),
+    disabledSeats: cat.disabledSeats || [],
   };
 }
 

@@ -3,9 +3,13 @@ import { ChevronUp, ChevronDown, MapPin, Grid3X3, DollarSign, RefreshCcw, Extern
 import { VenueData } from "@lovable/types/venue";
 import { cn } from "@lovable/lib/utils";
 import { Button } from "@lovable/components/ui/button";
+import { LovableVenueMap } from "@lovable/components/venue/LovableVenueMap";
+import type { VenueFloorDetail } from "@doevents/shared";
 
 interface VenueDetailsProps {
   venue: VenueData;
+  floors?: VenueFloorDetail[];
+  hasSeating?: boolean;
 }
 
 const formatPrice = (price: number) => {
@@ -16,9 +20,15 @@ const formatPrice = (price: number) => {
   }).format(price);
 };
 
-const VenueDetails = ({ venue }: VenueDetailsProps) => {
+const VenueDetails = ({ venue, floors = [], hasSeating = false }: VenueDetailsProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [showSeatingMap, setShowSeatingMap] = useState(false);
+
+  const mapEmbedSrc = venue.coordinates
+    ? `https://www.google.com/maps?q=${venue.coordinates.lat},${venue.coordinates.lng}&z=16&output=embed`
+    : null;
+  const showInteractiveSeatingMap = Boolean(hasSeating && floors.length);
 
   const refundPolicyLabels: Record<string, string> = {
     "mismo-dia": "El mismo día de la reserva",
@@ -64,10 +74,10 @@ const VenueDetails = ({ venue }: VenueDetailsProps) => {
               <h4 className="text-sm font-semibold">Ubicación</h4>
             </div>
             <div className="rounded-xl overflow-hidden border border-border shadow-sm">
-              {venue.coordinates && (
+              {mapEmbedSrc && (
                 <div className="aspect-video bg-secondary/30 relative">
                   <iframe
-                    src={`https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.521260322283!2d${venue.coordinates.lng}!3d${venue.coordinates.lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwMDknMTUuNSJOIDc1wrAyNScyNS42Ilc!5e0!3m2!1ses!2sco!4v1234567890`}
+                    src={mapEmbedSrc}
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}
@@ -75,6 +85,7 @@ const VenueDetails = ({ venue }: VenueDetailsProps) => {
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
                     className="absolute inset-0"
+                    title="Ubicación del lugar"
                   />
                 </div>
               )}
@@ -86,6 +97,7 @@ const VenueDetails = ({ venue }: VenueDetailsProps) => {
                     📍 {venue.directions}
                   </p>
                 )}
+                {venue.coordinates && (
                 <Button
                   variant="outline"
                   size="sm"
@@ -95,19 +107,50 @@ const VenueDetails = ({ venue }: VenueDetailsProps) => {
                   <ExternalLink className="w-4 h-4 mr-2" />
                   Ver en Google Maps
                 </Button>
+                )}
               </div>
             </div>
           </div>
 
           {/* Seating Map */}
-          {venue.seatingMap && venue.seatingMap.zones?.length > 0 && (
+          {(showInteractiveSeatingMap || (venue.seatingMap && venue.seatingMap.zones?.length > 0)) && (
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <Grid3X3 className="w-4 h-4 text-primary" />
                 <h4 className="text-sm font-semibold">Mapa de silletería</h4>
               </div>
               <div className="rounded-xl overflow-hidden border border-border">
-                {venue.seatingMap.imageUrl ? (
+                {showInteractiveSeatingMap ? (
+                  <div className="bg-card p-3">
+                    <LovableVenueMap
+                      floors={floors}
+                      interactive={false}
+                      overviewMode
+                      ownerPreviewMode
+                      height={320}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="mt-3 w-full"
+                      onClick={() => setShowSeatingMap((prev) => !prev)}
+                    >
+                      {showSeatingMap ? 'Ocultar mapa ampliado' : 'Ver mapa ampliado'}
+                    </Button>
+                    {showSeatingMap && (
+                      <div className="mt-3 rounded-xl border border-border overflow-hidden">
+                        <LovableVenueMap
+                          floors={floors}
+                          interactive={false}
+                          overviewMode={false}
+                          ownerPreviewMode
+                          height={480}
+                        />
+                      </div>
+                    )}
+                  </div>
+                ) : venue.seatingMap?.imageUrl ? (
                   <div className="aspect-video bg-secondary/20 relative">
                     <img
                       src={venue.seatingMap.imageUrl}
@@ -116,6 +159,7 @@ const VenueDetails = ({ venue }: VenueDetailsProps) => {
                     />
                   </div>
                 ) : null}
+                {venue.seatingMap?.zones?.length ? (
                 <div className="p-4 bg-card">
                   <p className="text-sm text-muted-foreground mb-3">
                     {venue.seatingMap.description}
@@ -134,6 +178,7 @@ const VenueDetails = ({ venue }: VenueDetailsProps) => {
                     ))}
                   </div>
                 </div>
+                ) : null}
               </div>
             </div>
           )}

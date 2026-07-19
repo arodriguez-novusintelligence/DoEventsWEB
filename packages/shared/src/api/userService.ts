@@ -1,6 +1,8 @@
 import { getAuthToken, getCurrentEnv } from './client';
 import { fetchUserEvents } from './eventsService';
 import { resolveImageUrl, appendImageCacheBuster } from '../lib/resolveImageUrl';
+import { resolveUserMediaDisplayUrl } from '../lib/persistentMediaUrl';
+import { resolveUserAvatarUrl } from '../lib/userAvatarUtils';
 
 export interface UserProfile {
   id?: string;
@@ -8,6 +10,7 @@ export interface UserProfile {
   apellido?: string;
   email?: string;
   phone?: string;
+  phoneNumber?: string;
   username?: string;
   imagen?: string;
   coverImageUrl?: string;
@@ -32,6 +35,8 @@ export interface UserProfile {
   companyIndustry?: string;
   companyDescription?: string;
   isPublicProfile?: boolean;
+  date?: string;
+  countryCode?: string;
 }
 
 export interface UserStats {
@@ -133,24 +138,29 @@ export async function fetchUserById(userId: string): Promise<UserProfile | null>
     nombre,
     apellido,
     email: raw.email as string | undefined,
-    phone: raw.phone as string | undefined,
+    phone: (raw.phone || raw.phoneNumber) as string | undefined,
+    phoneNumber: (raw.phoneNumber || undefined) as string | undefined,
     username: (raw.user || raw.username) as string | undefined,
     imagen: appendImageCacheBuster(
-      resolveImageUrl(raw.fotoPerfilUrl as string | undefined)
-        || resolveImageUrl(
-          (raw.fotoPerfilSignedUrl || raw.fotoPerfilUrl || raw.imagen) as string | undefined,
+      resolveUserAvatarUrl(
+        resolveUserMediaDisplayUrl(
+          raw.fotoPerfilSignedUrl as string | undefined,
+          raw.fotoPerfilUrl as string | undefined,
+          raw.profileImageUrl as string | undefined,
+          raw.imagen as string | undefined,
         ),
+        userId,
+      ),
       (raw.fotoPerfilUpdatedAt || raw.updatedAt) as string | number | undefined,
     ),
     coverImageUrl: appendImageCacheBuster(
-      resolveImageUrl(raw.coverImagePublicUrl as string | undefined)
-        || resolveImageUrl(
-          (raw.profileCover as { key?: string; url?: string } | undefined)?.key
-            || (raw.profileCover as { key?: string; url?: string } | undefined)?.url,
-        )
-        || resolveImageUrl(
-          (raw.coverImageSignedUrl || raw.coverImageUrl || raw.coverImagePublicUrl) as string | undefined,
-        ),
+      resolveUserMediaDisplayUrl(
+        raw.coverImageSignedUrl as string | undefined,
+        raw.coverImageUrl as string | undefined,
+        raw.coverImagePublicUrl as string | undefined,
+        (raw.profileCover as { key?: string; url?: string } | undefined)?.url,
+        (raw.profileCover as { key?: string; url?: string } | undefined)?.key,
+      ),
       (raw.profileCoverUpdatedAt || raw.coverUpdatedAt || raw.updatedAt) as string | number | undefined,
     ),
     bio: (raw.description || raw.bio) as string | undefined,
@@ -171,6 +181,14 @@ export async function fetchUserById(userId: string): Promise<UserProfile | null>
     isPublicProfile: raw.isPublicProfile === undefined || raw.isPublicProfile === null
       ? true
       : String(raw.isPublicProfile).toLowerCase() !== 'false',
+    date: (raw.date || raw.fechaNacimiento || raw.birthDate) as string | undefined,
+    countryCode: (() => {
+      const rawCode = (raw.countryCode || raw.indicativo) as string | undefined;
+      if (!rawCode) return undefined;
+      const trimmed = String(rawCode).trim();
+      if (!trimmed) return undefined;
+      return trimmed.startsWith('+') ? trimmed : `+${trimmed.replace(/\D/g, '')}`;
+    })(),
   };
   } catch {
     return null;
@@ -260,6 +278,9 @@ export async function updateProfileVisibility(userId: string, isPublicProfile: b
   if (!response.ok) {
     throw new Error(body.statusDesc || body.statusMessage || 'No se pudo actualizar la visibilidad');
   }
+  const { setProfilePrivacyCache, invalidatePrivacyCaches } = await import('../lib/privacyVisibility');
+  setProfilePrivacyCache(userId, isPublicProfile);
+  invalidatePrivacyCaches(userId);
 }
 
 export {

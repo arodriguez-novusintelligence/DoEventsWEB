@@ -1,5 +1,22 @@
 import { useState } from 'react';
-import { ChevronLeft, ChevronDown, ChevronUp, Download, Ticket, ShieldCheck, Percent, XCircle, Users, CheckCircle, X, Check, Clock, Loader2 } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronDown,
+  ChevronUp,
+  Download,
+  ShieldCheck,
+  CheckCircle,
+  XCircle,
+  Users,
+  X,
+  Check,
+  Clock,
+  Loader2,
+  ScanLine,
+  AlertCircle,
+  RefreshCw,
+} from 'lucide-react';
+import { Button } from '@lovable/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@lovable/components/ui/avatar';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@lovable/components/ui/table';
 import type { EventChatRoom } from '@lovable/data/chatData';
@@ -7,6 +24,7 @@ import type { CategoryAccessData, SeatAccessInfo, TicketTypeAttendees } from '@l
 import { getEmptyAccessData, resolveAccessData } from '../../../lovable-bridge/statsAdapter';
 import { useLiveEventStats } from '../../../lovable-bridge/useLiveEventStats';
 import { exportAccessExcel } from '@lovable/utils/exportAccessExcel';
+import StatsSectionBanner from './StatsSectionBanner';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 
 interface AccessControlViewProps {
@@ -48,7 +66,7 @@ const AttendeeGroup = ({ group }: { group: TicketTypeAttendees }) => {
                   <Avatar className="h-12 w-12 border-2 border-border">
                     <AvatarImage src={att.avatar} alt={att.name} />
                     <AvatarFallback className="text-xs bg-secondary text-secondary-foreground">
-                      {att.name.substring(0, 2).toUpperCase()}
+                      {(att.name || '?').substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="absolute -bottom-0.5 -right-0.5 rounded-full bg-card p-0.5">
@@ -192,62 +210,92 @@ const CategorySeatMap = ({ category, onBack }: { category: CategoryAccessData; o
 };
 
 const AccessControlView = ({ event, onBack }: AccessControlViewProps) => {
-  const { data, loading } = useLiveEventStats(event, resolveAccessData, getEmptyAccessData());
+  const { data, loading, loadError, reload } = useLiveEventStats(
+    event,
+    resolveAccessData,
+    getEmptyAccessData(),
+    undefined,
+    'access',
+  );
   const [selectedCategory, setSelectedCategory] = useState<CategoryAccessData | null>(null);
 
+  const accessStatus = data.accessStatus ?? { valid: 0, invalid: 0, duplicate: 0 };
   const pieData = [
-    { name: 'Valid', value: data.accessStatus.valid, color: 'hsl(var(--primary))' },
-    { name: 'Invalid', value: data.accessStatus.invalid, color: 'hsl(var(--muted))' },
-    { name: 'Duplicate', value: data.accessStatus.duplicate, color: 'hsl(var(--destructive))' },
-  ];
+    { name: 'Valid', value: accessStatus.valid || 0, color: 'hsl(var(--primary))' },
+    { name: 'Invalid', value: accessStatus.invalid || 0, color: 'hsl(var(--muted))' },
+    { name: 'Duplicate', value: accessStatus.duplicate || 0, color: 'hsl(var(--destructive))' },
+  ].filter((entry) => entry.value > 0);
 
-  const barData = data.trafficByType.map(t => ({
+  const barData = (data.trafficByType || []).map((t) => ({
     name: t.type,
     Concedidos: t.granted,
     Denegados: t.denied,
   }));
 
-  const summaryCards = [
-    { label: 'Total\nBoletos', value: data.totalTickets.toLocaleString('es-CO'), icon: Ticket },
-    { label: 'Accesos\nConcedidos', value: data.accessGranted.toLocaleString('es-CO'), color: 'text-primary' },
-    { label: 'Asistencia', value: `${data.attendance}%`, icon: Percent },
-    { label: 'Denegaciones', value: data.denials.toString(), color: 'text-destructive' },
-    { label: 'Dentro\nActual', value: data.currentInside.toLocaleString('es-CO'), icon: Users },
-  ];
+  const categoryAccess = data.categoryAccess || [];
+  const gates = data.gates || [];
+  const attendeesByType = data.attendeesByType || [];
 
   return (
-    <div className="min-h-screen bg-background pt-16 pb-24">
-      {/* Top bar */}
-      <div className="fixed top-0 left-0 right-0 z-20 flex items-center gap-3 border-b border-border/60 bg-card px-4 py-3 shadow-sm">
-        <button onClick={onBack} className="text-foreground">
-          <ChevronLeft className="h-5 w-5" />
-        </button>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
-              <ShieldCheck className="h-5 w-5 text-primary" />
-            </span>
-            <h1 className="text-base font-extrabold text-foreground truncate">Control de accesos</h1>
-          </div>
-          <p className="text-xs text-muted-foreground truncate">{event.eventName}</p>
-        </div>
-        <button
-          onClick={() => exportAccessExcel(data, event.eventName)}
-          className="flex items-center gap-1.5 rounded-lg bg-primary/10 px-3 py-2 text-xs font-medium text-primary transition-colors hover:bg-primary/20"
-        >
-          <Download className="h-4 w-4" />
-          Exportar
-        </button>
-      </div>
+    <div className="min-h-screen bg-slate-50 pb-24">
+      <StatsSectionBanner
+        title="Control de Accesos"
+        subtitle={event.eventName}
+        icon={ScanLine}
+        onBack={onBack}
+        stats={[
+          { value: loading ? '…' : data.totalTickets.toLocaleString('es-CO'), label: 'Boletos' },
+          { value: loading ? '…' : data.accessGranted.toLocaleString('es-CO'), label: 'Concedidos' },
+          { value: loading ? '…' : `${data.attendance}%`, label: 'Asistencia' },
+        ]}
+        summary={
+          <>
+            Dentro ahora:{' '}
+            <span className="font-bold">{loading ? '…' : data.currentInside.toLocaleString('es-CO')}</span>
+            {' · '}
+            Denegaciones:{' '}
+            <span className="font-bold">{loading ? '…' : data.denials}</span>
+          </>
+        }
+        rightAction={(
+          <button
+            type="button"
+            onClick={() => exportAccessExcel(data, event.eventName)}
+            className="flex items-center gap-1.5 rounded-lg bg-primary-foreground/15 px-3 py-1.5 text-xs font-medium text-primary-foreground transition hover:bg-primary-foreground/25"
+          >
+            <Download className="h-3.5 w-3.5" />
+            Excel
+          </button>
+        )}
+      />
 
-      <div className="mx-auto max-w-lg px-4 py-4 space-y-6">
+      <div className="mx-auto max-w-lg space-y-6 px-4 pt-5">
         {loading && (
           <p className="flex items-center justify-center gap-2 py-6 text-sm text-muted-foreground">
             <Loader2 className="h-4 w-4 animate-spin text-primary" />
             Cargando control de accesos…
           </p>
         )}
-        {!loading && data.totalTickets === 0 && (
+        {loadError && !loading && (
+          <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-8 text-center shadow-sm">
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 ring-2 ring-destructive/20">
+              <AlertCircle className="h-7 w-7 text-destructive" />
+            </div>
+            <p className="text-sm font-semibold text-foreground">No se pudieron cargar los accesos</p>
+            <p className="mt-1 text-xs text-muted-foreground">{loadError}</p>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="mt-4 gap-1.5 rounded-full"
+              onClick={reload}
+            >
+              <RefreshCw className="h-3.5 w-3.5" />
+              Reintentar
+            </Button>
+          </div>
+        )}
+        {!loading && !loadError && data.totalTickets === 0 && (
           <div className="rounded-2xl border border-dashed border-border bg-card p-8 text-center shadow-sm">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
               <ShieldCheck className="h-7 w-7 text-primary" />
@@ -258,51 +306,50 @@ const AccessControlView = ({ event, onBack }: AccessControlViewProps) => {
             </p>
           </div>
         )}
-        {!loading && data.totalTickets > 0 && (
+        {!loading && !loadError && data.totalTickets > 0 && (
           selectedCategory ? (
           <CategorySeatMap category={selectedCategory} onBack={() => setSelectedCategory(null)} />
         ) : (
           <>
-            {/* Summary cards row */}
-            <section className="grid grid-cols-5 gap-2">
-              {summaryCards.map(card => (
-                <div key={card.label} className="flex flex-col items-center rounded-xl border border-border/60 bg-card p-3 text-center shadow-sm">
-                  {card.icon && <card.icon className="h-4 w-4 text-muted-foreground mb-1" />}
-                  <span className="text-[10px] text-muted-foreground whitespace-pre-line leading-tight">{card.label}</span>
-                  <span className={`text-lg font-bold mt-0.5 ${card.color || 'text-card-foreground'}`}>{card.value}</span>
-                </div>
-              ))}
-            </section>
-
             {/* Donut chart */}
             <section className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
               <h2 className="text-base font-extrabold text-foreground mb-4">Estados de Acceso</h2>
-              <ResponsiveContainer width="100%" height={240}>
-                <PieChart>
-                  <Pie data={pieData} cx="50%" cy="50%" innerRadius={60} outerRadius={95} paddingAngle={2} dataKey="value" strokeWidth={0}>
-                    {pieData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
-                  </Pie>
-                  <Legend verticalAlign="bottom" formatter={(value) => {
-                    const item = pieData.find(d => d.name === value);
-                    return <span className="text-xs text-muted-foreground">{value}: {item?.value}</span>;
-                  }} />
-                </PieChart>
-              </ResponsiveContainer>
+              {pieData.length === 0 ? (
+                <p className="py-8 text-center text-sm text-muted-foreground">
+                  Aún no hay escaneos registrados. Los {data.totalTickets} boletos están pendientes de acceso.
+                </p>
+              ) : (
+                <ResponsiveContainer width="100%" height={240}>
+                  <PieChart>
+                    <Pie data={pieData} cx="50%" cy="50%" innerRadius={60} outerRadius={95} paddingAngle={2} dataKey="value" strokeWidth={0}>
+                      {pieData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                    </Pie>
+                    <Legend verticalAlign="bottom" formatter={(value) => {
+                      const item = pieData.find(d => d.name === value);
+                      return <span className="text-xs text-muted-foreground">{value}: {item?.value}</span>;
+                    }} />
+                  </PieChart>
+                </ResponsiveContainer>
+              )}
             </section>
 
             {/* Bar chart */}
             <section className="rounded-2xl border border-border/60 bg-card p-5 shadow-sm">
               <h2 className="text-base font-extrabold text-foreground mb-4">Tráfico por Tipo de Boleta</h2>
-              <ResponsiveContainer width="100%" height={220}>
-                <BarChart data={barData} barCategoryGap="20%">
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis dataKey="name" tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} />
-                  <YAxis tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} />
-                  <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 12, fontSize: 12 }} />
-                  <Bar dataKey="Concedidos" fill="hsl(var(--primary))" radius={[3, 3, 0, 0]} />
-                  <Bar dataKey="Denegados" fill="hsl(var(--destructive))" radius={[3, 3, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+              {barData.length === 0 ? (
+                <p className="py-6 text-center text-sm text-muted-foreground">Sin tráfico por categoría aún.</p>
+              ) : (
+                <ResponsiveContainer width="100%" height={220}>
+                  <BarChart data={barData} barCategoryGap="20%">
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                    <XAxis dataKey="name" tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} />
+                    <YAxis tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} />
+                    <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 12, fontSize: 12 }} />
+                    <Bar dataKey="Concedidos" fill="hsl(var(--primary))" radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="Denegados" fill="hsl(var(--destructive))" radius={[3, 3, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
             </section>
 
             {/* Venue Map — Access */}
@@ -316,9 +363,10 @@ const AccessControlView = ({ event, onBack }: AccessControlViewProps) => {
                 </div>
 
                 <div className="flex gap-2 mt-2">
-                  {(data.categoryAccess.length ? data.categoryAccess : []).slice(0, 3).map((cat) => (
+                  {categoryAccess.slice(0, 3).map((cat) => (
                     <button
                       key={cat.name}
+                      type="button"
                       onClick={() => setSelectedCategory(cat)}
                       className="flex flex-col items-center rounded-xl border-2 p-3 transition-colors hover:bg-accent/30"
                       style={{ borderColor: cat.colorHex }}
@@ -332,21 +380,26 @@ const AccessControlView = ({ event, onBack }: AccessControlViewProps) => {
                   ))}
                 </div>
 
+                {categoryAccess.length === 0 && (
+                  <p className="text-center text-xs text-muted-foreground">Sin categorías de acceso aún.</p>
+                )}
+
                 <div className="w-56 rounded-full border border-border bg-muted/30 py-1.5 text-center mt-1">
                   <span className="text-[10px] text-primary font-medium">Pista de Baile</span>
                 </div>
 
-                {data.categoryAccess[3] && (
+                {categoryAccess[3] && (
                   <button
-                    onClick={() => setSelectedCategory(data.categoryAccess[3])}
+                    type="button"
+                    onClick={() => setSelectedCategory(categoryAccess[3])}
                     className="flex flex-col items-center rounded-xl border-2 px-10 py-3 transition-colors hover:bg-accent/30"
-                    style={{ borderColor: data.categoryAccess[3].colorHex }}
+                    style={{ borderColor: categoryAccess[3].colorHex }}
                   >
-                    <Users className="h-3.5 w-3.5 mb-1" style={{ color: data.categoryAccess[3].colorHex }} />
-                    <span className="text-xs font-semibold" style={{ color: data.categoryAccess[3].colorHex }}>{data.categoryAccess[3].name}</span>
-                    <span className="text-[10px] text-primary font-medium">{data.categoryAccess[3].granted} ✓</span>
-                    <span className="text-[10px] text-destructive font-medium">{data.categoryAccess[3].denied} ✗</span>
-                    <span className="text-[10px] text-amber-500 font-medium">{data.categoryAccess[3].pending} ⏳</span>
+                    <Users className="h-3.5 w-3.5 mb-1" style={{ color: categoryAccess[3].colorHex }} />
+                    <span className="text-xs font-semibold" style={{ color: categoryAccess[3].colorHex }}>{categoryAccess[3].name}</span>
+                    <span className="text-[10px] text-primary font-medium">{categoryAccess[3].granted} ✓</span>
+                    <span className="text-[10px] text-destructive font-medium">{categoryAccess[3].denied} ✗</span>
+                    <span className="text-[10px] text-amber-500 font-medium">{categoryAccess[3].pending} ⏳</span>
                   </button>
                 )}
               </div>
@@ -355,47 +408,55 @@ const AccessControlView = ({ event, onBack }: AccessControlViewProps) => {
             {/* Gate table */}
             <section className="rounded-2xl border border-border bg-card p-5">
               <h2 className="text-base font-bold text-foreground mb-4">Estado de Acceso por Puerta</h2>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-xs">Puerta</TableHead>
-                      <TableHead className="text-xs text-center">Total Intentos</TableHead>
-                      <TableHead className="text-xs text-center">Concedidos</TableHead>
-                      <TableHead className="text-xs text-center">Denegados</TableHead>
-                      <TableHead className="text-xs text-center">Porcentaje</TableHead>
-                      <TableHead className="text-xs text-center">Estado</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {data.gates.map(gate => (
-                      <TableRow key={gate.name}>
-                        <TableCell className="text-sm font-medium text-card-foreground">{gate.name}</TableCell>
-                        <TableCell className="text-sm text-center text-muted-foreground">{gate.totalAttempts}</TableCell>
-                        <TableCell className="text-sm text-center font-semibold text-primary">{gate.granted}</TableCell>
-                        <TableCell className="text-sm text-center font-semibold text-destructive">{gate.denied}</TableCell>
-                        <TableCell className="text-sm text-center text-muted-foreground">{gate.percentage}%</TableCell>
-                        <TableCell className="text-center">
-                          <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold ${statusBadgeClass[gate.status]}`}>{gate.status}</span>
-                        </TableCell>
+              {gates.length === 0 ? (
+                <p className="py-4 text-center text-sm text-muted-foreground">Sin puertas registradas.</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="text-xs">Puerta</TableHead>
+                        <TableHead className="text-xs text-center">Total Intentos</TableHead>
+                        <TableHead className="text-xs text-center">Concedidos</TableHead>
+                        <TableHead className="text-xs text-center">Denegados</TableHead>
+                        <TableHead className="text-xs text-center">Porcentaje</TableHead>
+                        <TableHead className="text-xs text-center">Estado</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                    </TableHeader>
+                    <TableBody>
+                      {gates.map((gate) => (
+                        <TableRow key={gate.name}>
+                          <TableCell className="text-sm font-medium text-card-foreground">{gate.name}</TableCell>
+                          <TableCell className="text-sm text-center text-muted-foreground">{gate.totalAttempts}</TableCell>
+                          <TableCell className="text-sm text-center font-semibold text-primary">{gate.granted}</TableCell>
+                          <TableCell className="text-sm text-center font-semibold text-destructive">{gate.denied}</TableCell>
+                          <TableCell className="text-sm text-center text-muted-foreground">{gate.percentage}%</TableCell>
+                          <TableCell className="text-center">
+                            <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold ${statusBadgeClass[gate.status] || statusBadgeClass.Normal}`}>{gate.status}</span>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
             </section>
 
             {/* Attendees */}
             <section>
-              <div className="flex items-center gap-2 mb-4">
+              <div className="mb-4 flex items-center gap-2">
                 <ShieldCheck className="h-5 w-5 text-muted-foreground" />
                 <h2 className="text-base font-bold text-foreground">Asistentes al Evento</h2>
               </div>
-              <div className="space-y-3">
-                {data.attendeesByType.map(group => (
-                  <AttendeeGroup key={group.type} group={group} />
-                ))}
-              </div>
+              {attendeesByType.length === 0 ? (
+                <p className="py-4 text-center text-sm text-muted-foreground">Sin asistentes registrados.</p>
+              ) : (
+                <div className="space-y-3">
+                  {attendeesByType.map((group) => (
+                    <AttendeeGroup key={group.type} group={group} />
+                  ))}
+                </div>
+              )}
             </section>
           </>
         )

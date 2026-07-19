@@ -62,6 +62,68 @@ function authHeaders(): Record<string, string> {
 
 
 
+function extractIdFromAppPath(segment: 'events' | 'places' | 'services', link?: unknown): string | undefined {
+  if (typeof link !== 'string' || !link) return undefined;
+  const match = link.match(new RegExp(`/${segment}/([^/?#]+)`, 'i'));
+  return match?.[1]?.trim() || undefined;
+}
+
+function extractRoomIdFromNotification(item: Record<string, unknown>, metadata: Record<string, unknown>): string | undefined {
+  const direct = metadata.roomId || (item as { roomId?: string }).roomId;
+  if (direct && typeof direct === 'string' && !direct.includes('/')) {
+    return direct.trim();
+  }
+  const candidates = [metadata.route, metadata.link, metadata.url].filter(Boolean);
+  for (const candidate of candidates) {
+    const value = String(candidate);
+    const fromQuery = value.match(/[?&]roomId=([^&#]+)/i)?.[1];
+    if (fromQuery) return decodeURIComponent(fromQuery).trim();
+  }
+  return undefined;
+}
+
+function isChatMessageNotification(type: string, metadata: Record<string, unknown>): boolean {
+  const text = `${type} ${metadata.type || ''} ${metadata.templateKey || ''}`.toLowerCase();
+  return text.includes('chat-message') || text.includes('chat_user_new_message');
+}
+
+function dedupeChatNotifications(items: AppNotification[]): AppNotification[] {
+  const chatByRoom = new Map<string, AppNotification>();
+  const others: AppNotification[] = [];
+
+  for (const notification of items) {
+    const meta = notification.metadata || {};
+    const type = String(notification.type || meta.type || '');
+    if (!isChatMessageNotification(type, meta)) {
+      others.push(notification);
+      continue;
+    }
+    const roomId = notification.roomId || extractRoomIdFromNotification(
+      notification as unknown as Record<string, unknown>,
+      meta,
+    );
+    if (!roomId) {
+      others.push(notification);
+      continue;
+    }
+    const normalized = { ...notification, roomId };
+    const existing = chatByRoom.get(roomId);
+    if (!existing) {
+      chatByRoom.set(roomId, normalized);
+      continue;
+    }
+    const existingTs = Date.parse(existing.createdAt || existing.timestamp || '') || 0;
+    const nextTs = Date.parse(normalized.createdAt || normalized.timestamp || '') || 0;
+    if (nextTs >= existingTs) chatByRoom.set(roomId, normalized);
+  }
+
+  return [...others, ...chatByRoom.values()].sort((a, b) => {
+    const ta = Date.parse(a.createdAt || a.timestamp || '') || 0;
+    const tb = Date.parse(b.createdAt || b.timestamp || '') || 0;
+    return tb - ta;
+  });
+}
+
 function normalizeNotification(item: Record<string, unknown>): AppNotification {
 
   const metadata = (item.metadata || {}) as Record<string, unknown>;
@@ -112,13 +174,27 @@ function normalizeNotification(item: Record<string, unknown>): AppNotification {
 
     readStatus: String(item.readStatus || metadata.readStatus || (item.read ? 'READ' : 'UNREAD')),
 
-    eventId: (item.eventId || metadata.eventId || data.eventId) as string | undefined,
+    eventId: (item.eventId || metadata.eventId || data.eventId || extractIdFromAppPath('events', metadata.link || metadata.detailLink || metadata.shareLink || metadata.route)) as string | undefined,
 
     eventName: (metadata.eventName || data.eventName) as string | undefined,
 
-    route: (metadata.route || data.route) as string | undefined,
+    route: (() => {
+      const direct = (metadata.route || data.route) as string | undefined;
+      if (direct) return direct;
+      const deepLink = String(metadata.deepLink || data.deepLink || '').trim();
+      if (!deepLink) return undefined;
+      if (deepLink.startsWith('http://') || deepLink.startsWith('https://')) {
+        try {
+          const url = new URL(deepLink);
+          return `${url.pathname}${url.search}`;
+        } catch {
+          return deepLink;
+        }
+      }
+      return deepLink.startsWith('/') ? deepLink : `/${deepLink}`;
+    })(),
 
-    roomId: (metadata.roomId || metadata.link || data.roomId) as string | undefined,
+    roomId: extractRoomIdFromNotification(item, metadata),
 
     metadata,
 
@@ -144,7 +220,9 @@ export async function fetchUserNotifications(userId: string): Promise<AppNotific
 
     const raw = Array.isArray(data) ? data : data?.items || data?.notifications || [];
 
-    return raw.map((item) => normalizeNotification(item as unknown as Record<string, unknown>));
+    return dedupeChatNotifications(
+      raw.map((item) => normalizeNotification(item as unknown as Record<string, unknown>)),
+    );
 
   } catch (err) {
 
@@ -166,7 +244,9 @@ export async function fetchUserNotifications(userId: string): Promise<AppNotific
 
     const raw = Array.isArray(data) ? data : data?.items || data?.notifications || [];
 
-    return raw.map((item: Record<string, unknown>) => normalizeNotification(item));
+    return dedupeChatNotifications(
+      raw.map((item: Record<string, unknown>) => normalizeNotification(item)),
+    );
 
   }
 

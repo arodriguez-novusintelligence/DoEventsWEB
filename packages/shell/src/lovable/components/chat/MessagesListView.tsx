@@ -16,7 +16,8 @@ import {
   Loader2,
   AlertCircle,
 } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@lovable/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@lovable/components/ui/avatar';
+import { UserAvatarImage } from '../../../components/UserAvatarImage';
 import { Badge } from '@lovable/components/ui/badge';
 import { toast } from 'sonner';
 import type { ChatAttendee, EventChatRoom, EventStatus, PrivateChat } from '@lovable/data/chatData';
@@ -397,21 +398,21 @@ const MessagesListView = ({
       >
         <button
           type="button"
-          className="shrink-0"
+          className="flex min-w-0 flex-1 items-center gap-3 text-left transition hover:opacity-90"
           onClick={() => user.id && onOpenUserProfile?.(user.id)}
           aria-label={`Ver perfil de ${displayName}`}
         >
-          <Avatar className="h-12 w-12">
-            {avatar ? <AvatarImage src={avatar} alt={displayName} className="object-cover" /> : null}
+          <Avatar className="h-12 w-12 shrink-0">
+            <UserAvatarImage src={avatar} userId={user.id} alt={displayName} className="object-cover" />
             <AvatarFallback className="bg-primary/10 text-primary text-sm font-extrabold">{initials}</AvatarFallback>
           </Avatar>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-extrabold text-foreground">{displayName}</p>
+            {user.username && (
+              <p className="truncate text-xs text-muted-foreground">@{user.username}</p>
+            )}
+          </div>
         </button>
-        <div className="flex-1 min-w-0 text-left">
-          <p className="text-sm font-extrabold text-foreground truncate">{displayName}</p>
-          {user.username && (
-            <p className="text-xs text-muted-foreground truncate">@{user.username}</p>
-          )}
-        </div>
         <button
           type="button"
           onClick={() => user.id && onStartDirectChat?.(user.id)}

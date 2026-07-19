@@ -116,7 +116,7 @@ export const LoginPage: React.FC = () => {
         const userId = response.data.user.userId;
         dispatch(setAuthData({ token, idUser: userId }));
         dispatch(setAuthenticated(true));
-        persistSession(token, userId);
+        persistSession(token, userId, undefined, undefined, response.data.user.platformRole);
         notify('Nos alegra que hagas parte de esta red de Eventers', 'success');
         goToApp();
         return;

@@ -86,6 +86,41 @@ export interface SaveStaffAssignmentsInput {
   }>;
 }
 
+export interface EventStaffGateAssignment {
+  gateId: string;
+  gateName?: string;
+  assignedUsers: Array<{
+    userId: string;
+    name?: string;
+    username?: string;
+    email?: string;
+    avatar?: string;
+  }>;
+}
+
+export async function fetchEventStaffAssignments(eventId: string): Promise<{
+  venueId?: string;
+  accessControl: EventStaffGateAssignment[];
+}> {
+  try {
+    const response = await fetch(
+      `${getCurrentEnv().apiBaseUrl}/staff-access/admin/events/${encodeURIComponent(eventId)}`,
+      { headers: authHeaders() },
+    );
+    if (!response.ok) return { accessControl: [] };
+    const body = await response.json() as {
+      venueId?: string;
+      accessControl?: EventStaffGateAssignment[];
+    };
+    return {
+      venueId: body.venueId,
+      accessControl: body.accessControl || [],
+    };
+  } catch {
+    return { accessControl: [] };
+  }
+}
+
 export async function saveStaffAssignments(input: SaveStaffAssignmentsInput): Promise<void> {
   const response = await fetch(
     `${getCurrentEnv().apiBaseUrl}/staff-access/assignments`,

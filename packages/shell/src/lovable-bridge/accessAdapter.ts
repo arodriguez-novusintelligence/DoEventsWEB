@@ -18,6 +18,13 @@ export interface AccessEventView {
   doors: number;
   staff: number;
   assigned?: boolean;
+  assignedGate?: string;
+  organizer?: {
+    id?: string;
+    name?: string;
+    email?: string;
+    avatar?: string;
+  };
 }
 
 function eventFieldsFromUserEvent(event: UserEventItem) {
@@ -129,5 +136,12 @@ export function staffAssignmentsToAccessEvents(assignments: StaffAssignment[]): 
     doors: 1,
     staff: 1,
     assigned: true,
+    assignedGate: a.gateName || undefined,
+    organizer: a.eventOwner ? {
+      id: a.eventOwner.userId,
+      name: [a.eventOwner.name, a.eventOwner.lastName].filter(Boolean).join(' ') || 'Organizador',
+      email: a.eventOwner.email,
+      avatar: a.eventOwner.fotoPerfil,
+    } : undefined,
   }));
 }

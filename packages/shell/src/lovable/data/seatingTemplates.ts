@@ -98,6 +98,36 @@ function buildCategoryFigure(
   };
 }
 
+type ServiceElementSpec = {
+  id: string;
+  name: string;
+  floor: number;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  color?: string;
+  shape?: SeatingFigureShape;
+  notes?: string;
+};
+
+function buildServiceElements(specs: ServiceElementSpec[]): SeatingFigure[] {
+  return specs.map((spec) => ({
+    id: spec.id,
+    shape: spec.shape || 'rectangle',
+    role: 'element' as const,
+    name: spec.name,
+    x: spec.x,
+    y: spec.y,
+    w: spec.w,
+    h: spec.h,
+    color: spec.color || '#64748B',
+    floor: spec.floor,
+    locked: true,
+    notes: spec.notes,
+  }));
+}
+
 const MOVISTAR_GATES: EventGate[] = [
   { id: 'g-ma-p2', number: 1, name: 'Puerta 2 — Acceso Norte' },
   { id: 'g-ma-p8', number: 2, name: 'Puerta 8 — VIP Sur' },
@@ -232,38 +262,25 @@ const MOVISTAR_LAYOUTS: Record<string, ZoneLayout> = {
   'ma-accesible': { shape: 'rectangle', x: 42, y: 48, w: 16, h: 6, color: '#64748B', gateId: 'g-ma-platea', price: 180000, rows: 5, seatsPerRow: 26 },
 };
 
+const MOVISTAR_SERVICE_ELEMENTS: ServiceElementSpec[] = [
+  { id: 'ma-stage', name: 'Escenario principal', floor: 1, x: 30, y: 2, w: 40, h: 14, color: '#1F2937', shape: 'stadium', notes: 'Escenario orientado al norte. Parrilla técnica 85 t.' },
+  { id: 'ma-door-n1', name: 'Puerta principal Norte (P2)', floor: 1, x: 46, y: 18, w: 8, h: 4, color: '#334155', notes: 'Acceso platea norte.' },
+  { id: 'ma-door-s1', name: 'Puerta VIP Sur (P8)', floor: 1, x: 46, y: 88, w: 8, h: 4, color: '#334155', notes: 'Acceso tribuna fan sur.' },
+  { id: 'ma-bath-p1-a', name: 'Baños platea occidental', floor: 1, x: 8, y: 40, w: 6, h: 5, color: '#94A3B8', notes: 'Servicios sanitarios nivel 1.' },
+  { id: 'ma-bath-p1-b', name: 'Baños platea oriental', floor: 1, x: 86, y: 40, w: 6, h: 5, color: '#94A3B8' },
+  { id: 'ma-concourse-1', name: 'Concourse / F&B', floor: 1, x: 44, y: 92, w: 12, h: 6, color: '#6B7280', notes: 'Puntos de comida y bebida.' },
+  { id: 'ma-door-p2-w', name: 'Puerta Piso 2 Occidente', floor: 2, x: 6, y: 58, w: 5, h: 4, color: '#475569' },
+  { id: 'ma-door-p2-e', name: 'Puerta Piso 2 Oriente', floor: 2, x: 89, y: 58, w: 5, h: 4, color: '#475569' },
+  { id: 'ma-bath-p2', name: 'Baños gradería media', floor: 2, x: 48, y: 50, w: 8, h: 4, color: '#94A3B8' },
+  { id: 'ma-door-p3', name: 'Puertas gradería alta', floor: 3, x: 48, y: 8, w: 8, h: 3, color: '#475569' },
+  { id: 'ma-bath-p3-w', name: 'Baños piso 3 occidente', floor: 3, x: 10, y: 12, w: 6, h: 4, color: '#94A3B8' },
+  { id: 'ma-bath-p3-e', name: 'Baños piso 3 oriente', floor: 3, x: 84, y: 12, w: 6, h: 4, color: '#94A3B8' },
+  { id: 'ma-vip-lounge', name: 'Zona VIP / suites', floor: 3, x: 4, y: 2, w: 18, h: 8, color: '#BE185D', notes: 'Acceso suites y boxes.' },
+];
+
 function buildMovistarFigures(): SeatingFigure[] {
   const categories = MOVISTAR_ZONES.map((zone) => buildCategoryFigure(zone, MOVISTAR_LAYOUTS[zone.id]));
-  const elements: SeatingFigure[] = [
-    {
-      id: 'ma-stage',
-      shape: 'stadium',
-      role: 'element',
-      name: 'Escenario',
-      x: 30,
-      y: 2,
-      w: 40,
-      h: 14,
-      color: '#1F2937',
-      floor: 1,
-      locked: true,
-      notes: 'Escenario principal — orientación norte. Parrilla técnica 85 t.',
-    },
-    {
-      id: 'ma-servicios',
-      shape: 'rectangle',
-      role: 'element',
-      name: 'Servicios y concourse',
-      x: 44,
-      y: 92,
-      w: 12,
-      h: 6,
-      color: '#6B7280',
-      floor: 1,
-      notes: 'Baños, hidratación y puntos de comida (12 puntos F&B en el recinto).',
-    },
-  ];
-  return [...elements, ...categories];
+  return [...buildServiceElements(MOVISTAR_SERVICE_ELEMENTS), ...categories];
 }
 
 /** Plantilla rigurosa — Movistar Arena Bogotá (Coliseo renovado, aforo estándar ~14.000). */
@@ -376,38 +393,25 @@ const CAMPIN_LAYOUTS: Record<string, ZoneLayout> = {
   'ec-sur': { shape: 'semicircle', x: 28, y: 76, w: 44, h: 22, color: '#D97706', gateId: 'g-ec-sur', price: 45000, arcInner: 45, arcSpan: 170, rows: 24, seatsPerRow: 217 },
 };
 
+const CAMPIN_SERVICE_ELEMENTS: ServiceElementSpec[] = [
+  { id: 'ec-field', name: 'Campo de juego', floor: 1, x: 26, y: 28, w: 48, h: 44, color: '#16A34A', notes: 'Cancha reglamentaria FIFA — 105 m x 68 m aprox.' },
+  { id: 'ec-benches', name: 'Bancas técnicas', floor: 1, x: 24, y: 46, w: 4, h: 8, color: '#1E293B' },
+  { id: 'ec-door-ori', name: 'Ingreso Tribuna Oriental', floor: 1, x: 92, y: 44, w: 6, h: 8, color: '#334155' },
+  { id: 'ec-door-occ', name: 'Ingreso Tribuna Occidental', floor: 1, x: 2, y: 44, w: 6, h: 8, color: '#334155' },
+  { id: 'ec-door-norte', name: 'Ingreso Tribuna Norte', floor: 1, x: 44, y: 2, w: 12, h: 5, color: '#334155' },
+  { id: 'ec-door-sur', name: 'Ingreso Tribuna Sur', floor: 1, x: 44, y: 93, w: 12, h: 5, color: '#334155' },
+  { id: 'ec-bath-ori-b', name: 'Baños tribuna oriental baja', floor: 1, x: 88, y: 28, w: 5, h: 6, color: '#94A3B8' },
+  { id: 'ec-bath-occ-b', name: 'Baños tribuna occidental baja', floor: 1, x: 7, y: 28, w: 5, h: 6, color: '#94A3B8' },
+  { id: 'ec-bath-norte', name: 'Baños tribuna norte', floor: 1, x: 70, y: 6, w: 5, h: 4, color: '#94A3B8' },
+  { id: 'ec-bath-sur', name: 'Baños tribuna sur', floor: 1, x: 70, y: 90, w: 5, h: 4, color: '#94A3B8' },
+  { id: 'ec-bath-ori-a', name: 'Baños tribuna oriental alta', floor: 2, x: 88, y: 12, w: 5, h: 5, color: '#94A3B8' },
+  { id: 'ec-bath-occ-a', name: 'Baños tribuna occidental alta', floor: 2, x: 7, y: 12, w: 5, h: 5, color: '#94A3B8' },
+  { id: 'ec-press', name: 'Prensa / cabina', floor: 2, x: 44, y: 10, w: 12, h: 4, color: '#64748B' },
+];
+
 function buildCampinFigures(): SeatingFigure[] {
   const categories = CAMPIN_ZONES.map((zone) => buildCategoryFigure(zone, CAMPIN_LAYOUTS[zone.id]));
-  const elements: SeatingFigure[] = [
-    {
-      id: 'ec-field',
-      shape: 'rectangle',
-      role: 'element',
-      name: 'Campo de juego',
-      x: 26,
-      y: 28,
-      w: 48,
-      h: 44,
-      color: '#16A34A',
-      floor: 1,
-      locked: true,
-      notes: 'Cancha reglamentaria FIFA — 105 m x 68 m aprox.',
-    },
-    {
-      id: 'ec-benches',
-      shape: 'rectangle',
-      role: 'element',
-      name: 'Bancas técnicas',
-      x: 24,
-      y: 46,
-      w: 4,
-      h: 8,
-      color: '#1E293B',
-      floor: 1,
-      notes: 'Zona técnica y suplentes.',
-    },
-  ];
-  return [...elements, ...categories];
+  return [...buildServiceElements(CAMPIN_SERVICE_ELEMENTS), ...categories];
 }
 
 /**
@@ -448,8 +452,84 @@ export const ESTADIO_EL_CAMPIN_TEMPLATE: SeatingMapTemplate = {
   seatingMap: { figures: buildCampinFigures() },
 };
 
+const PLAZA_CLARO_GATES: EventGate[] = [
+  { id: 'g-pc-norte', number: 1, name: 'Puerta Norte — Carrera 68' },
+  { id: 'g-pc-sur', number: 2, name: 'Puerta Sur — Av. El Dorado' },
+  { id: 'g-pc-vip', number: 3, name: 'Acceso VIP / Palco' },
+  { id: 'g-pc-occ', number: 4, name: 'Puerta Occidental' },
+];
+
+const PLAZA_CLARO_ZONES: SeatingZoneSpec[] = [
+  { id: 'pc-pista', name: 'Pista / Floor', floor: 1, sectors: 'Pista general de pie/sentado', seats: 3200, seatType: 'general', description: 'Zona más cercana al escenario en conciertos.' },
+  { id: 'pc-trib-baja', name: 'Tribuna Baja', floor: 1, sectors: 'Anillos 101-118', seats: 4800, seatType: 'numbered', description: 'Primera gradería alrededor del escenario.' },
+  { id: 'pc-trib-media', name: 'Tribuna Media', floor: 2, sectors: 'Anillos 201-218', seats: 4200, seatType: 'numbered', description: 'Segunda altura con vista panorámica.' },
+  { id: 'pc-trib-alta', name: 'Tribuna Alta', floor: 3, sectors: 'Anillos 301-318', seats: 3800, seatType: 'numbered', description: 'Gradería superior del recinto.' },
+  { id: 'pc-vip', name: 'Palcos VIP', floor: 2, sectors: 'Palcos y boxes', seats: 600, seatType: 'vip', description: 'Zona premium con servicio exclusivo.' },
+  { id: 'pc-accesible', name: 'Zona accesible', floor: 1, sectors: 'PMR tribuna baja', seats: 120, seatType: 'accessible', description: 'Ubicación para movilidad reducida.' },
+];
+
+const PLAZA_CLARO_LAYOUTS: Record<string, ZoneLayout> = {
+  'pc-pista': { shape: 'rectangle', x: 28, y: 38, w: 44, h: 28, color: '#7C3AED', gateId: 'g-pc-sur', price: 320000, rows: 20, seatsPerRow: 160 },
+  'pc-trib-baja': { shape: 'horseshoe', x: 8, y: 52, w: 84, h: 38, color: '#2563EB', gateId: 'g-pc-norte', price: 180000, arcInner: 42, arcSpan: 200, rows: 24, seatsPerRow: 200 },
+  'pc-trib-media': { shape: 'horseshoe', x: 6, y: 28, w: 88, h: 30, color: '#0EA5E9', gateId: 'g-pc-occ', price: 140000, arcInner: 38, arcSpan: 210, rows: 21, seatsPerRow: 200 },
+  'pc-trib-alta': { shape: 'horseshoe', x: 4, y: 4, w: 92, h: 28, color: '#0284C7', gateId: 'g-pc-norte', price: 95000, arcInner: 34, arcSpan: 220, rows: 19, seatsPerRow: 200 },
+  'pc-vip': { shape: 'rectangle', x: 2, y: 2, w: 18, h: 10, color: '#DB2777', gateId: 'g-pc-vip', price: 850000, rows: 4, seatsPerRow: 150 },
+  'pc-accesible': { shape: 'rectangle', x: 42, y: 48, w: 16, h: 6, color: '#64748B', gateId: 'g-pc-sur', price: 160000, rows: 4, seatsPerRow: 30 },
+};
+
+const PLAZA_CLARO_SERVICE_ELEMENTS: ServiceElementSpec[] = [
+  { id: 'pc-stage', name: 'Escenario / tarima', floor: 1, x: 32, y: 8, w: 36, h: 16, color: '#1F2937', shape: 'stadium', notes: 'Escenario central orientado al sur.' },
+  { id: 'pc-door-n', name: 'Puerta principal Norte', floor: 1, x: 46, y: 90, w: 8, h: 4, color: '#334155' },
+  { id: 'pc-door-s', name: 'Puerta principal Sur', floor: 1, x: 46, y: 2, w: 8, h: 4, color: '#334155' },
+  { id: 'pc-bath-f1-a', name: 'Baños tribuna baja occidente', floor: 1, x: 10, y: 60, w: 6, h: 5, color: '#94A3B8' },
+  { id: 'pc-bath-f1-b', name: 'Baños tribuna baja oriente', floor: 1, x: 84, y: 60, w: 6, h: 5, color: '#94A3B8' },
+  { id: 'pc-bath-f2', name: 'Baños tribuna media', floor: 2, x: 48, y: 34, w: 8, h: 4, color: '#94A3B8' },
+  { id: 'pc-bath-f3', name: 'Baños tribuna alta', floor: 3, x: 48, y: 10, w: 8, h: 4, color: '#94A3B8' },
+  { id: 'pc-fnb', name: 'Zona F&B / concourse', floor: 1, x: 44, y: 94, w: 12, h: 4, color: '#6B7280' },
+];
+
+function buildPlazaClaroFigures(): SeatingFigure[] {
+  const categories = PLAZA_CLARO_ZONES.map((zone) => buildCategoryFigure(zone, PLAZA_CLARO_LAYOUTS[zone.id]));
+  return [...buildServiceElements(PLAZA_CLARO_SERVICE_ELEMENTS), ...categories];
+}
+
+/** Plaza Claro Bogotá — recinto indoor multipropósito (~12.720 butacas en conciertos). */
+export const PLAZA_CLARO_BOGOTA_TEMPLATE: SeatingMapTemplate = {
+  id: 'plaza-claro-bogota',
+  name: 'Plaza Claro Bogotá',
+  description:
+    'Plaza Claro Bogotá: escenario central, pista, tribunas en 3 niveles y palcos VIP. Aforo típico en conciertos ~12.700.',
+  venueName: 'Plaza Claro Bogotá',
+  city: 'Bogotá, Colombia',
+  address: 'Av. El Dorado # 68C-61, Bogotá',
+  latitude: 4.6312,
+  longitude: -74.0945,
+  placeType: 'Estadio o coliseo',
+  officialCapacity: 12720,
+  maxCapacity: 14000,
+  floors: [1, 2, 3],
+  levels: [
+    { floor: 1, label: 'Nivel 1 — Pista y tribuna baja', description: 'Pista y anillos inferiores 101-118.' },
+    { floor: 2, label: 'Nivel 2 — Tribuna media y VIP', description: 'Anillos 201-218 y palcos.' },
+    { floor: 3, label: 'Nivel 3 — Tribuna alta', description: 'Anillos superiores 301-318.' },
+  ],
+  zones: PLAZA_CLARO_ZONES,
+  sectionsIncluded: PLAZA_CLARO_ZONES.map((z) => `${z.name} (${z.sectors})`),
+  sectionsNotIncluded: [
+    'Backstage, camerinos y zonas técnicas.',
+    'Configuraciones con pista 100% de pie (aforo superior al modelo sentado).',
+  ],
+  sources: [
+    'https://plazaclaro.com/',
+    'https://bogota.gov.co/',
+  ],
+  gates: PLAZA_CLARO_GATES,
+  seatingMap: { figures: buildPlazaClaroFigures() },
+};
+
 export const SEATING_MAP_TEMPLATES: SeatingMapTemplate[] = [
   MOVISTAR_ARENA_BOGOTA_TEMPLATE,
+  PLAZA_CLARO_BOGOTA_TEMPLATE,
   ESTADIO_EL_CAMPIN_TEMPLATE,
 ];
 

@@ -3,21 +3,28 @@ import { useNavigate } from 'react-router-dom';
 import {
   Banknote,
   ChevronLeft,
-  FolderKanban,
+  Flag,
   LayoutDashboard,
+  RefreshCw,
   Search,
   ShieldCheck,
-  Sparkles,
   UserPlus,
   Users,
 } from 'lucide-react';
 
-export type AdminTabId = 'home' | 'content' | 'support' | 'payments' | 'admin' | 'newusers' | 'ai';
+export type AdminTabId =
+  | 'home'
+  | 'reports'
+  | 'refunds'
+  | 'support'
+  | 'payments'
+  | 'admin'
+  | 'newusers';
 
 const TABS: { id: AdminTabId; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { id: 'home', label: 'Inicio', icon: LayoutDashboard },
-  { id: 'content', label: 'Contenido', icon: FolderKanban },
-  { id: 'ai', label: 'IA', icon: Sparkles },
+  { id: 'reports', label: 'Denuncias', icon: Flag },
+  { id: 'refunds', label: 'Reembolsos', icon: RefreshCw },
   { id: 'support', label: 'Soporte', icon: Search },
   { id: 'payments', label: 'Pagos', icon: Banknote },
   { id: 'admin', label: 'Usuarios', icon: Users },
@@ -42,8 +49,8 @@ export const AdminLayout: React.FC<Props> = ({ activeTab, onTabChange, children 
   const time = now.toLocaleTimeString('es-CO', { hour12: false });
 
   return (
-    <div className="min-h-screen bg-background pb-24">
-      <div className="bg-gradient-to-br from-primary via-primary to-[#8B97FA] rounded-b-3xl px-4 pt-6 pb-6 text-primary-foreground">
+    <div className="min-h-screen bg-background pb-36">
+      <div className="rounded-b-3xl bg-gradient-to-br from-primary via-primary to-accent px-4 pb-6 pt-6 text-primary-foreground">
         <button
           type="button"
           onClick={() => navigate('/profile')}
@@ -61,7 +68,6 @@ export const AdminLayout: React.FC<Props> = ({ activeTab, onTabChange, children 
             <p className="text-sm text-primary-foreground/80">Backoffice de do.events</p>
           </div>
         </div>
-        <p className="mt-3 text-xs text-primary-foreground/70">Hora servidor: {time}</p>
       </div>
 
       <div className="sticky top-0 z-20 border-b border-border bg-background">
@@ -87,6 +93,9 @@ export const AdminLayout: React.FC<Props> = ({ activeTab, onTabChange, children 
       </div>
 
       <main className="px-4 py-6">{children}</main>
+      <p className="pointer-events-none fixed bottom-24 right-4 text-[10px] text-muted-foreground/60">
+        Hora servidor: {time}
+      </p>
     </div>
   );
 };

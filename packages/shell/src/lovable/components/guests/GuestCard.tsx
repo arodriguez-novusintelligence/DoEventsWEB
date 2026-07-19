@@ -2,7 +2,8 @@ import { Heart, Trash2, Edit, MoreVertical } from "lucide-react";
 import { Guest } from "@lovable/types/guest";
 import { Button } from "@lovable/components/ui/button";
 import { Badge } from "@lovable/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@lovable/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@lovable/components/ui/avatar";
+import { UserAvatarImage } from "../../../components/UserAvatarImage";
 import { Checkbox } from "@lovable/components/ui/checkbox";
 import {
   DropdownMenu,
@@ -31,7 +32,7 @@ export function GuestCard({ guest, onToggleFavorite, onDelete, onEdit, hideActio
             <Checkbox checked={isSelected} onCheckedChange={() => onSelectionToggle(guest.id)} className="data-[state=checked]:bg-primary data-[state=checked]:border-primary" />
           )}
           <Avatar className="h-10 w-10">
-            <AvatarImage src={guest.avatar} alt={`${guest.name} ${guest.lastName}`} />
+            <UserAvatarImage src={guest.avatar} userId={guest.invitedUserId || guest.id} alt={`${guest.name} ${guest.lastName}`} />
             <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm">{initials}</AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">

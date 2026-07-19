@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Loader2, Compass } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import {
   EVENTS_CACHE_INVALIDATED_EVENT,
   SERVICES_CACHE_INVALIDATED_EVENT,
   VENUES_CACHE_INVALIDATED_EVENT,
+  applyProfileCityAsLocation,
   buildDiscoverLocationKey,
   cacheDiscover,
   fetchEventsFeed,
@@ -13,7 +14,7 @@ import {
   fetchNearbyServices,
   fetchNearbyVenues,
   fetchOwnerRentalVenues,
-  mergeVenuesById,
+  fetchUserById,
   fetchUserEvents,
   fetchFavoriteUserEvents,
   fetchLikedServiceIds,
@@ -23,35 +24,47 @@ import {
   isDiscoverCacheFresh,
   getCachedProfiles,
   getStoredUserLocation,
+  type StoredUserLocation,
+  mergeVenuesById,
   toggleEventLike,
   likeVenue,
   likeService,
   resolveUserLocation,
+  useStoredUserLocation,
   RootState,
   useToast,
   EVENT_FAVORITE_CHANGED_EVENT,
   dispatchEventFavoriteChanged,
   syncEventFavoriteWithFeedPublications,
   USER_LOCATION_CHANGED_EVENT,
+  filterByOwnerPrivacy,
   type FeedEventItem,
   type NearbyServiceProvider,
   type NearbyVenue,
-  type StoredUserLocation,
 } from '@doevents/shared';
 import EventsView from '@lovable/components/feed/EventsView';
 import { feedEventToDiscoverItem } from '../lovable-bridge/discoverAdapter';
-import { filterAndSortMyPublishedEvents } from '../lovable-bridge/discoverEventFilters';
+import {
+  buildNearbyEventsFromCatalog,
+  discoverNearbyLooksIncomplete,
+  filterAndSortMyPublishedEvents,
+  filterDiscoverFeedEvents,
+} from '../lovable-bridge/discoverEventFilters';
 import {
   buildOtherDiscoverEvents,
   buildUpcomingDiscoverEvents,
   splitRecommendedCarousel,
 } from '../lovable-bridge/discoverSections';
 import { groupServicesByProvider } from '../lovable-bridge/servicesAdapter';
+import { nearbyVenueToPublishedDraft } from '../lovable-bridge/venuesAdapter';
 import { providerToCard } from '../lovable-bridge/useNearbyServices';
 import type { FeedServiceCard } from '@lovable/components/feed/FeedServicesCarousel';
-import { nearbyVenueToPublishedDraft } from '../lovable-bridge/venuesAdapter';
+import DiscoverServiceDetailOverlay from '../components/DiscoverServiceDetailOverlay';
 
-const NEARBY_RADIUS_KM = 50;
+const NEARBY_RADIUS_KM = 100;
+const NEARBY_FETCH_LIMIT = 80;
+const DISCOVER_FEED_LIMIT = 100;
+const FAVORITE_REFRESH_EVENT = EVENT_FAVORITE_CHANGED_EVENT;
 
 function sortEventsByDistance(items: FeedEventItem[]): FeedEventItem[] {
   return [...items].sort((a, b) => (a.distancia ?? Infinity) - (b.distancia ?? Infinity));
@@ -65,7 +78,58 @@ function sortVenuesByDistance(items: NearbyVenue[]): NearbyVenue[] {
   return [...items].sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity));
 }
 
-const FAVORITE_REFRESH_EVENT = EVENT_FAVORITE_CHANGED_EVENT;
+function hasDiscoverContent(cached: {
+  nearby?: FeedEventItem[];
+  recommended?: FeedEventItem[];
+  services?: NearbyServiceProvider[];
+  venues?: NearbyVenue[];
+}): boolean {
+  return Boolean(
+    cached.nearby?.length
+    || cached.recommended?.length
+    || cached.services?.length
+    || cached.venues?.length,
+  );
+}
+
+function resolveNearbyEvents(
+  apiNearby: FeedEventItem[],
+  catalog: FeedEventItem[],
+  loc: StoredUserLocation | null,
+): FeedEventItem[] {
+  const filtered = filterDiscoverFeedEvents(apiNearby);
+  if (!loc) return sortEventsByDistance(filtered);
+  return buildNearbyEventsFromCatalog(
+    catalog,
+    loc.lat,
+    loc.lng,
+    NEARBY_RADIUS_KM,
+    sortEventsByDistance(filtered),
+  );
+}
+
+function shouldSkipDiscoverNetworkRefresh(
+  cached: {
+    nearby?: FeedEventItem[];
+    recommended?: FeedEventItem[];
+    services?: NearbyServiceProvider[];
+    venues?: NearbyVenue[];
+  },
+  loc: StoredUserLocation | null,
+  cacheFresh: boolean,
+): boolean {
+  if (!cacheFresh || !hasDiscoverContent(cached)) return false;
+  if (discoverNearbyLooksIncomplete(
+    cached.nearby || [],
+    cached.recommended || [],
+    loc?.lat,
+    loc?.lng,
+    NEARBY_RADIUS_KM,
+  )) {
+    return false;
+  }
+  return true;
+}
 
 async function enrichProviderAvatars(
   providers: ReturnType<typeof groupServicesByProvider>,
@@ -74,18 +138,31 @@ async function enrichProviderAvatars(
   const profiles = await getCachedProfiles(providers.map((p) => p.userId));
   return providers.map((p) => {
     const profile = profiles.get(p.userId);
-    const avatarFromProfile = profile?.imagen;
     return {
       ...p,
-      avatarUrl: avatarFromProfile || p.avatarUrl,
+      avatarUrl: profile?.imagen || p.avatarUrl,
     };
   });
+}
+
+async function resolveDiscoverLocation(
+  userId?: string,
+  stored?: StoredUserLocation | null,
+): Promise<StoredUserLocation | null> {
+  if (stored) return stored;
+  const fromDevice = await resolveUserLocation({ prompt: false }).catch(() => null);
+  if (fromDevice) return fromDevice;
+  if (!userId) return null;
+  const profile = await fetchUserById(userId).catch(() => null);
+  if (!profile?.ciudad) return null;
+  return applyProfileCityAsLocation(profile.ciudad, profile.departamento).catch(() => null);
 }
 
 export const EventsPage: React.FC = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const userId = useSelector((s: RootState) => s.auth.idUser);
+  const userLocation = useStoredUserLocation();
   const [loading, setLoading] = useState(true);
   const [nearby, setNearby] = useState<ReturnType<typeof feedEventToDiscoverItem>[]>([]);
   const [recommendedAll, setRecommendedAll] = useState<ReturnType<typeof feedEventToDiscoverItem>[]>([]);
@@ -96,26 +173,15 @@ export const EventsPage: React.FC = () => {
   const [publishedVenues, setPublishedVenues] = useState<ReturnType<typeof nearbyVenueToPublishedDraft>[]>([]);
   const [likedVenueIds, setLikedVenueIds] = useState<Set<string>>(new Set());
   const [likedServiceIds, setLikedServiceIds] = useState<Set<string>>(new Set());
+  const [discoverService, setDiscoverService] = useState<{ id: string; openBooking?: boolean } | null>(null);
+  const [effectiveLocation, setEffectiveLocation] = useState<StoredUserLocation | null>(() => getStoredUserLocation());
 
-  const recommendedCarousel = useMemo(
-    () => splitRecommendedCarousel(recommendedAll),
-    [recommendedAll],
-  );
-
-  const upcomingEvents = useMemo(
-    () => buildUpcomingDiscoverEvents(myEvents),
-    [myEvents],
-  );
-
+  const recommendedCarousel = useMemo(() => splitRecommendedCarousel(recommendedAll), [recommendedAll]);
+  const upcomingEvents = useMemo(() => buildUpcomingDiscoverEvents(myEvents), [myEvents]);
   const otherEvents = useMemo(
-    () => buildOtherDiscoverEvents(recommendedAll, {
-      nearby,
-      favorites,
-      myEvents,
-    }),
+    () => buildOtherDiscoverEvents(recommendedAll, { nearby, favorites, myEvents }),
     [recommendedAll, nearby, favorites, myEvents],
   );
-
   const favoriteEventIds = useMemo(
     () => new Set(favorites.map((e) => e.id).filter(Boolean)),
     [favorites],
@@ -134,7 +200,6 @@ export const EventsPage: React.FC = () => {
     }
     const isFavorite = favoriteEventIds.has(eventId);
     const liked = !isFavorite;
-
     setFavorites((prev) => {
       if (!liked) return prev.filter((e) => e.id !== eventId);
       const source = findDiscoverEvent(eventId);
@@ -142,7 +207,6 @@ export const EventsPage: React.FC = () => {
       return [source, ...prev];
     });
     dispatchEventFavoriteChanged(eventId, liked, isFavorite);
-
     try {
       await toggleEventLike(userId, eventId, liked);
       await syncEventFavoriteWithFeedPublications(eventId, liked, isFavorite);
@@ -233,132 +297,161 @@ export const EventsPage: React.FC = () => {
     setLikedServiceIds(serviceLikes);
   };
 
+  const applyDiscoverPayload = async (
+    loc: StoredUserLocation | null,
+    sortedNearby: FeedEventItem[],
+    feedItems: FeedEventItem[],
+    mineItems: FeedEventItem[],
+    favItems: FeedEventItem[],
+    sortedServices: NearbyServiceProvider[],
+    mergedVenues: NearbyVenue[],
+  ) => {
+    const mappedNearby = sortedNearby.map(feedEventToDiscoverItem);
+    const mappedRecommended = filterDiscoverFeedEvents(feedItems).map(feedEventToDiscoverItem);
+    const nearbyDistances = new Map(
+      sortedNearby.filter((e) => e.id).map((e) => [e.id!, e.distancia ?? Infinity]),
+    );
+    const sortedMine = filterAndSortMyPublishedEvents(filterDiscoverFeedEvents(mineItems), {
+      userLat: loc?.lat,
+      userLng: loc?.lng,
+      radiusKm: NEARBY_RADIUS_KM,
+      nearbyDistances,
+    });
+    const mappedMy = sortedMine.map(feedEventToDiscoverItem);
+    const mappedFav = filterDiscoverFeedEvents(favItems).map(feedEventToDiscoverItem);
+
+    setNearby(mappedNearby);
+    setRecommendedAll(mappedRecommended);
+    setMyEvents(mappedMy);
+    setFavorites(mappedFav);
+    const providers = groupServicesByProvider(sortedServices);
+    const enrichedProviders = await enrichProviderAvatars(providers);
+    setServiceProviders(enrichedProviders);
+    setNearbyServiceCards(sortedServices.map(providerToCard));
+    setPublishedVenues(mergedVenues.map(nearbyVenueToPublishedDraft));
+    void loadLikedDiscoverItems(
+      mergedVenues.map((v) => v.venueId).filter(Boolean),
+      sortedServices.map((s) => s.serviceId).filter(Boolean),
+      userId || undefined,
+    );
+  };
+
   const load = async (loc: StoredUserLocation | null, forceNetwork = false) => {
+    setEffectiveLocation(loc);
     const locationKey = buildDiscoverLocationKey(loc?.lat, loc?.lng, userId || undefined);
     const cacheFresh = !forceNetwork && isDiscoverCacheFresh(locationKey);
 
     if (!forceNetwork) {
       const cached = getCachedDiscover(locationKey, true);
       if (cached) {
-        const mappedNearby = sortEventsByDistance(cached.nearby).map(feedEventToDiscoverItem);
-        const mappedRecommended = cached.recommended.map(feedEventToDiscoverItem);
-        const nearbyDistances = new Map(
-          cached.nearby.filter((e) => e.id).map((e) => [e.id!, e.distancia ?? Infinity]),
+        const cachedRecommended = filterDiscoverFeedEvents(cached.recommended || []);
+        const sortedNearby = resolveNearbyEvents(cached.nearby || [], cachedRecommended, loc);
+        await applyDiscoverPayload(
+          loc,
+          sortedNearby,
+          cachedRecommended,
+          cached.myEvents,
+          cached.favorites,
+          sortServicesByDistance(cached.services || []),
+          sortVenuesByDistance(cached.venues || []),
         );
-        const sortedMine = filterAndSortMyPublishedEvents(cached.myEvents, {
-          userLat: loc?.lat,
-          userLng: loc?.lng,
-          radiusKm: NEARBY_RADIUS_KM,
-          nearbyDistances,
-        });
-        const mappedMy = sortedMine.map(feedEventToDiscoverItem);
-        const mappedFav = cached.favorites.map(feedEventToDiscoverItem);
-        setNearby(mappedNearby);
-        setRecommendedAll(mappedRecommended);
-        setMyEvents(mappedMy);
-        setFavorites(mappedFav);
-        const providers = groupServicesByProvider(sortServicesByDistance(cached.services || []));
-        setServiceProviders(providers);
-        setNearbyServiceCards(sortServicesByDistance(cached.services || []).map(providerToCard));
-        setPublishedVenues(sortVenuesByDistance(cached.venues || []).map(nearbyVenueToPublishedDraft));
         setLoading(false);
-        void loadLikedDiscoverItems(
-          (cached.venues || []).map((v) => v.venueId).filter(Boolean),
-          (cached.services || []).map((s) => s.serviceId).filter(Boolean),
-          userId || undefined,
-        );
-        if (cacheFresh) {
-          void enrichProviderAvatars(providers).then(setServiceProviders);
+        if (shouldSkipDiscoverNetworkRefresh(cached, loc, cacheFresh)) {
           return;
         }
       }
     }
 
-    if (!cacheFresh) setLoading(true);
+    setLoading(true);
     try {
       const [nearbyRes, feedRes, mineRes, favRes, servicesRes, venuesRes] = await Promise.all([
         loc
-          ? fetchNearbyEvents(loc.lat, loc.lng, NEARBY_RADIUS_KM, userId || undefined, 20).catch(() => [])
+          ? fetchNearbyEvents(loc.lat, loc.lng, NEARBY_RADIUS_KM, userId || undefined, NEARBY_FETCH_LIMIT).catch((err) => {
+            console.warn('[Descubre] fetchNearbyEvents falló', err);
+            return [] as FeedEventItem[];
+          })
           : Promise.resolve([]),
-        fetchEventsFeed(userId || undefined, 0, 40, { forceNetwork }).catch(() => ({ items: [] })),
+        fetchEventsFeed(userId || undefined, 0, DISCOVER_FEED_LIMIT, { forceNetwork: true }).catch(() => ({ items: [] as FeedEventItem[] })),
         userId
-          ? fetchUserEvents(userId, { forceNetwork, allEvents: true }).catch(() => ({ data: { datosEvento: [] } }))
-          : Promise.resolve({ data: { datosEvento: [] } }),
+          ? fetchUserEvents(userId, { forceNetwork: true }).catch(() => ({ data: { datosEvento: [] as FeedEventItem[] } }))
+          : Promise.resolve({ data: { datosEvento: [] as FeedEventItem[] } }),
         userId
           ? fetchFavoriteUserEvents(userId, 40).catch(() => [])
           : Promise.resolve([]),
         loc
-          ? fetchNearbyServices(loc.lat, loc.lng, NEARBY_RADIUS_KM, 40, { forceNetwork }).catch(() => [])
+          ? fetchNearbyServices(loc.lat, loc.lng, NEARBY_RADIUS_KM, 40, { forceNetwork: true }).catch(() => [])
           : Promise.resolve([]),
         loc
-          ? fetchNearbyVenues(loc.lat, loc.lng, NEARBY_RADIUS_KM, 40, { forceNetwork }).catch(() => [])
+          ? fetchNearbyVenues(loc.lat, loc.lng, NEARBY_RADIUS_KM, 40, { forceNetwork: true }).catch(() => [])
           : Promise.resolve([]),
       ]);
 
-      const sortedNearby = sortEventsByDistance(nearbyRes);
+      const feedItemsRaw = filterDiscoverFeedEvents(feedRes.items || []);
+      const feedItems = await filterByOwnerPrivacy(
+        feedItemsRaw,
+        (item) => item.userId,
+        userId || undefined,
+      );
+      const sortedNearby = resolveNearbyEvents(nearbyRes, feedItems, loc);
       const sortedServices = sortServicesByDistance(servicesRes);
       let mergedVenues = sortVenuesByDistance(venuesRes);
       if (userId) {
         const ownVenues = await fetchOwnerRentalVenues(userId).catch(() => []);
         mergedVenues = sortVenuesByDistance(mergeVenuesById(mergedVenues, ownVenues));
       }
+      const mineItems = filterDiscoverFeedEvents(mineRes.data?.datosEvento || []);
+      const favItems = filterDiscoverFeedEvents(Array.isArray(favRes) ? favRes : []);
 
-      const mappedNearby = sortedNearby.map(feedEventToDiscoverItem);
-      const mappedRecommended = (feedRes.items || []).map(feedEventToDiscoverItem);
-      const nearbyDistances = new Map(
-        sortedNearby.filter((e) => e.id).map((e) => [e.id!, e.distancia ?? Infinity]),
-      );
-      const sortedMine = filterAndSortMyPublishedEvents(mineRes.data?.datosEvento || [], {
-        userLat: loc?.lat,
-        userLng: loc?.lng,
-        radiusKm: NEARBY_RADIUS_KM,
-        nearbyDistances,
-      });
-      const mappedMy = sortedMine.map(feedEventToDiscoverItem);
-      const mappedFav = (Array.isArray(favRes) ? favRes : []).map(feedEventToDiscoverItem);
-
-      setNearby(mappedNearby);
-      setRecommendedAll(mappedRecommended);
-      setMyEvents(mappedMy);
-      setFavorites(mappedFav);
-      const providers = groupServicesByProvider(sortedServices);
-      const enrichedProviders = await enrichProviderAvatars(providers);
-      setServiceProviders(enrichedProviders);
-      setNearbyServiceCards(sortedServices.map(providerToCard));
-      setPublishedVenues(mergedVenues.map(nearbyVenueToPublishedDraft));
+      await applyDiscoverPayload(loc, sortedNearby, feedItems, mineItems, favItems, sortedServices, mergedVenues);
 
       cacheDiscover({
         locationKey,
         nearby: sortedNearby,
-        recommended: feedRes.items || [],
-        myEvents: mineRes.data?.datosEvento || [],
-        favorites: Array.isArray(favRes) ? favRes : [],
+        recommended: feedItems,
+        myEvents: mineItems,
+        favorites: favItems,
         services: sortedServices,
         venues: mergedVenues,
       });
-      void loadLikedDiscoverItems(
-        mergedVenues.map((v) => v.venueId).filter(Boolean),
-        sortedServices.map((s) => s.serviceId).filter(Boolean),
-        userId || undefined,
-      );
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : 'No se pudo cargar Descubre', 'error');
     } finally {
       setLoading(false);
     }
   };
 
+  const handleRequestLocation = async () => {
+    const resolved = await resolveUserLocation({ prompt: true, force: true }).catch(() => null);
+    if (resolved) {
+      setEffectiveLocation(resolved);
+      void load(resolved, true);
+      return;
+    }
+    showToast('Activa la ubicación del navegador o indícala desde el Feed o el Mapa', 'error');
+  };
+
   useEffect(() => {
-    const init = async () => {
-      let loc = getStoredUserLocation();
-      if (!loc) {
-        loc = await resolveUserLocation({ prompt: true }).catch(() => null);
+    let cancelled = false;
+
+    const run = async () => {
+      const stored = userLocation ?? getStoredUserLocation();
+      const loc = await resolveDiscoverLocation(userId || undefined, stored);
+      if (cancelled) return;
+      const locationKey = buildDiscoverLocationKey(loc?.lat, loc?.lng, userId || undefined);
+      const staleEmpty = getCachedDiscover(locationKey, true);
+      if (staleEmpty && !hasDiscoverContent(staleEmpty)) {
+        invalidateDiscoverCache();
       }
+      setEffectiveLocation(loc);
       await load(loc);
     };
-    void init();
+    void run();
 
     const handler = (e: Event) => {
       const detail = (e as CustomEvent<StoredUserLocation>).detail;
-      void load(detail || getStoredUserLocation(), true);
+      const next = detail || getStoredUserLocation();
+      setEffectiveLocation(next);
+      void load(next, true);
     };
     const onCacheInvalidated = () => { void load(getStoredUserLocation(), true); };
     const onFavorite = () => { void load(getStoredUserLocation(), true); };
@@ -369,15 +462,22 @@ export const EventsPage: React.FC = () => {
     window.addEventListener(VENUES_CACHE_INVALIDATED_EVENT, onCacheInvalidated);
     window.addEventListener(FAVORITE_REFRESH_EVENT, onFavorite);
     return () => {
+      cancelled = true;
       window.removeEventListener(USER_LOCATION_CHANGED_EVENT, handler);
       window.removeEventListener(EVENTS_CACHE_INVALIDATED_EVENT, onCacheInvalidated);
       window.removeEventListener(SERVICES_CACHE_INVALIDATED_EVENT, onCacheInvalidated);
       window.removeEventListener(VENUES_CACHE_INVALIDATED_EVENT, onCacheInvalidated);
       window.removeEventListener(FAVORITE_REFRESH_EVENT, onFavorite);
     };
-  }, [userId]);
+  }, [userId, userLocation?.lat, userLocation?.lng]);
 
-  if (loading && !nearby.length && !recommendedAll.length && !serviceProviders.length) {
+  const openDiscoverService = (card: FeedServiceCard, openBooking = false) => {
+    if (card.id && !/^sp-\d+$/i.test(card.id)) {
+      setDiscoverService({ id: card.id, openBooking });
+    }
+  };
+
+  if (loading && !nearby.length && !recommendedAll.length && !serviceProviders.length && !publishedVenues.length) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3 bg-background pb-24">
         <div className="flex flex-col items-center gap-3 rounded-2xl bg-card px-10 py-12 shadow-sm">
@@ -385,81 +485,79 @@ export const EventsPage: React.FC = () => {
             <Loader2 className="h-7 w-7 animate-spin text-primary" />
           </div>
           <p className="text-sm font-semibold text-foreground">Descubriendo eventos cerca de ti…</p>
-          <p className="text-xs text-muted-foreground max-w-[240px] text-center">
-            Cargando eventos, lugares y servicios según tu ubicación.
-          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-secondary pb-24" aria-label="Descubre eventos">
-    <div className="sticky top-0 z-10 border-b border-border/40 bg-gradient-to-r from-primary/5 via-background to-accent/5 px-4 py-3 shadow-sm">
-      <div className="mx-auto flex max-w-lg items-center gap-3">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
-          <Compass className="h-5 w-5 text-primary" />
-        </span>
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-primary">Descubre</p>
-          <h1 className="text-lg font-extrabold text-foreground">Eventos cerca de ti</h1>
-        </div>
-      </div>
-    </div>
-    <EventsView
-      publishedEvents={myEvents}
-      nearbyEvents={nearby}
-      recommendedEvents={recommendedCarousel}
-      favoriteEvents={favorites}
-      upcomingEvents={upcomingEvents}
-      otherEvents={otherEvents}
-      publishedVenues={publishedVenues}
-      nearbyServiceCards={nearbyServiceCards}
-      servicesLoading={loading}
-      discoverLoading={loading}
-      serviceProviders={serviceProviders.map((p) => ({
-        userId: p.userId,
-        name: p.name,
-        avatarUrl: p.avatarUrl,
-        username: p.username,
-        servicesCount: p.servicesCount,
-        rating: p.rating,
-        primaryRole: p.primaryRole,
-        primaryServiceId: p.services[0]?.serviceId,
-        services: p.services.map((service) => ({
-          role: service.role,
-          category: service.category,
-          description: service.description,
-          sectors: service.sectors,
-          name: service.name,
-        })),
-      }))}
-      onCreateEvent={() => navigate('/events/create')}
-      onOpenEvent={(event) => {
-        if (event.id) navigate(`/events/${event.id}`);
-      }}
-      onOpenVenue={(venue) => {
-        if (venue?.id) navigate(`/places/${venue.id}`);
-        else navigate('/places/publish');
-      }}
-      onOpenServiceProvider={(provider) => navigate(`/users/${provider.userId}/services`)}
-      onOpenService={(card) => {
-        if (card.id && !/^sp-\d+$/i.test(card.id)) {
-          navigate(`/services/${card.id}`);
-        }
-      }}
-      onReserveService={(serviceId) => navigate(`/services/${serviceId}`)}
-      onViewAllNearby={() => navigate('/map')}
-      onViewAllRecommended={() => navigate('/events')}
-      onViewAllVenues={() => navigate('/places')}
-      onViewAllProviders={() => navigate('/services')}
-      favoriteEventIds={favoriteEventIds}
-      onToggleFavorite={(eventId) => { void handleToggleFavorite(eventId); }}
-      likedVenueIds={likedVenueIds}
-      onToggleVenueLike={(venueId) => { void handleToggleVenueLike(venueId); }}
-      likedServiceIds={likedServiceIds}
-      onToggleServiceLike={(serviceId) => { void handleToggleServiceLike(serviceId); }}
-    />
+    <div className="min-h-screen bg-background pb-24" aria-label="Descubre eventos">
+      {discoverService ? (
+        <DiscoverServiceDetailOverlay
+          serviceId={discoverService.id}
+          openBookingOnMount={discoverService.openBooking}
+          onBack={() => setDiscoverService(null)}
+        />
+      ) : null}
+      <EventsView
+        publishedEvents={myEvents}
+        nearbyEvents={nearby}
+        recommendedEvents={recommendedCarousel}
+        favoriteEvents={favorites}
+        upcomingEvents={upcomingEvents}
+        otherEvents={otherEvents}
+        publishedVenues={publishedVenues}
+        nearbyServiceCards={nearbyServiceCards}
+        servicesLoading={loading}
+        discoverLoading={loading}
+        hasUserLocation={Boolean(effectiveLocation ?? userLocation)}
+        nearbyRadiusKm={NEARBY_RADIUS_KM}
+        userLocationLabel={(effectiveLocation ?? userLocation)?.label || (effectiveLocation ?? userLocation)?.city}
+        onRequestLocation={() => { void handleRequestLocation(); }}
+        serviceProviders={serviceProviders.map((p) => ({
+          userId: p.userId,
+          name: p.name,
+          avatarUrl: p.avatarUrl,
+          username: p.username,
+          servicesCount: p.servicesCount,
+          rating: p.rating,
+          primaryRole: p.primaryRole,
+          primaryServiceId: p.services[0]?.serviceId,
+          services: p.services.map((service) => ({
+            role: service.role,
+            category: service.category,
+            description: service.description,
+            sectors: service.sectors,
+            name: service.name,
+          })),
+        }))}
+        onCreateEvent={() => navigate('/events/create')}
+        onOpenEvent={(event) => {
+          if (event.id) navigate(`/events/${event.id}`);
+        }}
+        onOpenVenue={(venue) => {
+          if (venue?.id) navigate(`/places/${venue.id}`);
+          else navigate('/places/publish');
+        }}
+        onOpenServiceProvider={(provider) => navigate(`/users/${provider.userId}/services`)}
+        onOpenService={(card) => openDiscoverService(card)}
+        onReserveServiceCard={(card) => openDiscoverService(card, true)}
+        onEditServiceCard={(card) => {
+          if (card.id) navigate(`/services/${card.id}/edit`);
+        }}
+        currentUserId={userId}
+        onReserveService={(serviceId) => setDiscoverService({ id: serviceId, openBooking: true })}
+        onViewAllNearby={() => navigate('/map')}
+        onViewAllRecommended={() => navigate('/events')}
+        onViewAllVenues={() => navigate('/places')}
+        onViewAllProviders={() => navigate('/services')}
+        favoriteEventIds={favoriteEventIds}
+        onToggleFavorite={(eventId) => { void handleToggleFavorite(eventId); }}
+        likedVenueIds={likedVenueIds}
+        onToggleVenueLike={(venueId) => { void handleToggleVenueLike(venueId); }}
+        likedServiceIds={likedServiceIds}
+        onToggleServiceLike={(serviceId) => { void handleToggleServiceLike(serviceId); }}
+      />
     </div>
   );
 };

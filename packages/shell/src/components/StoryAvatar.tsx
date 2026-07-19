@@ -38,7 +38,12 @@ export const StoryAvatar: React.FC<StoryAvatarProps> = ({
   const showOwnIdleRing = isOwn && !showStoryRing;
 
   const inner = (
-    <UserAvatar name={name || 'Usuario'} imageUrl={imageUrl || undefined} size={size} />
+    <UserAvatar
+      userId={userId}
+      name={name || 'Usuario'}
+      imageUrl={imageUrl || undefined}
+      size={size}
+    />
   );
 
   const ringClasses = [

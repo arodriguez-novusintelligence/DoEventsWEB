@@ -1,7 +1,17 @@
 /// <reference types="google.maps" />
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
-import { loadGoogleMapsScript, resolveManualUserLocation, resolveUserLocation, useToast } from '@doevents/shared';
-import { Search, Crosshair, Ruler, ChevronDown, Navigation, MapPin, Calendar, Clock, ArrowRight, Users, Star, RefreshCw, Loader2, AlertCircle } from 'lucide-react';
+import {
+  loadGoogleMapsScript,
+  resolveImageUrl,
+  isPlaceholderEventImage,
+  resolveManualUserLocation,
+  resolveUserLocation,
+  applyGeocodedPlaceAsUserLocation,
+  searchPlaceSuggestions,
+  useToast,
+  type GeocodedPlace,
+} from '@doevents/shared';
+import { Search, Crosshair, Ruler, ChevronDown, ChevronLeft, Navigation, MapPin, Calendar, Clock, ArrowRight, Users, Star, RefreshCw, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
 import { cn } from '@lovable/lib/utils';
 import type { PublishedVenueDraft } from '@lovable/components/venues/VenueCreator';
@@ -41,7 +51,17 @@ const CATEGORY_LABEL: Record<Category, string> = {
   servicios: 'Servicios',
 };
 
-const NAV_CLEARANCE = 'calc(7.5rem + env(safe-area-inset-bottom, 0px))';
+const NAV_CLEARANCE = 'calc(5.5rem + env(safe-area-inset-bottom, 0px))';
+
+function escapeCssUrl(url: string): string {
+  return url.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
+function resolveMapPinImage(imageUrl: string): string {
+  const resolved = resolveImageUrl(imageUrl?.trim() || null);
+  if (!resolved || isPlaceholderEventImage(resolved)) return '';
+  return resolved;
+}
 
 // Load Google Maps JS API once
 function loadGoogleMaps(): Promise<typeof google> {
@@ -58,6 +78,7 @@ function createImageMarker(
   onClick: () => void,
   selected: boolean,
 ) {
+  const pinImage = escapeCssUrl(resolveMapPinImage(imageUrl));
   class ImageMarker extends google.maps.OverlayView {
     div: HTMLDivElement | null = null;
     onAdd() {
@@ -66,6 +87,9 @@ function createImageMarker(
       div.style.cursor = 'pointer';
       div.style.transform = 'translate(-50%, -100%)';
       div.style.zIndex = selected ? '10' : '1';
+      const photoHtml = pinImage
+        ? `<img src="${pinImage}" alt="" referrerpolicy="no-referrer" style="width:100%;height:100%;object-fit:cover;display:block;" />`
+        : '';
       div.innerHTML = `
         <div style="position:relative;width:56px;height:68px;filter:drop-shadow(0 4px 6px rgba(0,0,0,.3));">
           <svg viewBox="0 0 56 68" width="56" height="68" style="position:absolute;inset:0;">
@@ -74,7 +98,9 @@ function createImageMarker(
                   stroke="${selected ? '#ffffff' : 'rgba(255,255,255,.9)'}"
                   stroke-width="${selected ? 3 : 2}"/>
           </svg>
-          <div style="position:absolute;top:4px;left:50%;transform:translateX(-50%);width:40px;height:40px;border-radius:50%;background:url('${imageUrl}') center/cover;border:2px solid white;"></div>
+          <div style="position:absolute;top:4px;left:50%;transform:translateX(-50%);width:40px;height:40px;border-radius:50%;overflow:hidden;background:rgba(255,255,255,.95);border:2px solid white;">
+            ${photoHtml}
+          </div>
         </div>`;
       div.addEventListener('click', onClick);
       this.div = div;
@@ -107,6 +133,8 @@ export interface MapViewProps {
   distanceKm?: number;
   distanceOptions?: number[];
   loading?: boolean;
+  focusItemId?: string | null;
+  onBack?: () => void;
   onDistanceChange?: (km: number) => void;
   onOpenEvent?: (eventId: string) => void;
   onOpenVenue?: (venueId?: string) => void;
@@ -124,9 +152,11 @@ const FILTERS: Array<{ key: 'todos' | Category; label: string }> = [
 const MapView = ({
   mapItems,
   userLocation,
-  distanceKm: distanceKmProp = 5,
-  distanceOptions = [5, 10, 25, 50],
+  distanceKm: distanceKmProp = 100,
+  distanceOptions = [5, 10, 25, 50, 100],
   loading = false,
+  focusItemId = null,
+  onBack,
   onDistanceChange,
   onOpenEvent,
   onOpenVenue,
@@ -139,6 +169,12 @@ const MapView = ({
   const markersRef = useRef<google.maps.OverlayView[]>([]);
   const mapInitializedRef = useRef(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [suggestions, setSuggestions] = useState<GeocodedPlace[]>([]);
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const suggestTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const suggestSeq = useRef(0);
+  const searchWrapRef = useRef<HTMLDivElement>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [filter, setFilter] = useState<'todos' | Category>('todos');
   const [distanceMenuOpen, setDistanceMenuOpen] = useState(false);
@@ -149,6 +185,64 @@ const MapView = ({
   const [locating, setLocating] = useState(false);
   const [geocoding, setGeocoding] = useState(false);
   const { showToast } = useToast();
+
+  useEffect(() => () => {
+    if (suggestTimer.current) clearTimeout(suggestTimer.current);
+  }, []);
+
+  useEffect(() => {
+    if (!showSuggestions) return;
+    const onPointerDown = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node | null;
+      if (searchWrapRef.current && target && !searchWrapRef.current.contains(target)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', onPointerDown);
+    document.addEventListener('touchstart', onPointerDown);
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown);
+      document.removeEventListener('touchstart', onPointerDown);
+    };
+  }, [showSuggestions]);
+
+  const fetchSuggestions = (value: string) => {
+    const trimmed = value.trim();
+    if (trimmed.length < 2) {
+      setSuggestions([]);
+      setLoadingSuggestions(false);
+      return;
+    }
+
+    if (suggestTimer.current) clearTimeout(suggestTimer.current);
+    setLoadingSuggestions(true);
+    const seq = ++suggestSeq.current;
+
+    suggestTimer.current = setTimeout(async () => {
+      try {
+        const items = await searchPlaceSuggestions(trimmed, 8);
+        if (seq !== suggestSeq.current) return;
+        setSuggestions(items);
+      } finally {
+        if (seq === suggestSeq.current) setLoadingSuggestions(false);
+      }
+    }, 280);
+  };
+
+  const applyPlace = (place: GeocodedPlace) => {
+    const resolved = applyGeocodedPlaceAsUserLocation(place);
+    setSearchQuery(resolved.label || resolved.city || place.label);
+    setSuggestions([]);
+    setShowSuggestions(false);
+    panMapTo(resolved.lat, resolved.lng);
+    showToast(`Mapa centrado en ${resolved.label || resolved.city}`, 'success');
+  };
+
+  const handleSearchInput = (value: string) => {
+    setSearchQuery(value);
+    setShowSuggestions(true);
+    fetchSuggestions(value);
+  };
 
   const panMapTo = (lat: number, lng: number, zoom = 14) => {
     if (!mapInstance.current) return;
@@ -177,13 +271,27 @@ const MapView = ({
       showToast('Escribe una ciudad o lugar para buscar', 'error');
       return;
     }
+    if (suggestions.length === 1) {
+      applyPlace(suggestions[0]);
+      return;
+    }
+    if (suggestions.length > 1) {
+      setShowSuggestions(true);
+      showToast('Selecciona una ubicación de la lista', 'error');
+      return;
+    }
     setGeocoding(true);
     try {
       const resolved = await resolveManualUserLocation(query);
       if (!resolved) {
         showToast('No encontramos esa ubicación. Prueba: Bogotá, Medellín, Girardot…', 'error');
+        setShowSuggestions(true);
+        fetchSuggestions(query);
         return;
       }
+      setSearchQuery(resolved.label || resolved.city || query);
+      setSuggestions([]);
+      setShowSuggestions(false);
       panMapTo(resolved.lat, resolved.lng);
       showToast(`Mapa centrado en ${resolved.label || resolved.city || query}`, 'success');
     } finally {
@@ -196,7 +304,13 @@ const MapView = ({
       e.preventDefault();
       void handlePlaceSearch();
     }
+    if (e.key === 'Escape') {
+      setShowSuggestions(false);
+    }
   };
+
+  const placeSearchPending = searchQuery.trim().length >= 2
+    && (loadingSuggestions || suggestions.length > 0);
 
   const items = useMemo<MapItem[]>(() => (
     (mapItems || []).map((it) => ({
@@ -204,7 +318,7 @@ const MapView = ({
       category: it.category,
       title: it.title,
       subtitle: it.subtitle,
-      image: it.image,
+      image: resolveMapPinImage(it.image),
       pos: { lat: it.lat, lng: it.lng },
       date: it.date,
       timeRange: it.timeRange,
@@ -217,9 +331,23 @@ const MapView = ({
 
   const filtered = items.filter((it) => {
     if (filter !== 'todos' && it.category !== filter) return false;
-    if (searchQuery && !it.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    if (!placeSearchPending && searchQuery.trim()
+      && !it.title.toLowerCase().includes(searchQuery.trim().toLowerCase())) return false;
     return true;
   });
+
+  useEffect(() => {
+    if (!focusItemId) return;
+    const target = items.find((it) => it.id === focusItemId || it.refId === focusItemId);
+    if (!target) return;
+    setSelectedId(target.id);
+    if (target.category === 'eventos' || target.category === 'lugares' || target.category === 'servicios') {
+      setFilter('todos');
+    }
+    if (loaded) {
+      panMapTo(target.pos.lat, target.pos.lng, 15);
+    }
+  }, [focusItemId, items, loaded]);
 
   useEffect(() => {
     if (mapInitializedRef.current && mapRetryKey === 0) return;
@@ -282,6 +410,12 @@ const MapView = ({
     userMarkerRef.current.setPosition(position);
   }, [loaded, userLocation]);
 
+  useEffect(() => {
+    if (!loaded || !mapInstance.current || !userLocation) return;
+    if (focusItemId) return;
+    panMapTo(userLocation.lat, userLocation.lng);
+  }, [loaded, userLocation?.lat, userLocation?.lng, focusItemId]);
+
   // Render markers
   useEffect(() => {
     if (!loaded || !mapInstance.current || !(window as any).google) return;
@@ -329,7 +463,7 @@ const MapView = ({
   return (
     <div
       className="relative flex flex-col bg-background"
-      style={{ height: 'calc(100dvh - 4rem)', paddingBottom: NAV_CLEARANCE }}
+      style={{ height: 'calc(100dvh - 3.5rem)', paddingBottom: NAV_CLEARANCE }}
     >
       {loading && (
         <div className="absolute inset-0 z-40 flex items-center justify-center bg-background/60 backdrop-blur-sm">
@@ -340,34 +474,90 @@ const MapView = ({
         </div>
       )}
       {/* Floating search + distance */}
-      <div className="absolute left-0 right-0 top-0 z-30 flex items-center gap-2 px-3 pt-3">
-        <div className="flex flex-1 items-center gap-2 rounded-full bg-card px-4 py-2.5 shadow-lg border border-border">
+      <div className="absolute left-0 right-0 top-0 z-30 flex flex-col gap-2 px-3 pt-3">
+        {onBack && (
           <button
             type="button"
-            onClick={() => void handlePlaceSearch()}
-            disabled={geocoding}
-            className="shrink-0 text-primary disabled:opacity-50"
-            aria-label="Buscar ubicación"
+            onClick={onBack}
+            className="flex w-fit items-center gap-1 rounded-full bg-card px-3 py-2 text-sm font-semibold text-primary shadow-lg border border-border"
           >
-            {geocoding ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+            <ChevronLeft className="h-4 w-4" />
+            Volver
           </button>
-          <input
-            type="text"
-            placeholder="Buscar evento, lugar o perfil"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={onSearchKeyDown}
-            className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
-          />
-          <button
-            type="button"
-            onClick={() => void handleDeviceLocation()}
-            disabled={locating}
-            className="shrink-0 text-foreground/70 disabled:opacity-50"
-            aria-label="Usar mi ubicación"
-          >
-            {locating ? <Loader2 className="h-4 w-4 animate-spin text-primary" /> : <Crosshair className="h-4 w-4" />}
-          </button>
+        )}
+        <div className="flex items-start gap-2">
+        <div ref={searchWrapRef} className="relative flex-1">
+          <div className="flex items-center gap-2 rounded-full bg-card px-4 py-2.5 shadow-lg border border-border">
+            <button
+              type="button"
+              onClick={() => void handlePlaceSearch()}
+              disabled={geocoding}
+              className="shrink-0 text-primary disabled:opacity-50"
+              aria-label="Buscar ubicación"
+            >
+              {geocoding ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+            </button>
+            <input
+              type="text"
+              placeholder="Buscar ciudad, evento o lugar"
+              value={searchQuery}
+              onChange={(e) => handleSearchInput(e.target.value)}
+              onFocus={() => {
+                setShowSuggestions(true);
+                if (searchQuery.trim().length >= 2) fetchSuggestions(searchQuery);
+              }}
+              onKeyDown={onSearchKeyDown}
+              className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+              autoComplete="off"
+            />
+            <button
+              type="button"
+              onClick={() => void handleDeviceLocation()}
+              disabled={locating}
+              className="shrink-0 text-foreground/70 disabled:opacity-50"
+              aria-label="Usar mi ubicación"
+            >
+              {locating ? <Loader2 className="h-4 w-4 animate-spin text-primary" /> : <Crosshair className="h-4 w-4" />}
+            </button>
+          </div>
+
+          {showSuggestions && searchQuery.trim().length >= 2 && (loadingSuggestions || suggestions.length > 0) && (
+            <div className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-2xl border border-border bg-card shadow-xl">
+              {loadingSuggestions && (
+                <div className="flex items-center gap-2 px-4 py-3 text-xs text-muted-foreground">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  Buscando ubicaciones…
+                </div>
+              )}
+              {!loadingSuggestions && suggestions.length > 0 && (
+                <ul>
+                  {suggestions.map((place) => (
+                    <li key={`${place.lat}-${place.lng}-${place.label}`}>
+                      <button
+                        type="button"
+                        className="flex w-full items-start gap-2 border-b border-border/40 px-4 py-3 text-left last:border-b-0 hover:bg-muted/60"
+                        onClick={() => applyPlace(place)}
+                      >
+                        <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                        <span className="min-w-0">
+                          <span className="block text-sm font-medium text-foreground">{place.label}</span>
+                          {place.country && !place.label.includes(place.country) && (
+                            <span className="block text-[11px] text-muted-foreground">{place.country}</span>
+                          )}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+
+          {showSuggestions && !loadingSuggestions && searchQuery.trim().length >= 2 && suggestions.length === 0 && (
+            <div className="absolute left-0 right-0 top-full z-50 mt-2 rounded-2xl border border-border bg-card px-4 py-3 text-xs text-muted-foreground shadow-xl">
+              No encontramos esa ciudad. Prueba agregar el país o busca un evento por nombre.
+            </div>
+          )}
         </div>
         <div className="relative">
           <button
@@ -403,10 +593,11 @@ const MapView = ({
             </>
           )}
         </div>
+        </div>
       </div>
 
       {/* Category filter chips */}
-      <div className="absolute left-0 right-0 top-[68px] z-30 px-3">
+      <div className={cn('absolute left-0 right-0 z-30 px-3', onBack ? 'top-[112px]' : 'top-[68px]')}>
         <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
           {FILTERS.map((f) => {
             const active = filter === f.key;
@@ -511,7 +702,16 @@ const MapView = ({
               )}
             >
               <div className="relative shrink-0">
-                <img src={it.image} alt={it.title} className="h-12 w-12 rounded-full object-cover" loading="lazy" />
+                {it.image ? (
+                  <img src={it.image} alt={it.title} className="h-12 w-12 rounded-full object-cover" loading="lazy" />
+                ) : (
+                  <div
+                    className="flex h-12 w-12 items-center justify-center rounded-full"
+                    style={{ backgroundColor: `${PIN_COLOR[it.category]}22` }}
+                  >
+                    <MapPin className="h-5 w-5" style={{ color: PIN_COLOR[it.category] }} />
+                  </div>
+                )}
                 <span
                   className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-card"
                   style={{ backgroundColor: PIN_COLOR[it.category] }}
@@ -532,7 +732,11 @@ const MapView = ({
           ))}
           {filtered.length === 0 && (
             <div className="w-full rounded-full bg-card border border-border px-4 py-3 text-center text-xs text-muted-foreground">
-              Sin resultados para "{searchQuery}"
+              {placeSearchPending
+                ? 'Selecciona una ubicación sugerida arriba'
+                : searchQuery.trim()
+                  ? `Sin resultados para "${searchQuery}"`
+                  : 'No hay elementos en esta categoría cerca de ti'}
             </div>
           )}
         </div>
@@ -545,7 +749,16 @@ const MapView = ({
           style={{ bottom: 'calc(13rem + env(safe-area-inset-bottom, 0px))' }}
         >
           <div className="relative h-40 bg-black">
-            <img src={selectedItem.image} alt={selectedItem.title} className="h-full w-full object-cover" />
+            {selectedItem.image ? (
+              <img src={selectedItem.image} alt={selectedItem.title} className="h-full w-full object-cover" />
+            ) : (
+              <div
+                className="flex h-full w-full items-center justify-center"
+                style={{ backgroundColor: `${PIN_COLOR[selectedItem.category]}22` }}
+              >
+                <MapPin className="h-10 w-10" style={{ color: PIN_COLOR[selectedItem.category] }} />
+              </div>
+            )}
             <span
               className="absolute top-2 left-2 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white shadow"
               style={{ backgroundColor: PIN_COLOR[selectedItem.category] }}

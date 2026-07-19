@@ -1,6 +1,6 @@
 import { DoEventsLogo } from '@doevents/shared';
 const AuthLogo = () => (
-  <div className="flex flex-col items-center gap-2">
+  <div className="mb-4 flex flex-col items-center gap-2">
     <h1 className="text-5xl font-bold tracking-tight">
       <span className="text-primary">Do</span>
       <span className="text-primary mx-1">·</span>

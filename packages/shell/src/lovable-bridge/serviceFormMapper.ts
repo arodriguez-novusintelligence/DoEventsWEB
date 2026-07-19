@@ -1,4 +1,10 @@
-import { normalizeMediaUrl, resolveDisplayLocation, resolveImageUrl, type NearbyServiceProvider } from '@doevents/shared';
+import {
+  dedupeMediaUrls,
+  normalizeMediaUrl,
+  resolveDisplayLocation,
+  resolveImageUrl,
+  type NearbyServiceProvider,
+} from '@doevents/shared';
 import type { ServiceFormData } from '@lovable/data/servicesData';
 import { initialFormData } from '@lovable/data/servicesData';
 function mapActivityPricing(service: NearbyServiceProvider) {
@@ -41,6 +47,61 @@ function mapGallery(service: NearbyServiceProvider, cover?: string) {
     url,
     kind: 'image' as const,
   }));
+}
+
+export function buildServiceApiPayload(
+  form: ServiceFormData,
+  userId: string,
+  options: {
+    profileImageUrl?: string;
+    profileImageGalleryImageId?: string;
+    profileImageGalleryKey?: string;
+    galleryUrls: string[];
+  },
+) {
+  const sector = form.sectors[0] || form.sectorOther || 'Servicio';
+  const activityList = form.sectors.flatMap((s) => form.activities[s] || []);
+  const primaryActivity = activityList[0] || '';
+  const pricing: Record<string, { cost: string; currency: string }> = {};
+  Object.entries(form.activityPricing).forEach(([key, val]) => {
+    if (val?.cost) pricing[key] = { cost: val.cost, currency: val.currency || 'COP' };
+  });
+  const description = form.pricingDetails?.[0]?.description
+    || form.faqs?.find((f) => f.answer)?.answer
+    || `Servicios de ${sector}: ${activityList.join(', ') || 'varias actividades'}`;
+  const city = resolveDisplayLocation({
+    city: form.locationCity,
+    label: form.locationLabel,
+    locationLabel: form.locationLabel,
+  });
+
+  return {
+    userId,
+    name: primaryActivity || sector,
+    category: sector,
+    role: primaryActivity || sector,
+    description,
+    ...(options.profileImageGalleryImageId || options.profileImageGalleryKey
+      ? {
+          profileImageGalleryImageId: options.profileImageGalleryImageId,
+          profileImageGalleryKey: options.profileImageGalleryKey,
+          profileImageUrl: options.profileImageUrl,
+        }
+      : { profileImageUrl: options.profileImageUrl }),
+    gallery: dedupeMediaUrls([
+      ...(options.profileImageUrl ? [options.profileImageUrl] : []),
+      ...options.galleryUrls.filter(Boolean),
+    ]),
+    galleryImportImageIds: form.gallery
+      .map((item) => item.galleryImageId)
+      .filter((id): id is string => Boolean(id)),
+    sectors: form.sectors,
+    activities: form.activities,
+    pricing,
+    latitude: form.latitude,
+    longitude: form.longitude,
+    city: city !== '—' ? city : form.locationCity,
+  };
 }
 
 export function apiServiceToForm(service: NearbyServiceProvider): ServiceFormData {

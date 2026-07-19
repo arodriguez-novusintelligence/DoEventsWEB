@@ -5,6 +5,8 @@ export interface AvailableSeat {
   ticketStatus?: string;
   price?: number;
   seatLabel?: string;
+  ownerId?: string;
+  orderId?: string;
   location?: {
     seatLabel?: string;
     rowLabel?: string;
@@ -15,8 +17,13 @@ export interface AvailableSeat {
 export interface TicketCategory {
   categoryId: string;
   categoryName: string;
+  /** Color hex del mapa de silletería (p. ej. #E1BEE7) */
+  categoryColor?: string | null;
   distributionId: string;
   createDate: string;
+  gateId?: string | null;
+  /** Venue clonado del evento (fuente de verdad para el mapa de checkout) */
+  venueId?: string;
   seats: AvailableSeat[];
 }
 
@@ -35,6 +42,10 @@ export interface CreateOrderTicketRequest {
   distributionCreateDate: string;
   category: string;
   seats: string[];
+  /** Color hex de la categoría en el mapa (persistido en la orden) */
+  categoryColor?: string;
+  purchasePrice?: number;
+  price?: number;
 }
 
 export interface CreateOrderResponse {
@@ -50,6 +61,8 @@ export interface CreateOrderResponse {
     ticketInstanceId?: string;
     id?: string;
     category?: string;
+    categoryColor?: string;
+    category_color?: string;
     seatLabel?: string;
     qr_url?: string;
     qr_code?: string;

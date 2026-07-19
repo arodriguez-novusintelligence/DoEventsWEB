@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ChevronLeft, Calendar, MapPin, DoorOpen, Users, ScanLine, Settings2, Plus, Eye, CheckCircle2 } from 'lucide-react';
+import { UserAvatar } from '@doevents/shared';
 import ScanQRSheet from './ScanQRSheet';
 import { toast } from 'sonner';
 
@@ -31,10 +32,49 @@ interface AccessEvent {
 
 
 interface Props {
+  events?: AccessEventView[];
+  loading?: boolean;
+  loadError?: string | null;
+  onRetry?: () => void;
   onBack: () => void;
+  onConfigureEvent?: (event: AccessEvent) => void;
+  onAssignEvent?: () => void;
   onConfigure?: (eventId: string) => void;
   onViewOrganizer?: (organizer: Organizer) => void;
   onViewEvent?: (event: AccessEvent) => void;
+  initialTab?: 'mios' | 'asignados';
+  focusEventId?: string;
+  autoOpenScan?: boolean;
+}
+
+function mapViewStatus(status: AccessEventView['status']): EventStatus {
+  if (status === 'en_ejecucion') return 'en-curso';
+  if (status === 'cancelado') return 'cancelado';
+  if (status === 'finalizado') return 'finalizado';
+  if (status === 'inactivo') return 'inactivo';
+  return 'activo';
+}
+
+function toAccessEvent(view: AccessEventView): AccessEvent {
+  return {
+    id: view.id,
+    title: view.title,
+    date: view.date,
+    time: view.time,
+    location: view.location,
+    status: mapViewStatus(view.status),
+    doors: view.doors,
+    staff: view.staff,
+    assigned: view.assigned,
+    assignedGate: view.assignedGate,
+    organizer: view.organizer ? {
+      id: view.organizer.id || '',
+      name: view.organizer.name || 'Organizador',
+      initials: (view.organizer.name || 'O').slice(0, 2).toUpperCase(),
+      email: view.organizer.email || '',
+      avatar: view.organizer.avatar,
+    } : undefined,
+  };
 }
 
 const statusStyles: Record<EventStatus, string> = {
@@ -82,17 +122,47 @@ const sortEvents = (list: AccessEvent[]): AccessEvent[] => {
   });
 };
 
-const AccessControlListView = ({ onBack, onConfigure, onViewOrganizer, onViewEvent }: Props) => {
-  const [tab, setTab] = useState<'mios' | 'asignados'>('mios');
+const AccessControlListView = ({
+  events = [],
+  loading = false,
+  loadError = null,
+  onRetry,
+  onBack,
+  onConfigureEvent,
+  onAssignEvent,
+  onConfigure,
+  onViewOrganizer,
+  onViewEvent,
+  initialTab = 'mios',
+  focusEventId,
+  autoOpenScan = false,
+}: Props) => {
+  const [tab, setTab] = useState<'mios' | 'asignados'>(initialTab);
   const [scanFor, setScanFor] = useState<AccessEvent | null>(null);
 
+  const mappedEvents = useMemo(
+    () => events.map(toAccessEvent),
+    [events],
+  );
+
   const items = useMemo(
-    () => sortEvents(ACCESS_EVENTS.filter((e) => (tab === 'mios' ? !e.assigned : e.assigned))),
-    [tab],
+    () => sortEvents(mappedEvents.filter((e) => (tab === 'mios' ? !e.assigned : e.assigned))),
+    [mappedEvents, tab],
   );
 
   const canScan = (s: EventStatus) => s === 'activo' || s === 'en-curso';
   const isConfigured = (ev: AccessEvent) => ev.doors > 0 && ev.staff > 0;
+
+  useEffect(() => {
+    if (!focusEventId || !autoOpenScan) return;
+    const match = mappedEvents.find((event) => event.id === focusEventId);
+    if (match) {
+      setTab(match.assigned ? 'asignados' : 'mios');
+      if (canScan(match.status)) {
+        setScanFor(match);
+      }
+    }
+  }, [focusEventId, autoOpenScan, mappedEvents]);
 
   return (
     <div className="min-h-screen bg-secondary pt-16 pb-36">
@@ -111,7 +181,7 @@ const AccessControlListView = ({ onBack, onConfigure, onViewOrganizer, onViewEve
               </div>
               <div className="min-w-0">
                 <h1 className="text-lg font-bold text-primary-foreground leading-tight truncate">Control de Accesos</h1>
-                <p className="text-[11px] text-primary-foreground/80">{ACCESS_EVENTS.length} Eventos disponibles</p>
+                <p className="text-[11px] text-primary-foreground/80">{mappedEvents.length} Eventos disponibles</p>
               </div>
             </div>
           </div>
@@ -141,7 +211,22 @@ const AccessControlListView = ({ onBack, onConfigure, onViewOrganizer, onViewEve
 
           {/* Event cards */}
           <div className="space-y-4">
-            {items.length === 0 && (
+            {loading && (
+              <div className="rounded-2xl bg-card p-10 text-center text-sm text-muted-foreground shadow-sm">
+                Cargando eventos…
+              </div>
+            )}
+            {!loading && loadError && (
+              <div className="rounded-2xl bg-card p-6 text-center text-sm text-muted-foreground shadow-sm">
+                <p>{loadError}</p>
+                {onRetry && (
+                  <button type="button" onClick={onRetry} className="mt-3 text-primary font-semibold">
+                    Reintentar
+                  </button>
+                )}
+              </div>
+            )}
+            {!loading && !loadError && items.length === 0 && (
               <div className="rounded-2xl bg-card p-10 text-center text-sm text-muted-foreground shadow-sm">
                 No tienes eventos en esta categoría.
               </div>
@@ -155,13 +240,7 @@ const AccessControlListView = ({ onBack, onConfigure, onViewOrganizer, onViewEve
                   <div>
                     <p className="text-xs text-muted-foreground mb-2">Organizador</p>
                     <div className="flex items-center gap-3">
-                      {ev.organizer?.avatar ? (
-                        <img src={ev.organizer.avatar} alt={ev.organizer.name} className="h-11 w-11 rounded-full object-cover" />
-                      ) : (
-                        <div className="h-11 w-11 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm">
-                          {ev.organizer?.initials}
-                        </div>
-                      )}
+                      <UserAvatar name={ev.organizer?.name || 'Organizador'} imageUrl={ev.organizer?.avatar} userId={ev.organizer?.id} size={44} />
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold text-foreground truncate">{ev.organizer?.name}</p>
                         <p className="text-xs text-muted-foreground truncate">{ev.organizer?.email}</p>
@@ -280,7 +359,7 @@ const AccessControlListView = ({ onBack, onConfigure, onViewOrganizer, onViewEve
                     <ScanLine className="h-4 w-4" /> Escanear código
                   </button>
                   <button
-                    onClick={() => onConfigure?.(ev.id)}
+                    onClick={() => onConfigureEvent?.(ev) ?? onConfigure?.(ev.id)}
                     className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl py-2.5 text-sm font-semibold text-primary hover:bg-primary/5 transition-colors"
                   >
                     <Settings2 className="h-4 w-4" /> Configurar
@@ -292,7 +371,7 @@ const AccessControlListView = ({ onBack, onConfigure, onViewOrganizer, onViewEve
 
           {tab === 'mios' && (
             <button
-              onClick={() => toast('Asignar nuevo evento')}
+              onClick={() => onAssignEvent ? onAssignEvent() : toast('Asignar nuevo evento')}
               className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-primary/40 bg-primary/5 px-4 py-3 text-sm font-semibold text-primary"
             >
               <Plus className="h-4 w-4" /> Asignar evento

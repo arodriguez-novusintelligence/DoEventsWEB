@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {
   fetchOrganizerStaffSummary,
@@ -13,10 +13,19 @@ import {
   staffAssignmentsToAccessEvents,
 } from '../lovable-bridge/accessAdapter';
 
+import type { AccessEventView } from '../lovable-bridge/accessAdapter';
+
 export const AccessControlPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const focusState = (location.state || {}) as {
+    eventId?: string;
+    gateId?: string;
+    initialTab?: 'mios' | 'asignados';
+    autoScan?: boolean;
+  };
   const userId = useSelector((s: RootState) => s.auth.idUser);
-  const [events, setEvents] = useState<ReturnType<typeof mergeOrganizerStaffSummary>>([]);
+  const [events, setEvents] = useState<AccessEventView[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
@@ -65,6 +74,9 @@ export const AccessControlPage: React.FC = () => {
       onBack={() => navigate('/')}
       onConfigureEvent={(ev) => navigate(`/events/${ev.id}`)}
       onAssignEvent={() => navigate('/events/create')}
+      initialTab={focusState.initialTab}
+      focusEventId={focusState.eventId}
+      autoOpenScan={focusState.autoScan}
     />
   );
 };

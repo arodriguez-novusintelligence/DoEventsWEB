@@ -1,9 +1,9 @@
-import { useMemo, useState } from 'react';
-import { Search, X, UserPlus, BookUser, Pencil, ChevronDown } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { Search, X, UserPlus, BookUser, ChevronDown, Loader2 } from 'lucide-react';
 import { EventHost } from '@lovable/data/eventFormData';
-import { platformUsers, searchPlatformUsers, PlatformUser } from '@lovable/data/platformUsers';
+import { platformUsers } from '@lovable/data/platformUsers';
+import { UserAvatar, resolveUserAvatarUrl, searchUsers } from '@doevents/shared';
 
-import { searchUsers } from '@doevents/shared';
 interface HostPickerModalProps {
   open: boolean;
   onClose: () => void;
@@ -13,37 +13,38 @@ interface HostPickerModalProps {
 
 type TabKey = 'search' | 'manual' | 'contacts';
 
+type SearchUserRow = {
+  id: string;
+  name: string;
+  username: string;
+  email?: string;
+  avatar?: string;
+  phone?: string;
+  countryCode?: string;
+  initials?: string;
+};
+
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'search', label: 'Buscar contacto' },
   { key: 'manual', label: 'Manual' },
   { key: 'contacts', label: 'Contactos' },
 ];
 
-const Avatar = ({ user }: { user: PlatformUser }) => (
-  <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/15 text-sm font-bold text-primary">
-    {user.avatar ? (
-      <img src={user.avatar} alt={user.name} className="h-full w-full object-cover" />
-    ) : (
-      user.initials
-    )}
-  </div>
-);
-
 const UserRow = ({
   user,
   added,
   onAdd,
 }: {
-  user: PlatformUser;
+  user: SearchUserRow;
   added: boolean;
   onAdd: () => void;
 }) => (
   <div className="flex items-center gap-3 rounded-2xl bg-secondary px-3 py-2.5">
-    <Avatar user={user} />
+    <UserAvatar name={user.name} imageUrl={user.avatar} userId={user.id} size={44} className="shrink-0" />
     <div className="min-w-0 flex-1">
       <p className="truncate text-sm font-bold text-foreground">{user.name}</p>
-      <p className="truncate text-xs text-primary">{user.username}</p>
-      <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+      {user.username && <p className="truncate text-xs text-primary">@{user.username}</p>}
+      {user.email && <p className="truncate text-xs text-muted-foreground">{user.email}</p>}
     </div>
     <button
       type="button"
@@ -59,6 +60,8 @@ const UserRow = ({
 const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalProps) => {
   const [tab, setTab] = useState<TabKey>('search');
   const [query, setQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<SearchUserRow[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
   const [manual, setManual] = useState({
     name: '',
     email: '',
@@ -67,21 +70,66 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
     role: '',
   });
 
-  const results = useMemo(() => searchPlatformUsers(query), [query]);
+  useEffect(() => {
+    const q = query.replace('@', '').trim();
+    if (q.length < 1) {
+      setSearchResults([]);
+      setSearchLoading(false);
+      return;
+    }
+    setSearchLoading(true);
+    const timer = window.setTimeout(async () => {
+      try {
+        const results = await searchUsers(q);
+        setSearchResults(results.map((u) => {
+          const id = String(u.id || '');
+          const name = u.name || u.nombreCompleto || u.email || 'Usuario';
+          const username = (u.username || u.user || '').replace(/^@/, '');
+          const avatar = resolveUserAvatarUrl(u.imagen || u.avatarUrl, id);
+          const initials = name
+            .split(/\s+/)
+            .map((p) => p[0])
+            .slice(0, 2)
+            .join('')
+            .toUpperCase();
+          return { id, name, username, email: u.email, avatar, initials };
+        }).filter((u) => u.id));
+      } catch {
+        setSearchResults([]);
+      } finally {
+        setSearchLoading(false);
+      }
+    }, 300);
+    return () => window.clearTimeout(timer);
+  }, [query]);
+
+  const contactUsers = useMemo<SearchUserRow[]>(
+    () => platformUsers.slice(0, 6).map((u) => ({
+      id: u.id,
+      name: u.name,
+      username: u.username.replace(/^@/, ''),
+      email: u.email,
+      avatar: resolveUserAvatarUrl(u.avatar, u.id),
+      phone: u.phone,
+      countryCode: u.countryCode,
+      initials: u.initials,
+    })),
+    [],
+  );
 
   if (!open) return null;
 
-  const addPlatform = (u: PlatformUser) => {
+  const addPlatform = (u: SearchUserRow) => {
     onAdd({
       id: u.id,
       name: u.name,
-      username: u.username,
+      username: u.username ? `@${u.username}` : undefined,
       email: u.email,
       avatar: u.avatar,
       initials: u.initials,
       phone: u.phone,
       countryCode: u.countryCode,
-      source: u.id.startsWith('u-') ? 'platform' : 'contact',
+      source: 'platform',
     });
   };
 
@@ -112,7 +160,6 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-background/50 sm:items-center">
       <div className="flex max-h-[90vh] w-full max-w-md flex-col rounded-t-3xl bg-card shadow-2xl sm:rounded-3xl">
-        {/* Header */}
         <div className="flex items-center justify-between p-5 pb-3">
           <h3 className="text-lg font-bold text-foreground">Seleccionar anfitrión</h3>
           <button
@@ -125,7 +172,6 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
           </button>
         </div>
 
-        {/* Tabs */}
         <div className="flex border-b border-border px-2">
           {TABS.map((t) => {
             const active = tab === t.key;
@@ -147,7 +193,6 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
           })}
         </div>
 
-        {/* Content */}
         <div className="flex-1 overflow-y-auto p-5">
           {tab === 'search' && (
             <div className="space-y-3">
@@ -181,12 +226,17 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
                   <p className="py-8 text-center text-sm text-muted-foreground">
                     Empieza a escribir para buscar usuarios de Do•events
                   </p>
-                ) : results.length === 0 ? (
+                ) : searchLoading ? (
+                  <div className="flex items-center justify-center gap-2 py-8 text-sm text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Buscando…
+                  </div>
+                ) : searchResults.length === 0 ? (
                   <p className="py-8 text-center text-sm text-muted-foreground">
                     No se encontraron usuarios con “{query}”
                   </p>
                 ) : (
-                  results.map((u) => (
+                  searchResults.map((u) => (
                     <UserRow
                       key={u.id}
                       user={u}
@@ -262,9 +312,9 @@ const HostPickerModal = ({ open, onClose, onAdd, existingIds }: HostPickerModalP
             <div className="space-y-3">
               <div className="flex items-center gap-2 rounded-xl bg-accent/60 p-3 text-xs text-accent-foreground">
                 <BookUser className="h-4 w-4 shrink-0" />
-                Estos son contactos de demostración importados desde tu agenda.
+                Contactos de demostración importados desde tu agenda.
               </div>
-              {platformUsers.slice(0, 6).map((u) => (
+              {contactUsers.map((u) => (
                 <UserRow
                   key={`c-${u.id}`}
                   user={u}

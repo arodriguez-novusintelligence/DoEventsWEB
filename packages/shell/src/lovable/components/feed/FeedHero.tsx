@@ -1,7 +1,9 @@
 import { MapPin, Plus, Sparkles, Loader2 } from 'lucide-react';
+import { useEffect } from 'react';
 import { UserAvatar } from '@doevents/shared';
 import { cn } from '@lovable/lib/utils';
-import FeedThemeToggle from './FeedThemeToggle';
+
+const FEED_THEME_STORAGE_KEY = 'feed_theme_v1';
 
 export interface FeedStoryItem {
   id: string;
@@ -17,6 +19,11 @@ export interface FeedStoryItem {
 interface FeedHeroProps {
   userName?: string;
   location?: string;
+  locationDetails?: {
+    city?: string;
+    address?: string;
+    country?: string;
+  };
   onChangeLocation?: () => void;
   stories?: FeedStoryItem[];
   storiesLoading?: boolean;
@@ -31,12 +38,37 @@ interface FeedHeroProps {
 const FeedHero = ({
   userName = 'Andrés',
   location = 'Indica tu ubicación',
+  locationDetails,
   onChangeLocation,
   stories = [],
   storiesLoading = false,
   onStoryClick,
   onCreateStory,
 }: FeedHeroProps) => {
+  const legacyLocationParts = location.split(',').map((part) => part.trim()).filter(Boolean);
+  const details = locationDetails || {};
+  const hasLocationDetails = Boolean(
+    details.city || details.address || details.country,
+  );
+  const locationLines = hasLocationDetails
+    ? details
+    : legacyLocationParts.length >= 3
+      ? {
+        city: legacyLocationParts[0],
+        address: legacyLocationParts.slice(1, -1).join(', '),
+        country: legacyLocationParts[legacyLocationParts.length - 1],
+      }
+      : { city: location };
+
+  useEffect(() => {
+    document.documentElement.removeAttribute('data-feed-theme');
+    try {
+      localStorage.removeItem(FEED_THEME_STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
   return (
     <div className="relative pb-4">
       <div
@@ -53,11 +85,18 @@ const FeedHero = ({
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-primary-foreground/70">
                   Tu ubicación
                 </p>
-                <p className="truncate text-sm font-bold text-primary-foreground">{location}</p>
+                {locationLines.city && (
+                  <p className="truncate text-sm font-bold text-primary-foreground">{locationLines.city}</p>
+                )}
+                {locationLines.address && (
+                  <p className="truncate text-xs text-primary-foreground/85">{locationLines.address}</p>
+                )}
+                {locationLines.country && (
+                  <p className="truncate text-xs text-primary-foreground/85">{locationLines.country}</p>
+                )}
               </div>
             </div>
             <div className="flex shrink-0 items-center gap-2">
-              <FeedThemeToggle />
               <button
                 type="button"
                 onClick={() => onChangeLocation?.()}

@@ -33,6 +33,7 @@ export interface EventDetailData {
   venueId?: string;
   hasSeating?: boolean;
   video?: string;
+  Hashtags?: string | string[];
   itinerary?: Array<{ time?: string; title?: string; description?: string }>;
   eventDays?: Array<{
     id?: string;
@@ -51,9 +52,11 @@ export interface EventDetailData {
   ubicacion?: EventLocation;
   latitude?: number;
   longitude?: number;
+  Categoria?: string;
 }
 
 export interface EventCategoryInfo {
+  preference_id?: number | string;
   preference_name_es?: string;
   preference_name_en?: string;
   Category_ES?: string;

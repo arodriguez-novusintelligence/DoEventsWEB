@@ -1,6 +1,7 @@
 import type { VenueAddonService, WizardFloor, WizardGate } from '@doevents/shared';
 import { newWizardId } from '@doevents/shared';
 import type { FacilidadSelected } from '@lovable/components/venues/FacilitiesPicker';
+import type { VenueCatalogSelection } from './venueCatalogOptions';
 import { VENUE_PLACE_TYPES } from './venueOptions';
 
 export interface PlaceFaq {
@@ -38,6 +39,22 @@ export interface PlaceMediaItem {
   kind: 'image' | 'video';
 }
 
+export type RentalBillingUnit = 'day' | 'month';
+
+export interface PlaceDatePriceOverride {
+  price?: string;
+  blocked?: boolean;
+}
+
+export interface PlacePromoCodeBatch {
+  id: string;
+  currency: 'COP' | 'USD' | 'EUR' | 'MXN' | 'DOP';
+  value: number;
+  quantity: number;
+  description: string;
+  codes: string[];
+}
+
 export interface PlacePricing {
   perDay: string;
   perMultiDay: string;
@@ -64,6 +81,9 @@ export interface PlaceFormData {
   hasParking: boolean;
   features: string[];
   pricing: PlacePricing;
+  rentalUnit: RentalBillingUnit;
+  datePrices: Record<string, PlaceDatePriceOverride>;
+  promoCodes: PlacePromoCodeBatch[];
   selectedDates: string[];
   blockedDates: string[];
   globalStartTime: string;
@@ -78,8 +98,12 @@ export interface PlaceFormData {
   neighborhood: string;
   facilities: FacilidadSelected[];
   allowedEventTypes: string[];
-  accessibility: string[];
-  security: string[];
+  includedServices: VenueCatalogSelection[];
+  accessibility: VenueCatalogSelection[];
+  security: VenueCatalogSelection[];
+  chargeType: string;
+  calendarWeekdays: number[];
+  calendarMonths: number[];
   hostRole: 'dueno' | 'admin' | '';
   addonServices: VenueAddonService[];
   faqs: PlaceFaq[];
@@ -109,11 +133,14 @@ export const initialPlaceFormData = (): PlaceFormData => ({
     perMonth: '',
     currency: 'COP',
   },
+  rentalUnit: 'day',
+  datePrices: {},
+  promoCodes: [],
   selectedDates: [],
   blockedDates: [],
   globalStartTime: '08:00',
   globalEndTime: '22:00',
-  bookingPreference: 'instant',
+  bookingPreference: 'approval',
   refundPolicy: '',
   directions: '',
   nearbyReferencesText: '',
@@ -129,8 +156,12 @@ export const initialPlaceFormData = (): PlaceFormData => ({
   neighborhood: '',
   facilities: [],
   allowedEventTypes: [],
+  includedServices: [],
   accessibility: [],
   security: [],
+  chargeType: 'Por día',
+  calendarWeekdays: [],
+  calendarMonths: [],
   hostRole: '',
   addonServices: [],
   faqs: [],

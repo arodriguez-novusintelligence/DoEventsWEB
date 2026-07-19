@@ -1,9 +1,11 @@
 import { cn } from '@lovable/lib/utils';
 import type { FeedUiPost as Post, FeedUiUser as User } from '@doevents/shared';
-import ImageCarousel from './ImageCarousel';
 import PostActions from './PostActions';
 import PostMenu from './PostMenu';
 import MentionText from './MentionText';
+import EntityFeedBody, { postToEntityContent, repostOfToEntityContent } from './EntityFeedBody';
+import { feedTopBadgeTheme, isEntityFeedType, publicationFeedTheme } from './entityFeedTheme';
+import ImageCarousel from './ImageCarousel';
 import { StoryAvatar } from '../../../components/StoryAvatar';
 import { useActiveStoryAuthors } from '../../../contexts/StoriesContext';
 
@@ -73,11 +75,21 @@ const PostCard = ({
   const isRepost = !!post.repostOf;
   const contentType = isRepost ? (post.repostOf!.type ?? 'publicacion') : post.type;
   const badge = typeLabel(contentType);
+  const entityContent = !isRepost ? postToEntityContent(post) : null;
+  const repostEntityContent = isRepost ? repostOfToEntityContent(post.repostOf!) : null;
+  const isEntityPost = Boolean(entityContent);
+  const isEntityRepost = Boolean(repostEntityContent);
+  const entityBorder = entityContent
+    ? feedTopBadgeTheme(entityContent.topBadge).cardBorder
+    : isEntityRepost && repostEntityContent
+      ? feedTopBadgeTheme(repostEntityContent.topBadge).cardBorder
+      : post.isUserPublication
+        ? publicationFeedTheme.cardBorder
+        : '';
   const canOpen = !!onOpenDetail;
 
   return (
     <article className="mx-4 my-5" aria-label="Tarjeta de publicación">
-      {/* Header (outside the white card) */}
       <div className="flex items-center justify-between px-1 pb-2.5">
         <div className="flex items-center gap-2.5">
           <StoryAvatar
@@ -105,17 +117,17 @@ const PostCard = ({
         </div>
         <div className="flex items-center gap-1">
           {!isOwner && (
-          <button
-            onClick={onFollow}
-            className={cn(
-              'rounded-full border px-4 py-1 text-xs font-semibold transition-colors',
-              followed
-                ? 'border-muted-foreground/30 text-muted-foreground'
-                : 'border-primary text-primary hover:bg-primary/5'
-            )}
-          >
-            {followed ? 'Siguiendo' : 'Seguir'}
-          </button>
+            <button
+              onClick={onFollow}
+              className={cn(
+                'rounded-full border px-4 py-1 text-xs font-semibold transition-colors',
+                followed
+                  ? 'border-muted-foreground/30 text-muted-foreground'
+                  : 'border-primary text-primary hover:bg-primary/5',
+              )}
+            >
+              {followed ? 'SEGUIDO' : 'Seguir'}
+            </button>
           )}
           <PostMenu
             isOwner={isOwner}
@@ -129,14 +141,19 @@ const PostCard = ({
         </div>
       </div>
 
-      {/* White card */}
-      <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm ring-2 ring-primary/20">
-        {/* Type badge */}
-        <div className="px-4 pt-3">
-          <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-            {badge}
-          </span>
-        </div>
+      <div
+        className={cn(
+          'overflow-hidden rounded-2xl bg-card shadow-sm',
+          isEntityPost || isEntityRepost ? entityBorder : 'border border-border/60 ring-2 ring-primary/20',
+        )}
+      >
+        {!isEntityPost && !isEntityRepost && (
+          <div className="px-4 pt-3">
+            <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+              {badge}
+            </span>
+          </div>
+        )}
 
         {isRepost ? (
           <>
@@ -155,66 +172,107 @@ const PostCard = ({
               </div>
             )}
 
-            {/* Embedded original post */}
             <div
-              className={`mx-4 my-3 overflow-hidden rounded-xl border border-border/60 shadow-sm ${canOpen ? 'cursor-pointer' : ''}`}
-              onClick={canOpen ? () => onOpenDetail!(post) : undefined}
+              className={cn(
+                'mx-4 my-3 overflow-hidden rounded-xl border border-border/60 shadow-sm',
+                isEntityRepost ? '' : canOpen && 'cursor-pointer',
+              )}
+              onClick={!isEntityRepost && canOpen ? () => onOpenDetail!(post) : undefined}
             >
-              <div className="flex items-center gap-2 px-3 py-2.5">
-                <StoryAvatar
-                  userId={post.repostOf!.user.id}
-                  name={post.repostOf!.user.name}
-                  imageUrl={post.repostOf!.user.avatarUrl}
-                  size={32}
-                  onClick={() => onViewProfile?.(post.repostOf!.user)}
-                />
-                <div className="leading-tight">
-                  <p className="text-sm font-semibold text-card-foreground">
-                    {post.repostOf!.user.name}
-                  </p>
-                  <span className="text-xs text-muted-foreground">
-                    {post.repostOf!.timeAgo}
-                  </span>
-                </div>
-              </div>
-              <ImageCarousel images={post.repostOf!.images} className="aspect-[4/3]" />
-              <div className="px-3 py-3">
-                <h3 className="text-sm font-bold text-card-foreground">
-                  {post.repostOf!.title}
-                </h3>
-                {post.repostOf!.date ? (
-                  <p className="mt-1 text-xs font-semibold text-card-foreground">{post.repostOf!.date}</p>
-                ) : null}
-                {post.repostOf!.location ? (
-                  <p className="mt-0.5 text-xs text-muted-foreground">{post.repostOf!.location}</p>
-                ) : null}
-                <MentionText
-                  text={post.repostOf!.description}
+              {isEntityRepost && repostEntityContent ? (
+                <EntityFeedBody
+                  content={repostEntityContent}
+                  compact
+                  canOpen={canOpen}
+                  onOpenDetail={onOpenDetail}
+                  postForOpen={post}
                   onMentionClick={onMentionClick}
-                  className="mt-1 text-sm leading-relaxed text-card-foreground"
                 />
-                {post.repostOf!.tags.length > 0 && (
-                  <p className="mt-2 text-sm text-primary">{post.repostOf!.tags.join('  ')}</p>
-                )}
-              </div>
+              ) : (
+                <>
+                  {isEntityFeedType(post.repostOf?.type) ? null : (
+                    <div className="flex items-center gap-2 px-3 py-2.5">
+                      <StoryAvatar
+                        userId={post.repostOf!.user.id}
+                        name={post.repostOf!.user.name}
+                        imageUrl={post.repostOf!.user.avatarUrl}
+                        size={32}
+                        onClick={() => onViewProfile?.(post.repostOf!.user)}
+                      />
+                      <div className="leading-tight">
+                        <p className="text-sm font-semibold text-card-foreground">
+                          {post.repostOf!.user.name}
+                        </p>
+                        <span className="text-xs text-muted-foreground">
+                          {post.repostOf!.timeAgo}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  <ImageCarousel images={post.repostOf!.images} className="aspect-[4/3]" />
+                  <div className="px-3 py-3">
+                    <h3 className="text-sm font-bold text-card-foreground">
+                      {post.repostOf!.title}
+                    </h3>
+                    {post.repostOf!.date ? (
+                      <p className="mt-1 text-xs font-semibold text-card-foreground">{post.repostOf!.date}</p>
+                    ) : null}
+                    {post.repostOf!.location ? (
+                      <p className="mt-0.5 text-xs text-muted-foreground">{post.repostOf!.location}</p>
+                    ) : null}
+                    <MentionText
+                      text={post.repostOf!.description}
+                      onMentionClick={onMentionClick}
+                      className="mt-1 text-sm leading-relaxed text-card-foreground"
+                    />
+                    {post.repostOf!.tags.length > 0 && (
+                      <p className="mt-2 text-sm text-primary">{post.repostOf!.tags.join('  ')}</p>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           </>
+        ) : isEntityPost && entityContent ? (
+          <EntityFeedBody
+            content={entityContent}
+            canOpen={canOpen}
+            onOpenDetail={onOpenDetail}
+            postForOpen={post}
+            onMentionClick={onMentionClick}
+          />
+        ) : post.isUserPublication ? (
+          <EntityFeedBody
+            content={{
+              topBadge: 'publicacion',
+              showSummaryCard: false,
+              images: post.images,
+              title: post.title,
+              date: post.date,
+              location: post.location,
+              description: post.description,
+              tags: post.tags,
+            }}
+            canOpen={canOpen}
+            onOpenDetail={onOpenDetail}
+            postForOpen={post}
+            onMentionClick={onMentionClick}
+          />
         ) : (
           <>
-            {/* Image */}
             <div
-              className={`px-4 pt-3 ${canOpen ? 'cursor-pointer' : ''}`}
+              className={cn('px-4 pt-3', canOpen && 'cursor-pointer')}
               onClick={canOpen ? () => onOpenDetail!(post) : undefined}
             >
               <ImageCarousel images={post.images} className="aspect-[16/10] rounded-xl" />
             </div>
 
-            {/* Content */}
             <div
-              className={`px-4 pt-3 ${canOpen ? 'cursor-pointer' : ''}`}
+              className={cn('px-4 pt-3', canOpen && 'cursor-pointer')}
               onClick={canOpen ? () => onOpenDetail!(post) : undefined}
             >
-              <h2 className="text-[15px] font-bold leading-tight text-card-foreground hover:text-primary transition-colors">
+              <h2 className="text-[15px] font-bold leading-tight text-card-foreground transition-colors hover:text-primary">
                 {post.title}
               </h2>
               {post.date && (
@@ -237,7 +295,6 @@ const PostCard = ({
           </>
         )}
 
-        {/* Actions */}
         <PostActions
           liked={liked}
           likesCount={post.likes}

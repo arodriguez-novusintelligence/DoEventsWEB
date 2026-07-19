@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { SERVICE_SECTORS, SECTOR_ACTIVITIES, PRICING_TYPES, CURRENCIES, REFUND_POLICIES, ServiceFormData, ActivityPricing } from '@lovable/data/servicesData';
 import { Checkbox } from '@lovable/components/ui/checkbox';
 import { Input } from '@lovable/components/ui/input';
@@ -10,13 +10,63 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@lovable/co
 import { cn } from '@lovable/lib/utils';
 import {
   Zap, ClipboardCheck, Plus, Trash2, GripVertical, FileText, HelpCircle,
-  ChevronDown, Briefcase, ListChecks, DollarSign, CalendarDays, Camera, User, Video, X,
+  ChevronDown, Briefcase, ListChecks, DollarSign, CalendarDays, Camera, User, Video, X, MapPin, Ticket,
 } from 'lucide-react';
 import CalendarPlanner from './CalendarPlanner';
+import ServiceLocationSection from './sections/ServiceLocationSection';
+import ServicePromoCodesSection from './sections/ServicePromoCodesSection';
 
-import { resolveDisplayLocation, resolveManualUserLocation, resolveUserLocation, MediaSourcePicker, RootState } from '@doevents/shared';
-import { newWizardId } from '@doevents/shared';
-export const SECTION_ORDER = ['photo', 'sectors', 'activities', 'pricing', 'calendar', 'preferences', 'faq'];
+export const SECTION_ORDER = ['photo', 'location', 'sectors', 'activities', 'pricing', 'calendar', 'promo', 'preferences', 'faq'] as const;
+
+export const SECTION_SHORT_LABELS: Record<(typeof SECTION_ORDER)[number], string> = {
+  photo: 'Foto',
+  location: 'Ubicación',
+  sectors: 'Tipo',
+  activities: 'Actividades',
+  pricing: 'Precio',
+  calendar: 'Días',
+  promo: 'Códigos',
+  preferences: 'Preferencias',
+  faq: 'FAQ',
+};
+
+export const SECTION_LABELS = SECTION_SHORT_LABELS;
+
+export function isSectionComplete(key: (typeof SECTION_ORDER)[number], f: ServiceFormData): boolean {
+  switch (key) {
+    case 'photo':
+      return Boolean(f.servicePhoto || f.coverImageUrl || f.coverImagePreview);
+    case 'location':
+      return Boolean(f.latitude && f.longitude);
+    case 'sectors':
+      return f.sectors.length > 0;
+    case 'activities':
+      return f.sectors.some((s) => (f.activities[s] || []).length > 0);
+    case 'pricing': {
+      const keys = f.sectors.flatMap((s) => (f.activities[s] || []).map((a) => `${s}::${a}`));
+      if (!keys.length) return false;
+      return keys.every((k) => {
+        const p = f.activityPricing[k];
+        return Boolean(p?.cost && Number(p.cost) > 0);
+      });
+    }
+    case 'calendar':
+      return true;
+    case 'promo':
+      if (!f.promoEnabled) return true;
+      return (f.promoCodes?.length ?? 0) > 0;
+    case 'preferences':
+      return Boolean(f.refundPolicy && f.bookingPreference);
+    case 'faq':
+      return true;
+    default:
+      return false;
+  }
+}
+
+export function areAllSectionsComplete(f: ServiceFormData): boolean {
+  return SECTION_ORDER.every((k) => isSectionComplete(k, f));
+}
 
 interface StepUnifiedProps {
   formData: ServiceFormData;
@@ -24,42 +74,59 @@ interface StepUnifiedProps {
   onNext: () => void;
   activeSectionIndex: number;
   onSectionChange: (index: number) => void;
+  defaultProfileImageUrl?: string;
+  editMode?: boolean;
 }
 
-const StepUnified = ({ formData, updateForm, onNext, activeSectionIndex, onSectionChange }: StepUnifiedProps) => {
+const StepUnified = ({ formData, updateForm, onNext, activeSectionIndex, onSectionChange, defaultProfileImageUrl, editMode = false }: StepUnifiedProps) => {
   const [showOtherSector, setShowOtherSector] = useState(false);
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     photo: true,
+    location: false,
     sectors: false,
     activities: false,
     pricing: false,
     calendar: false,
+    promo: false,
     preferences: false,
     faq: false,
   });
 
   const sectionOrder = SECTION_ORDER;
 
+  useEffect(() => {
+    const key = sectionOrder[activeSectionIndex];
+    if (!key) return;
+    setOpenSections((prev) => {
+      const next: Record<string, boolean> = {};
+      sectionOrder.forEach((k) => { next[k] = k === key; });
+      return next;
+    });
+    requestAnimationFrame(() => {
+      document.getElementById(`service-section-${key}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }, [activeSectionIndex]);
+
+  const handleSectionOpenChange = (sectionKey: string, open: boolean) => {
+    if (open) {
+      const idx = sectionOrder.indexOf(sectionKey);
+      if (idx >= 0) onSectionChange(idx);
+      setOpenSections(() => Object.fromEntries(sectionOrder.map((k) => [k, k === sectionKey])));
+      return;
+    }
+    setOpenSections((prev) => ({ ...prev, [sectionKey]: false }));
+  };
+
   const openNextSection = (currentKey: string) => {
     const idx = sectionOrder.indexOf(currentKey);
     if (idx < sectionOrder.length - 1) {
       const nextKey = sectionOrder[idx + 1];
-      setOpenSections((prev) => ({ ...prev, [currentKey]: false, [nextKey]: true }));
-      onSectionChange(idx + 1);
+      handleSectionOpenChange(nextKey, true);
     } else {
       onNext();
     }
   };
 
-  const toggleSection = (key: string) => {
-    const isOpening = !openSections[key];
-    setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
-    if (isOpening) {
-      onSectionChange(sectionOrder.indexOf(key));
-    }
-  };
-
-  // --- Sector logic ---
   const toggleSector = (sector: string) => {
     const next = formData.sectors.includes(sector)
       ? formData.sectors.filter((s) => s !== sector)
@@ -104,6 +171,23 @@ const StepUnified = ({ formData, updateForm, onNext, activeSectionIndex, onSecti
   const hasSectors = formData.sectors.length > 0;
   const canContinue = hasSectors;
 
+  const renderContinueButton = (sectionKey: (typeof SECTION_ORDER)[number]) => {
+    if (editMode) return null;
+    return (
+      <Button
+        onClick={() => openNextSection(sectionKey)}
+        disabled={!isSectionComplete(sectionKey, formData)}
+        className="mt-4 w-full rounded-full py-5 text-sm font-semibold disabled:opacity-50"
+      >
+        Guardar y Continuar
+      </Button>
+    );
+  };
+
+  const wrapSection = (sectionKey: string, content: ReactNode) => (
+    <div id={`service-section-${sectionKey}`}>{content}</div>
+  );
+
   // --- Shared section header ---
   const SectionHeader = ({
     icon: Icon,
@@ -113,25 +197,31 @@ const StepUnified = ({ formData, updateForm, onNext, activeSectionIndex, onSecti
     icon: React.ElementType;
     title: string;
     sectionKey: string;
-  }) => (
+  }) => {
+    const done = isSectionComplete(sectionKey as (typeof SECTION_ORDER)[number], formData);
+    return (
     <CollapsibleTrigger
       className="flex w-full items-center gap-3 rounded-2xl bg-card px-4 py-4 shadow-sm transition-colors hover:bg-accent/50"
-      onClick={() => toggleSection(sectionKey)}
     >
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
         <Icon className="h-5 w-5 text-primary" />
       </div>
       <span className="flex-1 text-left text-sm font-semibold text-foreground">{title}</span>
+      {done && !openSections[sectionKey] && (
+        <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-bold text-primary">✓</span>
+      )}
       <ChevronDown
         className={cn('h-5 w-5 text-primary transition-transform', openSections[sectionKey] && 'rotate-180')}
       />
     </CollapsibleTrigger>
-  );
+    );
+  };
 
   return (
     <div className="space-y-4">
       {/* 1. Foto del servicio */}
-      <Collapsible open={openSections.photo}>
+      {wrapSection('photo', (
+      <Collapsible open={openSections.photo} onOpenChange={(open) => handleSectionOpenChange('photo', open)}>
         <SectionHeader icon={Camera} title="Foto del servicio *" sectionKey="photo" />
         <CollapsibleContent className="mt-2 px-1">
           <div className="rounded-2xl bg-card p-4 shadow-sm space-y-4">
@@ -158,13 +248,26 @@ const StepUnified = ({ formData, updateForm, onNext, activeSectionIndex, onSecti
                   className="hidden"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
-                    if (file) updateForm({ servicePhoto: URL.createObjectURL(file) });
+                    if (file) {
+                      const preview = URL.createObjectURL(file);
+                      updateForm({
+                        servicePhoto: preview,
+                        coverImageFile: file,
+                        coverImageUrl: preview,
+                        coverImagePreview: preview,
+                      });
+                    }
                   }}
                 />
               </label>
               <button
                 type="button"
-                onClick={() => updateForm({ servicePhoto: '/placeholder.svg' })}
+                onClick={() => updateForm({
+                  servicePhoto: defaultProfileImageUrl || '/placeholder.svg',
+                  coverImageUrl: defaultProfileImageUrl || '/placeholder.svg',
+                  coverImagePreview: defaultProfileImageUrl || '/placeholder.svg',
+                  coverImageFile: undefined,
+                })}
                 className="flex items-center justify-center gap-2 rounded-full border border-border bg-card px-4 py-3 text-sm font-semibold text-foreground"
               >
                 <User className="h-4 w-4" />
@@ -217,13 +320,25 @@ const StepUnified = ({ formData, updateForm, onNext, activeSectionIndex, onSecti
               </div>
             </div>
           </div>
-          <Button onClick={() => openNextSection('photo')} className="mt-4 w-full rounded-full py-5 text-sm font-semibold">
-            Guardar y Continuar
-          </Button>
+          {renderContinueButton('photo')}
         </CollapsibleContent>
       </Collapsible>
-      {/* 2. Tipo de servicio */}
-      <Collapsible open={openSections.sectors}>
+      ))}
+
+      {/* 2. Ubicación del servicio */}
+      {wrapSection('location', (
+      <Collapsible open={openSections.location} onOpenChange={(open) => handleSectionOpenChange('location', open)}>
+        <SectionHeader icon={MapPin} title="Ubicación del servicio *" sectionKey="location" />
+        <CollapsibleContent className="mt-2 px-1">
+          <ServiceLocationSection formData={formData} updateForm={updateForm} />
+          {renderContinueButton('location')}
+        </CollapsibleContent>
+      </Collapsible>
+      ))}
+
+      {/* 3. Tipo de servicio */}
+      {wrapSection('sectors', (
+      <Collapsible open={openSections.sectors} onOpenChange={(open) => handleSectionOpenChange('sectors', open)}>
         <SectionHeader icon={Briefcase} title="¿Qué tipo de servicio(s) prestas?" sectionKey="sectors" />
         <CollapsibleContent className="mt-2 px-1">
           <div className="rounded-2xl bg-card p-4 shadow-sm">
@@ -256,14 +371,14 @@ const StepUnified = ({ formData, updateForm, onNext, activeSectionIndex, onSecti
               />
             )}
           </div>
-          <Button onClick={() => openNextSection('sectors')} className="mt-4 w-full rounded-full py-5 text-sm font-semibold">
-            Guardar y Continuar
-          </Button>
+          {renderContinueButton('sectors')}
         </CollapsibleContent>
       </Collapsible>
+      ))}
 
       {/* 3. Actividades */}
-      <Collapsible open={openSections.activities}>
+      {wrapSection('activities', (
+      <Collapsible open={openSections.activities} onOpenChange={(open) => handleSectionOpenChange('activities', open)}>
         <SectionHeader icon={ListChecks} title="Selecciona las actividades" sectionKey="activities" />
         <CollapsibleContent className="mt-2 space-y-3 px-1">
           {!hasSectors ? (
@@ -316,14 +431,14 @@ const StepUnified = ({ formData, updateForm, onNext, activeSectionIndex, onSecti
               );
             })
           )}
-          <Button onClick={() => openNextSection('activities')} className="mt-4 w-full rounded-full py-5 text-sm font-semibold">
-            Guardar y Continuar
-          </Button>
+          {renderContinueButton('activities')}
         </CollapsibleContent>
       </Collapsible>
+      ))}
 
       {/* 4. Precio por actividad */}
-      <Collapsible open={openSections.pricing}>
+      {wrapSection('pricing', (
+      <Collapsible open={openSections.pricing} onOpenChange={(open) => handleSectionOpenChange('pricing', open)}>
         <SectionHeader icon={DollarSign} title="Precio por Servicio y actividad" sectionKey="pricing" />
         <CollapsibleContent className="mt-2 space-y-3 px-1">
           {allActivities.length === 0 ? (
@@ -380,14 +495,14 @@ const StepUnified = ({ formData, updateForm, onNext, activeSectionIndex, onSecti
               );
             })
           )}
-          <Button onClick={() => openNextSection('pricing')} className="mt-4 w-full rounded-full py-5 text-sm font-semibold">
-            Guardar y Continuar
-          </Button>
+          {renderContinueButton('pricing')}
         </CollapsibleContent>
       </Collapsible>
+      ))}
 
       {/* 5. Días disponibles */}
-      <Collapsible open={openSections.calendar}>
+      {wrapSection('calendar', (
+      <Collapsible open={openSections.calendar} onOpenChange={(open) => handleSectionOpenChange('calendar', open)}>
         <SectionHeader icon={CalendarDays} title="Días disponibles" sectionKey="calendar" />
         <CollapsibleContent className="mt-2 px-1">
           <CalendarPlanner
@@ -402,14 +517,27 @@ const StepUnified = ({ formData, updateForm, onNext, activeSectionIndex, onSecti
             basePriceCost={basePriceCost}
             basePriceCurrency={basePriceCurrency}
           />
-          <Button onClick={() => openNextSection('calendar')} className="mt-4 w-full rounded-full py-5 text-sm font-semibold">
-            Guardar y Continuar
-          </Button>
+          {renderContinueButton('calendar')}
         </CollapsibleContent>
       </Collapsible>
+      ))}
 
-      {/* 6. Preferencia y reembolso */}
-      <Collapsible open={openSections.preferences}>
+      {/* 7. Códigos promocionales */}
+      {wrapSection('promo', (
+      <Collapsible open={openSections.promo} onOpenChange={(open) => handleSectionOpenChange('promo', open)}>
+        <SectionHeader icon={Ticket} title="Códigos promocionales" sectionKey="promo" />
+        <CollapsibleContent className="mt-2 px-1">
+          <div className="rounded-2xl bg-card shadow-sm overflow-hidden">
+            <ServicePromoCodesSection formData={formData} updateForm={updateForm} />
+          </div>
+          {renderContinueButton('promo')}
+        </CollapsibleContent>
+      </Collapsible>
+      ))}
+
+      {/* 8. Preferencia y reembolso */}
+      {wrapSection('preferences', (
+      <Collapsible open={openSections.preferences} onOpenChange={(open) => handleSectionOpenChange('preferences', open)}>
         <SectionHeader icon={FileText} title="Preferencia y reembolso del servicio" sectionKey="preferences" />
         <CollapsibleContent className="mt-2 px-1">
           <div className="rounded-2xl bg-card p-4 shadow-sm space-y-6">
@@ -465,15 +593,15 @@ const StepUnified = ({ formData, updateForm, onNext, activeSectionIndex, onSecti
               </RadioGroup>
             </div>
           </div>
-          <Button onClick={() => openNextSection('preferences')} className="mt-4 w-full rounded-full py-5 text-sm font-semibold">
-            Guardar y Continuar
-          </Button>
+          {renderContinueButton('preferences')}
         </CollapsibleContent>
       </Collapsible>
+      ))}
 
 
       {/* 7. FAQ */}
-      <Collapsible open={openSections.faq}>
+      {wrapSection('faq', (
+      <Collapsible open={openSections.faq} onOpenChange={(open) => handleSectionOpenChange('faq', open)}>
         <SectionHeader icon={HelpCircle} title="Preguntas frecuentes (FAQ)" sectionKey="faq" />
         <CollapsibleContent className="mt-2 px-1">
           <div className="rounded-2xl bg-card p-4 shadow-sm">
@@ -505,11 +633,10 @@ const StepUnified = ({ formData, updateForm, onNext, activeSectionIndex, onSecti
               Agregar pregunta
             </Button>
           </div>
-          <Button onClick={() => openNextSection('faq')} className="mt-4 w-full rounded-full py-5 text-sm font-semibold">
-            Guardar y Continuar
-          </Button>
+          {renderContinueButton('faq')}
         </CollapsibleContent>
       </Collapsible>
+      ))}
 
     </div>
   );

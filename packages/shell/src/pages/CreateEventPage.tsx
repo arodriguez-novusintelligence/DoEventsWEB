@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {
   fetchEventDetail,
@@ -7,6 +7,7 @@ import {
   RootState,
   useToast,
   type AIEventDraft,
+  isDraftPublishStatus,
 } from '@doevents/shared';
 import type { EventFormData } from '@lovable/data/eventFormData';
 import { initialEventFormData } from '@lovable/data/eventFormData';
@@ -21,6 +22,10 @@ import {
   saveLocalWizardDraft,
 } from '../lib/wizardDraftBridge';
 import { eventDetailToFormData } from '../lovable-bridge/eventEditBridge';
+import {
+  clearEventResumePrefill,
+  readEventResumePrefill,
+} from '../lovable-bridge/eventDuplicateBridge';
 
 function parseDraftDateHint(hint?: string): { startDate?: string; startTime?: string } {
   if (!hint) return {};
@@ -80,21 +85,25 @@ function buildFormFromDraft(draft: AIEventDraft): Partial<EventFormData> {
 
 export const CreateEventPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const venueIdParam = searchParams.get('venueId');
   const { showToast } = useToast();
   const userId = useSelector((s: RootState) => s.auth.idUser);
   const resumeEventId = searchParams.get('resume');
+  const duplicateVenueId = (location.state as { duplicateVenueId?: string; fromDuplicate?: boolean } | null)?.duplicateVenueId;
+  const fromDuplicate = Boolean((location.state as { fromDuplicate?: boolean } | null)?.fromDuplicate);
   const [publishing, setPublishing] = useState(false);
   const publishLock = useRef(false);
   const [initialData, setInitialData] = useState<EventFormData | null>(
-    venueIdParam ? null : initialEventFormData,
+    venueIdParam || resumeEventId ? null : initialEventFormData,
   );
   const [initialStep, setInitialStep] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7 | undefined>(undefined);
+  const [resumeLoading, setResumeLoading] = useState(Boolean(resumeEventId));
   const draftLoaded = useRef(false);
 
   useEffect(() => {
-    if (venueIdParam || draftLoaded.current) return;
+    if (venueIdParam || resumeEventId || draftLoaded.current) return;
     try {
       const raw = sessionStorage.getItem('doevents.ai-event-draft');
       if (!raw) return;
@@ -138,7 +147,7 @@ export const CreateEventPage: React.FC = () => {
     } catch {
       /* ignore malformed draft */
     }
-  }, [venueIdParam, showToast]);
+  }, [venueIdParam, resumeEventId, showToast]);
 
   useEffect(() => {
     if (venueIdParam || draftLoaded.current || resumeEventId) return;
@@ -162,33 +171,97 @@ export const CreateEventPage: React.FC = () => {
   }, [userId, venueIdParam, resumeEventId, showToast]);
 
   useEffect(() => {
-    if (!resumeEventId || draftLoaded.current) return;
-    draftLoaded.current = true;
+    if (!resumeEventId) return;
+
     let cancelled = false;
-    fetchEventDetail(resumeEventId)
-      .then(async (detail) => {
-        if (cancelled || !detail?.event) return;
-        const form = await eventDetailToFormData(detail, detail.images || []);
-        setInitialData({
-          ...form,
-          persistedEventId: resumeEventId,
-        });
-        showToast('Borrador de evento cargado', 'success');
-      })
-      .catch(() => {
-        if (!cancelled) showToast('No se pudo cargar el borrador', 'error');
-      });
+    setResumeLoading(true);
+
+    const hydrateFromDetail = async (
+      detail: Awaited<ReturnType<typeof fetchEventDetail>>,
+      persistedId: string,
+    ): Promise<EventFormData | null> => {
+      if (!detail?.event) return null;
+      const form = await eventDetailToFormData(detail, detail.images || []);
+      const venueId = detail.event.venueId || duplicateVenueId;
+      if (venueId && !detail.event.venueId) {
+        try {
+          const locationPatch = await applyVenueToEventLocation(venueId, 'own');
+          form.location = {
+            ...form.location,
+            ...locationPatch,
+            mode: 'mine',
+            selectedVenueId: venueId,
+            venueOwnership: 'own',
+          };
+        } catch {
+          form.location = {
+            ...form.location,
+            mode: 'mine',
+            selectedVenueId: venueId,
+            venueOwnership: 'own',
+          };
+        }
+      }
+      return { ...form, persistedEventId: persistedId };
+    };
+
+    const loadResume = async () => {
+      try {
+        const storedPrefill = readEventResumePrefill(resumeEventId);
+        if (storedPrefill) {
+          if (cancelled) return;
+          setInitialData({ ...storedPrefill, persistedEventId: resumeEventId });
+          setInitialStep(fromDuplicate || storedPrefill.name?.toLowerCase().startsWith('copia de ') ? 7 : undefined);
+          clearEventResumePrefill(resumeEventId);
+          showToast('Copia del evento cargada. Revisa los datos y publícala.', 'success');
+          return;
+        }
+
+        const detail = await fetchEventDetail(resumeEventId);
+        const form = await hydrateFromDetail(detail, resumeEventId);
+        if (cancelled) return;
+        if (!form) {
+          throw new Error('No se encontró el evento duplicado');
+        }
+        setInitialData(form);
+        const isDuplicateCopy = fromDuplicate
+          || (form.name || '').trim().toLowerCase().startsWith('copia de ');
+        const isDraft = isDraftPublishStatus(detail.event.estatus);
+        setInitialStep(isDuplicateCopy || isDraft ? 7 : undefined);
+        showToast(
+          isDuplicateCopy
+            ? 'Copia del evento cargada. Revisa los datos y publícala.'
+            : isDraft
+              ? 'Borrador cargado. Puedes editar y guardar desde el resumen.'
+              : 'Borrador de evento cargado',
+          'success',
+        );
+      } catch (err) {
+        if (!cancelled) {
+          showToast(
+            err instanceof Error ? err.message : 'No se pudo cargar la copia del evento',
+            'error',
+          );
+        }
+      } finally {
+        if (!cancelled) setResumeLoading(false);
+      }
+    };
+
+    void loadResume();
     return () => { cancelled = true; };
-  }, [resumeEventId, showToast]);
+  }, [resumeEventId, duplicateVenueId, fromDuplicate, showToast]);
+
+  const resolvePersistedEventId = (formData: EventFormData): string | undefined =>
+    formData.persistedEventId || resumeEventId || undefined;
 
   const handleDraftSave = async (formData: EventFormData): Promise<string> => {
     if (!userId) throw new Error('no-auth');
     const eventId = await saveLovableEventDraft(
-      { ...formData, persistedEventId: formData.persistedEventId },
+      { ...formData, persistedEventId: resolvePersistedEventId(formData) },
       userId,
     );
     saveLocalWizardDraft(userId, 'event', { ...formData, persistedEventId: eventId });
-    setInitialData((prev) => (prev ? { ...prev, ...formData, persistedEventId: eventId } : prev));
     await notifyWizardDraftReminder({
       userId,
       kind: 'event',
@@ -235,14 +308,11 @@ export const CreateEventPage: React.FC = () => {
     setPublishing(true);
     try {
       const eventId = await publishLovableEvent(
-        { ...data, persistedEventId: data.persistedEventId },
+        { ...data, persistedEventId: resolvePersistedEventId(data) },
         userId,
       );
       if (userId) clearLocalWizardDraft(userId, 'event');
       return eventId;
-    } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Error al publicar el evento', 'error');
-      throw err;
     } finally {
       publishLock.current = false;
       setPublishing(false);
@@ -264,7 +334,7 @@ export const CreateEventPage: React.FC = () => {
     });
   };
 
-  if (!initialData) {
+  if (!initialData || resumeLoading) {
     return (
       <div className="de-page-content flex min-h-[50vh] items-center justify-center">
         <Loader />
@@ -283,16 +353,13 @@ export const CreateEventPage: React.FC = () => {
         </div>
       )}
       <CreateEventView
+        userId={userId}
         onBack={handleBack}
         onDraftSaved={handleDraftSave}
         onPublish={handlePublish}
         onPublished={(eventId) => {
-          void finishPublishAndGoToFeed(eventId, {
-            onNavigate: () => {
-              showToast('¡Evento publicado!', 'success');
-              navigate(`/events/published?eventId=${eventId}`, { replace: true });
-            },
-          });
+          showToast('¡Evento publicado en el Feed!', 'success');
+          void finishPublishAndGoToFeed(eventId, { navigate });
         }}
         initialData={initialData}
         initialStep={initialStep}

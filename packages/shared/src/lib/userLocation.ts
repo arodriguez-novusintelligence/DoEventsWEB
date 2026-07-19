@@ -1,5 +1,7 @@
+import { invalidateDiscoverCache } from './discoverCache';
 import { formatMapLocationLabel } from './formatMapLocation';
-import { geocodePlaceQuery, reverseGeocodePlace } from './geocodePlace';
+import { geocodePlaceQuery, reverseGeocodePlace, type GeocodedPlace } from './geocodePlace';
+import { invalidateMapCache } from './mapCache';
 
 const STORAGE_KEY = 'doevents_user_location';
 export const USER_LOCATION_CHANGED_EVENT = 'doevents-location-changed';
@@ -9,6 +11,8 @@ export interface StoredUserLocation {
   lng: number;
   city?: string;
   departamento?: string;
+  street?: string;
+  country?: string;
   label?: string;
   updatedAt: number;
 }
@@ -25,9 +29,23 @@ export function getStoredUserLocation(): StoredUserLocation | null {
   }
 }
 
+function invalidateLocationDependentCaches(): void {
+  invalidateDiscoverCache();
+  invalidateMapCache();
+}
+
 export function saveStoredUserLocation(location: Omit<StoredUserLocation, 'updatedAt'>): StoredUserLocation {
+  const previous = getStoredUserLocation();
   const entry: StoredUserLocation = { ...location, updatedAt: Date.now() };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(entry));
+
+  const coordsChanged = !previous
+    || Math.abs(previous.lat - entry.lat) > 0.0001
+    || Math.abs(previous.lng - entry.lng) > 0.0001;
+  if (coordsChanged) {
+    invalidateLocationDependentCaches();
+  }
+
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent(USER_LOCATION_CHANGED_EVENT, { detail: entry }));
   }
@@ -41,11 +59,17 @@ export function clearStoredUserLocation(): void {
 export async function resolveManualUserLocation(query: string): Promise<StoredUserLocation | null> {
   const place = await geocodePlaceQuery(query);
   if (!place) return null;
+  return applyGeocodedPlaceAsUserLocation(place);
+}
+
+export function applyGeocodedPlaceAsUserLocation(place: GeocodedPlace): StoredUserLocation {
   return saveStoredUserLocation({
     lat: place.lat,
     lng: place.lng,
     city: place.city,
     departamento: place.departamento,
+    street: place.street,
+    country: place.country,
     label: place.label,
   });
 }
@@ -89,6 +113,8 @@ export async function resolveUserLocation(options?: {
         lng,
         city: reversed?.city,
         departamento: reversed?.departamento,
+        street: reversed?.street,
+        country: reversed?.country,
         label: reversed?.label || formatMapLocationLabel({
           city: reversed?.city,
           departamento: reversed?.departamento,

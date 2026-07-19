@@ -38,7 +38,7 @@ export function providerToCard(p: NearbyServiceProvider): FeedServiceCard {
 
     name: displayName,
 
-    role: p.role || p.category,
+    role: p.role || p.category || 'Servicio',
 
     rating: p.rating || 0,
 
@@ -46,7 +46,7 @@ export function providerToCard(p: NearbyServiceProvider): FeedServiceCard {
 
     handle: p.username ? `@${p.username}` : '',
 
-    description: p.description,
+    description: p.description || '',
 
     image: resolveEventImageUrl(
 

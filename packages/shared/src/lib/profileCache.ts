@@ -38,7 +38,7 @@ function writeStore(profiles: Record<string, CachedProfile>): void {
 function toCached(profile: UserProfile): CachedProfile {
   return {
     id: profile.id || '',
-    imagen: resolveImageUrl(profile.imagen) || profile.imagen,
+    imagen: profile.imagen,
     nombre: profile.nombre,
     apellido: profile.apellido,
     username: profile.username,
@@ -113,7 +113,7 @@ export async function enrichFeedEventsWithOrganizers(events: FeedEventItem[]): P
       ...event,
       imagen: resolveImageUrl(event.imagen) || event.imagen,
       organizerName: event.organizerName || organizerName(profile),
-      organizerAvatar: resolveImageUrl(profile?.imagen) || profile?.imagen,
+      organizerAvatar: profile?.imagen,
     };
   });
 }

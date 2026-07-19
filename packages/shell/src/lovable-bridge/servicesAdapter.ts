@@ -1,5 +1,5 @@
 import type { NearbyServiceProvider } from '@doevents/shared';
-import { resolveImageUrl } from '@doevents/shared';
+import { resolveImageUrl, resolveUserAvatarUrl } from '@doevents/shared';
 import type { ServiceFormData } from '@lovable/data/servicesData';
 
 export interface ServiceProviderProfile {
@@ -77,7 +77,7 @@ export function groupServicesByProvider(
     return {
       userId,
       name: displayName,
-      avatarUrl: resolveImageUrl(first.profileImageUrl || first.gallery?.[0]) || '',
+      avatarUrl: resolveUserAvatarUrl(first.profileImageUrl || first.gallery?.[0], first.userId) || '',
       username: first.username,
       servicesCount: services.length,
       rating: Math.round(avgRating * 10) / 10,

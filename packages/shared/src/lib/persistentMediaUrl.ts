@@ -11,6 +11,12 @@ export function isSignedS3Url(url?: string | null): boolean {
   }
 }
 
+export function isExternalProfileUrl(url?: string | null): boolean {
+  const raw = String(url || '').trim();
+  if (!raw) return false;
+  return /googleusercontent\.com|fbcdn\.net|graph\.facebook|appleid\.apple\.com|gravatar\.com/i.test(raw);
+}
+
 export function isEphemeralMediaUrl(url?: string | null): boolean {
   const raw = String(url || '').trim();
   if (!raw) return true;
@@ -90,4 +96,33 @@ export function pickPersistentGalleryUrl(item: {
     if (persistent) return persistent;
   }
   return '';
+}
+
+/** Prefiere URL firmada de S3; si no, resuelve keys/URLs públicas estables. */
+export function resolveUserMediaDisplayUrl(
+  signed?: string | null,
+  ...candidates: (string | null | undefined)[]
+): string | undefined {
+  const signedRaw = String(signed || '').trim();
+  if (signedRaw) {
+    if (isSignedS3Url(signedRaw)) return signedRaw;
+    if (isExternalProfileUrl(signedRaw)) return signedRaw;
+  }
+
+  for (const candidate of candidates) {
+    const raw = String(candidate || '').trim();
+    if (!raw) continue;
+    if (isExternalProfileUrl(raw)) return raw;
+    if (isSignedS3Url(raw)) return raw;
+  }
+
+  for (const candidate of candidates) {
+    const raw = String(candidate || '').trim();
+    if (!raw) continue;
+    if (isEphemeralMediaUrl(raw)) continue;
+    const persistent = toPersistentMediaUrl(raw);
+    if (persistent) return persistent;
+    if (raw.startsWith('http://') || raw.startsWith('https://')) return raw;
+  }
+  return undefined;
 }

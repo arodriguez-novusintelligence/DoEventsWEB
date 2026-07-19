@@ -1,9 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import type { SeatingFigure } from '@lovable/data/eventFormData';
 import { SeatingPreview } from '@lovable/components/events/StepEventLocation';
 import {
   buildSeatStatesForFigure,
   findSeatByLabel,
+  findTicketCategoryForFigure,
+  seatMatchesGridLabel,
   venueFloorsToFigures,
   type HighlightSeat,
   type SeatVisualState,
@@ -13,24 +15,38 @@ import type { AvailableSeat, TicketCategory, VenueFloorDetail } from '@doevents/
 export interface LovableVenueMapProps {
   floors: VenueFloorDetail[];
   ticketCategories?: TicketCategory[];
+  /** Categorías con todas las boletas (incl. no disponibles) solo para colorear el mapa */
+  displayCategories?: TicketCategory[];
   selectedIds?: Set<string>;
+  /** Sillas elegidas por categoría+etiqueta (respaldo visual cuando el id no coincide) */
+  selectedSeats?: HighlightSeat[];
   highlightSeats?: HighlightSeat[];
   filterCategoryName?: string;
   onToggle?: (category: TicketCategory, seat: AvailableSeat, label: string) => void;
   interactive?: boolean;
+  ownerPreviewMode?: boolean;
   height?: number | string;
+  /** Vista general: zonas y etiquetas sin grilla de sillas (evita solapamiento) */
+  overviewMode?: boolean;
 }
 
 export const LovableVenueMap: React.FC<LovableVenueMapProps> = ({
   floors,
   ticketCategories = [],
+  displayCategories,
   selectedIds,
+  selectedSeats = [],
   highlightSeats = [],
   filterCategoryName = 'all',
   onToggle,
   interactive = false,
+  ownerPreviewMode = false,
   height = 280,
+  overviewMode = false,
 }) => {
+  const lastToggleRef = useRef<{ key: string; ts: number } | null>(null);
+  /** En checkout interactivo nunca ocultar la grilla de sillas (vista Todo / mapa completo). */
+  const effectiveOverviewMode = overviewMode && !interactive;
   const figures = useMemo(() => venueFloorsToFigures(floors), [floors]);
 
   const visibleFigures = useMemo(() => {
@@ -48,20 +64,41 @@ export const LovableVenueMap: React.FC<LovableVenueMapProps> = ({
       map.set(
         figure.id,
         buildSeatStatesForFigure(figure, {
-          categories: ticketCategories,
+          categories: displayCategories || ticketCategories,
           selectedIds,
+          selectedSeats,
           highlightSeats,
+          ownerPreviewMode,
         }),
       );
     });
     return map;
-  }, [visibleFigures, ticketCategories, selectedIds, highlightSeats]);
+  }, [visibleFigures, displayCategories, ticketCategories, selectedIds, selectedSeats, highlightSeats, ownerPreviewMode]);
 
   const handleSeatClick = (figure: SeatingFigure, label: string) => {
-    if (!interactive || !onToggle) return;
-    const match = findSeatByLabel(label, ticketCategories, figure);
+    if (!interactive || !onToggle || effectiveOverviewMode) return;
+
+    const lookupCategories = displayCategories?.length ? displayCategories : ticketCategories;
+    const match = findSeatByLabel(label, lookupCategories, figure);
     if (!match) return;
-    onToggle(match.category, match.seat, match.label);
+
+    const purchaseCategory = findTicketCategoryForFigure(ticketCategories, figure) || match.category;
+    const purchaseSeat = purchaseCategory.seats.find(
+      (seat) => seat.ticketInstanceId === match.seat.ticketInstanceId
+        || seatMatchesGridLabel(seat, label.trim().toUpperCase()),
+    ) || match.seat;
+
+    const toggleKey = `${figure.id}::${purchaseSeat.ticketInstanceId || label}`;
+    const now = Date.now();
+    if (
+      lastToggleRef.current?.key === toggleKey
+      && now - lastToggleRef.current.ts < 450
+    ) {
+      return;
+    }
+    lastToggleRef.current = { key: toggleKey, ts: now };
+
+    onToggle(purchaseCategory, purchaseSeat, match.label);
   };
 
   if (!visibleFigures.length) {
@@ -80,7 +117,8 @@ export const LovableVenueMap: React.FC<LovableVenueMapProps> = ({
       figures={visibleFigures}
       height={height}
       seatStatesByFigure={seatStatesByFigure}
-      interactive={interactive}
+      interactive={interactive && !effectiveOverviewMode}
+      overviewMode={effectiveOverviewMode}
       onSeatClick={handleSeatClick}
     />
   );

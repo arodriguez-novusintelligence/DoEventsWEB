@@ -52,8 +52,16 @@ export function buildDetailRepostHandler(
       options.navigate('/');
     } catch (err) {
       const message = err instanceof Error ? err.message : 'No se pudo repostear en el Feed';
-      if (/reposteaste|already reposted/i.test(message)) {
+      if (/reposteaste|already reposted|FEED_ALREADY_REPOSTED/i.test(message)) {
         options.showToast(`Ya reposteaste este ${label.toLowerCase()}`, 'error');
+        return;
+      }
+      if (/FEED_REPOST_LIMIT|límite de republicaciones|republicar este contenido hasta/i.test(message)) {
+        options.showToast('Alcanzaste el límite de republicaciones para este contenido', 'error');
+        return;
+      }
+      if (/FEED_REPOST_COOLDOWN|esperar.*día/i.test(message)) {
+        options.showToast(message, 'error');
         return;
       }
       options.showToast(message, 'error');

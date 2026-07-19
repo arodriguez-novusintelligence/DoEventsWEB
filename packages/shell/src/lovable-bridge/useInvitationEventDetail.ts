@@ -46,7 +46,11 @@ export function useInvitationEventDetail(resolvedId?: string) {
           }
         }
         if (!cancelled) {
-          setInvitationEvent(eventDetailToInvitationEvent(detail, venueOptions));
+          setInvitationEvent(
+            detail
+              ? (eventDetailToInvitationEvent(detail, venueOptions))
+              : null,
+          );
         }
       } catch (err) {
         if (!cancelled) {

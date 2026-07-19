@@ -22,6 +22,7 @@ import {
   type AdminEventItem,
   type AdminServiceItem,
   type AdminVenueItem,
+  type AdminVenuePromoSummary,
 } from '@doevents/shared';
 
 type ContentKind = 'events' | 'venues' | 'services';
@@ -270,6 +271,9 @@ export const AdminContentTab: React.FC = () => {
                     {(detail as AdminVenueItem).description && (
                       <Row label="Descripción" value={(detail as AdminVenueItem).description} />
                     )}
+                    {(detail as AdminVenueItem).promoCodes && (
+                      <PromoCodesAdminSummary promo={(detail as AdminVenueItem).promoCodes!} emptyLabel="Sin códigos promocionales de alquiler registrados." />
+                    )}
                   </>
                 )}
                 {kind === 'services' && (
@@ -280,6 +284,9 @@ export const AdminContentTab: React.FC = () => {
                     <Row label="Proveedor" value={(detail as AdminServiceItem).userId} />
                     {(detail as AdminServiceItem).description && (
                       <Row label="Descripción" value={(detail as AdminServiceItem).description} />
+                    )}
+                    {(detail as AdminServiceItem).promoCodes && (
+                      <PromoCodesAdminSummary promo={(detail as AdminServiceItem).promoCodes!} emptyLabel="Sin códigos promocionales de servicio registrados." />
                     )}
                   </>
                 )}
@@ -318,6 +325,54 @@ function Row({ label, value }: { label: string; value?: string | null }) {
     <div>
       <dt className="text-xs font-medium text-muted-foreground">{label}</dt>
       <dd className="mt-0.5 break-words">{value}</dd>
+    </div>
+  );
+}
+
+function PromoCodesAdminSummary({
+  promo,
+  emptyLabel,
+}: {
+  promo: AdminVenuePromoSummary;
+  emptyLabel: string;
+}) {
+  if (!promo.totalCodes) {
+    return (
+      <div className="rounded-xl border border-border bg-secondary/30 p-3 text-sm text-muted-foreground">
+        {emptyLabel}
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-xl border border-border bg-secondary/30 p-3 space-y-2">
+      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Códigos promocionales</p>
+      <div className="grid grid-cols-2 gap-2 text-sm">
+        <span>Total: <strong>{promo.totalCodes}</strong></span>
+        <span>Disponibles: <strong>{promo.availableCodes}</strong></span>
+        <span>Redimidos: <strong>{promo.redeemedCodes}</strong></span>
+        <span>Compartidos: <strong>{promo.sharedCodes}</strong></span>
+      </div>
+      {promo.batches.length > 0 && (
+        <div className="space-y-1 pt-2 border-t border-border">
+          <p className="text-xs font-medium text-muted-foreground">Lotes creados ({promo.batches.length})</p>
+          {promo.batches.slice(0, 5).map((batch) => (
+            <p key={batch.id} className="text-xs">
+              {batch.description || batch.id}: {batch.quantity} códigos · {batch.currency} {batch.value.toLocaleString('es-CO')}
+            </p>
+          ))}
+        </div>
+      )}
+      {promo.redemptions.length > 0 && (
+        <div className="space-y-1 pt-2 border-t border-border">
+          <p className="text-xs font-medium text-muted-foreground">Redimidos recientes</p>
+          {promo.redemptions.slice(0, 5).map((r) => (
+            <p key={r.code} className="text-xs font-mono">
+              {r.code} · {r.redeemedAt?.slice(0, 10) || '—'} · desc. {r.discount.toLocaleString('es-CO')}
+            </p>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

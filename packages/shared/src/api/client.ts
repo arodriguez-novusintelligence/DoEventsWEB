@@ -40,6 +40,16 @@ export function getCurrentEnv(): AppEnvironment {
   return currentEnv!;
 }
 
+/**
+ * Rutas del HTTP API manageevents registradas como `/events/...` en Serverless.
+ * En api-dev / api-qa el mapping key `events` exige prefijo `/events/events/...`.
+ */
+export function manageEventsNestedApiUrl(relativePath: string): string {
+  const base = getCurrentEnv().apiBaseUrl;
+  const path = relativePath.startsWith('/') ? relativePath : `/${relativePath}`;
+  return `${base}/events/events${path}`;
+}
+
 export function setAuthToken(token: string): void {
   authToken = token;
   if (token) {

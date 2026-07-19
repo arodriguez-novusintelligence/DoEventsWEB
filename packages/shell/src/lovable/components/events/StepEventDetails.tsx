@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { fetchEventTypes, getPreferences, MediaSourcePicker, RootState } from '@doevents/shared';
+import { fetchEventTypes, getPreferences, MediaSourcePicker, RootState, UserAvatar, fetchUserById, getStoredUserId } from '@doevents/shared';
 import {
   CalendarDays,
   Clock,
@@ -31,8 +31,11 @@ import HostPickerModal from './HostPickerModal';
 import { toast } from 'sonner';
 import {
   isPulepApplicable,
+  isColombiaProfile,
   PULEP_PORTAL_URL,
 } from '@lovable/lib/pulepColombia';
+import { TimePicker } from '@lovable/components/ui/time-picker';
+import { isEventEndBeforeStart } from '@lovable/lib/eventDateValidation';
 import { ExternalLink, ShieldCheck } from 'lucide-react';
 
 interface StepEventDetailsProps {
@@ -69,6 +72,18 @@ const StepEventDetails = ({
     EVENT_CATEGORIES.map((c) => ({ id: c, label: c })),
   );
   const [loadingMeta, setLoadingMeta] = useState(true);
+  const [organizerCountry, setOrganizerCountry] = useState('');
+
+  useEffect(() => {
+    const userId = getStoredUserId();
+    if (!userId) return;
+    void fetchUserById(userId)
+      .then((profile) => {
+        if (!profile) return;
+        setOrganizerCountry(`${profile.pais || ''} ${profile.ciudad || ''}`.trim());
+      })
+      .catch(() => undefined);
+  }, []);
 
   useEffect(() => {
     setLoadingMeta(true);
@@ -94,7 +109,7 @@ const StepEventDetails = ({
     categories.find((c) => c.id === formData.category)?.label ?? formData.category;
   const typeLabel =
     eventTypes.find((t) => t.id === formData.type)?.label ?? formData.type;
-  const pulepApplies = isPulepApplicable(categoryLabel, typeLabel);
+  const pulepApplies = isColombiaProfile(organizerCountry) && isPulepApplicable(categoryLabel, typeLabel);
 
   useEffect(() => {
     if (formData.pulepRequired !== pulepApplies) {
@@ -110,9 +125,15 @@ const StepEventDetails = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pulepApplies]);
 
+  const pulepStarted = Boolean(
+    formData.pulepProducerType
+    || formData.pulepRegistrationNumber?.trim()
+    || formData.pulepAcknowledged,
+  );
   const pulepErr =
     showErrors &&
     pulepApplies &&
+    pulepStarted &&
     !(
       formData.pulepProducerType &&
       formData.pulepRegistrationNumber?.trim().length >= 5 &&
@@ -174,7 +195,7 @@ const StepEventDetails = ({
       toast('Este anfitrión ya está agregado.');
       return;
     }
-    updateForm({ hosts: [...formData.hosts, host] });
+    updateForm({ hosts: [...formData.hosts, { ...host, role: host.role || 'host' }] });
     toast.success(`${host.name} agregado como anfitrión`);
     setShowHostPicker(false);
   };
@@ -183,6 +204,13 @@ const StepEventDetails = ({
     updateForm({ hosts: formData.hosts.filter((h) => h.id !== id) });
 
   const err = (val: string) => showErrors && !val.trim();
+  const endBeforeStart = isEventEndBeforeStart(
+    formData.startDate,
+    formData.startTime,
+    formData.endDate,
+    formData.endTime,
+  );
+  const dateRangeErr = showErrors && endBeforeStart;
 
   return (
     <div className="space-y-5">
@@ -309,8 +337,7 @@ const StepEventDetails = ({
               <div>
                 <h3 className="text-sm font-bold text-primary">Cumplimiento PULEP (Colombia)</h3>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Espectáculo de artes escénicas — Ley 1493. Registra tu evento en el portal PULEP
-                  antes de publicar boletas.
+                  Espectáculo de artes escénicas — Ley 1493. Opcional en Colombia: registra tu evento en PULEP si aplica.
                 </p>
                 <a
                   href={PULEP_PORTAL_URL}
@@ -403,17 +430,12 @@ const StepEventDetails = ({
           </div>
           <div>
             <Label>Hora inicio</Label>
-            <div className="relative">
-              <Clock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary" />
-              <input
-                type="time"
-                value={formData.startTime}
-                onChange={(e) => updateForm({ startTime: e.target.value })}
-                className={`${inputBase} pl-9 ${
-                  err(formData.startTime) ? errorBorder : ''
-                }`}
-              />
-            </div>
+            <TimePicker
+              value={formData.startTime}
+              onChange={(startTime) => updateForm({ startTime })}
+              placeholder="Seleccionar hora"
+              className={err(formData.startTime) ? errorBorder : ''}
+            />
             <ErrorText show={err(formData.startTime)} />
           </div>
           <div>
@@ -425,25 +447,25 @@ const StepEventDetails = ({
                 value={formData.endDate}
                 onChange={(e) => updateForm({ endDate: e.target.value })}
                 className={`${inputBase} pl-9 ${
-                  err(formData.endDate) ? errorBorder : ''
+                  err(formData.endDate) || dateRangeErr ? errorBorder : ''
                 }`}
               />
             </div>
             <ErrorText show={err(formData.endDate)} />
+            {dateRangeErr && (
+              <p className="mt-1 text-xs font-medium text-destructive">
+                La fecha y hora de fin no pueden ser anteriores al inicio.
+              </p>
+            )}
           </div>
           <div>
             <Label>Hora fin</Label>
-            <div className="relative">
-              <Clock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary" />
-              <input
-                type="time"
-                value={formData.endTime}
-                onChange={(e) => updateForm({ endTime: e.target.value })}
-                className={`${inputBase} pl-9 ${
-                  err(formData.endTime) ? errorBorder : ''
-                }`}
-              />
-            </div>
+            <TimePicker
+              value={formData.endTime}
+              onChange={(endTime) => updateForm({ endTime })}
+              placeholder="Seleccionar hora"
+              className={err(formData.endTime) || dateRangeErr ? errorBorder : ''}
+            />
             <ErrorText show={err(formData.endTime)} />
           </div>
         </div>
@@ -681,13 +703,7 @@ const StepEventDetails = ({
                       className="rounded-2xl border border-border/60 bg-background p-3"
                     >
                       <div className="flex items-start gap-3">
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/15 text-sm font-bold text-primary">
-                          {h.avatar ? (
-                            <img src={h.avatar} alt={h.name} className="h-full w-full object-cover" />
-                          ) : (
-                            h.initials || h.name.slice(0, 2).toUpperCase()
-                          )}
-                        </div>
+                        <UserAvatar name={h.name} imageUrl={h.avatar} userId={h.id} size={44} className="shrink-0" />
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-bold text-foreground">
                             {h.name}

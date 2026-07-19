@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchUserById, isPlatformAdmin, Loader, useToast } from '@doevents/shared';
+import { fetchUserById, fetchSubscriptionStatus, canAccessAdminPanel, Loader, useToast } from '@doevents/shared';
 
 export function useAdminGuard(userId?: string | null) {
   const navigate = useNavigate();
@@ -16,8 +16,12 @@ export function useAdminGuard(userId?: string | null) {
     let cancelled = false;
     void (async () => {
       try {
-        const profile = await fetchUserById(userId);
-        const admin = isPlatformAdmin(profile?.platformRole);
+        const [profile, subscription] = await Promise.all([
+          fetchUserById(userId).catch(() => null),
+          fetchSubscriptionStatus(userId).catch(() => null),
+        ]);
+        const admin = canAccessAdminPanel(profile?.platformRole)
+          || canAccessAdminPanel(subscription?.platformRole);
         if (!admin) {
           showToast('No tienes permisos de administrador', 'error');
           navigate('/profile', { replace: true });

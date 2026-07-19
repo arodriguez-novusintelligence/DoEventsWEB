@@ -1,6 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
-import { ChevronLeft, Ticket, Copy, CheckCircle2, Circle, ChevronDown, ChevronUp, ShoppingBag, User as UserIcon, CalendarDays, Clock, Plus, X, Share2, Search, Mail, MessageCircle, Bell, Send, Check, History, Ban, AlertTriangle } from 'lucide-react';
-import { supabase } from '@lovable/integrations/supabase/client';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  Ticket, Copy, CheckCircle2, Circle, ChevronDown, ChevronUp,
+  ShoppingBag, User as UserIcon, CalendarDays, Clock, Plus, X, Share2, Search,
+  Mail, MessageCircle, Bell, Send, Check, History, Ban, AlertTriangle, Loader2,
+} from 'lucide-react';
+import StatsSectionBanner from './StatsSectionBanner';
 import { Avatar, AvatarFallback, AvatarImage } from '@lovable/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@lovable/components/ui/dialog';
 import { Input } from '@lovable/components/ui/input';
@@ -10,9 +14,28 @@ import { Textarea } from '@lovable/components/ui/textarea';
 import { toast } from 'sonner';
 import type { EventChatRoom } from '@lovable/data/chatData';
 import type { PromoCodeBatch, PromoCurrency } from '@lovable/data/eventFormData';
-import { getEventPromoCodes, generateUniquePromoCodes, addEventPromoCodeBatch } from '@lovable/data/promoCodesData';
 import type { User } from '@lovable/data/';
-import { useNotifications } from '@lovable/contexts/NotificationsContext';
+import {
+  cancelEventPromoCode,
+  createEventPromoCodeBatch,
+  fetchEventPromoCodes,
+  searchUsers,
+  shareEventPromoCode,
+  emitNotificationsUpdated,
+  getPersistedUserDisplayName,
+  cancelServicePromoCode,
+  createServicePromoCodeBatch,
+  fetchServicePromoCodes,
+  shareServicePromoCode,
+  fetchVenuePromoCodes,
+  shareVenuePromoCode,
+  cancelVenuePromoCode,
+  createVenuePromoCodeBatch,
+  type PromoCodeCancellationRecord,
+  type PromoCodeRedemptionRecord,
+  type PromoCodeShareRecord,
+} from '@doevents/shared';
+import type { ServiceStatsItem } from './StatsServiceListView';
 
 interface SearchableUser {
   id: string;
@@ -23,36 +46,15 @@ interface SearchableUser {
   avatar?: string;
 }
 
-const SEARCHABLE_USERS: SearchableUser[] = [
-  { id: 'su-1', name: 'Ana María Torres', username: 'ana.torres', email: 'ana.torres@mail.com', initials: 'AT' },
-  { id: 'su-2', name: 'Carlos López', username: 'carlos.lopez', email: 'carlos.lopez@mail.com', initials: 'CL' },
-  { id: 'su-3', name: 'Juliana Pérez', username: 'juliana.p', email: 'juliana.perez@mail.com', initials: 'JP' },
-  { id: 'su-4', name: 'Ricardo Mejía', username: 'ricardo.m', email: 'ricardo.mejia@mail.com', initials: 'RM' },
-  { id: 'su-5', name: 'Sofía Restrepo', username: 'sofi.r', email: 'sofia.restrepo@mail.com', initials: 'SR' },
-  { id: 'su-6', name: 'Daniel Gómez', username: 'dani.gomez', email: 'daniel.gomez@mail.com', initials: 'DG' },
-  { id: 'su-7', name: 'Mariana Cárdenas', username: 'mariana.c', email: 'mariana.c@mail.com', initials: 'MC' },
-];
-
 type ShareChannel = 'mail' | 'whatsapp' | 'campana';
 
 interface PromoCodesStatsViewProps {
-  event: EventChatRoom;
+  event?: EventChatRoom;
+  service?: ServiceStatsItem;
+  venue?: { venueId: string; name: string; imageUrl?: string };
+  embedded?: boolean;
   onBack: () => void;
-  onViewProfile?: (user: User | { name: string; initials: string }) => void;
-}
-
-interface Redemption {
-  code: string;
-  orderId: string;
-  redeemedAt: string;
-  user: { id: string; name: string; initials: string; avatar?: string; username: string };
-  ticketType: string;
-  ticketQty: number;
-  subtotal: number;
-  serviceFee: number;
-  discount: number;
-  total: number;
-  currency: string;
+  onViewProfile?: (user: User | { name: string; initials: string; id?: string }) => void;
 }
 
 const formatMoney = (v: number, currency: string) => {
@@ -62,188 +64,171 @@ const formatMoney = (v: number, currency: string) => {
   return `${currency} ${v.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
 };
 
-// Mock fallback: si el registry no tiene códigos para este evento, generamos
-// dos lotes de demostración (VIP y GENERAL) para visualizar el módulo.
-const buildMockBatches = (eventId: string): PromoCodeBatch[] => {
-  const seed = new Set<string>();
-  return [
-    {
-      id: `${eventId}-vip`,
-      currency: 'COP',
-      value: 50000,
-      quantity: 10,
-      description: 'VIP',
-      codes: generateUniquePromoCodes(10, seed),
-    },
-    {
-      id: `${eventId}-gen`,
-      currency: 'COP',
-      value: 20000,
-      quantity: 10,
-      description: 'GENERAL',
-      codes: generateUniquePromoCodes(10, seed),
-    },
-  ];
+const formatShareDate = (iso: string) => {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleString('es-CO', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 };
 
+const formatRedeemedAtDisplay = (iso: string) => {
+  if (!iso) return '— · —';
+  if (iso.includes('·')) return iso;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  const datePart = d
+    .toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' })
+    .toUpperCase();
+  const timePart = d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: false });
+  return `${datePart} · ${timePart}`;
+};
 
-const PromoCodesStatsView = ({ event, onBack, onViewProfile }: PromoCodesStatsViewProps) => {
-  const [localBatches, setLocalBatches] = useState<PromoCodeBatch[]>([]);
+const toInitials = (name: string) =>
+  name.split(' ').filter(Boolean).map((p) => p[0]).slice(0, 2).join('').toUpperCase();
 
-  const batches = useMemo<PromoCodeBatch[]>(() => {
-    const real = getEventPromoCodes(event.id);
-    const base = real.length > 0 ? real : buildMockBatches(event.id);
-    return [...base, ...localBatches.filter((lb) => !base.some((b) => b.id === lb.id))];
-  }, [event.id, localBatches]);
+const resolveEventId = (event: EventChatRoom) => event.eventId || event.id;
 
-  // Form state for new batch
+const PromoCodesStatsView = ({ event, service, venue, embedded = false, onBack, onViewProfile }: PromoCodesStatsViewProps) => {
+  const isVenue = Boolean(venue);
+  const isService = Boolean(service) && !isVenue;
+  const entityId = venue?.venueId ?? service?.serviceId ?? resolveEventId(event!);
+  const entityName = venue?.name ?? service?.name ?? event!.eventName;
+  const entityImage = venue?.imageUrl ?? service?.imageUrl ?? event?.eventImage;
+  const codePrefixHint = isVenue ? 'DOV-XXXXXX' : isService ? 'DOS-XXXXXX' : 'DOE-XXXXXX';
+  const organizerName = getPersistedUserDisplayName() || (isService ? 'Proveedor' : 'Organizador');
+
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [batches, setBatches] = useState<PromoCodeBatch[]>([]);
+  const [shares, setShares] = useState<PromoCodeShareRecord[]>([]);
+  const [cancellations, setCancellations] = useState<PromoCodeCancellationRecord[]>([]);
+  const [redemptions, setRedemptions] = useState<Record<string, PromoCodeRedemptionRecord>>({});
+
   const [createOpen, setCreateOpen] = useState(false);
   const [newDescription, setNewDescription] = useState('');
   const [newValue, setNewValue] = useState('');
   const [newCurrency, setNewCurrency] = useState<PromoCurrency>('COP');
   const [newQuantity, setNewQuantity] = useState('');
+  const [creating, setCreating] = useState(false);
 
-  const resetForm = () => {
-    setNewDescription('');
-    setNewValue('');
-    setNewCurrency('COP');
-    setNewQuantity('');
-  };
-
-  const handleCreateBatch = () => {
-    const value = Number(newValue);
-    const quantity = Number(newQuantity);
-    const description = newDescription.trim();
-    if (!description) return toast.error('Ingresa una etiqueta (ej: VIP, GENERAL)');
-    if (!value || value <= 0) return toast.error('Ingresa un valor válido');
-    if (!quantity || quantity <= 0 || quantity > 500) return toast.error('Cantidad entre 1 y 500');
-
-    const existing = new Set<string>(batches.flatMap((b) => b.codes));
-    const codes = generateUniquePromoCodes(quantity, existing);
-    const batch: PromoCodeBatch = {
-      id: `${event.id}-${Date.now()}`,
-      currency: newCurrency,
-      value,
-      quantity,
-      description: description.toUpperCase(),
-      codes,
-    };
-    addEventPromoCodeBatch(event.id, batch);
-    setLocalBatches((prev) => [...prev, batch]);
-    setOpenBatchId(batch.id);
-    setCreateOpen(false);
-    resetForm();
-    toast.success(`${quantity} códigos generados para ${description.toUpperCase()}`);
-  };
-
-  // Determinar de manera determinista qué códigos están "usados" (mock).
-  // Tomamos ~40% de cada lote como redimidos.
-  const redemptions = useMemo<Record<string, Redemption>>(() => {
-    const map: Record<string, Redemption> = {};
-    batches.forEach((batch, bIdx) => {
-      const usedCount = Math.max(1, Math.floor(batch.codes.length * 0.4));
-      batch.codes.slice(0, usedCount).forEach((code, idx) => {
-        const user = USERS[(bIdx * 3 + idx) % USERS.length];
-        const subtotal = batch.description === 'VIP' ? 180000 : 90000;
-        const serviceFee = Math.round(subtotal * 0.08);
-        const total = Math.max(0, subtotal + serviceFee - batch.value);
-        const day = 10 + idx;
-        map[code] = {
-          code,
-          orderId: `DOE-${batch.description.slice(0, 2).toUpperCase()}${1000 + bIdx * 100 + idx}`,
-          redeemedAt: `${String(day).padStart(2, '0')} MAR 2026 · ${String(9 + (idx % 12)).padStart(2, '0')}:${String((idx * 7) % 60).padStart(2, '0')}`,
-          user,
-          ticketType: batch.description,
-          ticketQty: 1 + (idx % 3),
-          subtotal,
-          serviceFee,
-          discount: batch.value,
-          total,
-          currency: batch.currency,
-        };
-      });
-    });
-    return map;
-  }, [batches]);
-
-  const totalCodes = batches.reduce((sum, b) => sum + b.codes.length, 0);
-  const totalUsed = Object.keys(redemptions).length;
-  const totalDiscount = Object.values(redemptions).reduce((s, r) => s + r.discount, 0);
-
-  const [openBatchId, setOpenBatchId] = useState<string | null>(batches[0]?.id ?? null);
+  const [openBatchId, setOpenBatchId] = useState<string | null>(null);
   const [expandedRedemption, setExpandedRedemption] = useState<string | null>(null);
   const [expandedShares, setExpandedShares] = useState<string | null>(null);
   const [expandedCanceled, setExpandedCanceled] = useState<string | null>(null);
 
-  // Share history loaded from DB
-  interface ShareRecord {
-    id: string;
-    promo_code: string;
-    recipient_id: string;
-    recipient_name: string;
-    recipient_username: string;
-    recipient_email: string | null;
-    channels: string[];
-    message: string | null;
-    organizer_name: string | null;
-    created_at: string;
-  }
-  const [shares, setShares] = useState<ShareRecord[]>([]);
+  const [cancelCode, setCancelCode] = useState<string | null>(null);
+  const [cancelReason, setCancelReason] = useState('');
+  const [canceling, setCanceling] = useState(false);
+
+  const [shareCode, setShareCode] = useState<string | null>(null);
+  const [shareQuery, setShareQuery] = useState('');
+  const [shareUser, setShareUser] = useState<SearchableUser | null>(null);
+  const [shareChannels, setShareChannels] = useState<ShareChannel[]>(['mail', 'whatsapp', 'campana']);
+  const [shareMessage, setShareMessage] = useState('');
+  const [shareSent, setShareSent] = useState(false);
+  const [sharing, setSharing] = useState(false);
+  const [searchResults, setSearchResults] = useState<SearchableUser[]>([]);
+  const [searchingUsers, setSearchingUsers] = useState(false);
+
+  const loadPromoData = useCallback(async () => {
+    if (!entityId) {
+      setLoadError(isVenue ? 'Lugar no válido' : isService ? 'Servicio no válido' : 'Evento no válido');
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    setLoadError(null);
+    try {
+      const data = isVenue
+        ? await fetchVenuePromoCodes(entityId)
+        : isService
+          ? await fetchServicePromoCodes(entityId)
+          : await fetchEventPromoCodes(entityId);
+      setBatches(data.batches);
+      setShares(data.shares);
+      setCancellations(data.cancellations);
+      setRedemptions(data.redemptions);
+      setOpenBatchId((prev) => prev ?? data.batches[0]?.id ?? null);
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : 'No se pudieron cargar los códigos');
+      setBatches([]);
+      setShares([]);
+      setCancellations([]);
+      setRedemptions({});
+    } finally {
+      setLoading(false);
+    }
+  }, [entityId, isService, isVenue]);
 
   useEffect(() => {
-    let mounted = true;
-    (async () => {
-      const { data, error } = await supabase
-        .from('promo_code_shares')
-        .select('id, promo_code, recipient_id, recipient_name, recipient_username, recipient_email, channels, message, organizer_name, created_at')
-        .eq('event_id', event.id)
-        .order('created_at', { ascending: false });
-      if (!mounted) return;
-      if (!error && data) setShares(data as ShareRecord[]);
-    })();
-    return () => { mounted = false; };
-  }, [event.id]);
+    void loadPromoData();
+  }, [loadPromoData]);
 
-  // Mock de códigos COMPARTIDOS: tomamos el siguiente ~30% de cada lote (después de los usados)
+  useEffect(() => {
+    const q = shareQuery.trim().replace(/^@/, '');
+    if (!q || shareUser) {
+      setSearchResults([]);
+      return;
+    }
+    let cancelled = false;
+    const timer = window.setTimeout(async () => {
+      setSearchingUsers(true);
+      try {
+        const users = await searchUsers(q);
+        if (cancelled) return;
+        setSearchResults(
+          users
+            .filter((u) => u.id)
+            .slice(0, 6)
+            .map((u) => ({
+              id: u.id!,
+              name: u.name || u.email || 'Usuario',
+              username: (u.username || u.email?.split('@')[0] || 'usuario').replace(/^@/, ''),
+              email: u.email || '',
+              initials: toInitials(u.name || u.email || 'U'),
+              avatar: u.imagen,
+            })),
+        );
+      } catch {
+        if (!cancelled) setSearchResults([]);
+      } finally {
+        if (!cancelled) setSearchingUsers(false);
+      }
+    }, 300);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [shareQuery, shareUser]);
 
   const sharesByCode = useMemo(() => {
-    const map: Record<string, ShareRecord[]> = {};
-    [...shares, ...mockShares].forEach((s) => {
+    const map: Record<string, PromoCodeShareRecord[]> = {};
+    shares.forEach((s) => {
       (map[s.promo_code] ||= []).push(s);
     });
     return map;
-  }, [shares, mockShares]);
-
-  // Cancellations loaded from DB
-  interface CancellationRecord {
-    id: string;
-    promo_code: string;
-    reason: string | null;
-    created_at: string;
-  }
-  const [cancellations, setCancellations] = useState<CancellationRecord[]>([]);
-
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
-      const { data, error } = await supabase
-        .from('promo_code_cancellations')
-        .select('id, promo_code, reason, created_at')
-        .eq('event_id', event.id)
-        .order('created_at', { ascending: false });
-      if (!mounted) return;
-      if (!error && data) setCancellations(data as CancellationRecord[]);
-    })();
-    return () => { mounted = false; };
-  }, [event.id]);
-
-  // Mock cancellations: 1 código cancelado por lote, evitando códigos ya usados/compartidos
+  }, [shares]);
 
   const cancellationByCode = useMemo(() => {
-    const map: Record<string, CancellationRecord> = {};
-    [...cancellations, ...mockCancellations].forEach((c) => { map[c.promo_code] = c; });
+    const map: Record<string, PromoCodeCancellationRecord> = {};
+    cancellations.forEach((c) => { map[c.promo_code] = c; });
     return map;
-  }, [cancellations, mockCancellations]);
+  }, [cancellations]);
+
+  const cancelBatch = useMemo(
+    () => batches.find((b) => b.codes.includes(cancelCode ?? '')) ?? null,
+    [batches, cancelCode],
+  );
+
+  const shareBatch = useMemo(
+    () => batches.find((b) => b.codes.includes(shareCode ?? '')) ?? null,
+    [batches, shareCode],
+  );
 
   type CodeStatus = 'USADO' | 'CANCELADO' | 'COMPARTIDO' | 'DISPONIBLE';
   const getStatus = (code: string): CodeStatus => {
@@ -253,6 +238,13 @@ const PromoCodesStatsView = ({ event, onBack, onViewProfile }: PromoCodesStatsVi
     return 'DISPONIBLE';
   };
 
+  const totalCodes = batches.reduce((sum, b) => sum + b.codes.length, 0);
+  const totalUsed = Object.keys(redemptions).length;
+  const totalAvailable = batches
+    .flatMap((batch) => batch.codes)
+    .filter((code) => getStatus(code) === 'DISPONIBLE').length;
+  const totalDiscount = Object.values(redemptions).reduce((s, r) => s + r.discount, 0);
+
   const statusStyle: Record<CodeStatus, { badge: string; row: string; icon: string }> = {
     USADO: { badge: 'bg-emerald-100 text-emerald-700', row: 'border-emerald-200 bg-emerald-50/40', icon: 'text-emerald-600' },
     COMPARTIDO: { badge: 'bg-indigo-100 text-indigo-700', row: 'border-indigo-200 bg-indigo-50/40', icon: 'text-indigo-600' },
@@ -260,94 +252,67 @@ const PromoCodesStatsView = ({ event, onBack, onViewProfile }: PromoCodesStatsVi
     DISPONIBLE: { badge: 'bg-muted text-muted-foreground', row: 'border-border bg-background', icon: 'text-muted-foreground' },
   };
 
-  const formatShareDate = (iso: string) => {
-    const d = new Date(iso);
-    return d.toLocaleString('es-CO', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-  };
-
   const channelLabel = (c: string) => (c === 'mail' ? 'Mail' : c === 'whatsapp' ? 'WhatsApp' : c === 'campana' ? 'Campana' : c);
   const channelIcon = (c: string) => (c === 'mail' ? Mail : c === 'whatsapp' ? MessageCircle : Bell);
 
-  // Cancel dialog state
-  const [cancelCode, setCancelCode] = useState<string | null>(null);
-  const [cancelReason, setCancelReason] = useState('');
-  const cancelBatch = useMemo(
-    () => batches.find((b) => b.codes.includes(cancelCode ?? '')) ?? null,
-    [batches, cancelCode]
-  );
-
-  const { addNotification } = useNotifications();
-
-  const handleConfirmCancel = async () => {
-    if (!cancelCode) return;
-    const batchId = batches.find((b) => b.codes.includes(cancelCode))?.id ?? null;
-    const { data, error } = await supabase
-      .from('promo_code_cancellations')
-      .insert({
-        event_id: event.id,
-        batch_id: batchId,
-        promo_code: cancelCode,
-        reason: cancelReason.trim() || null,
-      })
-      .select('id, promo_code, reason, created_at')
-      .single();
-    if (error) { toast.error('No se pudo cancelar el código'); return; }
-    setCancellations((prev) => [data as CancellationRecord, ...prev]);
-
-    // Si el código estaba COMPARTIDO, notificar a cada destinatario (campana + simulación mail)
-    const recipients = sharesByCode[cancelCode] ?? [];
-    if (recipients.length > 0) {
-      const valueLabel = cancelBatch ? `${formatMoney(cancelBatch.value, cancelBatch.currency)} ${cancelBatch.description}` : '';
-      recipients.forEach((r) => {
-        const initials = r.recipient_name.split(' ').map((p) => p[0]).slice(0, 2).join('').toUpperCase();
-        addNotification({
-          type: 'promo_code_canceled',
-          fromUser: { id: r.recipient_id, name: r.recipient_name, initials },
-          eventName: event.eventName,
-          message: `Tu código promocional ${cancelCode}${valueLabel ? ` (${valueLabel})` : ''} fue cancelado por el organizador y ya no podrá ser redimido`,
-        });
-      });
-      toast.success(`Código ${cancelCode} cancelado · Notificación enviada a ${recipients.length} destinatario${recipients.length > 1 ? 's' : ''} (mail + campana)`);
-    } else {
-      toast.success(`Código ${cancelCode} cancelado`);
-    }
-    setCancelCode(null);
-    setCancelReason('');
+  const resetForm = () => {
+    setNewDescription('');
+    setNewValue('');
+    setNewCurrency('COP');
+    setNewQuantity('');
   };
 
+  const handleCreateBatch = async () => {
+    const value = Number(newValue);
+    const quantity = Number(newQuantity);
+    const description = newDescription.trim();
+    if (!description) return toast.error('Ingresa una etiqueta (ej: VIP, GENERAL)');
+    if (!value || value <= 0) return toast.error('Ingresa un valor válido');
+    if (!quantity || quantity <= 0 || quantity > 500) return toast.error('Cantidad entre 1 y 500');
 
-  // Share dialog state
-  const ORGANIZER_NAME = 'Andrés López';
-  const [shareCode, setShareCode] = useState<string | null>(null);
-  const [shareQuery, setShareQuery] = useState('');
-  const [shareUser, setShareUser] = useState<SearchableUser | null>(null);
-  const [shareChannels, setShareChannels] = useState<ShareChannel[]>(['campana']);
-  const [shareMessage, setShareMessage] = useState('');
-  const [shareSent, setShareSent] = useState(false);
-
-  const shareBatch = useMemo(
-    () => batches.find((b) => b.codes.includes(shareCode ?? '')) ?? null,
-    [batches, shareCode]
-  );
-
-  const filteredUsers = useMemo(() => {
-    const q = shareQuery.trim().toLowerCase().replace(/^@/, '');
-    if (!q) return SEARCHABLE_USERS.slice(0, 5);
-    return SEARCHABLE_USERS.filter(
-      (u) =>
-        u.username.toLowerCase().includes(q) ||
-        u.email.toLowerCase().includes(q) ||
-        u.name.toLowerCase().includes(q)
-    ).slice(0, 6);
-  }, [shareQuery]);
+    setCreating(true);
+    try {
+      const batch = isVenue
+        ? await createVenuePromoCodeBatch(entityId, {
+            description: description.toUpperCase(),
+            value,
+            quantity,
+            currency: newCurrency,
+          })
+        : isService
+        ? await createServicePromoCodeBatch(entityId, {
+            description: description.toUpperCase(),
+            value,
+            quantity,
+            currency: newCurrency,
+          })
+        : await createEventPromoCodeBatch(entityId, {
+            description: description.toUpperCase(),
+            value,
+            quantity,
+            currency: newCurrency,
+          });
+      setBatches((prev) => [...prev, batch]);
+      setOpenBatchId(batch.id);
+      setCreateOpen(false);
+      resetForm();
+      toast.success(`${quantity} códigos generados para ${description.toUpperCase()}`);
+      void loadPromoData();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'No se pudo crear el lote');
+    } finally {
+      setCreating(false);
+    }
+  };
 
   const openShare = (code: string) => {
     setShareCode(code);
     setShareUser(null);
     setShareQuery('');
-    setShareChannels(['campana']);
+    setShareChannels(['mail', 'whatsapp', 'campana']);
     setShareMessage('');
     setShareSent(false);
+    setSearchResults([]);
   };
 
   const toggleChannel = (c: ShareChannel) => {
@@ -359,39 +324,68 @@ const PromoCodesStatsView = ({ event, onBack, onViewProfile }: PromoCodesStatsVi
     if (shareChannels.length === 0) return toast.error('Selecciona al menos un canal');
     if (!shareCode) return;
 
-    const defaultMessage = `Hola, el organizador ${ORGANIZER_NAME} te ha compartido un código promocional para el evento ${event.eventName}. Ingresa, adquiere tus entradas y redime tu bono promocional.`;
+    const defaultMessage = isVenue
+      ? `Hola, ${organizerName} te ha compartido un código promocional para el lugar ${entityName}. Ingresa, reserva y redime tu bono promocional.`
+      : isService
+      ? `Hola, ${organizerName} te ha compartido un código promocional para el servicio ${entityName}. Ingresa, reserva y redime tu bono promocional.`
+      : `Hola, el organizador ${organizerName} te ha compartido un código promocional para el evento ${entityName}. Ingresa, adquiere tus entradas y redime tu bono promocional.`;
     const finalMessage = shareMessage.trim() || defaultMessage;
 
-    const batchId = batches.find((b) => b.codes.includes(shareCode))?.id ?? null;
-
-    const { data, error } = await supabase
-      .from('promo_code_shares')
-      .insert({
-        event_id: event.id,
-        batch_id: batchId,
+    setSharing(true);
+    try {
+      const sharePayload = {
         promo_code: shareCode,
         recipient_id: shareUser.id,
         recipient_name: shareUser.name,
         recipient_username: shareUser.username,
         recipient_email: shareUser.email,
-        recipient_avatar: shareUser.avatar ?? null,
         channels: shareChannels,
         message: finalMessage,
-        organizer_name: ORGANIZER_NAME,
-      })
-      .select('id, promo_code, recipient_id, recipient_name, recipient_username, recipient_email, channels, message, organizer_name, created_at')
-      .single();
-
-    if (error) {
-      toast.error('No se pudo registrar el envío');
-      return;
+        organizer_name: organizerName,
+      };
+      const share = isVenue
+        ? await shareVenuePromoCode(entityId, sharePayload)
+        : isService
+        ? await shareServicePromoCode(entityId, sharePayload)
+        : await shareEventPromoCode(entityId, sharePayload);
+      setShares((prev) => [share, ...prev]);
+      setShareSent(true);
+      if (shareChannels.includes('campana')) emitNotificationsUpdated();
+      const labels = shareChannels.map(channelLabel).join(', ');
+      toast.success(`Código enviado a @${shareUser.username} vía ${labels}`);
+      setTimeout(() => setShareCode(null), 1500);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'No se pudo registrar el envío');
+    } finally {
+      setSharing(false);
     }
+  };
 
-    setShares((prev) => [data as ShareRecord, ...prev]);
-    setShareSent(true);
-    const labels = shareChannels.map(channelLabel).join(', ');
-    toast.success(`Código enviado a @${shareUser.username} vía ${labels}`);
-    setTimeout(() => setShareCode(null), 1500);
+  const handleConfirmCancel = async () => {
+    if (!cancelCode) return;
+    setCanceling(true);
+    try {
+      const cancellation = isVenue
+        ? await cancelVenuePromoCode(entityId, cancelCode, cancelReason.trim() || null)
+        : isService
+        ? await cancelServicePromoCode(entityId, cancelCode, cancelReason.trim() || null)
+        : await cancelEventPromoCode(entityId, cancelCode, cancelReason.trim() || null);
+      setCancellations((prev) => [cancellation, ...prev]);
+      const recipients = sharesByCode[cancelCode] ?? [];
+      if (recipients.length > 0) {
+        emitNotificationsUpdated();
+        toast.success(`Código ${cancelCode} cancelado · Notificación enviada a ${recipients.length} destinatario${recipients.length > 1 ? 's' : ''} (mail + campana)`);
+      } else {
+        toast.success(`Código ${cancelCode} cancelado`);
+      }
+      setCancelCode(null);
+      setCancelReason('');
+      void loadPromoData();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'No se pudo cancelar el código');
+    } finally {
+      setCanceling(false);
+    }
   };
 
   const copy = (text: string, label: string) => {
@@ -399,45 +393,100 @@ const PromoCodesStatsView = ({ event, onBack, onViewProfile }: PromoCodesStatsVi
     toast.success(`${label} copiado`);
   };
 
-  return (
-    <div className="min-h-screen bg-slate-50 pb-12">
-      <div className="bg-gradient-to-br from-primary via-primary to-accent px-4 pt-16 pb-8 rounded-b-3xl">
-        <div className="mx-auto max-w-lg">
-          <button onClick={onBack} className="flex items-center gap-1 text-sm font-medium text-primary-foreground hover:bg-primary-foreground/10 rounded-lg px-2 py-1 -ml-2 transition mb-3">
-            <ChevronLeft className="h-4 w-4" /> Atrás
-          </button>
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-foreground/15 backdrop-blur">
-              <Ticket className="h-6 w-6 text-primary-foreground" />
-            </div>
-            <div className="min-w-0">
-              <h1 className="text-xl font-extrabold text-primary-foreground leading-tight">Códigos promocionales</h1>
-              <p className="text-xs text-primary-foreground/80 truncate">{event.eventName}</p>
-            </div>
-          </div>
+  if (loading) {
+    if (embedded) {
+      return (
+        <div className="flex items-center justify-center gap-2 rounded-2xl border border-border bg-card p-6">
+          <Loader2 className="h-5 w-5 animate-spin text-primary" />
+          <p className="text-sm text-muted-foreground">Cargando códigos promocionales…</p>
+        </div>
+      );
+    }
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center gap-3 pb-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="text-sm text-muted-foreground">Cargando códigos promocionales…</p>
+      </div>
+    );
+  }
 
-          <div className="mt-5 grid grid-cols-3 gap-2">
-            <div className="rounded-xl bg-primary-foreground/15 backdrop-blur p-3 text-center">
-              <div className="text-lg font-extrabold text-primary-foreground">{totalCodes}</div>
-              <div className="text-[10px] uppercase tracking-wide text-primary-foreground/80">Generados</div>
-            </div>
-            <div className="rounded-xl bg-primary-foreground/15 backdrop-blur p-3 text-center">
-              <div className="text-lg font-extrabold text-primary-foreground">{totalUsed}</div>
-              <div className="text-[10px] uppercase tracking-wide text-primary-foreground/80">Redimidos</div>
-            </div>
-            <div className="rounded-xl bg-primary-foreground/15 backdrop-blur p-3 text-center">
-              <div className="text-lg font-extrabold text-primary-foreground">{totalCodes - totalUsed}</div>
-              <div className="text-[10px] uppercase tracking-wide text-primary-foreground/80">Disponibles</div>
-            </div>
-          </div>
-
-          <div className="mt-3 rounded-xl bg-primary-foreground/10 backdrop-blur px-3 py-2 text-[11px] text-primary-foreground/90 text-center">
-            Descuento aplicado: <span className="font-bold">{formatMoney(totalDiscount, batches[0]?.currency ?? 'COP')}</span>
-          </div>
+  if (loadError) {
+    if (embedded) {
+      return (
+        <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-4 text-center">
+          <AlertTriangle className="h-6 w-6 text-destructive mx-auto mb-2" />
+          <p className="text-sm font-semibold text-destructive">{loadError}</p>
+          <Button className="mt-3" size="sm" onClick={() => void loadPromoData()}>Reintentar</Button>
+        </div>
+      );
+    }
+    return (
+      <div className="min-h-screen bg-slate-50 pb-12">
+        <StatsSectionBanner
+          title="Códigos promocionales"
+          subtitle={entityName}
+          icon={Ticket}
+          onBack={onBack}
+        />
+        <div className="mx-auto max-w-lg px-4 pt-8 text-center">
+          <AlertTriangle className="h-10 w-10 text-destructive mx-auto mb-3" />
+          <p className="text-sm font-semibold text-destructive">{loadError}</p>
+          <Button className="mt-4" onClick={() => void loadPromoData()}>Reintentar</Button>
         </div>
       </div>
+    );
+  }
 
-      <div className="mx-auto max-w-lg px-4 pt-5 space-y-4">
+  return (
+    <div className={embedded ? 'space-y-4' : 'min-h-screen bg-slate-50 pb-12'}>
+      {embedded ? (
+        <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
+              <Ticket className="h-5 w-5" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <h3 className="text-sm font-bold text-foreground">Códigos promocionales</h3>
+              <p className="text-xs text-muted-foreground truncate">{entityName}</p>
+            </div>
+          </div>
+          <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+            <div className="rounded-xl bg-card px-2 py-2">
+              <div className="text-lg font-bold text-foreground">{totalCodes}</div>
+              <div className="text-[10px] text-muted-foreground">Generados</div>
+            </div>
+            <div className="rounded-xl bg-card px-2 py-2">
+              <div className="text-lg font-bold text-foreground">{totalUsed}</div>
+              <div className="text-[10px] text-muted-foreground">Redimidos</div>
+            </div>
+            <div className="rounded-xl bg-card px-2 py-2">
+              <div className="text-lg font-bold text-foreground">{totalAvailable}</div>
+              <div className="text-[10px] text-muted-foreground">Disponibles</div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <StatsSectionBanner
+          title="Códigos promocionales"
+          subtitle={entityName}
+          icon={Ticket}
+          onBack={onBack}
+          stats={[
+            { value: totalCodes, label: 'Generados' },
+            { value: totalUsed, label: 'Redimidos' },
+            { value: totalAvailable, label: 'Disponibles' },
+          ]}
+          summary={
+            <>
+              Descuento aplicado:{' '}
+              <span className="font-bold">{formatMoney(totalDiscount, batches[0]?.currency ?? 'COP')}</span>
+            </>
+          }
+        />
+      )}
+
+      <div className={embedded ? 'space-y-4' : 'mx-auto max-w-lg space-y-4 px-4 pt-5'}>
+        {!embedded && (
         <button
           onClick={() => setCreateOpen(true)}
           className="w-full flex items-center justify-center gap-2 rounded-2xl bg-primary text-primary-foreground font-semibold py-3 shadow-sm hover:bg-primary/90 transition"
@@ -445,6 +494,15 @@ const PromoCodesStatsView = ({ event, onBack, onViewProfile }: PromoCodesStatsVi
           <Plus className="h-5 w-5" />
           Crear códigos promocionales
         </button>
+        )}
+
+        {batches.length === 0 && (
+          <div className="rounded-2xl border border-dashed border-primary/25 bg-card p-8 text-center">
+            <Ticket className="h-8 w-8 text-primary mx-auto mb-2" />
+            <p className="text-sm font-semibold text-foreground">Sin códigos promocionales</p>
+            <p className="mt-1 text-xs text-muted-foreground">Crea un lote para generar códigos {codePrefixHint}.</p>
+          </div>
+        )}
 
         {batches.map((batch) => {
           const isOpen = openBatchId === batch.id;
@@ -484,11 +542,9 @@ const PromoCodesStatsView = ({ event, onBack, onViewProfile }: PromoCodesStatsVi
                     const canCancel = status === 'DISPONIBLE' || status === 'COMPARTIDO';
                     const canceled = status === 'CANCELADO';
                     const cancellation = cancellationByCode[code];
+                    const redeemedAtDisplay = r ? formatRedeemedAtDisplay(r.redeemedAt) : '';
                     return (
-                      <div
-                        key={code}
-                        className={`rounded-xl border ${style.row} overflow-hidden`}
-                      >
+                      <div key={code} className={`rounded-xl border ${style.row} overflow-hidden`}>
                         <div className="flex items-center gap-2 p-3">
                           {status === 'USADO' ? (
                             <CheckCircle2 className={`h-4 w-4 ${style.icon} shrink-0`} />
@@ -574,18 +630,17 @@ const PromoCodesStatsView = ({ event, onBack, onViewProfile }: PromoCodesStatsVi
                           </div>
                         )}
 
-
                         {sharesOpen && codeShares.length > 0 && (
                           <div className="border-t border-indigo-100 bg-indigo-50/30 p-3 space-y-2">
                             <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-indigo-700">
                               <History className="h-3 w-3" /> Historial de envíos ({codeShares.length})
                             </div>
                             {codeShares.map((s) => {
-                              const recipientInitials = s.recipient_name.split(' ').map((p) => p[0]).slice(0, 2).join('');
+                              const recipientInitials = toInitials(s.recipient_name);
                               return (
                                 <div key={s.id} className="rounded-lg bg-card border border-indigo-100 p-2.5 space-y-1.5">
                                   <button
-                                    onClick={() => onViewProfile?.({ name: s.recipient_name, initials: recipientInitials })}
+                                    onClick={() => onViewProfile?.({ id: s.recipient_id, name: s.recipient_name, initials: recipientInitials })}
                                     className="w-full flex items-center gap-2 text-left"
                                   >
                                     <Avatar className="h-7 w-7">
@@ -624,7 +679,6 @@ const PromoCodesStatsView = ({ event, onBack, onViewProfile }: PromoCodesStatsVi
 
                         {used && expanded && r && (
                           <div className="border-t border-emerald-200/60 bg-card p-3 space-y-3">
-                            {/* Orden de compra */}
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
                                 <ShoppingBag className="h-3.5 w-3.5" />
@@ -642,15 +696,14 @@ const PromoCodesStatsView = ({ event, onBack, onViewProfile }: PromoCodesStatsVi
                             <div className="grid grid-cols-2 gap-2 text-[11px]">
                               <div className="flex items-center gap-1.5 text-muted-foreground">
                                 <CalendarDays className="h-3 w-3" />
-                                <span>{r.redeemedAt.split(' · ')[0]}</span>
+                                <span>{redeemedAtDisplay.split(' · ')[0]}</span>
                               </div>
                               <div className="flex items-center gap-1.5 text-muted-foreground">
                                 <Clock className="h-3 w-3" />
-                                <span>{r.redeemedAt.split(' · ')[1]}</span>
+                                <span>{redeemedAtDisplay.split(' · ')[1]}</span>
                               </div>
                             </div>
 
-                            {/* Detalle de la compra */}
                             <div className="rounded-lg bg-muted/40 p-3 space-y-1.5 text-[12px]">
                               <div className="flex justify-between">
                                 <span className="text-muted-foreground">{r.ticketType} × {r.ticketQty}</span>
@@ -670,9 +723,8 @@ const PromoCodesStatsView = ({ event, onBack, onViewProfile }: PromoCodesStatsVi
                               </div>
                             </div>
 
-                            {/* Usuario que redimió */}
                             <button
-                              onClick={() => onViewProfile?.({ name: r.user.name, initials: r.user.initials })}
+                              onClick={() => onViewProfile?.({ id: r.user.id, name: r.user.name, initials: r.user.initials })}
                               className="w-full flex items-center gap-3 rounded-lg border border-primary/20 bg-primary/5 p-2.5 text-left hover:bg-primary/10 transition"
                             >
                               <Avatar className="h-9 w-9">
@@ -710,42 +762,25 @@ const PromoCodesStatsView = ({ event, onBack, onViewProfile }: PromoCodesStatsVi
               Crear códigos promocionales
             </DialogTitle>
             <DialogDescription>
-              Se asociarán automáticamente al evento <span className="font-semibold text-foreground">{event.eventName}</span>.
+              Se asociarán automáticamente {isService ? 'al servicio' : 'al evento'}{' '}
+              <span className="font-semibold text-foreground">{entityName}</span>.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 pt-2">
             <div className="space-y-1.5">
               <Label htmlFor="promo-desc">Etiqueta del lote</Label>
-              <Input
-                id="promo-desc"
-                placeholder="Ej: VIP, GENERAL, EARLY"
-                value={newDescription}
-                onChange={(e) => setNewDescription(e.target.value)}
-                maxLength={20}
-              />
+              <Input id="promo-desc" placeholder="Ej: VIP, GENERAL, EARLY" value={newDescription} onChange={(e) => setNewDescription(e.target.value)} maxLength={20} />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label htmlFor="promo-value">Valor del descuento</Label>
-                <Input
-                  id="promo-value"
-                  type="number"
-                  inputMode="numeric"
-                  placeholder="50000"
-                  value={newValue}
-                  onChange={(e) => setNewValue(e.target.value)}
-                />
+                <Input id="promo-value" type="number" inputMode="numeric" placeholder="50000" value={newValue} onChange={(e) => setNewValue(e.target.value)} />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="promo-currency">Moneda</Label>
-                <select
-                  id="promo-currency"
-                  value={newCurrency}
-                  onChange={(e) => setNewCurrency(e.target.value as PromoCurrency)}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                >
+                <select id="promo-currency" value={newCurrency} onChange={(e) => setNewCurrency(e.target.value as PromoCurrency)} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
                   <option value="COP">COP</option>
                   <option value="USD">USD</option>
                   <option value="EUR">EUR</option>
@@ -757,17 +792,8 @@ const PromoCodesStatsView = ({ event, onBack, onViewProfile }: PromoCodesStatsVi
 
             <div className="space-y-1.5">
               <Label htmlFor="promo-qty">Cantidad de códigos a generar</Label>
-              <Input
-                id="promo-qty"
-                type="number"
-                inputMode="numeric"
-                placeholder="10"
-                value={newQuantity}
-                onChange={(e) => setNewQuantity(e.target.value)}
-                min={1}
-                max={500}
-              />
-              <p className="text-[11px] text-muted-foreground">Máximo 500 códigos por lote. Formato: DOE-XXXXXX.</p>
+              <Input id="promo-qty" type="number" inputMode="numeric" placeholder="10" value={newQuantity} onChange={(e) => setNewQuantity(e.target.value)} min={1} max={500} />
+              <p className="text-[11px] text-muted-foreground">Máximo 500 códigos por lote. Formato: {codePrefixHint}.</p>
             </div>
 
             {newValue && newQuantity && Number(newValue) > 0 && Number(newQuantity) > 0 && (
@@ -791,15 +817,15 @@ const PromoCodesStatsView = ({ event, onBack, onViewProfile }: PromoCodesStatsVi
               <Button variant="outline" className="flex-1" onClick={() => { setCreateOpen(false); resetForm(); }}>
                 <X className="h-4 w-4 mr-1" /> Cancelar
               </Button>
-              <Button className="flex-1" onClick={handleCreateBatch}>
-                <Plus className="h-4 w-4 mr-1" /> Generar códigos
+              <Button className="flex-1" onClick={() => void handleCreateBatch()} disabled={creating}>
+                {creating ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Plus className="h-4 w-4 mr-1" />}
+                Generar códigos
               </Button>
             </div>
           </div>
         </DialogContent>
       </Dialog>
 
-      {/* Share Promo Code Dialog */}
       <Dialog open={!!shareCode} onOpenChange={(o) => { if (!o) setShareCode(null); }}>
         <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -825,19 +851,19 @@ const PromoCodesStatsView = ({ event, onBack, onViewProfile }: PromoCodesStatsVi
             </div>
           ) : (
             <div className="space-y-4 pt-2">
-              {/* Event card */}
               <div className="rounded-2xl border border-primary/30 bg-primary/5 p-3 flex items-center gap-3">
-                {event.eventImage && (
-                  <img src={event.eventImage} alt="" className="h-14 w-14 rounded-xl object-cover" />
+                {entityImage && (
+                  <img src={entityImage} alt="" className="h-14 w-14 rounded-xl object-cover" />
                 )}
                 <div className="min-w-0 flex-1">
-                  <div className="text-[10px] font-bold uppercase tracking-wide text-primary">Evento</div>
-                  <div className="font-bold text-foreground truncate">{event.eventName}</div>
-                  <div className="text-xs text-muted-foreground">{event.eventDate}{event.eventTime ? ` · ${event.eventTime}` : ''}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-wide text-primary">{isService ? 'Servicio' : 'Evento'}</div>
+                  <div className="font-bold text-foreground truncate">{entityName}</div>
+                  {!isService && event && (
+                    <div className="text-xs text-muted-foreground">{event.eventDate}{event.eventTime ? ` · ${event.eventTime}` : ''}</div>
+                  )}
                 </div>
               </div>
 
-              {/* User search */}
               <div className="space-y-2">
                 <Label>Buscar usuario en DoEvents</Label>
                 <div className="relative">
@@ -852,21 +878,30 @@ const PromoCodesStatsView = ({ event, onBack, onViewProfile }: PromoCodesStatsVi
 
                 {!shareUser && (
                   <div className="rounded-xl border border-border divide-y divide-border max-h-56 overflow-y-auto">
-                    {filteredUsers.length === 0 && (
+                    {searchingUsers && (
+                      <div className="p-3 text-center text-xs text-muted-foreground flex items-center justify-center gap-2">
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" /> Buscando…
+                      </div>
+                    )}
+                    {!searchingUsers && searchResults.length === 0 && shareQuery.trim() && (
                       <div className="p-3 text-center text-xs text-muted-foreground">Sin resultados</div>
                     )}
-                    {filteredUsers.map((u) => (
+                    {!searchingUsers && !shareQuery.trim() && (
+                      <div className="p-3 text-center text-xs text-muted-foreground">Escribe @usuario o correo</div>
+                    )}
+                    {searchResults.map((u) => (
                       <button
                         key={u.id}
                         onClick={() => { setShareUser(u); setShareQuery(`@${u.username}`); }}
                         className="w-full flex items-center gap-3 p-2.5 text-left hover:bg-muted/50 transition"
                       >
                         <Avatar className="h-9 w-9">
+                          {u.avatar && <AvatarImage src={u.avatar} />}
                           <AvatarFallback className="bg-primary text-primary-foreground text-xs font-bold">{u.initials}</AvatarFallback>
                         </Avatar>
                         <div className="min-w-0 flex-1">
                           <div className="text-sm font-semibold text-foreground truncate">{u.name}</div>
-                          <div className="text-[11px] text-muted-foreground truncate">@{u.username} · {u.email}</div>
+                          <div className="text-[11px] text-muted-foreground truncate">@{u.username}{u.email ? ` · ${u.email}` : ''}</div>
                         </div>
                       </button>
                     ))}
@@ -876,26 +911,25 @@ const PromoCodesStatsView = ({ event, onBack, onViewProfile }: PromoCodesStatsVi
                 {shareUser && (
                   <div className="flex items-center gap-3 rounded-xl border border-primary/30 bg-primary/5 p-2.5">
                     <Avatar className="h-9 w-9">
+                      {shareUser.avatar && <AvatarImage src={shareUser.avatar} />}
                       <AvatarFallback className="bg-primary text-primary-foreground text-xs font-bold">{shareUser.initials}</AvatarFallback>
                     </Avatar>
                     <div className="min-w-0 flex-1">
                       <div className="text-sm font-bold text-foreground truncate">{shareUser.name}</div>
-                      <div className="text-[11px] text-muted-foreground truncate">@{shareUser.username} · {shareUser.email}</div>
+                      <div className="text-[11px] text-muted-foreground truncate">@{shareUser.username}{shareUser.email ? ` · ${shareUser.email}` : ''}</div>
                     </div>
-                    <button
-                      onClick={() => { setShareUser(null); setShareQuery(''); }}
-                      className="text-xs text-primary font-semibold"
-                    >
+                    <button onClick={() => { setShareUser(null); setShareQuery(''); }} className="text-xs text-primary font-semibold">
                       Cambiar
                     </button>
                   </div>
                 )}
               </div>
 
-              {/* Channels */}
               <div className="space-y-2">
                 <Label>Canales de envío</Label>
-                <p className="text-xs text-muted-foreground -mt-1">Selecciona uno o más medios.</p>
+                <p className="text-xs text-muted-foreground -mt-1">
+                  Por defecto se envía por Mail, WhatsApp y Campana. Desmarca solo si no quieres algún canal.
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {([
                     { id: 'mail' as ShareChannel, label: 'Mail', icon: Mail },
@@ -908,9 +942,7 @@ const PromoCodesStatsView = ({ event, onBack, onViewProfile }: PromoCodesStatsVi
                         key={id}
                         onClick={() => toggleChannel(id)}
                         className={`flex items-center gap-2 rounded-full border px-3 py-2 text-sm font-medium transition ${
-                          active
-                            ? 'bg-primary text-primary-foreground border-primary'
-                            : 'bg-background text-foreground border-border hover:bg-muted'
+                          active ? 'bg-primary text-primary-foreground border-primary' : 'bg-background text-foreground border-border hover:bg-muted'
                         }`}
                       >
                         <span className={`flex h-6 w-6 items-center justify-center rounded-full ${active ? 'bg-primary-foreground/20' : 'bg-primary/10'}`}>
@@ -924,21 +956,25 @@ const PromoCodesStatsView = ({ event, onBack, onViewProfile }: PromoCodesStatsVi
                 </div>
               </div>
 
-              {/* Message preview */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label>Mensaje</Label>
                   <span className="text-[11px] text-muted-foreground">{shareMessage.length}/200</span>
                 </div>
                 <Textarea
-                  placeholder={`Hola, el organizador ${ORGANIZER_NAME} te ha compartido un código promocional para el evento ${event.eventName}. Ingresa, adquiere tus entradas y redime tu bono promocional.`}
+                  placeholder={isService
+                    ? `Hola, ${organizerName} te ha compartido un código promocional para el servicio ${entityName}. Ingresa, reserva y redime tu bono promocional.`
+                    : `Hola, el organizador ${organizerName} te ha compartido un código promocional para el evento ${entityName}. Ingresa, adquiere tus entradas y redime tu bono promocional.`}
                   value={shareMessage}
                   onChange={(e) => setShareMessage(e.target.value.slice(0, 200))}
                   rows={4}
                 />
                 <div className="rounded-lg bg-muted/40 p-3 text-[12px] text-muted-foreground">
                   <div className="font-semibold text-foreground mb-1">Vista previa</div>
-                  Hola, el organizador <span className="font-semibold text-foreground">{ORGANIZER_NAME}</span> te ha compartido un código promocional para el evento <span className="font-semibold text-foreground">{event.eventName}</span>. Ingresa, adquiere tus entradas y redime tu bono promocional.
+                  Hola, {isService ? '' : 'el organizador '}
+                  <span className="font-semibold text-foreground">{organizerName}</span> te ha compartido un código promocional para {isService ? 'el servicio' : 'el evento'}{' '}
+                  <span className="font-semibold text-foreground">{entityName}</span>.
+                  {isService ? ' Ingresa, reserva y redime tu bono promocional.' : ' Ingresa, adquiere tus entradas y redime tu bono promocional.'}
                   <div className="mt-2 rounded-md bg-background border border-border px-2 py-1 font-mono text-foreground inline-block">{shareCode}</div>
                 </div>
               </div>
@@ -947,8 +983,9 @@ const PromoCodesStatsView = ({ event, onBack, onViewProfile }: PromoCodesStatsVi
                 <Button variant="outline" className="flex-1" onClick={() => setShareCode(null)}>
                   <X className="h-4 w-4 mr-1" /> Cancelar
                 </Button>
-                <Button className="flex-1" onClick={handleSendShare} disabled={!shareUser || shareChannels.length === 0}>
-                  <Send className="h-4 w-4 mr-1" /> Enviar
+                <Button className="flex-1" onClick={() => void handleSendShare()} disabled={!shareUser || shareChannels.length === 0 || sharing}>
+                  {sharing ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Send className="h-4 w-4 mr-1" />}
+                  Enviar
                 </Button>
               </div>
             </div>
@@ -956,7 +993,6 @@ const PromoCodesStatsView = ({ event, onBack, onViewProfile }: PromoCodesStatsVi
         </DialogContent>
       </Dialog>
 
-      {/* Cancel Promo Code Dialog */}
       <Dialog open={!!cancelCode} onOpenChange={(o) => { if (!o) { setCancelCode(null); setCancelReason(''); } }}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -974,30 +1010,22 @@ const PromoCodesStatsView = ({ event, onBack, onViewProfile }: PromoCodesStatsVi
             <div className="rounded-xl border border-rose-200 bg-rose-50/60 p-3 text-[12px] text-rose-700 flex items-start gap-2">
               <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" />
               <div>
-                Una vez cancelado el código <span className="font-bold">no podrá ser redimido</span> ni compartido nuevamente. Esta acción queda registrada en el historial del evento.
+                Una vez cancelado el código <span className="font-bold">no podrá ser redimido</span> ni compartido nuevamente. Esta acción queda registrada en el historial {isService ? 'del servicio' : 'del evento'}.
               </div>
             </div>
 
             <div className="space-y-1.5">
               <Label htmlFor="cancel-reason">Motivo (opcional)</Label>
-              <Textarea
-                id="cancel-reason"
-                placeholder="Ej: Compartido por error, código duplicado, etc."
-                value={cancelReason}
-                onChange={(e) => setCancelReason(e.target.value)}
-                rows={3}
-              />
+              <Textarea id="cancel-reason" placeholder="Ej: Compartido por error, código duplicado, etc." value={cancelReason} onChange={(e) => setCancelReason(e.target.value)} rows={3} />
             </div>
 
             <div className="flex gap-2 pt-2">
               <Button variant="outline" className="flex-1" onClick={() => { setCancelCode(null); setCancelReason(''); }}>
                 Volver
               </Button>
-              <Button
-                className="flex-1 bg-rose-600 hover:bg-rose-700 text-primary-foreground"
-                onClick={handleConfirmCancel}
-              >
-                <Ban className="h-4 w-4 mr-1" /> Cancelar código
+              <Button className="flex-1 bg-rose-600 hover:bg-rose-700 text-primary-foreground" onClick={() => void handleConfirmCancel()} disabled={canceling}>
+                {canceling ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Ban className="h-4 w-4 mr-1" />}
+                Cancelar código
               </Button>
             </div>
           </div>

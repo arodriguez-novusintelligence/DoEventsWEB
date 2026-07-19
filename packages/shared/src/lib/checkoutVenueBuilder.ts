@@ -148,14 +148,32 @@ export function enrichVenueFloorsFromTickets(
   floors: VenueFloorDetail[],
   categories: TicketCategory[],
 ): VenueFloorDetail[] {
-  const ticketByName = new Map(
-    categories.map((cat) => [normalizeName(cat.categoryName), cat]),
+  const ticketByName = new Map<string, TicketCategory[]>();
+  categories.forEach((cat) => {
+    const key = normalizeName(cat.categoryName);
+    const list = ticketByName.get(key) || [];
+    list.push(cat);
+    ticketByName.set(key, list);
+  });
+  const ticketByCategoryId = new Map(
+    categories.map((cat) => [cat.categoryId, cat]),
   );
+
+  const resolveTicketCategory = (cat: VenueCategoryDetail): TicketCategory | undefined => {
+    const byId = ticketByCategoryId.get(cat.categoryId);
+    if (byId) return byId;
+    const byName = ticketByName.get(normalizeName(cat.name)) || [];
+    if (byName.length === 1) return byName[0];
+    if (byName.length > 1) {
+      return byName.find((ticketCat) => ticketCat.categoryId === cat.categoryId) || byName[0];
+    }
+    return undefined;
+  };
 
   const enrichedFloors = floors.map((floor) => ({
     ...floor,
     categories: (floor.categories || []).map((cat) => {
-      const ticketCat = ticketByName.get(normalizeName(cat.name));
+      const ticketCat = resolveTicketCategory(cat);
       if (!ticketCat) return cat;
       return mergeCategorySeatsFromTickets(cat, ticketCat);
     }),
@@ -166,10 +184,16 @@ export function enrichVenueFloorsFromTickets(
   );
 
   const offeredNames = new Set(categories.map((c) => normalizeName(c.categoryName)));
+  const offeredCategoryIds = new Set(
+    categories.map((c) => c.categoryId || c.distributionId).filter(Boolean),
+  );
   return enrichedFloors
     .map((floor) => ({
       ...floor,
-      categories: (floor.categories || []).filter((cat) => offeredNames.has(normalizeName(cat.name))),
+      categories: (floor.categories || []).filter((cat) => {
+        if (cat.categoryId && offeredCategoryIds.has(cat.categoryId)) return true;
+        return offeredNames.has(normalizeName(cat.name));
+      }),
     }))
     .filter((floor) => (floor.categories || []).length > 0);
 }
@@ -206,6 +230,23 @@ export function countCheckoutSeatCoverage(
   );
 
   return { venueSeats, ticketSeats, matchedOffers };
+}
+
+/** Venue del evento: prioriza el de las distribuciones de boletas (clon del evento). */
+export function resolveCheckoutVenueId(
+  eventVenueId: string | undefined,
+  ticketCategories: TicketCategory[],
+): string | undefined {
+  const fromTickets = [
+    ...new Set(
+      ticketCategories
+        .map((cat) => cat.venueId?.trim())
+        .filter((id): id is string => Boolean(id)),
+    ),
+  ];
+  if (fromTickets.length === 1) return fromTickets[0];
+  if (fromTickets.length > 1) return fromTickets[0];
+  return eventVenueId?.trim() || undefined;
 }
 
 export function resolveCheckoutFloors(

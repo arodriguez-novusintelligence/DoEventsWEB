@@ -253,12 +253,18 @@ export const globalStyles = `
 
   .de-oauth-row--pill {
     margin-top: 0;
-    max-width: 358px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
   }
 
   .de-oauth-btn--pill {
     border-radius: 50px;
     height: 44px;
+    flex: 1 1 0;
+    min-width: 0;
   }
 
   .de-divider-row--login {

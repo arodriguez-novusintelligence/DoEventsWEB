@@ -1,11 +1,28 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
-  FileText, MapPin, ShieldCheck, Calendar, HelpCircle, Clock,
-  ChevronDown, ChevronUp, Save, Eye, Megaphone, Menu, Pencil, ExternalLink, Home, Loader2,
+  FileText, MapPin, ShieldCheck, Calendar, HelpCircle, Clock, Home,
+  ChevronDown, ChevronUp, Save, Eye, Megaphone, Pencil, ExternalLink, Loader2,
+  Ticket as TicketIcon, Copy, Check, Star, X,
 } from 'lucide-react';
-import { EventFormData, REFUND_POLICY_OPTIONS, SEATING_CURRENCIES } from '@lovable/data/eventFormData';
+import {
+  UserAvatar,
+  fetchEventPromoCodes,
+  isPlatformAdmin,
+  fetchUserById,
+  fetchUserStats,
+  getPersistedUserDisplayName,
+  resolveCategoryDisplayLabel,
+  resolveUserDisplayName,
+  resolveImageUrl,
+  resolveVenueTypeDisplayLabel,
+} from '@doevents/shared';
+import type { EventPromoCodesPayload } from '@doevents/shared';
+import { EventFormData, EventHost, REFUND_POLICY_OPTIONS, SEATING_CURRENCIES } from '@lovable/data/eventFormData';
+import { resolveMapSearchQuery } from '@doevents/shared';
 import { PULEP_PORTAL_URL } from '@lovable/lib/pulepColombia';
 import { SeatingPreview } from './StepEventLocation';
+import { toast } from 'sonner';
 
 interface StepEventSummaryProps {
   formData: EventFormData;
@@ -15,12 +32,33 @@ interface StepEventSummaryProps {
   onPublish: () => void;
   publishing?: boolean;
   publishLabel?: string;
+  viewerUserId?: string;
+  platformRole?: string;
 }
 
 type SectionKey =
   | 'main' | 'location' | 'access' | 'date' | 'faqs' | 'agenda';
 
 interface SectionDef { key: SectionKey; label: string; icon: any; editStep: number; }
+
+type ProfilePerson = {
+  id?: string;
+  name: string;
+  role?: string;
+  username?: string;
+  email?: string;
+  avatar?: string;
+  initials?: string;
+  rating?: number;
+  eventsCount?: number;
+  experiencePct?: number;
+};
+
+type PersonStats = {
+  rating: number;
+  eventsCount: number;
+  experiencePct: number;
+};
 
 const SECTIONS: SectionDef[] = [
   { key: 'main', label: 'Información principal', icon: FileText, editStep: 1 },
@@ -44,24 +82,290 @@ const Field = ({ label, value }: { label: React.ReactNode; value?: React.ReactNo
   </div>
 );
 
-function resolveVideoEmbedUrl(url: string): string | null {
-  const raw = url.trim();
-  if (!raw) return null;
-  const ytMatch = raw.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/i);
-  if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}`;
-  const vimeoMatch = raw.match(/vimeo\.com\/(?:video\/)?(\d+)/i);
-  if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
-  return null;
+function resolveAnfitriones(
+  hosts: EventHost[],
+  organizer: EventHost | null,
+  ownerUserId?: string,
+  viewerUserId?: string,
+): EventHost[] {
+  const organizerIds = new Set(
+    [organizer?.id, ownerUserId, viewerUserId].filter(Boolean).map(String),
+  );
+  return hosts.filter((h) => {
+    if (h.role === 'organizer') return false;
+    if (organizerIds.has(String(h.id))) return false;
+    return true;
+  });
+}
+
+const StarRow = ({ value = 0 }: { value?: number }) => (
+  <div className="flex gap-0.5">
+    {[1, 2, 3, 4, 5].map((i) => (
+      <Star
+        key={i}
+        className={`h-4 w-4 ${i <= value ? 'fill-primary text-primary' : 'text-primary'}`}
+      />
+    ))}
+  </div>
+);
+
+const PersonAvatar = ({ person, size = 64 }: { person: ProfilePerson; size?: number }) => {
+  const avatarUrl = person.avatar ? resolveImageUrl(person.avatar) || person.avatar : '';
+  if (avatarUrl) {
+    return (
+      <img
+        src={avatarUrl}
+        alt={person.name}
+        className="rounded-full object-cover"
+        style={{ width: size, height: size }}
+      />
+    );
+  }
+  return (
+    <UserAvatar
+      name={person.name}
+      userId={person.id}
+      size={size}
+      className="shrink-0"
+    />
+  );
+};
+
+const PersonCard = ({
+  person,
+}: {
+  person: ProfilePerson;
+}) => {
+  const navigate = useNavigate();
+
+  const openProfile = () => {
+    if (!person.id) {
+      toast.error('Este perfil no está disponible');
+      return;
+    }
+    navigate(`/users/${encodeURIComponent(person.id)}`);
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={openProfile}
+      className="block w-full rounded-2xl bg-card p-4 text-left shadow-sm ring-1 ring-border/50 transition hover:bg-card/80 hover:shadow-md active:scale-[0.99]"
+      aria-label={`Ver perfil de ${person.name}`}
+    >
+      <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 sm:gap-4">
+        <div className="flex min-w-[72px] flex-col items-center">
+          <PersonAvatar person={person} />
+          <p className="mt-2 max-w-[96px] truncate text-center text-sm font-bold text-foreground">
+            {person.name}
+          </p>
+        </div>
+        <div className="min-w-0 text-center">
+          <p className="text-2xl font-bold leading-none text-foreground">{person.eventsCount ?? 0}</p>
+          <p className="mt-1 text-xs text-muted-foreground">Eventos realizados</p>
+        </div>
+        <div className="flex flex-col items-end text-right">
+          <p className="text-xs text-muted-foreground">Calificación</p>
+          <StarRow value={person.rating} />
+          <p className="mt-3 text-lg font-bold leading-none text-foreground">%{person.experiencePct ?? 0}</p>
+          <p className="mt-1 text-xs text-muted-foreground">Experiencia</p>
+        </div>
+      </div>
+    </button>
+  );
+};
+
+function toProfilePerson(
+  host: EventHost | null | undefined,
+  roleLabel: string,
+  stats?: Partial<PersonStats>,
+): ProfilePerson {
+  return {
+    id: host?.id,
+    name: host?.name || roleLabel,
+    role: roleLabel,
+    username: host?.username,
+    email: host?.email,
+    avatar: host?.avatar,
+    initials: host?.initials || host?.name?.slice(0, 2).toUpperCase(),
+    rating: Math.max(0, Math.min(5, Math.round(stats?.rating ?? 0))),
+    eventsCount: stats?.eventsCount ?? 0,
+    experiencePct: Math.max(0, Math.min(100, Math.round(stats?.experiencePct ?? 0))),
+  };
 }
 
 
-const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publishing, publishLabel = 'Publicar' }: StepEventSummaryProps) => {
+const StepEventSummary = ({
+  formData,
+  onEdit,
+  onSave,
+  onPreview,
+  onPublish,
+  publishing,
+  publishLabel = 'Publicar',
+  viewerUserId,
+  platformRole,
+}: StepEventSummaryProps) => {
+  const [organizerProfile, setOrganizerProfile] = useState<EventHost | null>(null);
+  const [personStats, setPersonStats] = useState<Record<string, PersonStats>>({});
+  const [lightbox, setLightbox] = useState<string | null>(null);
+
+  const canViewPromoCodes = Boolean(
+    formData.persistedEventId
+    && viewerUserId
+    && (viewerUserId === formData.ownerUserId || isPlatformAdmin(platformRole)),
+  );
+
+  useEffect(() => {
+    const organizerId = formData.ownerUserId || viewerUserId;
+    const fromHosts = formData.hosts.find((h) => h.role === 'organizer');
+    let cancelled = false;
+
+    const loadStats = async (userId: string) => {
+      const [profileData, stats] = await Promise.all([
+        fetchUserById(userId).catch(() => null),
+        fetchUserStats(userId).catch(() => null),
+      ]);
+      if (cancelled) return { profileData, stats: null as PersonStats | null };
+      const eventsCount = Number(
+        stats?.eventosRealizados
+        ?? stats?.eventosFinalizados
+        ?? stats?.totalEventos
+        ?? 0,
+      );
+      const rating = Number(
+        stats?.calificacionPromedio
+        ?? profileData?.calificacion
+        ?? 0,
+      );
+      const experiencePct = Number(
+        stats?.experienciaEventosRealizados
+        ?? profileData?.experiencia
+        ?? 0,
+      );
+      const nextStats: PersonStats = {
+        rating: Math.max(0, Math.min(5, Math.round(rating))),
+        eventsCount: Math.max(0, eventsCount),
+        experiencePct: Math.max(0, Math.min(100, Math.round(experiencePct))),
+      };
+      setPersonStats((prev) => ({ ...prev, [userId]: nextStats }));
+      return { profileData, stats: nextStats };
+    };
+
+    if (fromHosts) {
+      setOrganizerProfile(fromHosts);
+      if (fromHosts.id) {
+        void loadStats(fromHosts.id).then(({ profileData }) => {
+          if (cancelled || !profileData) return;
+          setOrganizerProfile((prev) => ({
+            ...(prev || fromHosts),
+            name: prev?.name || resolveUserDisplayName(profileData) || fromHosts.name,
+            email: prev?.email || profileData.email || fromHosts.email,
+            avatar: prev?.avatar || profileData.imagen || fromHosts.avatar,
+            username: prev?.username
+              || (profileData.username ? `@${profileData.username}` : fromHosts.username),
+            phone: prev?.phone || profileData.phone || fromHosts.phone,
+            countryCode: prev?.countryCode || profileData.countryCode || fromHosts.countryCode,
+          }));
+        });
+      }
+      return () => { cancelled = true; };
+    }
+    if (!organizerId) {
+      setOrganizerProfile({
+        id: 'organizer',
+        role: 'organizer',
+        name: getPersistedUserDisplayName() || 'Organizador',
+      });
+      return () => { cancelled = true; };
+    }
+
+    void loadStats(organizerId)
+      .then(({ profileData }) => {
+        if (cancelled) return;
+        if (!profileData) {
+          setOrganizerProfile({
+            id: organizerId,
+            role: 'organizer',
+            name: getPersistedUserDisplayName() || 'Organizador',
+          });
+          return;
+        }
+        setOrganizerProfile({
+          id: profileData.id || organizerId,
+          role: 'organizer',
+          name: resolveUserDisplayName(profileData) || getPersistedUserDisplayName() || 'Organizador',
+          email: profileData.email || undefined,
+          phone: profileData.phone || undefined,
+          countryCode: profileData.countryCode || undefined,
+          avatar: profileData.imagen || undefined,
+          username: profileData.username ? `@${profileData.username}` : undefined,
+          source: 'platform',
+        });
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setOrganizerProfile({
+            id: organizerId,
+            role: 'organizer',
+            name: getPersistedUserDisplayName() || 'Organizador',
+          });
+        }
+      });
+
+    return () => { cancelled = true; };
+  }, [formData.hosts, formData.ownerUserId, viewerUserId]);
+
+  useEffect(() => {
+    const hostIds = Array.from(new Set(
+      formData.hosts
+        .filter((h) => h.role !== 'organizer' && h.id)
+        .map((h) => String(h.id)),
+    ));
+    if (!hostIds.length) return;
+    let cancelled = false;
+    hostIds.forEach((hostId) => {
+      void Promise.all([
+        fetchUserById(hostId).catch(() => null),
+        fetchUserStats(hostId).catch(() => null),
+      ]).then(([profileData, stats]) => {
+        if (cancelled) return;
+        const eventsCount = Number(
+          stats?.eventosRealizados
+          ?? stats?.eventosFinalizados
+          ?? stats?.totalEventos
+          ?? 0,
+        );
+        const rating = Number(stats?.calificacionPromedio ?? profileData?.calificacion ?? 0);
+        const experiencePct = Number(
+          stats?.experienciaEventosRealizados ?? profileData?.experiencia ?? 0,
+        );
+        setPersonStats((prev) => {
+          const next = {
+            rating: Math.max(0, Math.min(5, Math.round(rating))),
+            eventsCount: Math.max(0, eventsCount),
+            experiencePct: Math.max(0, Math.min(100, Math.round(experiencePct))),
+          };
+          const current = prev[hostId];
+          if (
+            current
+            && current.rating === next.rating
+            && current.eventsCount === next.eventsCount
+            && current.experiencePct === next.experiencePct
+          ) {
+            return prev;
+          }
+          return { ...prev, [hostId]: next };
+        });
+      });
+    });
+    return () => { cancelled = true; };
+  }, [formData.hosts]);
 
   const [open, setOpen] = useState<Record<SectionKey, boolean>>({
     main: true, location: true, access: false,
     date: false, faqs: false, agenda: false,
   });
-  const [fabOpen, setFabOpen] = useState(false);
 
   const toggle = (k: SectionKey) => setOpen((s) => ({ ...s, [k]: !s[k] }));
 
@@ -69,17 +373,33 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
     ? REFUND_POLICY_OPTIONS.find((o) => o.value === formData.refundPolicy)?.label
     : null;
 
+  const mediaImages = (formData.images || [])
+    .map((src) => resolveImageUrl(src) || src)
+    .filter(Boolean);
+
   const renderBody = (k: SectionKey) => {
     switch (k) {
       case 'main': {
-        const organizer = formData.hosts.find((h) => h.role === 'organizer') ?? formData.hosts[0];
-        const anfitrion = formData.hosts.find((h) => h.role === 'host') ?? formData.hosts[1];
+        const organizer = organizerProfile
+          || formData.hosts.find((h) => h.role === 'organizer')
+          || null;
+        const anfitriones = resolveAnfitriones(
+          formData.hosts,
+          organizer,
+          formData.ownerUserId,
+          viewerUserId,
+        );
+        const organizerCard = toProfilePerson(
+          organizer,
+          'Organizador',
+          organizer?.id ? personStats[organizer.id] : undefined,
+        );
         return (
           <div className="space-y-5">
             <div className="grid grid-cols-2 gap-x-4 gap-y-4">
               <Field label="Nombre del evento" value={formData.name} />
               <Field label="Tipo" value={formData.type} />
-              <Field label="Categoría" value={formData.category} />
+              <Field label="Categoría" value={resolveCategoryDisplayLabel(formData.category)} />
               <Field label="Clase" value={formData.eventClass === 'public' ? 'Público' : 'Privado'} />
               <Field label="Modalidad" value={formData.modality === 'presencial' ? 'Presencial' : 'Virtual'} />
               <Field label="Aforo" value={formData.capacity} />
@@ -108,47 +428,45 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
               </p>
             </div>
 
-            {formData.images.length > 0 && (
-              <div>
-                <p className="text-sm font-semibold text-primary">Material publicitario del evento</p>
-                <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4">
-                  {formData.images.map((src, i) => (
-                    <img
-                      key={i}
-                      src={src}
-                      alt={`Material ${i + 1}`}
-                      className="aspect-square w-full rounded-xl object-cover"
-                    />
+            <div>
+              <p className="text-sm font-semibold text-primary">Material publicitario del evento</p>
+              {mediaImages.length > 0 ? (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {mediaImages.map((src, i) => (
+                    <button
+                      key={`${src}-${i}`}
+                      type="button"
+                      onClick={() => setLightbox(src)}
+                      aria-label={`Ver imagen ${i + 1}`}
+                    >
+                      <img
+                        src={src}
+                        alt={`Material ${i + 1}`}
+                        className="h-20 w-20 cursor-zoom-in rounded-lg object-cover"
+                      />
+                    </button>
                   ))}
                 </div>
-              </div>
-            )}
+              ) : (
+                <p className="mt-2 text-sm text-muted-foreground">Sin material publicitario.</p>
+              )}
+            </div>
 
-            {formData.videoUrl && (
-              <div>
-                <p className="text-sm font-semibold text-primary">Video del evento</p>
-                {resolveVideoEmbedUrl(formData.videoUrl) ? (
-                  <div className="mt-2 overflow-hidden rounded-xl border border-border/60">
-                    <iframe
-                      title="Video del evento"
-                      src={resolveVideoEmbedUrl(formData.videoUrl) || ''}
-                      className="aspect-video w-full"
-                      loading="lazy"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  </div>
-                ) : null}
+            <div>
+              <p className="text-sm font-semibold text-primary">Video del evento</p>
+              {formData.videoUrl ? (
                 <a
                   href={formData.videoUrl}
                   target="_blank"
                   rel="noreferrer"
                   className="mt-2 inline-flex items-center gap-2 rounded-lg bg-foreground px-3 py-2 text-xs font-semibold text-background"
                 >
-                  Ver video <ExternalLink className="h-3 w-3" />
+                  Ver video en YouTube <ExternalLink className="h-3 w-3" />
                 </a>
-              </div>
-            )}
+              ) : (
+                <p className="mt-2 text-sm text-muted-foreground">Sin video.</p>
+              )}
+            </div>
 
             <div>
               <p className="text-sm font-semibold text-foreground">#Tags</p>
@@ -159,33 +477,35 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
               </div>
             </div>
 
-            {organizer && (
-              <div>
-                <p className="text-sm font-bold text-primary">Organizador</p>
-                <div className="mt-2 space-y-2">
-                  <Field label="Nombre" value={organizer.name} />
-                  <Field label="Correo electrónico" value={organizer.email} />
-                  <Field
-                    label="Número de teléfono principal"
-                    value={organizer.phone ? `${organizer.countryCode ?? ''} ${organizer.phone}`.trim() : ''}
-                  />
-                </div>
-              </div>
-            )}
+            <div>
+              <p className="mb-2 text-sm font-bold text-foreground">Organizador del evento</p>
+              <PersonCard person={organizerCard} />
+            </div>
 
-            {anfitrion && anfitrion.id !== organizer?.id && (
-              <div>
-                <p className="text-sm font-bold text-primary">Anfitrión</p>
-                <div className="mt-2 space-y-2">
-                  <Field label="Nombre" value={anfitrion.name} />
-                  <Field label="Correo electrónico" value={anfitrion.email} />
-                  <Field
-                    label="Número de teléfono principal"
-                    value={anfitrion.phone ? `${anfitrion.countryCode ?? ''} ${anfitrion.phone}`.trim() : ''}
-                  />
+            <div>
+              <p className="mb-2 text-sm font-bold text-foreground">Anfitrión del evento</p>
+              {anfitriones.length > 0 ? (
+                <div className="space-y-3">
+                  {anfitriones.map((anfitrion) => {
+                    const hostCard = toProfilePerson(
+                      anfitrion,
+                      'Anfitrión',
+                      anfitrion.id ? personStats[anfitrion.id] : undefined,
+                    );
+                    return (
+                      <PersonCard
+                        key={anfitrion.id}
+                        person={hostCard}
+                      />
+                    );
+                  })}
                 </div>
-              </div>
-            )}
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  No se asignó anfitrión (opcional).
+                </p>
+              )}
+            </div>
 
             {formData.pulepRequired && (
               <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4 space-y-3">
@@ -239,13 +559,16 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
       case 'location': {
         const l = formData.location;
         const figures = l.seatingMap?.figures ?? [];
-        const ticketCategories = figures.filter((f) => f.role === 'category' && f.priceEnabled);
+        const ticketCategories = figures.filter((f) => f.role === 'category');
         const floors = Array.from(new Set(figures.map((f) => f.floor ?? 1))).sort();
-        const mapQuery = encodeURIComponent(
-          l.customLat && l.customLng
-            ? `${l.customLat},${l.customLng}`
-            : (l.customAddress || l.detectedCity || ''),
-        );
+        const mapSearchQuery = resolveMapSearchQuery({
+          address: l.customAddress,
+          name: l.customName,
+          city: l.detectedCity,
+          lat: l.customLat,
+          lng: l.customLng,
+        });
+        const mapQuery = mapSearchQuery ? encodeURIComponent(mapSearchQuery) : '';
         const mapsEmbed = mapQuery
           ? `https://www.google.com/maps?q=${mapQuery}&output=embed`
           : null;
@@ -268,7 +591,7 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
 
             <div>
               <p className="text-sm font-bold text-primary">Tipo de lugar</p>
-              <p className="mt-1 text-sm text-foreground">{l.customType || '—'}</p>
+              <p className="mt-1 text-sm text-foreground">{resolveVenueTypeDisplayLabel(l.customType) || '—'}</p>
             </div>
 
             {(l.customImages?.length ?? 0) > 0 && (
@@ -320,13 +643,13 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
                     const currency = cat.currency && SEATING_CURRENCIES.includes(cat.currency)
                       ? cat.currency
                       : 'COP';
-                    const priceLabel = typeof cat.price === 'number' && cat.price > 0
+                    const priceLabel = cat.priceEnabled && typeof cat.price === 'number' && cat.price > 0
                       ? new Intl.NumberFormat('es-CO', {
                         style: 'currency',
                         currency,
                         maximumFractionDigits: 0,
                       }).format(cat.price)
-                      : '—';
+                      : 'Gratis';
                     return (
                       <div
                         key={cat.id}
@@ -377,6 +700,7 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
       }
       case 'access': {
         const ac = formData.accessControl ?? {};
+        const staffById = formData.accessStaff ?? {};
         const gates = formData.location.gates ?? [];
         if (gates.length === 0) {
           return (
@@ -418,7 +742,7 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
                   {userIds.length > 0 && (
                     <div className="mt-2 space-y-2">
                       {userIds.map((uid) => {
-                        const u = (formData.hosts ?? []).find((h) => h.id === uid);
+                        const u = staffById[uid] ?? (formData.hosts ?? []).find((h) => h.id === uid);
                         if (!u) {
                           return (
                             <div key={uid} className="flex items-center gap-3 rounded-xl bg-secondary/60 p-2.5">
@@ -434,13 +758,7 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
                         }
                         return (
                           <div key={uid} className="flex items-center gap-3 rounded-xl bg-secondary/60 p-2.5">
-                            {u.avatar ? (
-                              <img src={u.avatar} alt={u.name} className="h-10 w-10 rounded-full object-cover" />
-                            ) : (
-                              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
-                                {u.initials || u.name.charAt(0)}
-                              </div>
-                            )}
+                            <UserAvatar name={u.name} imageUrl={u.avatar} userId={u.id} size={40} />
                             <div className="min-w-0">
                               <p className="truncate text-sm font-bold text-foreground">{u.name}</p>
                               <p className="truncate text-xs text-muted-foreground">{u.email}</p>
@@ -478,11 +796,9 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
         };
         const fmtTime = (t?: string) => {
           if (!t) return '—';
-          const [hh, mm] = t.split(':').map(Number);
-          if (isNaN(hh)) return t;
-          const period = hh >= 12 ? 'P.M' : 'A.M';
-          const h12 = ((hh + 11) % 12) + 1;
-          return `${String(h12).padStart(2, '0')}:${String(mm ?? 0).padStart(2, '0')} ${period}`;
+          const [hh, mm] = t.split(':');
+          if (!hh || Number.isNaN(Number(hh))) return t;
+          return `${String(hh).padStart(2, '0')}:${String(mm ?? '00').padStart(2, '0')}`;
         };
         return (
           <div className="space-y-5">
@@ -517,6 +833,10 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
                 <p className="mt-0.5 text-sm font-bold text-foreground break-words">{refundLabel || '—'}</p>
               </div>
             </div>
+
+            {(formData.promoCodes?.length ?? 0) > 0 && (
+              <PromoCodesSummary batches={formData.promoCodes!} eventName={formData.name} />
+            )}
 
             {onEdit && (
               <button
@@ -644,21 +964,19 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
   };
 
   return (
-    <div className="relative pb-24">
-      <h2 className="flex items-center gap-2 text-xl font-extrabold text-primary">
-        <FileText className="h-5 w-5" /> Resumen del evento
-      </h2>
+    <div className="relative pb-8">
+      <h2 className="text-xl font-extrabold text-primary">Resumen del evento</h2>
 
       <div className="mt-4 space-y-3">
         {SECTIONS.map(({ key, label, icon: Icon }) => {
           const isOpen = open[key];
           return (
-            <div key={key} className="rounded-2xl border border-border/60 bg-card shadow-sm">
+            <div key={key} className="rounded-2xl bg-card shadow-sm">
               <button
                 onClick={() => toggle(key)}
                 className="flex w-full items-center gap-3 px-4 py-4 text-left"
               >
-                <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary ring-2 ring-primary/20">
+                <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   <Icon className="h-4 w-4" />
                 </div>
                 <span className="flex-1 text-sm font-semibold text-foreground">{label}</span>
@@ -670,53 +988,292 @@ const StepEventSummary = ({ formData, onEdit, onSave, onPreview, onPublish, publ
             </div>
           );
         })}
+        {canViewPromoCodes && formData.persistedEventId && (
+          <EventPromoCodesLivePanel eventId={formData.persistedEventId} eventName={formData.name} />
+        )}
       </div>
 
-      {/* Floating Acciones */}
-      <div className="fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom,0px))] right-6 z-30 flex flex-col items-end gap-3">
-        {fabOpen && (
-          <div className="flex flex-col items-end gap-3">
-            <button
-              onClick={() => { setFabOpen(false); onSave(); }}
-              className="flex items-center gap-2 rounded-full bg-card px-3 py-2 shadow-md"
-            >
-              <span className="text-sm font-semibold text-foreground">Guardar</span>
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 text-primary">
-                <Save className="h-4 w-4" />
-              </span>
-            </button>
-            <button
-              onClick={() => { setFabOpen(false); onPreview(); }}
-              className="flex items-center gap-2 rounded-full bg-card px-3 py-2 shadow-md"
-            >
-              <span className="text-sm font-semibold text-foreground">Previsualizar</span>
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 text-primary">
-                <Eye className="h-4 w-4" />
-              </span>
-            </button>
-            <button
-              disabled={publishing}
-              onClick={() => { setFabOpen(false); onPublish(); }}
-              className="flex items-center gap-2 rounded-full bg-card px-3 py-2 shadow-md disabled:opacity-50"
-            >
-              <span className="text-sm font-semibold text-foreground">
-                {publishing ? `${publishLabel}…` : publishLabel}
-              </span>
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 text-primary">
-                {publishing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Megaphone className="h-4 w-4" />}
-              </span>
-            </button>
-          </div>
-        )}
+      <div className="mt-8 mb-4 flex items-start justify-around gap-4">
         <button
-          onClick={() => setFabOpen((v) => !v)}
-          className="flex items-center gap-2 rounded-full bg-primary px-5 py-3 text-primary-foreground shadow-lg"
+          type="button"
+          onClick={onPreview}
+          className="flex flex-col items-center gap-2 transition-transform active:scale-95"
         >
-          <span className="text-sm font-bold">Acciones</span>
-          {fabOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
-          <Menu className="h-4 w-4" />
+          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg">
+            <Eye className="h-6 w-6" />
+          </span>
+          <span className="text-sm font-semibold text-foreground">Previsualizar</span>
+        </button>
+        <button
+          type="button"
+          onClick={onSave}
+          className="flex flex-col items-center gap-2 transition-transform active:scale-95"
+        >
+          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg">
+            <Save className="h-6 w-6" />
+          </span>
+          <span className="text-sm font-semibold text-foreground">Guardar</span>
+        </button>
+        <button
+          type="button"
+          disabled={publishing}
+          onClick={onPublish}
+          className="flex flex-col items-center gap-2 transition-transform active:scale-95 disabled:opacity-50"
+        >
+          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg">
+            {publishing ? <Loader2 className="h-6 w-6 animate-spin" /> : <Megaphone className="h-6 w-6" />}
+          </span>
+          <span className="text-sm font-semibold text-foreground">
+            {publishing ? `${publishLabel}…` : publishLabel}
+          </span>
         </button>
       </div>
+
+      {lightbox && (
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-black/80 p-4"
+          onClick={() => setLightbox(null)}
+          role="presentation"
+        >
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); setLightbox(null); }}
+            className="absolute right-4 top-4 rounded-full bg-white/10 p-2 text-white"
+            aria-label="Cerrar"
+          >
+            <X className="h-5 w-5" />
+          </button>
+          <img
+            src={lightbox}
+            alt=""
+            className="max-h-full max-w-full rounded-lg object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
+
+    </div>
+  );
+};
+
+const EventPromoCodesLivePanel = ({
+  eventId,
+  eventName,
+}: {
+  eventId: string;
+  eventName: string;
+}) => {
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [data, setData] = useState<EventPromoCodesPayload | null>(null);
+
+  useEffect(() => {
+    if (!open || data || loading) return;
+    setLoading(true);
+    setError(null);
+    fetchEventPromoCodes(eventId)
+      .then((payload) => setData(payload))
+      .catch((err) => setError(err instanceof Error ? err.message : 'No se pudieron cargar'))
+      .finally(() => setLoading(false));
+  }, [open, eventId, data, loading]);
+
+  const allCodes = (data?.batches || []).flatMap((batch) => batch.codes || []);
+  const usedSet = new Set(Object.keys(data?.redemptions || {}));
+  const cancelledSet = new Set(Object.keys(data?.cancellationByCode || {}));
+  const sharedSet = new Set((data?.shares || []).map((share) => share.promo_code));
+  const available = allCodes.filter(
+    (code) => !usedSet.has(code) && !cancelledSet.has(code) && !sharedSet.has(code),
+  );
+  const shared = allCodes.filter(
+    (code) => sharedSet.has(code) && !usedSet.has(code) && !cancelledSet.has(code),
+  );
+  const used = allCodes.filter((code) => usedSet.has(code));
+
+  return (
+    <div className="rounded-2xl bg-card shadow-sm">
+      <button
+        type="button"
+        onClick={() => setOpen((value) => !value)}
+        className="flex w-full items-center gap-3 px-4 py-4 text-left"
+      >
+        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <TicketIcon className="h-4 w-4" />
+        </div>
+        <span className="flex-1 text-sm font-semibold text-foreground">Códigos promocionales</span>
+        {open ? <ChevronUp className="h-4 w-4 text-primary" /> : <ChevronDown className="h-4 w-4 text-primary" />}
+      </button>
+      {open && (
+        <div className="border-t border-border/60 px-4 py-3 space-y-3">
+          {loading && (
+            <div className="flex items-center justify-center py-6">
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            </div>
+          )}
+          {error && <p className="text-sm text-destructive">{error}</p>}
+          {!loading && !error && data && (
+            <>
+              <p className="text-xs text-muted-foreground">
+                Códigos del evento <strong>{eventName || 'sin nombre'}</strong>. Solo visible para el creador y administradores.
+              </p>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="rounded-xl border border-border bg-background/50 p-3">
+                  <p className="text-xs text-muted-foreground">Disponibles</p>
+                  <p className="text-lg font-bold text-primary">{available.length}</p>
+                </div>
+                <div className="rounded-xl border border-border bg-background/50 p-3">
+                  <p className="text-xs text-muted-foreground">Usados</p>
+                  <p className="text-lg font-bold text-foreground">{used.length}</p>
+                </div>
+                <div className="rounded-xl border border-border bg-background/50 p-3">
+                  <p className="text-xs text-muted-foreground">Compartidos</p>
+                  <p className="text-lg font-bold text-indigo-600">{shared.length}</p>
+                </div>
+              </div>
+              {available.length > 0 && (
+                <div>
+                  <p className="mb-2 text-xs font-semibold text-foreground">Disponibles</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {available.map((code) => (
+                      <span key={code} className="rounded-md border border-primary/20 bg-primary/5 px-2 py-1 font-mono text-[11px] font-semibold text-primary">
+                        {code}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {used.length > 0 && (
+                <div>
+                  <p className="mb-2 text-xs font-semibold text-muted-foreground">Usados</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {used.map((code) => (
+                      <span key={code} className="rounded-md border border-border bg-muted/40 px-2 py-1 font-mono text-[11px] text-muted-foreground line-through">
+                        {code}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {!allCodes.length && (
+                <p className="text-sm text-muted-foreground">Este evento aún no tiene códigos promocionales generados.</p>
+              )}
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const PromoCodesSummary = ({
+  batches,
+  eventName,
+}: {
+  batches: NonNullable<EventFormData['promoCodes']>;
+  eventName: string;
+}) => {
+  const [open, setOpen] = useState(false);
+  const [openBatch, setOpenBatch] = useState<string | null>(batches[0]?.id ?? null);
+  const [copied, setCopied] = useState<string | null>(null);
+  const total = batches.reduce((acc, b) => acc + b.codes.length, 0);
+
+  const copy = async (text: string, id: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(id);
+      setTimeout(() => setCopied((c) => (c === id ? null : c)), 1500);
+    } catch {
+      /* ignore */
+    }
+  };
+
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center justify-between gap-2"
+      >
+        <div className="flex items-center gap-2">
+          <TicketIcon className="h-4 w-4 text-primary" />
+          <h4 className="text-sm font-bold text-primary">Códigos promocionales</h4>
+          <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">{total}</span>
+        </div>
+        <ChevronDown className={`h-4 w-4 text-primary transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+
+      {open && (
+        <div className="mt-3 space-y-3">
+          <p className="text-xs text-muted-foreground">
+            Comparte estos códigos con tus clientes para que apliquen el descuento al comprar.
+          </p>
+          <div className="rounded-xl border border-primary/15 bg-primary/5 p-3">
+            <p className="text-xs leading-relaxed text-foreground">
+              La gestión completa —compartir, cancelar y ver uso— está en{' '}
+              <strong>Mis estadísticas → {eventName || 'evento'} → Códigos promocionales</strong>.
+            </p>
+          </div>
+          {batches.map((b) => {
+            const isBatchOpen = openBatch === b.id;
+            return (
+              <div key={b.id} className="rounded-xl border border-border bg-background/50 p-3">
+                <div className="flex items-center justify-between gap-2">
+                  <div>
+                    <p className="text-xs text-muted-foreground">Valor</p>
+                    <p className="text-sm font-bold text-foreground">
+                      {b.currency} $ {b.value.toLocaleString('es-CO')}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-muted-foreground">Códigos</p>
+                    <p className="text-sm font-bold text-foreground">{b.codes.length}</p>
+                  </div>
+                </div>
+                {b.description && (
+                  <p className="mt-1 text-xs text-muted-foreground">{b.description}</p>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setOpenBatch(isBatchOpen ? null : b.id)}
+                  className="mt-2 flex w-full items-center justify-between rounded-lg bg-primary/5 px-3 py-1.5 text-xs font-semibold text-primary"
+                >
+                  <span>{isBatchOpen ? 'Ocultar códigos' : 'Ver códigos'}</span>
+                  <ChevronDown className={`h-3.5 w-3.5 transition-transform ${isBatchOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {isBatchOpen && (
+                  <div className="mt-2 space-y-2">
+                    <button
+                      type="button"
+                      onClick={() => copy(b.codes.join('\n'), `${b.id}-all`)}
+                      className="flex w-full items-center justify-center gap-2 rounded-lg border border-primary px-3 py-1.5 text-xs font-bold text-primary"
+                    >
+                      {copied === `${b.id}-all` ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                      Copiar todos
+                    </button>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      {b.codes.map((code) => (
+                        <button
+                          key={code}
+                          type="button"
+                          onClick={() => copy(code, code)}
+                          className="flex items-center justify-between rounded-md border border-border bg-card px-2 py-1 text-[11px]"
+                        >
+                          <span className="font-mono font-semibold text-foreground">{code}</span>
+                          {copied === code ? (
+                            <Check className="h-3 w-3 text-primary" />
+                          ) : (
+                            <Copy className="h-3 w-3 text-muted-foreground" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

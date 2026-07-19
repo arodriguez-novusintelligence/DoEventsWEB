@@ -34,6 +34,7 @@ export type NotificationType =
   | 'ticket_transfer'
   | 'refund'
   | 'access_assignment'
+  | 'task_assignment'
   | 'event_finished'
   | 'followed_event'
   | 'followed_post'
@@ -45,7 +46,9 @@ export type NotificationType =
   | 'venue_reserved'
   | 'service_booking'
   | 'service_booked'
-  | 'subscription_purchase';
+  | 'subscription_purchase'
+  | 'promo_code_shared'
+  | 'promo_code_canceled';
 
 export interface Notification {
   id: string;
@@ -56,15 +59,27 @@ export interface Notification {
   eventId?: string;
   venueId?: string;
   serviceId?: string;
+  entityId?: string;
+  entityType?: string;
+  triggerKey?: string;
+  invitationId?: string;
+  gateId?: string;
+  gateName?: string;
+  roomId?: string;
+  route?: string;
+  taskId?: string;
   venueName?: string;
   serviceName?: string;
   priceLabel?: string;
+  promoCode?: string;
   postId?: string;
   followId?: string;
   message?: string;
   timeAgo: string;
   read: boolean;
   actionable?: boolean;
+  /** Estado local tras aceptar/rechazar una solicitud de seguimiento. */
+  followRequestStatus?: 'accepted' | 'rejected';
   apiMeta?: {
     notificationId: string;
     userId: string;

@@ -1,5 +1,6 @@
 import { getAuthToken, getCurrentEnv } from './client';
 import { toUserFacingError } from '../lib/apiError';
+import { adjustPurchaseCountsCache } from '../lib/purchasesCountsCache';
 
 export type ServiceDayStatus = 'available' | 'reserved' | 'unavailable';
 
@@ -30,6 +31,8 @@ export interface CreateServiceBookingInput {
   startDate: string;
   endDate: string;
   additionalServices?: ServiceAdditionalBookingItem[];
+  activityKey?: string;
+  activityName?: string;
   buyer: {
     firstName: string;
     lastName: string;
@@ -67,6 +70,10 @@ export interface UserServiceBooking {
   bookingId: string;
   serviceId: string;
   serviceName: string;
+  serviceProvider?: string;
+  serviceSector?: string;
+  serviceCity?: string;
+  serviceAddress?: string;
   orderId: string;
   status: string;
   startDate: string;
@@ -76,6 +83,7 @@ export interface UserServiceBooking {
   pricing: CreateServiceBookingResponse['pricing'];
   createdAt: string;
   confirmedAt?: string | null;
+  expired_at_ts?: number | null;
 }
 
 function servicesBase(): string {
@@ -125,6 +133,8 @@ export async function createServiceBooking(
         startDate: input.startDate,
         endDate: input.endDate,
         additionalServices: input.additionalServices || [],
+        activityKey: input.activityKey,
+        activityName: input.activityName,
         buyer: input.buyer,
       }),
     },
@@ -133,6 +143,7 @@ export async function createServiceBooking(
   if (!response.ok) {
     throw new Error(toUserFacingError(body.error || body.message || 'No se pudo crear la reserva', 'reserva del servicio'));
   }
+  adjustPurchaseCountsCache(input.userId, { serviceCount: 1 });
   return body;
 }
 

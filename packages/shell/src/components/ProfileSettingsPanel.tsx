@@ -32,7 +32,12 @@ export const ProfileSettingsPanel: React.FC<ProfileSettingsPanelProps> = ({
       await updateProfileVisibility(userId, next);
       setIsPublic(next);
       onVisibilityChange?.(next);
-      showToast(next ? 'Tu perfil es visible para todos' : 'Tu perfil ahora es privado', 'success');
+      showToast(
+        next
+          ? 'Tu perfil es público: todos pueden ver tu contenido'
+          : 'Perfil privado: solo tus seguidores verán tu contenido',
+        'success',
+      );
     } catch (err) {
       showToast(err instanceof Error ? err.message : 'No se pudo actualizar', 'error');
     } finally {
@@ -84,7 +89,11 @@ export const ProfileSettingsPanel: React.FC<ProfileSettingsPanelProps> = ({
         <span className="de-profile-settings__icon">🔒</span>
         <div className="de-profile-settings__item-text">
           <strong>Perfil privado</strong>
-          <span>{isPublic ? 'Tu perfil es visible para todos' : 'Solo tú puedes ver tu perfil completo'}</span>
+          <span>
+            {isPublic
+              ? 'Tu perfil y publicaciones son visibles para todos'
+              : 'Solo tus seguidores pueden ver tu perfil, eventos, lugares y servicios'}
+          </span>
         </div>
         <button
           type="button"

@@ -25,8 +25,16 @@ interface LovableChatThreadProps {
   onBack: () => void;
   onAcceptInvitation: () => void;
   onDeclineInvitation: () => void;
-  onSendMessage: (text: string, options?: { announcement?: boolean }) => void;
+  onSendMessage: (
+    text: string,
+    options?: {
+      announcement?: boolean;
+      replyTo?: { id: string; text: string; senderName: string; senderId?: string };
+      editingMessageId?: string;
+    },
+  ) => void;
   onDeleteMessage: (messageId: string) => void;
+  onReportMessage?: (messageId: string) => void;
   onMediaPick?: (file: File) => void;
   onShareLocation?: () => void;
   onShareEvent?: () => void;
@@ -38,6 +46,10 @@ interface LovableChatThreadProps {
   isPrivateGroup: boolean;
   isReadOnlyEventChat?: boolean;
   onKickParticipant?: (participantId: string, participantName?: string) => void;
+  onReactMessage?: (messageId: string, emoji: string) => void;
+  onOpenStory?: (userId: string) => void;
+  onOpenUserProfile?: (userId: string) => void;
+  onCreateStory?: () => void;
 }
 
 export const LovableChatThread: React.FC<LovableChatThreadProps> = ({
@@ -59,6 +71,7 @@ export const LovableChatThread: React.FC<LovableChatThreadProps> = ({
   onDeclineInvitation,
   onSendMessage,
   onDeleteMessage,
+  onReportMessage,
   onMediaPick,
   onShareLocation,
   onShareEvent,
@@ -70,6 +83,10 @@ export const LovableChatThread: React.FC<LovableChatThreadProps> = ({
   isPrivateGroup,
   isReadOnlyEventChat = false,
   onKickParticipant,
+  onReactMessage,
+  onOpenStory,
+  onOpenUserProfile,
+  onCreateStory,
 }) => {
   if (loadingMessages) {
     return (
@@ -143,6 +160,8 @@ export const LovableChatThread: React.FC<LovableChatThreadProps> = ({
           isReadOnly={isReadOnlyEventChat}
           onSendMessage={onSendMessage}
           onDeleteMessage={onDeleteMessage}
+          onReportMessage={onReportMessage}
+          onReactMessage={onReactMessage}
           onMediaPick={onMediaPick}
           onShareLocation={onShareLocation}
           onShareEvent={onShareEvent}
@@ -150,6 +169,9 @@ export const LovableChatThread: React.FC<LovableChatThreadProps> = ({
           onAddPerson={onAddPerson}
           canModerate={isEventAdmin}
           onKickParticipant={onKickParticipant}
+          onOpenStory={onOpenStory}
+          onOpenUserProfile={onOpenUserProfile}
+          onCreateStory={onCreateStory}
         />
       )}
 
@@ -162,10 +184,15 @@ export const LovableChatThread: React.FC<LovableChatThreadProps> = ({
           canMessage={canMessage}
           onSendMessage={onSendMessage}
           onDeleteMessage={onDeleteMessage}
+          onReportMessage={onReportMessage}
+          onReactMessage={onReactMessage}
           onMediaPick={onMediaPick}
           onShareLocation={onShareLocation}
           onShareEvent={onShareEvent}
           onEventClick={onEventClick}
+          onOpenStory={onOpenStory}
+          onOpenUserProfile={onOpenUserProfile}
+          onCreateStory={onCreateStory}
         />
       )}
 
@@ -178,12 +205,17 @@ export const LovableChatThread: React.FC<LovableChatThreadProps> = ({
           canMessage={canMessage}
           onSendMessage={onSendMessage}
           onDeleteMessage={onDeleteMessage}
+          onReportMessage={onReportMessage}
+          onReactMessage={onReactMessage}
           onMediaPick={onMediaPick}
           onShareLocation={onShareLocation}
           onShareEvent={onShareEvent}
           onEventClick={onEventClick}
           canModerate={isEventAdmin}
           onKickParticipant={onKickParticipant}
+          onOpenStory={onOpenStory}
+          onOpenUserProfile={onOpenUserProfile}
+          onCreateStory={onCreateStory}
         />
       )}
     </div>

@@ -55,7 +55,11 @@ export async function parseFetchResponse<T>(
   }
 
   if (!response.ok) {
-    throw new Error(extractApiMessage(body, fallback));
+    const message = extractApiMessage(body, fallback);
+    if (message === 'Internal Server Error' || response.status === 500) {
+      throw new Error('El servidor no pudo guardar los cambios. Intenta de nuevo en unos segundos.');
+    }
+    throw new Error(message);
   }
 
   return (raw ? JSON.parse(raw) : {}) as T;

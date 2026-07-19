@@ -21,6 +21,7 @@ export interface UpdateUserProfileInput {
   user?: string;
   description?: string;
   phone?: string;
+  phoneNumber?: string;
   fotoPerfilBase64?: string;
   ciudad?: string;
   departamento?: string;
@@ -33,6 +34,9 @@ export interface UpdateUserProfileInput {
   companyWebsite?: string;
   companyIndustry?: string;
   companyDescription?: string;
+  date?: string;
+  countryCode?: string;
+  indicativo?: string;
 }
 
 function authHeaders(): Record<string, string> {
@@ -96,6 +100,7 @@ export async function updateUserProfile(input: UpdateUserProfileInput): Promise<
       user: input.user,
       description: input.description,
       phone: input.phone,
+      phoneNumber: input.phoneNumber,
       fotoPerfilBase64: input.fotoPerfilBase64,
       ciudad: input.ciudad,
       departamento: input.departamento,
@@ -108,6 +113,9 @@ export async function updateUserProfile(input: UpdateUserProfileInput): Promise<
       companyWebsite: input.companyWebsite,
       companyIndustry: input.companyIndustry,
       companyDescription: input.companyDescription,
+      date: input.date,
+      countryCode: input.countryCode ?? input.indicativo,
+      indicativo: input.indicativo ?? input.countryCode,
     }),
   });
 
@@ -269,11 +277,9 @@ export async function uploadProfileAvatar(userId: string, file: File): Promise<s
     throw new Error(saveBody.error || extractApiMessage(saveBody, 'No se pudo guardar la foto de perfil'));
   }
 
-  return resolveImageUrl(uploadBody.publicUrl)
+  return saveBody.fotoPerfilSignedUrl
+    || resolveImageUrl(uploadBody.publicUrl)
     || resolveImageUrl(saveBody.publicUrl)
-    || resolveImageUrl(saveBody.fotoPerfilSignedUrl)
-    || saveBody.fotoPerfilSignedUrl
-    || saveBody.publicUrl
     || uploadBody.publicUrl
     || uploadBody.signedUrl
     || '';
@@ -296,9 +302,8 @@ export async function setProfileAvatarFromGallery(
   if (!response.ok) {
     throw new Error(body.error || 'No se pudo usar la imagen de la galería como avatar');
   }
-  return resolveImageUrl(body.fotoPerfilSignedUrl)
+  return body.fotoPerfilSignedUrl
     || resolveImageUrl(body.publicUrl)
-    || body.fotoPerfilSignedUrl
     || body.publicUrl
     || '';
 }

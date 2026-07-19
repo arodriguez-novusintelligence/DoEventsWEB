@@ -7,7 +7,6 @@ import {
   fetchEventDetail,
   fetchGroupedUserTickets,
   fetchTicketQrUrl,
-  invalidateProfilePageCache,
   isPlaceholderEventImage,
   listStoredReservationsForUser,
   resolveEventImageUrl,
@@ -17,7 +16,7 @@ import {
 } from '@doevents/shared';
 import MyTicketsView from '@lovable/components/tickets/MyTicketsView';
 import type { Ticket, TicketStatus } from '@lovable/data/ticketsData';
-import { groupedTicketsToLovable } from '../lovable-bridge/ticketsAdapter';
+import { groupedTicketsToLovable, enrichTicketsCategoryColors, recoverMissingPendingTickets } from '../lovable-bridge/ticketsAdapter';
 
 function resolveNavigableOrderId(ticket: Ticket): string | null {
   const raw = ticket.orderId || ticket.orderRef || '';
@@ -61,6 +60,9 @@ async function enrichTicketsWithEventMedia(tickets: Ticket[]): Promise<Ticket[]>
 
 async function enrichTicketsWithQr(tickets: Ticket[]): Promise<Ticket[]> {
   return Promise.all(tickets.map(async (ticket) => {
+    if (ticket.isRefunded || ticket.isTransferredOut) {
+      return { ...ticket, qrUrl: undefined, qrCode: '' };
+    }
     if (ticket.qrUrl) return ticket;
     const ticketId = ticket.ticketInstanceId || ticket.id;
     if (!ticketId) return ticket;
@@ -111,8 +113,9 @@ export const TicketsPage: React.FC = () => {
     setLoadError(null);
     try {
       const grouped = await fetchGroupedUserTickets(userId);
-      const base = groupedTicketsToLovable(grouped);
-      const withExpiry = enrichPendingWithReservations(base, userId);
+      const base = await enrichTicketsCategoryColors(groupedTicketsToLovable(grouped));
+      const withOrphans = await recoverMissingPendingTickets(userId, base);
+      const withExpiry = enrichPendingWithReservations(withOrphans, userId);
       const withMedia = await enrichTicketsWithEventMedia(withExpiry);
       const enriched = await enrichTicketsWithQr(withMedia);
       setTickets(enriched);
@@ -126,7 +129,6 @@ export const TicketsPage: React.FC = () => {
 
   useEffect(() => {
     if (!userId) return;
-    invalidateProfilePageCache(userId);
     void reloadTickets();
   }, [userId]);
 
@@ -163,15 +165,19 @@ export const TicketsPage: React.FC = () => {
       initialTab={initialTab}
       onBack={() => (fromProfile ? navigate('/profile') : navigate('/'))}
       onViewEventDetail={(eventId) => navigate(`/events/${eventId}`)}
-      onOpenTicketDetail={(ticket) => {
+      onOpenTicketDetail={(ticket, action) => {
         const navigableOrderId = resolveNavigableOrderId(ticket);
         if (!navigableOrderId) {
           showToast('No se encontró la orden de esta boleta. Intenta recargar la página.', 'error');
           return;
         }
-        if (ticket.status === 'pendiente' && ticket.paymentExpiresAtTs) {
+        if (ticket.status === 'pendiente' && !action) {
           navigate(`/orders/${encodeURIComponent(navigableOrderId)}/confirm`, {
-            state: { eventId: ticket.eventId, eventName: ticket.eventTitle },
+            state: {
+              eventId: ticket.eventId,
+              eventName: ticket.eventTitle,
+              hasSeating: Boolean(ticket.seatLabel && ticket.seatLabel !== '—'),
+            },
           });
           return;
         }
@@ -191,6 +197,7 @@ export const TicketsPage: React.FC = () => {
               eventDate: ticket.eventDate,
               eventTime: ticket.startTime,
             },
+            openAction: action,
           },
         });
       }}

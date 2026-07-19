@@ -18,10 +18,14 @@ import {
   resolveEventImageUrl,
   sendEventInvitations,
   addEventGuest,
+  isPublishedEventStatus,
+  isEventInProgress,
   type UserEventItem,
   type EventGuest,
   type EventInvitation,
 } from "@doevents/shared";
+import { Avatar, AvatarFallback } from "@lovable/components/ui/avatar";
+import { UserAvatarImage } from "../../../components/UserAvatarImage";
 import { buildEventInvitationPayload, mergeEventGuestLists, mergeGuestsForInvite, dedupeGuests, findMatchingGuest, syncGuestIdsToInviteList } from "../../../lovable-bridge/guestsAdapter";
 import { guestErrorMessage } from "@lovable/utils/guestErrorMessage";
 import { composeFullPhone } from "./PhoneCountryFields";
@@ -224,7 +228,14 @@ export const EventInvitationModal = ({
         items
           .filter((ev) => {
             const status = String(ev.estatus || '').trim().toLowerCase();
-            return status !== 'deleted' && status !== 'cancelado' && status !== 'cancelled';
+            if (status === 'deleted' || status === 'cancelado' || status === 'cancelled') return false;
+            if (isPublishedEventStatus(ev.estatus)) return true;
+            return isEventInProgress({
+              fechaIni: ev.fechaIni,
+              fechaFin: ev.fechaFin,
+              horaIni: ev.horaIni,
+              horaFin: ev.horaFin,
+            });
           })
           .map(mapUserEvent)
           .filter((e) => e.id),
@@ -295,14 +306,14 @@ export const EventInvitationModal = ({
     return keys;
   }, [eventInvitations]);
 
-  const isAlreadyInvited = (g: Guest) => {
+  const isAlreadyInvited = useCallback((g: Guest) => {
     const checks = [
       g.invitedUserId && `uid:${g.invitedUserId}`,
       g.favoriteId && `fav:${g.favoriteId}`,
       g.id && `id:${g.id}`,
     ].filter(Boolean) as string[];
     return checks.some((k) => invitedGuestKeys.has(k));
-  };
+  }, [invitedGuestKeys]);
 
   const selectedGuests = useMemo(
     () => listGuests.filter((g) => guestIds.includes(g.id)),
@@ -311,10 +322,11 @@ export const EventInvitationModal = ({
 
   const filteredGuests = useMemo(() => {
     if (groupFilter === 'all') return listGuests;
+    if (groupFilter === 'invited') return listGuests.filter((g) => isAlreadyInvited(g));
     if (groupFilter === 'favorites') return listGuests.filter((g) => g.isFavorite);
     if (groupFilter === 'ungrouped') return listGuests.filter((g) => !g.groupId);
     return listGuests.filter((g) => g.groupId === groupFilter);
-  }, [listGuests, groupFilter]);
+  }, [listGuests, groupFilter, isAlreadyInvited]);
 
   const guestIsRecent = useCallback((g: Guest) => {
     return recentlyAddedGuestIds.some((key) => {
@@ -329,9 +341,15 @@ export const EventInvitationModal = ({
       const aRecent = guestIsRecent(a) ? 0 : 1;
       const bRecent = guestIsRecent(b) ? 0 : 1;
       if (aRecent !== bRecent) return aRecent - bRecent;
+      const aInvited = isAlreadyInvited(a) ? 0 : 1;
+      const bInvited = isAlreadyInvited(b) ? 0 : 1;
+      if (aInvited !== bInvited) return aInvited - bInvited;
+      const aFav = a.isFavorite ? 0 : 1;
+      const bFav = b.isFavorite ? 0 : 1;
+      if (aFav !== bFav) return aFav - bFav;
       return `${a.name} ${a.lastName}`.localeCompare(`${b.name} ${b.lastName}`, 'es');
     });
-  }, [filteredGuests, guestIsRecent]);
+  }, [filteredGuests, guestIsRecent, isAlreadyInvited]);
 
   const emailOnly = useMemo(
     () => selectedGuests.filter((g) => !g.username && g.email),
@@ -859,24 +877,50 @@ export const EventInvitationModal = ({
     setAddGuestOpen(v);
   };
 
+  const requestCloseAll = () => {
+    setAddGuestOpenSafe(false);
+    setEditOpenSafe(false);
+    setConfirmOpen(false);
+    close();
+  };
+
   return (
     <>
       <Dialog
         open={open}
         onOpenChange={(nextOpen) => {
           if (nextOpen) return;
-          if (addGuestOpenRef.current || editOpenRef.current) return;
-          close();
+          requestCloseAll();
         }}
       >
         <DialogContent
           stacked
-          className="!flex h-[100dvh] max-h-[100dvh] w-screen max-w-full flex-col gap-0 overflow-hidden rounded-none border-0 p-0 sm:h-[min(92dvh,820px)] sm:max-h-[min(92dvh,820px)] sm:w-full sm:max-w-md sm:rounded-2xl"
+          className="!flex h-[100dvh] max-h-[100dvh] w-screen max-w-full flex-col gap-0 overflow-hidden rounded-none border-0 p-0 sm:h-[min(92dvh,820px)] sm:max-h-[min(92dvh,820px)] sm:w-full sm:max-w-md sm:rounded-2xl [&>button:last-child]:hidden"
+          onPointerDownOutside={(e) => {
+            if (addGuestOpenRef.current || editOpenRef.current || confirmOpen) {
+              e.preventDefault();
+            }
+          }}
+          onEscapeKeyDown={(e) => {
+            if (addGuestOpenRef.current || editOpenRef.current || confirmOpen) {
+              e.preventDefault();
+            }
+          }}
         >
           <div className="relative flex h-full min-h-0 flex-1 flex-col overflow-hidden">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={requestCloseAll}
+            className="absolute right-3 top-3 z-20 h-8 w-8 p-0 rounded-full hover:bg-muted"
+            aria-label="Cerrar"
+          >
+            <X className="h-4 w-4" />
+          </Button>
           {step === 'events' && (
             <>
-              <DialogHeader className="shrink-0 space-y-1 p-4 pb-3 text-left sm:p-6 sm:pb-4">
+              <DialogHeader className="shrink-0 space-y-1 p-4 pb-3 pr-12 text-left sm:p-6 sm:pb-4">
                 <DialogTitle className="text-base font-semibold sm:text-xl">Seleccionar Evento</DialogTitle>
                 <p className="text-xs text-muted-foreground sm:text-sm">Elige un evento para enviar invitaciones</p>
               </DialogHeader>
@@ -954,7 +998,7 @@ export const EventInvitationModal = ({
           )}
           {step === 'channels' && event && (
             <>
-              <DialogHeader className="shrink-0 space-y-0 p-4 sm:p-6 pb-2 sm:pb-3 text-left">
+              <DialogHeader className="shrink-0 space-y-0 p-4 pr-12 sm:p-6 sm:pr-14 pb-2 sm:pb-3 text-left">
                 <div className="flex items-center gap-2">
                   <Button variant="ghost" size="sm" onClick={() => setStep('events')} className="h-8 w-8 p-0">
                     <ArrowLeft className="h-4 w-4" />
@@ -1063,6 +1107,7 @@ export const EventInvitationModal = ({
                     <div className="flex items-center gap-1.5 pb-1">
                       {[
                         { id: 'all', label: 'Todos', count: listGuests.length },
+                        { id: 'invited', label: 'Invitados', count: listGuests.filter((g) => isAlreadyInvited(g)).length },
                         { id: 'favorites', label: 'Favoritos', count: listGuests.filter((g) => g.isFavorite).length },
                         { id: 'ungrouped', label: 'Sin grupo', count: listGuests.filter((g) => !g.groupId).length },
                         ...groups.map((g) => ({
@@ -1143,13 +1188,16 @@ export const EventInvitationModal = ({
                           >
                             <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0 overflow-hidden">
                               <Checkbox checked={sel} onCheckedChange={(c) => toggleGuest(g.id, Boolean(c))} className="shrink-0" />
-                              {g.avatar ? (
-                                <img src={g.avatar} alt="" className="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover shrink-0" />
-                              ) : (
-                                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 overflow-hidden">
-                                  <span className="text-sm font-semibold text-primary">{g.name.charAt(0)}{g.lastName.charAt(0)}</span>
-                                </div>
-                              )}
+                              <Avatar className="h-9 w-9 sm:h-10 sm:w-10 shrink-0">
+                                <UserAvatarImage
+                                  src={g.avatar}
+                                  userId={g.invitedUserId || g.id}
+                                  alt={`${g.name} ${g.lastName}`.trim()}
+                                />
+                                <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs">
+                                  {g.name.charAt(0)}{g.lastName.charAt(0)}
+                                </AvatarFallback>
+                              </Avatar>
                               <div className="min-w-0 flex-1 overflow-hidden">
                                 <p className="font-medium text-sm truncate">{g.name} {g.lastName}</p>
                                 {g.username && (
@@ -1228,13 +1276,24 @@ export const EventInvitationModal = ({
                                 bad ? 'border-destructive bg-destructive/10' : 'border-border bg-background'
                               }`}
                             >
-                              <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${isEmailOnly ? 'bg-blue-500/10' : 'bg-primary/10'}`}>
+                              <Avatar className="h-5 w-5 shrink-0">
                                 {isEmailOnly ? (
-                                  <AtSign className="h-3 w-3 text-blue-500" />
+                                  <AvatarFallback className="bg-blue-500/10">
+                                    <AtSign className="h-3 w-3 text-blue-500" />
+                                  </AvatarFallback>
                                 ) : (
-                                  <span className="text-[9px] font-semibold text-primary">{g.name.charAt(0)}{g.lastName.charAt(0)}</span>
+                                  <>
+                                    <UserAvatarImage
+                                      src={g.avatar}
+                                      userId={g.invitedUserId || g.id}
+                                      alt={`${g.name} ${g.lastName}`.trim()}
+                                    />
+                                    <AvatarFallback className="bg-primary/10 text-[9px] font-semibold text-primary">
+                                      {g.name.charAt(0)}{g.lastName.charAt(0)}
+                                    </AvatarFallback>
+                                  </>
                                 )}
-                              </div>
+                              </Avatar>
                               <span className="font-medium truncate max-w-[min(140px,38vw)]">
                                 {isEmailOnly ? g.email : `${g.name} ${g.lastName}`}
                               </span>

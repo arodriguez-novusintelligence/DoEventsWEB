@@ -86,11 +86,11 @@ const FacilitiesPicker = ({ selected, onChange }: FacilitiesPickerProps) => {
   return (
     <div className="rounded-2xl border border-dashed border-primary/40 bg-secondary/40 p-4">
       {selected.length === 0 ? (
-        <>
-          <p className="text-center text-sm text-muted-foreground mb-3 leading-snug">
+        <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-center text-sm text-muted-foreground leading-snug sm:text-left sm:flex-1">
             Agrega los servicios y facilidades disponibles en tu lugar
           </p>
-          <div className="flex justify-center">
+          <div className="shrink-0">
             <Button
               variant="outline"
               onClick={openDialog}
@@ -99,7 +99,7 @@ const FacilitiesPicker = ({ selected, onChange }: FacilitiesPickerProps) => {
               Agregar
             </Button>
           </div>
-        </>
+        </div>
       ) : (
         <>
           <div className="space-y-2">

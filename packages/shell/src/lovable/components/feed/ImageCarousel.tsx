@@ -6,6 +6,8 @@ import { cn } from '@lovable/lib/utils';
 interface ImageCarouselProps {
   images: string[];
   className?: string;
+  /** Sin padding/borde extra — para tarjetas de evento/lugar/servicio con badges encima */
+  bare?: boolean;
 }
 
 const isVideo = (src: string) => {
@@ -141,7 +143,11 @@ const MediaLightbox = ({
 };
 
 /* ── Main Carousel ── */
-const ImageCarousel = ({ images, className }: ImageCarouselProps) => {
+const ImageCarousel = ({ images, className, bare = false }: ImageCarouselProps) => {
+  const frameClass = bare
+    ? 'overflow-hidden rounded-xl'
+    : 'overflow-hidden rounded-xl border border-border/60 shadow-sm ring-2 ring-primary/20';
+  const outerPad = bare ? '' : 'px-4';
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false });
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -165,8 +171,8 @@ const ImageCarousel = ({ images, className }: ImageCarouselProps) => {
   return (
     <>
       {images.length === 1 ? (
-        <div className="px-4">
-          <div className="overflow-hidden rounded-xl border border-border/60 shadow-sm ring-2 ring-primary/20">
+        <div className={outerPad}>
+          <div className={frameClass}>
           <MediaItem
             src={images[0]}
             className={cn('rounded-lg', className)}
@@ -175,8 +181,8 @@ const ImageCarousel = ({ images, className }: ImageCarouselProps) => {
           </div>
         </div>
       ) : (
-        <div className="relative px-4">
-          <div className="overflow-hidden rounded-xl border border-border/60 shadow-sm ring-2 ring-primary/20" ref={emblaRef}>
+        <div className={cn('relative', outerPad)}>
+          <div className={frameClass} ref={emblaRef}>
             <div className="flex">
               {images.map((src, i) => (
                 <div key={i} className="min-w-0 flex-[0_0_100%]">

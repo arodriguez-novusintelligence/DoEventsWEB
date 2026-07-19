@@ -2,12 +2,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {
-  buildMapUrl,
   canEditEntity,
   EventDetailResponse,
   extractVenueImageUrls,
   fetchEventDetail,
+  fetchPublicationById,
   fetchUserById,
+  getUserByEmail,
+  fetchUserStats,
   getCurrentEnv,
   getVenueById,
   invalidateDiscoverCache,
@@ -18,6 +20,7 @@ import {
   publishEvent,
   repostPublication,
   resolveImageUrl,
+  resolvePublicationDetailPath,
   RootState,
   useToast,
   dispatchEventFavoriteChanged,
@@ -25,7 +28,7 @@ import {
 } from '@doevents/shared';
 import InvitationEventDetailView from '@lovable/components/invitations/InvitationEventDetailView';
 import type { InvitationEvent } from '@lovable/data/invitationsData';
-import { eventDetailToInvitationEvent, type EventDetailViewOptions } from '../lovable-bridge/eventDetailAdapter';
+import { eventDetailToInvitationEvent, buildMinimalInvitationEvent, type EventDetailViewOptions } from '../lovable-bridge/eventDetailAdapter';
 import EventStaffSection, { type HiredServiceRef } from '../components/EventStaffSection';
 import EventMediaEditor from '../components/EventMediaEditor';
 
@@ -45,6 +48,7 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = () => {
   const [publishing, setPublishing] = useState(false);
   const [liking, setLiking] = useState(false);
   const [hiredStaff, setHiredStaff] = useState<HiredServiceRef[]>([]);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     if (!eventId) return;
@@ -54,24 +58,49 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = () => {
     } catch { /* ignore */ }
   }, [eventId]);
 
+  const invalidEventId = !eventId || /^pub_/i.test(eventId);
+
+  useEffect(() => {
+    if (!eventId || !/^pub_/i.test(eventId)) return;
+    let cancelled = false;
+
+    const redirectFromPublication = async () => {
+      const publication = await fetchPublicationById(eventId, userId || undefined);
+      if (cancelled || !publication) return;
+      const targetPath = resolvePublicationDetailPath(publication);
+      if (targetPath && targetPath !== `/events/${eventId}`) {
+        navigate(targetPath, { replace: true });
+      }
+    };
+
+    void redirectFromPublication();
+    return () => { cancelled = true; };
+  }, [eventId, navigate, userId]);
+
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
+      if (!eventId || invalidEventId) {
+        setDetail(null);
+        setLoading(false);
+        return;
+      }
       setLoading(true);
       try {
         const data = await fetchEventDetail(eventId);
         if (!cancelled) setDetail(data);
       } catch (err) {
         if (!cancelled) {
+          setDetail(null);
           showToast(err instanceof Error ? err.message : 'No se pudo cargar el evento', 'error');
         }
       } finally {
         if (!cancelled) setLoading(false);
       }
     };
-    if (eventId) load();
+    void load();
     return () => { cancelled = true; };
-  }, [eventId, showToast]);
+  }, [eventId, invalidEventId, showToast, reloadKey]);
 
   useEffect(() => {
     const venueId = detail?.event?.venueId;
@@ -90,6 +119,8 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = () => {
           name: venue.name,
           address: venue.address || undefined,
           images,
+          latitude: venue.latitude != null ? Number(venue.latitude) : undefined,
+          longitude: venue.longitude != null ? Number(venue.longitude) : undefined,
         });
       })
       .catch(() => {
@@ -100,28 +131,75 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = () => {
 
   useEffect(() => {
     if (!detail) return;
+    let cancelled = false;
+
     const enrichPerson = async (
       personKey: 'organizer' | 'host',
       userKey?: string,
-      fallbackEmail?: string,
+      fallbackName?: string,
     ) => {
       const person = detail[personKey];
-      if (person?.fotoPerfilUrl) return;
-      const lookupId = person?.id || userKey;
+      let lookupId = person?.id || userKey;
+      if (!lookupId && person?.email) {
+        const users = await getUserByEmail(person.email).catch(() => []);
+        lookupId = users[0]?.id;
+      }
       if (!lookupId) return;
       try {
-        const profile = await fetchUserById(lookupId);
-        if (!profile?.imagen) return;
+        const [profile, stats] = await Promise.all([
+          fetchUserById(lookupId).catch(() => null),
+          fetchUserStats(lookupId).catch(() => null),
+        ]);
+        if (cancelled) return;
         setDetail((prev) => {
           if (!prev) return prev;
+          const current = prev[personKey] || { name: fallbackName || 'Usuario' };
+          const numberOrUndefined = (value: unknown): number | undefined => {
+            const number = Number(value);
+            return Number.isFinite(number) ? number : undefined;
+          };
+          const firstNumber = (...values: unknown[]): number => {
+            for (const value of values) {
+              const number = numberOrUndefined(value);
+              if (number !== undefined) return number;
+            }
+            return 0;
+          };
+          const eventsCount = firstNumber(
+            current.eventosRealizados,
+            stats?.eventosRealizados,
+            stats?.eventosFinalizados,
+            current.totalEventos,
+            stats?.totalEventos,
+          );
+          const rating = firstNumber(
+            current.calificacionPromedio,
+            current.calificacion,
+            stats?.calificacionPromedio,
+            profile?.calificacion,
+          );
+          const completedEvents = numberOrUndefined(stats?.experienciaEventosRealizados);
+          const currentExperience = numberOrUndefined(current.experiencia)
+            ?? numberOrUndefined(profile?.experiencia);
+          // getUserStats entrega eventos realizados; el detalle usa porcentaje
+          // sobre el umbral histórico de 15 eventos.
+          const experience = completedEvents !== undefined
+            ? Math.min(100, Math.round((completedEvents / 15) * 100))
+            : (currentExperience ?? Math.min(100, Math.round((eventsCount / 15) * 100)));
           return {
             ...prev,
             [personKey]: {
-              ...(prev[personKey] || { name: fallbackEmail || 'Usuario' }),
-              id: prev[personKey]?.id || lookupId,
-              fotoPerfilUrl: resolveImageUrl(profile.imagen),
-              name: prev[personKey]?.name || profile.nombre,
-              lastName: prev[personKey]?.lastName || profile.apellido,
+              ...current,
+              id: current.id || profile?.id || lookupId,
+              name: current.name || profile?.nombre || fallbackName || 'Usuario',
+              lastName: current.lastName || profile?.apellido,
+              fotoPerfilUrl: current.fotoPerfilUrl
+                || profile?.imagen,
+              calificacion: rating,
+              calificacionPromedio: rating,
+              eventosRealizados: eventsCount,
+              totalEventos: eventsCount,
+              experiencia: experience,
             },
           };
         });
@@ -131,11 +209,16 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = () => {
     };
 
     void enrichPerson('organizer', detail.event.userId, detail.event.organizerName);
-    void enrichPerson('host', detail.host?.id, detail.event.emailAnf);
-  }, [detail?.event?.id, detail?.event?.userId, detail?.host?.id, detail?.organizer?.fotoPerfilUrl, detail?.host?.fotoPerfilUrl]);
+    void enrichPerson(
+      'host',
+      detail.host?.id,
+      detail.event.anfitrioName,
+    );
+
+    return () => { cancelled = true; };
+  }, [detail?.event?.id, detail?.event?.userId, detail?.host?.id]);
 
   const event = detail?.event;
-  const mapUrl = event ? buildMapUrl(event) : null;
   const isOwner = isEntityOwner(userId, event?.userId);
   const canEdit = canEditEntity(userId, event?.userId, event?.coAdminIds);
   const isDraft = event?.estatus === 'inactivo' || event?.estatus === 'draft';
@@ -143,10 +226,14 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = () => {
     || event?.estatus === 'ejecucion'
     || event?.estatus === 'en_ejecucion';
 
-  const invitationEvent: InvitationEvent | null = useMemo(
-    () => (detail ? eventDetailToInvitationEvent(detail, { venue: venueOptions }) : null),
-    [detail, venueOptions],
-  );
+  const invitationEvent: InvitationEvent | null = useMemo(() => {
+    if (!detail?.event) return null;
+    try {
+      return eventDetailToInvitationEvent(detail, { venue: venueOptions });
+    } catch {
+      return buildMinimalInvitationEvent(detail);
+    }
+  }, [detail, venueOptions]);
 
   const handlePublish = async () => {
     if (!eventId) return;
@@ -215,6 +302,14 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = () => {
         showToast('Ya reposteaste este evento', 'error');
         return;
       }
+      if (/FEED_REPOST_LIMIT|límite de republicaciones/i.test(message)) {
+        showToast('Alcanzaste el límite de republicaciones para este evento', 'error');
+        return;
+      }
+      if (/FEED_REPOST_COOLDOWN|esperar.*día/i.test(message)) {
+        showToast(message, 'error');
+        return;
+      }
       showToast(message, 'error');
     }
   };
@@ -229,11 +324,36 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = () => {
 
   if (!detail || !event || !invitationEvent) {
     return (
-      <div className="mx-auto max-w-lg px-4 pt-4 pb-24">
+      <div className="mx-auto flex min-h-[60vh] max-w-lg flex-col px-4 pt-4 pb-24">
         <button type="button" className="text-primary font-medium" onClick={() => navigate(-1)}>
           ← Atrás
         </button>
-        <p className="mt-6 text-center text-muted-foreground">Evento no encontrado.</p>
+        <div className="flex flex-1 flex-col items-center justify-center gap-3 text-center">
+          <p className="text-base font-semibold text-foreground">
+            {invalidEventId ? 'Enlace de evento inválido' : 'Evento no encontrado'}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            {invalidEventId
+              ? 'Abre el evento desde el feed o Mis eventos para ver su detalle.'
+              : 'No pudimos cargar el detalle. Comprueba tu conexión e inténtalo de nuevo.'}
+          </p>
+          {!invalidEventId && (
+            <button
+              type="button"
+              className="mt-2 rounded-full border border-primary px-5 py-2 text-sm font-semibold text-primary"
+              onClick={() => setReloadKey((key) => key + 1)}
+            >
+              Reintentar
+            </button>
+          )}
+          <button
+            type="button"
+            className="mt-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground"
+            onClick={() => navigate(invalidEventId ? '/' : '/events')}
+          >
+            {invalidEventId ? 'Ir al feed' : 'Ver eventos'}
+          </button>
+        </div>
       </div>
     );
   }
@@ -252,8 +372,7 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = () => {
         onPublish={isOwner && isDraft ? handlePublish : undefined}
         publishing={publishing || liking}
         onMapClick={() => {
-          if (mapUrl) window.open(mapUrl, '_blank', 'noopener,noreferrer');
-          else navigate('/map');
+          navigate(`/map?event=${encodeURIComponent(eventId)}&returnTo=${encodeURIComponent(`/events/${eventId}`)}`);
         }}
         onSuccess={() => showToast('Compra realizada', 'success')}
         contentBottomPadding="pb-0"
@@ -290,3 +409,5 @@ export const EventDetailPage: React.FC<EventDetailPageProps> = () => {
     </div>
   );
 };
+
+export default EventDetailPage;

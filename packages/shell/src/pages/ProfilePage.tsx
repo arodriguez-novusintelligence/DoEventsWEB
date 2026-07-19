@@ -10,6 +10,9 @@ import {
   fetchFollowingCount,
   fetchFollowingList,
   fetchGroupedUserTickets,
+  fetchUserInvitations,
+  fetchUserServiceBookings,
+  fetchUserVenueBookings,
   EVENTS_CACHE_INVALIDATED_EVENT,
   fetchUserById,
   fetchUserEvents,
@@ -17,8 +20,8 @@ import {
   fetchUserPublications,
   fetchUserServiceComments,
   fetchUserStats,
+  fetchAllGuestContacts,
   fetchOwnerProfileVenues,
-  listUserVenues,
   fetchServicesByUserId,
   SERVICES_CACHE_INVALIDATED_EVENT,
   VENUES_CACHE_INVALIDATED_EVENT,
@@ -27,9 +30,13 @@ import {
   getExperienceSegment,
   cacheProfilePageSnapshot,
   getProfilePageCache,
-  invalidateProfilePageCache,
+  getProfileHeaderCache,
+  invalidateProfileHeaderCache,
+  patchProfilePageCounts,
+  sanitizeProfileMediaForCache,
   invalidateCachedProfile,
   PROFILE_PAGE_CACHE_INVALIDATED_EVENT,
+  SOCIAL_GRAPH_UPDATED_EVENT,
   appendImageCacheBuster,
   Loader,
   resolveImageUrl,
@@ -46,12 +53,22 @@ import {
   type UserStats,
   resolveUserDisplayName,
   getPersistedUserDisplayName,
+  getPersistedOAuthProfilePhoto,
+  clearPersistedOAuthProfilePhoto,
+  resolveUserAvatarUrl,
+  setCachedPurchaseCounts,
+  userIdsMatch,
 } from '@doevents/shared';
+import {
+  composeFullPhone,
+  normalizePhoneNumber,
+} from '@lovable/components/guests/PhoneCountryFields';
 import ProfileView from '@lovable/components/feed/ProfileView';
 import type { FavEventItem, FavPlaceItem } from '@lovable/components/feed/FavoritesView';
 import type { ProfileCommentItem } from '@lovable/components/feed/ProfileCommentsView';
 import type { ProfileListUser } from '@lovable/components/feed/FollowersSheet';
-import { groupedTicketsToLovable } from '../lovable-bridge/ticketsAdapter';
+import { groupedTicketsToLovable, enrichTicketsCategoryColors } from '../lovable-bridge/ticketsAdapter';
+import { filterVisibleUserEvents } from '../lovable-bridge/discoverEventFilters';
 import { feedEventToDiscoverItem } from '../lovable-bridge/discoverAdapter';
 import { feedPublicationToLovablePost } from '../lovable-bridge/feedAdapter';
 import { nearbyServiceToFormData } from '../lovable-bridge/servicesAdapter';
@@ -66,8 +83,15 @@ function toProfileListUser(entry: { id: string; name: string; avatarUrl?: string
     id: entry.id,
     name,
     initials: name.split(' ').filter(Boolean).map((p) => p[0]).join('').slice(0, 2).toUpperCase() || 'DE',
-    avatarUrl: resolveImageUrl(entry.avatarUrl) || undefined,
+    avatarUrl: resolveUserAvatarUrl(entry.avatarUrl, entry.id) || undefined,
   };
+}
+
+function resolveProfileAvatarForUi(
+  profile: UserProfile | null | undefined,
+  userId: string | null | undefined,
+): string | undefined {
+  return resolveUserAvatarUrl(profile?.imagen, userId);
 }
 
 export const ProfilePage: React.FC = () => {
@@ -93,15 +117,108 @@ export const ProfilePage: React.FC = () => {
   const [profileComments, setProfileComments] = useState<ProfileCommentItem[]>([]);
   const [myPosts, setMyPosts] = useState<ReturnType<typeof feedPublicationToLovablePost>[]>([]);
   const [myEventsCount, setMyEventsCount] = useState(0);
-  const [ticketsCount, setTicketsCount] = useState(0);
+  const [myStatsCount, setMyStatsCount] = useState(0);
+  const [myPurchasesCount, setMyPurchasesCount] = useState(0);
+  const [myInvitationsCount, setMyInvitationsCount] = useState(0);
+  const [myGuestsCount, setMyGuestsCount] = useState(0);
   const [rating, setRating] = useState(0);
   const [commentsCount, setCommentsCount] = useState(0);
   const [uploading, setUploading] = useState(false);
   const [mediaPickerTarget, setMediaPickerTarget] = useState<'avatar' | 'cover' | null>(null);
   const [publishedServices, setPublishedServices] = useState<ServiceFormData[]>([]);
+  const [myServicesCount, setMyServicesCount] = useState(0);
   const [myVenuesCount, setMyVenuesCount] = useState(0);
 
-  const reload = useCallback(async (forceNetwork = false) => {
+  const applyHeaderFromCache = useCallback((cached: ReturnType<typeof getProfileHeaderCache>) => {
+    if (!cached?.profile) return;
+    setProfile(sanitizeProfileMediaForCache(cached.profile, userId));
+    setFollowersCount(cached.followersCount);
+    setFollowingCount(cached.followingCount);
+    setRating(cached.rating);
+  }, [userId]);
+
+  const applyFullCache = useCallback((cached: NonNullable<ReturnType<typeof getProfilePageCache>>) => {
+    if (cached.profile) {
+      setProfile(sanitizeProfileMediaForCache(cached.profile, userId));
+    }
+    setStats(cached.stats);
+    setMyEventsCount(cached.myEventsCount);
+    setMyStatsCount(cached.myStatsCount ?? cached.myEventsCount ?? 0);
+    setMyPurchasesCount(
+      cached.myPurchasesCount
+      ?? (cached as { ticketsCount?: number }).ticketsCount
+      ?? 0,
+    );
+    setMyInvitationsCount(cached.myInvitationsCount ?? 0);
+    setMyVenuesCount(cached.myVenuesCount);
+    setMyServicesCount(cached.myServicesCount ?? 0);
+    setFollowersCount(cached.followersCount);
+    setFollowingCount(cached.followingCount);
+    setRating(cached.rating);
+    setCommentsCount(cached.commentsCount);
+  }, [userId]);
+
+  const applyUserServices = useCallback((userServices: Awaited<ReturnType<typeof fetchServicesByUserId>>) => {
+    const mapped = (userServices || []).map(nearbyServiceToFormData);
+    setPublishedServices(mapped);
+    setMyServicesCount(mapped.length);
+    if (userId) {
+      patchProfilePageCounts(userId, { myServicesCount: mapped.length });
+    }
+  }, [userId]);
+
+  const refreshUserServices = useCallback(async (forceNetwork = false) => {
+    if (!userId) return;
+    const userServices = await fetchServicesByUserId(userId, {
+      forceNetwork,
+      includeInactive: true,
+    }).catch(() => []);
+    applyUserServices(userServices);
+  }, [userId, applyUserServices]);
+
+  const refreshProfileCounts = useCallback(async (forceNetwork = false) => {
+    if (!userId) return;
+    try {
+      const [events, userVenues, userServices] = await Promise.all([
+        fetchUserEvents(userId, { forceNetwork, allEvents: true }).catch(() => ({ data: { datosEvento: [] } })),
+        fetchOwnerProfileVenues(userId).catch(() => []),
+        fetchServicesByUserId(userId, { forceNetwork, includeInactive: true }).catch(() => []),
+      ]);
+      const visibleEvents = filterVisibleUserEvents(events.data?.datosEvento || []);
+      const eventsCount = visibleEvents.length;
+      const venuesCount = userVenues.length;
+      const servicesCount = (userServices || []).length;
+
+      setMyEventsCount(eventsCount);
+      setMyVenuesCount(venuesCount);
+      applyUserServices(userServices);
+      setMyStatsCount((prev) => (prev > 0 ? prev : eventsCount));
+
+      patchProfilePageCounts(userId, {
+        myEventsCount: eventsCount,
+        myVenuesCount: venuesCount,
+        myServicesCount: servicesCount,
+      });
+    } catch {
+      // refresco en segundo plano; no bloquear la UI
+    }
+  }, [userId, applyUserServices]);
+
+  const loadSocialLists = useCallback(async () => {
+    if (!userId) return;
+    const [followersData, followingData, followersRes, followingCountRes] = await Promise.all([
+      fetchFollowersList(userId).catch(() => []),
+      fetchFollowingList(userId).catch(() => []),
+      fetchFollowersCount(userId).catch(() => ({ count: 0 })),
+      fetchFollowingCount(userId).catch(() => 0),
+    ]);
+    setFollowersList(followersData.map(toProfileListUser));
+    setFollowingList(followingData.map(toProfileListUser));
+    setFollowersCount(followersRes.count || 0);
+    setFollowingCount(typeof followingCountRes === 'number' ? followingCountRes : 0);
+  }, [userId]);
+
+  const reload = useCallback(async (forceHeaderRefresh = false) => {
     if (!userId) {
       setLoading(false);
       setLoadError(null);
@@ -109,25 +226,32 @@ export const ProfilePage: React.FC = () => {
     }
 
     setLoadError(null);
-    if (!forceNetwork) {
-      const cached = getProfilePageCache(userId);
-      if (cached?.profile) {
-        setProfile(cached.profile);
-        setStats(cached.stats);
-        setMyEventsCount(cached.myEventsCount);
-        setTicketsCount(cached.ticketsCount);
-        setMyVenuesCount(cached.myVenuesCount);
-        setFollowersCount(cached.followersCount);
-        setFollowingCount(cached.followingCount);
-        setRating(cached.rating);
-        setCommentsCount(cached.commentsCount);
-        setLoading(false);
-      }
-    } else {
-      invalidateProfilePageCache(userId);
+
+    const fullCache = !forceHeaderRefresh ? getProfilePageCache(userId) : null;
+    const headerCache = !forceHeaderRefresh ? getProfileHeaderCache(userId) : null;
+    const headerFresh = Boolean(headerCache?.profile);
+    const fullFresh = Boolean(fullCache?.profile);
+
+    if (fullFresh && fullCache) {
+      applyFullCache(fullCache);
+      setLoading(false);
+      void refreshUserServices(forceHeaderRefresh);
+      void refreshProfileCounts(true);
+      void loadSocialLists();
+      return;
     }
 
-    setLoading((prev) => prev || !getProfilePageCache(userId));
+    if (headerFresh && headerCache) {
+      applyHeaderFromCache(headerCache);
+      setLoading(false);
+    } else if (forceHeaderRefresh) {
+      invalidateProfileHeaderCache(userId);
+    }
+
+    if (!headerFresh && !fullFresh) {
+      setLoading(true);
+    }
+
     try {
       const [
         userProfile,
@@ -144,12 +268,22 @@ export const ProfilePage: React.FC = () => {
         likedPosts,
         userVenues,
         userServices,
+        userInvitations,
+        venueBookings,
+        serviceBookings,
+        guestContacts,
       ] = await Promise.all([
-        fetchUserById(userId).catch(() => null),
+        headerFresh
+          ? Promise.resolve(headerCache?.profile ?? null)
+          : fetchUserById(userId).catch(() => null),
         fetchUserStats(userId).catch(() => null),
-        fetchUserEvents(userId, { forceNetwork, allEvents: true }).catch(() => ({ data: { datosEvento: [] } })),
-        fetchFollowersCount(userId).catch(() => ({ count: 0 })),
-        fetchFollowingCount(userId).catch(() => 0),
+        fetchUserEvents(userId, { forceNetwork: forceHeaderRefresh, allEvents: true }).catch(() => ({ data: { datosEvento: [] } })),
+        headerFresh
+          ? Promise.resolve({ count: headerCache?.followersCount ?? 0 })
+          : fetchFollowersCount(userId).catch(() => ({ count: 0 })),
+        headerFresh
+          ? Promise.resolve(headerCache?.followingCount ?? 0)
+          : fetchFollowingCount(userId).catch(() => 0),
         fetchGroupedUserTickets(userId).catch(() => null),
         fetchUserServiceComments(userId).catch(() => []),
         fetchFollowersList(userId).catch(() => []),
@@ -158,15 +292,41 @@ export const ProfilePage: React.FC = () => {
         fetchUserPublications(userId).catch(() => []),
         fetchUserLikedPublications(userId).catch(() => []),
         fetchOwnerProfileVenues(userId).catch(() => []),
-        fetchServicesByUserId(userId, { forceNetwork, includeInactive: true }).catch(() => []),
+        fetchServicesByUserId(userId, { forceNetwork: forceHeaderRefresh, includeInactive: true }).catch(() => []),
+        fetchUserInvitations(userId).catch(() => ({ invitations: [] })),
+        fetchUserVenueBookings(userId).catch(() => []),
+        fetchUserServiceBookings(userId).catch(() => []),
+        fetchAllGuestContacts(userId).catch(() => []),
       ]);
+      const visibleEvents = filterVisibleUserEvents(events.data?.datosEvento || []);
+      const lovableTickets = tickets
+        ? await enrichTicketsCategoryColors(groupedTicketsToLovable(tickets))
+        : [];
+      const activeTickets = lovableTickets.filter(
+        (ticket) => ticket.status === 'aprobada' || ticket.status === 'pendiente',
+      ).length;
+      const purchasesTotal = activeTickets + venueBookings.length + serviceBookings.length;
+      setCachedPurchaseCounts(userId, {
+        ticketCount: activeTickets,
+        venueCount: venueBookings.length,
+        serviceCount: serviceBookings.length,
+      });
+      const invitationsTotal = userInvitations.invitations?.length || 0;
       setProfile(userProfile);
       setStats(userStats);
       setFollowersCount(followers.count || 0);
       setFollowingCount(typeof following === 'number' ? following : 0);
       setFollowersList(followersData.map(toProfileListUser));
       setFollowingList(followingData.map(toProfileListUser));
-      setMyEventsCount(events.data?.datosEvento?.length || 0);
+      setMyEventsCount(visibleEvents.length);
+      setMyStatsCount(userStats?.totalEventos ?? visibleEvents.length);
+      setMyInvitationsCount(invitationsTotal);
+      setMyGuestsCount(
+        Array.isArray(guestContacts) && guestContacts.length > 0
+          ? guestContacts.length
+          : (userStats?.Invitados || 0),
+      );
+      setMyPurchasesCount(purchasesTotal);
       setFavoriteEvents(
         (Array.isArray(favEvents) ? favEvents : []).map((ev) => {
           const item = feedEventToDiscoverItem(ev);
@@ -194,57 +354,59 @@ export const ProfilePage: React.FC = () => {
       setFavoritePosts(likedPosts.map(feedPublicationToLovablePost));
       setFavoritePlaces([]);
       setFavoriteProfiles(followingData.map(toProfileListUser));
-      setPublishedServices((userServices || []).map(nearbyServiceToFormData));
+      applyUserServices(userServices);
       setMyVenuesCount(userVenues.length);
-      if (tickets) {
-        const lovable = groupedTicketsToLovable(tickets);
-        setTicketsCount(lovable.filter((t) => t.status === 'aprobada').length);
-      } else {
-        setTicketsCount(0);
-      }
       setRating(userProfile?.calificacion || userStats?.calificacionPromedio || 0);
       setCommentsCount(comments?.length || 0);
       cacheProfilePageSnapshot({
         userId,
-        profile: userProfile,
+        profile: userProfile ? sanitizeProfileMediaForCache(userProfile, userId) : userProfile,
         stats: userStats,
-        myEventsCount: events.data?.datosEvento?.length || 0,
-        ticketsCount: tickets ? groupedTicketsToLovable(tickets).filter((t) => t.status === 'aprobada').length : 0,
+        myEventsCount: visibleEvents.length,
+        myStatsCount: userStats?.totalEventos ?? visibleEvents.length,
+        myPurchasesCount: purchasesTotal,
+        myInvitationsCount: invitationsTotal,
         myVenuesCount: userVenues.length,
+        myServicesCount: (userServices || []).length,
         followersCount: followers.count || 0,
         followingCount: typeof following === 'number' ? following : 0,
         rating: userProfile?.calificacion || userStats?.calificacionPromedio || 0,
         commentsCount: comments?.length || 0,
-      });
+      }, { preserveHeader: headerFresh });
     } catch (err) {
       setLoadError(err instanceof Error ? err.message : 'No se pudo cargar tu perfil');
     } finally {
       setLoading(false);
     }
-  }, [userId]);
+  }, [userId, applyFullCache, applyHeaderFromCache, applyUserServices, refreshUserServices, refreshProfileCounts, loadSocialLists]);
 
   useEffect(() => {
     void reload();
-    const onCacheInvalidated = () => { void reload(true); };
-    window.addEventListener(EVENTS_CACHE_INVALIDATED_EVENT, onCacheInvalidated);
-    window.addEventListener(SERVICES_CACHE_INVALIDATED_EVENT, onCacheInvalidated);
-    window.addEventListener(VENUES_CACHE_INVALIDATED_EVENT, onCacheInvalidated);
-    window.addEventListener(PROFILE_PAGE_CACHE_INVALIDATED_EVENT, onCacheInvalidated);
+    const onSecondaryDataChanged = () => { void reload(true); };
+    const onHeaderCacheInvalidated = () => { void reload(true); };
+    const onSocialGraphUpdated = () => { void loadSocialLists(); };
+    window.addEventListener(EVENTS_CACHE_INVALIDATED_EVENT, onSecondaryDataChanged);
+    window.addEventListener(SERVICES_CACHE_INVALIDATED_EVENT, onSecondaryDataChanged);
+    window.addEventListener(VENUES_CACHE_INVALIDATED_EVENT, onSecondaryDataChanged);
+    window.addEventListener(PROFILE_PAGE_CACHE_INVALIDATED_EVENT, onHeaderCacheInvalidated);
+    window.addEventListener(SOCIAL_GRAPH_UPDATED_EVENT, onSocialGraphUpdated);
     return () => {
-      window.removeEventListener(EVENTS_CACHE_INVALIDATED_EVENT, onCacheInvalidated);
-      window.removeEventListener(SERVICES_CACHE_INVALIDATED_EVENT, onCacheInvalidated);
-      window.removeEventListener(VENUES_CACHE_INVALIDATED_EVENT, onCacheInvalidated);
-      window.removeEventListener(PROFILE_PAGE_CACHE_INVALIDATED_EVENT, onCacheInvalidated);
+      window.removeEventListener(EVENTS_CACHE_INVALIDATED_EVENT, onSecondaryDataChanged);
+      window.removeEventListener(SERVICES_CACHE_INVALIDATED_EVENT, onSecondaryDataChanged);
+      window.removeEventListener(VENUES_CACHE_INVALIDATED_EVENT, onSecondaryDataChanged);
+      window.removeEventListener(PROFILE_PAGE_CACHE_INVALIDATED_EVENT, onHeaderCacheInvalidated);
+      window.removeEventListener(SOCIAL_GRAPH_UPDATED_EVENT, onSocialGraphUpdated);
     };
-  }, [reload]);
+  }, [reload, loadSocialLists]);
 
   const handleAvatarUpload = async (file: File) => {
     if (!userId) return;
     setUploading(true);
     try {
       const newUrl = await uploadProfileAvatar(userId, file);
+      clearPersistedOAuthProfilePhoto(userId);
       const busted = appendImageCacheBuster(newUrl, Date.now()) || newUrl;
-      invalidateProfilePageCache(userId);
+      invalidateProfileHeaderCache(userId);
       invalidateCachedProfile(userId);
       setProfile((prev) => (prev ? { ...prev, imagen: busted } : prev));
       window.dispatchEvent(new Event(PROFILE_PAGE_CACHE_INVALIDATED_EVENT));
@@ -263,7 +425,7 @@ export const ProfilePage: React.FC = () => {
     try {
       const newUrl = await uploadProfileCover(userId, file);
       const busted = appendImageCacheBuster(newUrl, Date.now()) || newUrl;
-      invalidateProfilePageCache(userId);
+      invalidateProfileHeaderCache(userId);
       invalidateCachedProfile(userId);
       setProfile((prev) => (prev ? { ...prev, coverImageUrl: busted } : prev));
       window.dispatchEvent(new Event(PROFILE_PAGE_CACHE_INVALIDATED_EVENT));
@@ -288,9 +450,10 @@ export const ProfilePage: React.FC = () => {
         ? await setProfileAvatarFromGallery(userId, input)
         : await setProfileCoverFromGallery(userId, input);
       const busted = appendImageCacheBuster(newUrl, Date.now()) || newUrl;
-      invalidateProfilePageCache(userId);
+      invalidateProfileHeaderCache(userId);
       invalidateCachedProfile(userId);
       if (target === 'avatar') {
+        clearPersistedOAuthProfilePhoto(userId);
         setProfile((prev) => (prev ? { ...prev, imagen: busted } : prev));
         showToast('Foto de perfil actualizada', 'success');
       } else {
@@ -312,17 +475,27 @@ export const ProfilePage: React.FC = () => {
     phone: string;
     username: string;
     bio: string;
+    fecha?: string;
+    phonePrefix?: string;
   }) => {
     if (!userId) return;
+    const prefix = (data.phonePrefix || '+57').trim();
+    const digits = normalizePhoneNumber(data.phone);
+    const normalizedPhone = composeFullPhone(prefix, digits);
     await updateUserProfile({
       id: userId,
       name: data.nombres,
       lastName: data.apellidos,
-      phone: data.phone,
+      phone: normalizedPhone,
+      phoneNumber: digits,
       user: data.username,
       description: data.bio,
+      date: data.fecha || undefined,
+      countryCode: prefix,
+      indicativo: prefix.replace(/^\+/, ''),
     });
-    await reload();
+    invalidateProfileHeaderCache(userId);
+    await reload(true);
     showToast('Perfil actualizado', 'success');
   };
 
@@ -341,7 +514,7 @@ export const ProfilePage: React.FC = () => {
     );
   }
 
-  if (loading) {
+  if (loading && !profile) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center bg-secondary">
         <Loader />
@@ -371,20 +544,31 @@ export const ProfilePage: React.FC = () => {
     <>
       <ProfileView
         userId={userId || undefined}
+        isPublicProfile={profile?.isPublicProfile !== false}
+        onVisibilityChange={(isPublic) => {
+          setProfile((prev) => (prev ? { ...prev, isPublicProfile: isPublic } : prev));
+        }}
         profileName={profileName}
         profileUsername={profile?.username ? `@${profile.username}` : '@eventer'}
-        profileAvatar={profile?.imagen || undefined}
+        profileAvatar={resolveProfileAvatarForUi(profile, userId)}
         profileCover={profile?.coverImageUrl || undefined}
         profileBio={profile?.bio || ''}
         profileEmail={profile?.email}
         profilePhone={profile?.phone}
+        profilePhoneNumber={profile?.phoneNumber}
+        profileCountryCode={profile?.countryCode}
         profileDocument={profile?.documento}
+        profileBirthDate={profile?.date}
         profileCity={profile?.ciudad}
         profileAddress={profile?.direccion}
         followersCount={followersCount}
         followingCount={followingCount}
         followersList={followersList}
         followingList={followingList}
+        onFollowersChange={(next) => {
+          setFollowersList(next);
+          setFollowersCount(next.length);
+        }}
         favoriteEvents={favoriteEvents}
         favoritePosts={favoritePosts}
         favoritePlaces={favoritePlaces}
@@ -399,11 +583,12 @@ export const ProfilePage: React.FC = () => {
         }}
         profileLikes={profile?.likesReceivedCount || stats?.totalPostFavoritos || 0}
         myEventsCount={myEventsCount}
-        myVenuesCount={myVenuesCount || stats?.UserPlaces || 0}
-        myServicesCount={publishedServices.length || stats?.UserServices || 0}
-        myInvitationsCount={stats?.totalInvitaciones || stats?.UserInvitations || 0}
-        myTicketsCount={ticketsCount}
-        myGuestsCount={stats?.Invitados || 0}
+        myVenuesCount={myVenuesCount}
+        myServicesCount={myServicesCount || publishedServices.length}
+        myStatsCount={myStatsCount}
+        myInvitationsCount={myInvitationsCount}
+        myPurchasesCount={myPurchasesCount}
+        myGuestsCount={myGuestsCount || stats?.Invitados || 0}
         myPostsCount={myPosts.length || stats?.totalPublicaciones || 0}
         favEventsCount={favoriteEvents.length || stats?.totalEventosFavoritos || 0}
         favPostsCount={favoritePosts.length || stats?.totalPostFavoritos || 0}
@@ -430,7 +615,7 @@ export const ProfilePage: React.FC = () => {
         onNavigateStats={() => navigate('/profile/stats')}
         onOpenMyEvents={() => navigate('/my-events')}
         onOpenMyVenues={() => navigate('/profile/venues')}
-        onOpenMyTickets={() => navigate('/tickets', { state: { from: 'profile' } })}
+        onOpenMyTickets={() => navigate('/purchases')}
         onOpenMyInvitations={() => navigate('/profile/invitations')}
         onOpenGuests={() => navigate('/guests')}
         onOpenMyPosts={() => navigate('/profile/publications')}
@@ -460,7 +645,12 @@ export const ProfilePage: React.FC = () => {
         open={Boolean(storyViewerUserId)}
         authorUserId={storyViewerUserId}
         currentUserId={userId}
+        currentUserAvatar={profile?.imagen || getPersistedOAuthProfilePhoto(userId)}
         onClose={() => setStoryViewerUserId(null)}
+        onOpenProfile={(id) => {
+          if (userId && userIdsMatch(id, userId)) navigate('/profile');
+          else navigate(`/users/${encodeURIComponent(id)}`);
+        }}
         onStoriesChanged={refreshStories}
       />
       {userId && mediaPickerTarget && (

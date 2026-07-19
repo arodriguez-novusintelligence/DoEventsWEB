@@ -547,7 +547,7 @@ const UserServicesGrid = ({
           onOpenChange={setBookingOpen}
 
           service={bookingService}
-
+          serviceDisplayName={bookingMeta ? serviceDisplayName(bookingMeta) : undefined}
           additionalServiceOptions={additionalServiceOptions}
 
           liveBooking={

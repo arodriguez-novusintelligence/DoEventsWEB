@@ -7,7 +7,7 @@ param(
 $ErrorActionPreference = "Stop"
 
 $corsPath = Join-Path $env:TEMP "chat-s3-cors.json"
-$corsJson = '{"CORSRules":[{"AllowedHeaders":["*"],"AllowedMethods":["GET","PUT","HEAD"],"AllowedOrigins":["https://qa.doeventsapp.com","https://doeventsapp.com","http://localhost:5173","http://localhost:4173"],"ExposeHeaders":["ETag","x-amz-request-id"],"MaxAgeSeconds":3600}]}'
+$corsJson = '{"CORSRules":[{"AllowedHeaders":["*"],"AllowedMethods":["GET","PUT","POST","HEAD"],"AllowedOrigins":["https://dev.doeventsapp.com","https://qa.doeventsapp.com","https://doeventsapp.com","http://localhost:5173","http://localhost:4173","http://127.0.0.1:5173","https://localhost","capacitor://localhost"],"ExposeHeaders":["ETag","x-amz-request-id"],"MaxAgeSeconds":3600}]}'
 [System.IO.File]::WriteAllText($corsPath, $corsJson, [System.Text.UTF8Encoding]::new($false))
 
 Write-Host "Aplicando CORS en s3://$Bucket ($Region)..." -ForegroundColor Cyan

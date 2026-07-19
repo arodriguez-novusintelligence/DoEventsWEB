@@ -12,6 +12,15 @@ const TYPE_PATTERNS = [
   /presentaci[oó]n musical/i,
 ];
 
+const COLOMBIA_PATTERNS = [/colombia/i, /\bco\b/i];
+
+/** Perfil o ubicación del organizador en Colombia. */
+export function isColombiaProfile(country?: string | null, city?: string | null): boolean {
+  const value = `${country || ''} ${city || ''}`.trim();
+  if (!value) return false;
+  return COLOMBIA_PATTERNS.some((p) => p.test(value));
+}
+
 /** Determina si el evento cae bajo Ley 1493 / PULEP (artes escénicas). */
 export function isPulepApplicable(categoryLabel: string, typeLabel: string): boolean {
   const cat = categoryLabel.trim();
@@ -22,12 +31,19 @@ export function isPulepApplicable(categoryLabel: string, typeLabel: string): boo
   return false;
 }
 
+/** PULEP es opcional: solo valida si el usuario empezó a completar el bloque. */
 export function isPulepFormValid(formData: EventFormData): boolean {
   if (!formData.pulepRequired) return true;
+  const started = Boolean(
+    formData.pulepProducerType
+    || formData.pulepRegistrationNumber?.trim()
+    || formData.pulepAcknowledged,
+  );
+  if (!started) return true;
   return !!(
-    formData.pulepProducerType &&
-    formData.pulepRegistrationNumber?.trim().length >= 5 &&
-    formData.pulepAcknowledged
+    formData.pulepProducerType
+    && formData.pulepRegistrationNumber?.trim().length >= 5
+    && formData.pulepAcknowledged
   );
 }
 

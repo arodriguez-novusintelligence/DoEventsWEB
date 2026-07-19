@@ -1,8 +1,12 @@
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import {
   Send, Plus, X, Image, Video, Paperclip, MapPin, CalendarDays, Megaphone,
 } from 'lucide-react';
 import { cn } from '@lovable/lib/utils';
+import ChatMemberMentionAutocomplete, {
+  resolveChatMentionHandle,
+  type ChatMentionMember,
+} from './ChatMemberMentionAutocomplete';
 
 export interface ChatComposeBarProps {
   value: string;
@@ -18,6 +22,9 @@ export interface ChatComposeBarProps {
   editingMessage?: string | null;
   onCancelEdit?: () => void;
   placeholder?: string;
+  /** Integrantes del chatroom disponibles para @mención */
+  mentionMembers?: ChatMentionMember[];
+  currentUserId?: string;
 }
 
 const ChatComposeBar = ({
@@ -34,11 +41,43 @@ const ChatComposeBar = ({
   editingMessage,
   onCancelEdit,
   placeholder = 'Escribe tu mensaje...',
+  mentionMembers = [],
+  currentUserId,
 }: ChatComposeBarProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [cursorPosition, setCursorPosition] = useState(0);
+  const [mentionActive, setMentionActive] = useState(false);
   const photoRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLInputElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const syncCursor = () => {
+    const el = inputRef.current;
+    if (!el) return;
+    setCursorPosition(el.selectionStart ?? el.value.length);
+  };
+
+  const handleSelectMention = useCallback((
+    member: ChatMentionMember,
+    mentionStart: number,
+    mentionEnd: number,
+  ) => {
+    const handle = resolveChatMentionHandle(member);
+    const before = value.slice(0, mentionStart);
+    const after = value.slice(mentionEnd);
+    const next = `${before}@${handle} ${after.replace(/^\s*/, '')}`;
+    onChange(next);
+    setMentionActive(false);
+    requestAnimationFrame(() => {
+      const el = inputRef.current;
+      if (!el) return;
+      const pos = before.length + handle.length + 2; // @handle + space
+      el.focus();
+      el.setSelectionRange(pos, pos);
+      setCursorPosition(pos);
+    });
+  }, [onChange, value]);
 
   const handleFile = (file: File | undefined) => {
     if (!file || !onMediaPick) return;
@@ -89,7 +128,7 @@ const ChatComposeBar = ({
                     className="flex flex-col items-center gap-1 rounded-xl px-2 py-3 text-xs font-medium text-foreground hover:bg-accent disabled:opacity-40"
                   >
                     <Megaphone className="h-5 w-5 text-primary" />
-                    Difusión
+                    Anuncio
                   </button>
                 )}
               </div>
@@ -118,6 +157,17 @@ const ChatComposeBar = ({
           onChange={(e) => handleFile(e.target.files?.[0])}
         />
 
+        {mentionMembers.length > 0 && (
+          <ChatMemberMentionAutocomplete
+            inputValue={value}
+            cursorPosition={cursorPosition}
+            members={mentionMembers}
+            currentUserId={currentUserId}
+            onSelect={handleSelectMention}
+            onActiveChange={setMentionActive}
+          />
+        )}
+
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -138,12 +188,29 @@ const ChatComposeBar = ({
           )}
 
           <input
+            ref={inputRef}
             type="text"
             placeholder={editingMessage ? 'Editando mensaje...' : placeholder}
             value={value}
             disabled={!canMessage || sending}
-            onChange={(e) => onChange(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && onSend()}
+            onChange={(e) => {
+              onChange(e.target.value);
+              setCursorPosition(e.target.selectionStart ?? e.target.value.length);
+            }}
+            onClick={syncCursor}
+            onKeyUp={syncCursor}
+            onSelect={syncCursor}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                if (mentionActive) {
+                  // El autocomplete captura Enter (ventana, capture)
+                  e.preventDefault();
+                  return;
+                }
+                e.preventDefault();
+                onSend();
+              }
+            }}
             className="flex-1 rounded-full border border-border bg-card px-4 py-2.5 text-sm outline-none transition-shadow focus:ring-2 focus:ring-primary/20 disabled:opacity-50"
           />
 

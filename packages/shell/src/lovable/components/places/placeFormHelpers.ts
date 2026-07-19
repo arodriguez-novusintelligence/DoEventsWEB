@@ -1,6 +1,7 @@
 import type { PublishRentalPlaceInput } from '@doevents/shared';
 import { facilidadesDetailed } from '@lovable/data/facilidadesOptions';
 import type { PlaceFormData } from '@lovable/data/placeData';
+import { catalogSelectionLabels } from '@lovable/data/venueCatalogOptions';
 
 const facilityLabelById = Object.fromEntries(
   facilidadesDetailed.map((f) => [f.id, f.label]),
@@ -19,12 +20,14 @@ export function facilityLabels(form: PlaceFormData): string[] {
 export function mergedFeatureLabels(form: PlaceFormData): string[] {
   const fromFacilities = facilityLabels(form);
   const fromEvents = form.allowedEventTypes;
-  const fromAccessibility = form.accessibility;
-  const fromSecurity = form.security;
+  const fromAccessibility = catalogSelectionLabels(form.accessibility);
+  const fromSecurity = catalogSelectionLabels(form.security);
+  const fromIncluded = catalogSelectionLabels(form.includedServices);
   return [...new Set([
     ...form.features,
     ...fromFacilities,
     ...fromEvents,
+    ...fromIncluded,
     ...fromAccessibility,
     ...fromSecurity,
   ])];
@@ -42,7 +45,7 @@ export function placeFormToPublishInput(
   },
 ): PublishRentalPlaceInput {
   const placeType = form.placeType === 'Otro' ? form.placeTypeOther : form.placeType;
-  const capacity = form.hasSeating
+  const seatingCapacity = form.hasSeating
     ? form.floors.reduce(
       (sum, floor) => sum + floor.categories.reduce(
         (cSum, cat) => cSum + (cat.seats?.length || cat.rows * cat.seatsPerRow || 0),
@@ -50,7 +53,11 @@ export function placeFormToPublishInput(
       ),
       0,
     )
-    : Number(form.capacity) || 0;
+    : 0;
+  const manualCapacity = Number(form.capacity) || 0;
+  const capacity = form.hasSeating
+    ? Math.max(manualCapacity, seatingCapacity) || manualCapacity || 100
+    : manualCapacity || 100;
 
   return {
     name: form.name.trim(),
@@ -69,12 +76,19 @@ export function placeFormToPublishInput(
     features: mergedFeatureLabels(form),
     facilities: form.facilities,
     allowedEventTypes: form.allowedEventTypes,
+    includedServices: form.includedServices,
     accessibility: form.accessibility,
     security: form.security,
+    chargeType: form.chargeType,
+    calendarWeekdays: form.calendarWeekdays,
+    calendarMonths: form.calendarMonths,
     hostRole: form.hostRole,
     faqs: form.faqs.filter((f) => f.question.trim()),
     neighborhood: form.neighborhood.trim(),
     pricing: form.pricing,
+    rentalUnit: form.rentalUnit,
+    datePrices: form.datePrices,
+    promoCodes: form.promoCodes,
     videos: extras.videos,
     images: extras.images,
     imageUrls: extras.imageUrls,

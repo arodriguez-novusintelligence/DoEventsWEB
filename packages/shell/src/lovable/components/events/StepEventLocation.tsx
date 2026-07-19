@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { listUserVenues, reverseGeocodePlace, RootState, MediaSourcePicker } from '@doevents/shared';
+import { listUserVenues, reverseGeocodePlace, geocodePlaceQuery, streetAddressFromGeocodedPlace, RootState, MediaSourcePicker, resolveImageUrl, PlaceAutocompleteInput } from '@doevents/shared';
 import { applyVenueToEventLocation, type VenueOwnership } from '../../../lovable-bridge/eventVenueBridge';
 import { useNearbyVenues } from '../../../lovable-bridge/useNearbyVenues';
 import {
@@ -19,6 +19,7 @@ import {
   Navigation,
   X,
   LayoutTemplate,
+  Pencil,
 } from 'lucide-react';
 import {
   EventFormData,
@@ -29,7 +30,8 @@ import {
   VenueMode,
   EventFormUpdater,
 } from '@lovable/data/eventFormData';
-import { VENUE_TYPES, Venue } from '@lovable/data/venuesData';
+import { VENUE_PLACE_TYPES } from '@lovable/data/venueOptions';
+import type { Venue } from '@lovable/data/venuesData';
 import { Switch } from '@lovable/components/ui/switch';
 import { Input } from '@lovable/components/ui/input';
 import { Button } from '@lovable/components/ui/button';
@@ -47,12 +49,12 @@ import { toast } from 'sonner';
 import {
   SEATING_MAP_TEMPLATES,
   applySeatingTemplateToLocation,
-  formatTemplateCapacityLabel,
+  estimateTemplateCapacity,
   getSeatingTemplate,
   type SeatingMapTemplate,
 } from '@lovable/data/seatingTemplates';
-import SeatingTemplateInfoPanel from '@lovable/components/venues/seating/SeatingTemplateInfoPanel';
 import SeatingMapEditor, { shapeStyle, SeatsGrid } from './SeatingMapEditor';
+import TicketCategoriesSection from './TicketCategoriesSection';
 import EventLocationMap from './EventLocationMap';
 import { Maximize2, EyeOff as EyeOffIcon, Expand, Menu, Home as HomeIcon, Loader2 } from 'lucide-react';
 
@@ -62,7 +64,10 @@ interface Props {
   showErrors: boolean;
 }
 
-const DEFAULT_COORDS: [number, number] = [18.4861, -69.9312]; // Santo Domingo
+const DEFAULT_COORDS: [number, number] = [18.4861, -69.9312];
+
+const eventLocationInputClass =
+  'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2';
 
 const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
   const loc = formData.location;
@@ -72,9 +77,10 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
 
   const setMode = (mode: VenueMode) => updateLoc({ mode });
 
-  const [venueTab, setVenueTab] = useState<'nearby' | 'mine' | 'templates'>('mine');
+  const [venueTab, setVenueTab] = useState<'nearby' | 'mine' | 'templates'>('nearby');
   const [search, setSearch] = useState('');
   const [newGateName, setNewGateName] = useState('');
+  const [editingGateId, setEditingGateId] = useState<string | null>(null);
   const [editorOpen, setEditorOpen] = useState(false);
   const [previewHidden, setPreviewHidden] = useState(false);
   const [floors, setFloors] = useState<number[]>([1]);
@@ -82,6 +88,12 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
   const [floorToRemove, setFloorToRemove] = useState<number | null>(null);
   const [myVenues, setMyVenues] = useState<Venue[]>([]);
   const [venuesLoading, setVenuesLoading] = useState(false);
+  const [geocodingAddress, setGeocodingAddress] = useState(false);
+  const [mapPickMode, setMapPickMode] = useState(false);
+  const [resolvingMapPick, setResolvingMapPick] = useState(false);
+  const lastGeocodedAddressRef = useRef('');
+  const userPinnedMapRef = useRef(false);
+  const geocodeRequestIdRef = useRef(0);
   const { venues: nearbyVenues, loading: nearbyLoading } = useNearbyVenues(80);
   const allFigures = loc.seatingMap?.figures ?? [];
   const currentFloorFigures = useMemo(
@@ -127,7 +139,7 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
     }
     let cancelled = false;
     setVenuesLoading(true);
-    listUserVenues(userId, { isTemplate: true })
+    listUserVenues(userId, { isTemplate: false })
       .then((venues) => {
         if (cancelled) return;
         setMyVenues(venues.map((v) => ({
@@ -136,7 +148,8 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
           shortCode: v.venueId.slice(0, 9),
           type: 'Salón de eventos',
           capacity: v.capacity || 0,
-          address: v.city || '—',
+          address: v.address || v.city || '—',
+          image: resolveImageUrl(v.mainImage || v.imageUrls?.[0]) || undefined,
           source: 'mine' as const,
         })));
       })
@@ -161,6 +174,17 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
   ) => {
     try {
       const patch = await applyVenueToEventLocation(venueId, ownership);
+      // Si el lugar ya trae pin, no re-geocodificar. Si no, coordsOnly puede completar lat/lng
+      // sin reescribir dirección/ciudad.
+      const hasVenueCoords =
+        typeof patch.customLat === 'number'
+        && typeof patch.customLng === 'number'
+        && Number.isFinite(patch.customLat)
+        && Number.isFinite(patch.customLng);
+      userPinnedMapRef.current = hasVenueCoords;
+      lastGeocodedAddressRef.current = hasVenueCoords
+        ? [patch.customAddress, patch.detectedCity].filter(Boolean).join(', ')
+        : '';
       updateLoc({
         ...patch,
         mode: 'mine',
@@ -183,13 +207,15 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
       });
     } catch {
       if (fallback) {
+        userPinnedMapRef.current = false;
+        lastGeocodedAddressRef.current = '';
         updateLoc({
           selectedVenueId: venueId,
           selectedTemplateId: undefined,
           venueOwnership: ownership,
           customName: fallback.name,
           customType: fallback.type,
-          customAddress: fallback.address,
+          customAddress: fallback.address === '—' ? '' : fallback.address,
           showMap: true,
         });
         toast.success(`${fallback.name} seleccionado.`);
@@ -216,7 +242,14 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
   );
 
   const selectTemplate = (tpl: SeatingMapTemplate) => {
-    updateLoc(applySeatingTemplateToLocation(tpl));
+    const patch = applySeatingTemplateToLocation(tpl);
+    updateLoc({
+      ...patch,
+      customName: loc.customName?.trim() || patch.customName,
+      customAddress: loc.customAddress?.trim() || patch.customAddress,
+      customImages: loc.customImages?.length ? loc.customImages : patch.customImages,
+      detectedCity: loc.detectedCity || patch.detectedCity,
+    });
     setFloors(tpl.floors);
     setActiveFloor(tpl.floors[0] ?? 1);
     toast.success(`Plantilla "${tpl.name}" seleccionada`);
@@ -273,31 +306,157 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
     updateLoc({ customImages: [...(loc.customImages ?? []), ...urls] });
   };
 
-  const lat = loc.customLat ?? DEFAULT_COORDS[0];
-  const lng = loc.customLng ?? DEFAULT_COORDS[1];
+  const hasMapCoordinates =
+    typeof loc.customLat === 'number'
+    && typeof loc.customLng === 'number'
+    && Number.isFinite(loc.customLat)
+    && Number.isFinite(loc.customLng);
 
-  const applyGeocodedPlace = (place: Awaited<ReturnType<typeof reverseGeocodePlace>>) => {
+  const buildGeocodeQuery = () => {
+    const addr = loc.customAddress?.trim() ?? '';
+    const city = loc.detectedCity?.trim() ?? '';
+    const name = loc.customName?.trim() ?? '';
+    if (addr.length >= 3) {
+      const normalizedAddr = addr.toLowerCase();
+      const parts = [addr];
+      if (city && !normalizedAddr.includes(city.toLowerCase())) {
+        parts.push(city);
+      }
+      return parts.join(', ');
+    }
+    if (name.length >= 5 && (name.includes(',') || /\d/.test(name))) return name;
+    return '';
+  };
+
+  const applyGeocodedPlace = (
+    place: Awaited<ReturnType<typeof reverseGeocodePlace>>,
+    sourceKey?: string,
+    options?: { pinFromMap?: boolean; mode?: 'address' | 'city' | 'coordsOnly' },
+  ) => {
     if (!place) return;
+    if (options?.pinFromMap) userPinnedMapRef.current = true;
+    if (sourceKey) lastGeocodedAddressRef.current = sourceKey;
+
+    const mode = options?.mode
+      || (options?.pinFromMap ? 'address' : 'coordsOnly');
+    const street = streetAddressFromGeocodedPlace(place);
+
+    if (mode === 'coordsOnly') {
+      // Autogeocode al tipear: solo mueve el pin; no reescribe dirección/ciudad del lugar.
+      updateLoc({
+        customLat: place.lat,
+        customLng: place.lng,
+        showMap: true,
+        ...(!loc.detectedCity?.trim() && place.city
+          ? { detectedCity: place.city }
+          : {}),
+      });
+      return;
+    }
+
+    if (mode === 'city') {
+      updateLoc({
+        customLat: place.lat,
+        customLng: place.lng,
+        detectedCity: place.city || place.label.split(',')[0]?.trim() || place.label,
+        showMap: true,
+      });
+      return;
+    }
+
     updateLoc({
       customLat: place.lat,
       customLng: place.lng,
-      customAddress: place.label,
-      detectedCity: place.city || place.departamento || place.label,
+      customAddress: street || place.label,
+      detectedCity: place.city || loc.detectedCity || place.departamento || '',
       showMap: true,
     });
   };
 
+  useEffect(() => {
+    if (userPinnedMapRef.current) return;
+    const query = buildGeocodeQuery();
+    if (query.length < 5) return;
+    if (query === lastGeocodedAddressRef.current) return;
+
+    let cancelled = false;
+    const requestId = ++geocodeRequestIdRef.current;
+
+    const timer = window.setTimeout(async () => {
+      setGeocodingAddress(true);
+      try {
+        const place = await geocodePlaceQuery(query);
+        if (cancelled || requestId !== geocodeRequestIdRef.current) return;
+        if (!place) return;
+        if (userPinnedMapRef.current) return;
+        applyGeocodedPlace(place, query, { mode: 'coordsOnly' });
+      } finally {
+        if (!cancelled && requestId === geocodeRequestIdRef.current) {
+          setGeocodingAddress(false);
+        }
+      }
+    }, 700);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loc.customAddress, loc.customName, loc.detectedCity]);
+
   const handleMapPick = async (newLat: number, newLng: number) => {
-    const place = await reverseGeocodePlace(newLat, newLng);
-    if (place) {
-      applyGeocodedPlace(place);
-      return;
+    setResolvingMapPick(true);
+    try {
+      const place = await reverseGeocodePlace(newLat, newLng);
+      if (place) {
+        applyGeocodedPlace(place, place.label, { pinFromMap: true, mode: 'address' });
+        toast.success('Ubicación seleccionada en el mapa.');
+        setMapPickMode(false);
+        return;
+      }
+      const coordsLabel = `${newLat.toFixed(5)}, ${newLng.toFixed(5)}`;
+      userPinnedMapRef.current = true;
+      lastGeocodedAddressRef.current = coordsLabel;
+      updateLoc({
+        customLat: newLat,
+        customLng: newLng,
+        customAddress: coordsLabel,
+        showMap: true,
+      });
+      toast.success('Coordenadas guardadas. No se pudo resolver la dirección.');
+      setMapPickMode(false);
+    } finally {
+      setResolvingMapPick(false);
     }
+  };
+
+  const startMapSelection = async () => {
+    let nextLat = hasMapCoordinates ? (loc.customLat as number) : DEFAULT_COORDS[0];
+    let nextLng = hasMapCoordinates ? (loc.customLng as number) : DEFAULT_COORDS[1];
+
+    if (!hasMapCoordinates) {
+      const cityQuery = [loc.detectedCity, loc.customAddress].filter(Boolean).join(', ').trim();
+      if (cityQuery.length >= 3) {
+        try {
+          const place = await geocodePlaceQuery(cityQuery);
+          if (place) {
+            nextLat = place.lat;
+            nextLng = place.lng;
+          }
+        } catch {
+          // keep defaults
+        }
+      }
+    }
+
     updateLoc({
-      customLat: newLat,
-      customLng: newLng,
-      customAddress: `${newLat.toFixed(4)}, ${newLng.toFixed(4)}`,
       showMap: true,
+      customLat: nextLat,
+      customLng: nextLng,
+    });
+    setMapPickMode(true);
+    toast.message('Modo selección activo', {
+      description: 'Toca el mapa o arrastra el pin para fijar la ubicación exacta.',
     });
   };
 
@@ -309,7 +468,7 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         const place = await reverseGeocodePlace(pos.coords.latitude, pos.coords.longitude);
-        if (place) applyGeocodedPlace(place);
+        if (place) applyGeocodedPlace(place, place.label, { mode: 'address', pinFromMap: true });
         else {
           updateLoc({
             customLat: pos.coords.latitude,
@@ -338,6 +497,17 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
       toast('Ingresa un nombre para la puerta.');
       return;
     }
+    if (editingGateId) {
+      updateLoc({
+        gates: (loc.gates ?? []).map((g) =>
+          g.id === editingGateId ? { ...g, name } : g,
+        ),
+      });
+      setEditingGateId(null);
+      setNewGateName('');
+      toast.success('Puerta actualizada.');
+      return;
+    }
     const next: EventGate = {
       id: `g-${Date.now()}`,
       number: (loc.gates?.length ?? 0) + 1,
@@ -347,7 +517,18 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
     setNewGateName('');
   };
 
+  const startEditGate = (gate: EventGate) => {
+    setEditingGateId(gate.id);
+    setNewGateName(gate.name);
+  };
+
+  const cancelEditGate = () => {
+    setEditingGateId(null);
+    setNewGateName('');
+  };
+
   const removeGate = (id: string) => {
+    if (editingGateId === id) cancelEditGate();
     const remaining = (loc.gates ?? [])
       .filter((g) => g.id !== id)
       .map((g, i) => ({ ...g, number: i + 1 }));
@@ -355,9 +536,6 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
   };
 
   const setTicketing = (t: TicketingType) => {
-    if (t === 'with-seating' && (loc.gates?.length ?? 0) === 0) {
-      toast.error('Agrega al menos una puerta de ingreso para usar el editor de mapa de silletería.');
-    }
     updateLoc({
       ticketingType: t,
       seatingLayout: t === 'only-tickets' ? 'general' : 'numbered',
@@ -379,17 +557,9 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
 
   return (
     <div className="space-y-4 pb-4">
-      <div className="px-1">
-        <h2 className="text-xl font-bold text-primary">Ubicación del evento</h2>
-        <p className="mt-1 text-sm text-foreground">
-          Elige un lugar existente o configura uno personalizado.{' '}
-          <span className="text-muted-foreground">(Obligatorio)</span>
-        </p>
-      </div>
-
-      <h3 className="px-1 text-sm font-bold text-foreground">
+      <h2 className="px-1 text-lg font-bold text-foreground">
         Selecciona el tipo de lugar
-      </h3>
+      </h2>
 
       {/* Mode tabs */}
       <div className="grid grid-cols-2 gap-3">
@@ -461,29 +631,28 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
                   ? 'Buscar plantilla por nombre o ciudad'
                   : 'Buscar venue por nombre'
               }
-              className="pl-9"
+              className="rounded-full border-border bg-background pl-9"
             />
           </div>
 
+          {venueTab === 'templates' ? (
+            <div className="grid grid-cols-2 gap-3">
+              {filteredTemplates.length === 0 && (
+                <p className="col-span-2 py-6 text-center text-sm text-muted-foreground">
+                  No hay plantillas que coincidan con tu búsqueda.
+                </p>
+              )}
+              {filteredTemplates.map((tpl) => (
+                <TemplateCard
+                  key={tpl.id}
+                  template={tpl}
+                  selected={loc.selectedTemplateId === tpl.id}
+                  onSelect={() => selectTemplate(tpl)}
+                />
+              ))}
+            </div>
+          ) : (
           <div className="flex gap-3 overflow-x-auto pb-2">
-            {venueTab === 'templates' ? (
-              <>
-                {filteredTemplates.length === 0 && (
-                  <p className="w-full py-6 text-center text-sm text-muted-foreground">
-                    No hay plantillas que coincidan con tu búsqueda.
-                  </p>
-                )}
-                {filteredTemplates.map((tpl) => (
-                  <TemplateCard
-                    key={tpl.id}
-                    template={tpl}
-                    selected={loc.selectedTemplateId === tpl.id}
-                    onSelect={() => selectTemplate(tpl)}
-                  />
-                ))}
-              </>
-            ) : (
-              <>
             {(venuesLoading || (venueTab === 'nearby' && nearbyLoading)) && (
               <div className="flex w-full flex-col items-center gap-2 py-8">
                 <Loader2 className="h-6 w-6 animate-spin text-primary" />
@@ -517,9 +686,8 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
                 }}
               />
             ))}
-              </>
-            )}
           </div>
+          )}
 
           {showErrors && !loc.selectedVenueId && !loc.selectedTemplateId && (
             <p className="text-xs font-medium text-destructive">
@@ -637,7 +805,7 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
               }`}
             >
               <option value="">Seleccionar tipo</option>
-              {VENUE_TYPES.map((t) => (
+              {VENUE_PLACE_TYPES.map((t) => (
                 <option key={t} value={t}>
                   {t}
                 </option>
@@ -645,26 +813,53 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
             </select>
           </div>
 
-          {/* Detected city */}
-          {loc.detectedCity && (
-            <div className="rounded-xl bg-primary/5 px-3 py-2 text-xs">
-              <span className="font-semibold text-primary">
-                Ciudad detectada:
-              </span>{' '}
-              <span className="text-foreground">{loc.detectedCity}</span>
-            </div>
-          )}
+          {/* City */}
+          <div>
+            <label className="mb-1 block text-sm font-bold text-foreground">
+              Ciudad *
+            </label>
+            <PlaceAutocompleteInput
+              value={loc.detectedCity ?? ''}
+              onChange={(v) => {
+                lastGeocodedAddressRef.current = '';
+                userPinnedMapRef.current = false;
+                updateLoc({ detectedCity: v });
+              }}
+              onPlaceSelect={(place) => {
+                userPinnedMapRef.current = true;
+                applyGeocodedPlace(place, place.label, { mode: 'city' });
+              }}
+              placeholder="Ej: Bogotá, Medellín, Puerto Gaitán…"
+              inputClassName={
+                showErrors && !loc.detectedCity?.trim()
+                  ? `${eventLocationInputClass} border-destructive`
+                  : eventLocationInputClass
+              }
+            />
+          </div>
 
           {/* Address input */}
           <div>
             <label className="mb-1 block text-sm font-bold text-foreground">
               Dirección del evento
             </label>
-            <Input
+            <PlaceAutocompleteInput
               value={loc.customAddress ?? ''}
-              onChange={(e) => updateLoc({ customAddress: e.target.value })}
+              onChange={(v) => {
+                lastGeocodedAddressRef.current = '';
+                userPinnedMapRef.current = false;
+                updateLoc({ customAddress: v });
+              }}
+              onPlaceSelect={(place) => {
+                userPinnedMapRef.current = true;
+                applyGeocodedPlace(place, place.label, { mode: 'address' });
+              }}
               placeholder="Calle, número, sector…"
+              inputClassName={eventLocationInputClass}
             />
+            {geocodingAddress && (
+              <p className="mt-1 text-xs text-muted-foreground">Buscando ubicación en el mapa…</p>
+            )}
           </div>
 
           {/* Map controls */}
@@ -673,7 +868,10 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
               type="button"
               variant="default"
               size="sm"
-              onClick={() => updateLoc({ showMap: !loc.showMap })}
+              onClick={() => {
+                if (loc.showMap) setMapPickMode(false);
+                updateLoc({ showMap: !loc.showMap });
+              }}
               className="rounded-full"
             >
               {loc.showMap ? (
@@ -688,6 +886,22 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
             </Button>
             <Button
               type="button"
+              variant={mapPickMode ? 'secondary' : 'default'}
+              size="sm"
+              onClick={() => {
+                if (mapPickMode) {
+                  setMapPickMode(false);
+                  return;
+                }
+                startMapSelection();
+              }}
+              className="rounded-full"
+            >
+              <MapPin className="mr-1 h-4 w-4" />
+              {mapPickMode ? 'Cancelar selección' : 'Seleccionar ubicación en el mapa'}
+            </Button>
+            <Button
+              type="button"
               variant="default"
               size="sm"
               onClick={useMyLocation}
@@ -699,7 +913,26 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
 
           {/* Map */}
           {loc.showMap && (
-            <EventLocationMap lat={lat} lng={lng} onPick={handleMapPick} />
+            <div className="space-y-2">
+              <EventLocationMap
+                lat={hasMapCoordinates ? (loc.customLat as number) : DEFAULT_COORDS[0]}
+                lng={hasMapCoordinates ? (loc.customLng as number) : DEFAULT_COORDS[1]}
+                onPick={handleMapPick}
+                pickMode={mapPickMode}
+              />
+              {mapPickMode && (
+                <p className="text-xs font-medium text-primary">
+                  {resolvingMapPick
+                    ? 'Obteniendo dirección de la ubicación seleccionada…'
+                    : 'Desplázate por el mapa, toca el punto exacto o arrastra el pin rojo.'}
+                </p>
+              )}
+              {!mapPickMode && hasMapCoordinates && (
+                <p className="text-xs text-muted-foreground">
+                  Ubicación fijada. Usa “Seleccionar ubicación en el mapa” para ajustarla.
+                </p>
+              )}
+            </div>
           )}
 
           {missingLocation && (
@@ -760,9 +993,15 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
         <div className="space-y-3 rounded-2xl bg-card p-4 shadow-sm">
           <h3 className="text-base font-bold text-foreground">
             Agregar puertas de ingreso al lugar{' '}
-            <span className="text-sm font-medium text-destructive">
-              (obligatorio)
-            </span>
+            {loc.ticketingType === 'only-tickets' ? (
+              <span className="text-sm font-medium text-muted-foreground">
+                (opcional)
+              </span>
+            ) : (
+              <span className="text-sm font-medium text-destructive">
+                (obligatorio)
+              </span>
+            )}
           </h3>
 
           <div className="rounded-xl border border-border p-3">
@@ -772,7 +1011,10 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
                   # de puerta
                 </label>
                 <div className="border-b border-input pb-1 text-sm font-bold text-foreground">
-                  {(loc.gates?.length ?? 0) + 1}
+                  {editingGateId
+                    ? (loc.gates ?? []).find((g) => g.id === editingGateId)?.number
+                      ?? (loc.gates?.length ?? 0) + 1
+                    : (loc.gates?.length ?? 0) + 1}
                 </div>
               </div>
               <div>
@@ -788,20 +1030,41 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
                 />
               </div>
             </div>
-            <button
-              type="button"
-              onClick={addGate}
-              className="ml-auto mt-2 flex items-center gap-1 text-sm font-semibold text-primary"
-            >
-              <Plus className="h-4 w-4" /> Agregar puerta
-            </button>
+            <div className="mt-2 flex items-center justify-end gap-3">
+              {editingGateId && (
+                <button
+                  type="button"
+                  onClick={cancelEditGate}
+                  className="text-sm font-semibold text-muted-foreground"
+                >
+                  Cancelar
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={addGate}
+                className="flex items-center gap-1 text-sm font-semibold text-primary"
+              >
+                {editingGateId ? (
+                  <>
+                    <Check className="h-4 w-4" /> Guardar puerta
+                  </>
+                ) : (
+                  <>
+                    <Plus className="h-4 w-4" /> Agregar puerta
+                  </>
+                )}
+              </button>
+            </div>
           </div>
 
           <div className="space-y-2">
             {(loc.gates ?? []).map((g) => (
               <div
                 key={g.id}
-                className="flex items-center gap-3 rounded-xl border border-border bg-card p-3"
+                className={`flex items-center gap-3 rounded-xl border bg-card p-3 ${
+                  editingGateId === g.id ? 'border-primary' : 'border-border'
+                }`}
               >
                 <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10 text-primary">
                   <DoorOpen className="h-4 w-4" />
@@ -810,6 +1073,14 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
                 <span className="flex-1 text-sm font-semibold text-foreground">
                   {g.name}
                 </span>
+                <button
+                  type="button"
+                  onClick={() => startEditGate(g)}
+                  className="flex h-7 w-7 items-center justify-center rounded-md bg-primary/10 text-primary"
+                  aria-label="Editar puerta"
+                >
+                  <Pencil className="h-4 w-4" />
+                </button>
                 <button
                   type="button"
                   onClick={() => removeGate(g.id)}
@@ -833,6 +1104,16 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
             </p>
           )}
         </div>
+      )}
+
+      {showVenueEditor && loc.ticketingType === 'only-tickets' && (
+        <TicketCategoriesSection
+          categories={loc.ticketCategories ?? []}
+          gates={loc.gates ?? []}
+          totalCapacity={Number(formData.capacity) || 0}
+          showErrors={showErrors}
+          onChange={(next) => updateLoc({ ticketCategories: next })}
+        />
       )}
 
       {/* Seating map editor — only when custom + with-seating + at least one gate */}
@@ -957,6 +1238,7 @@ const StepEventLocation = ({ formData, updateForm, showErrors }: Props) => {
                   gates={loc.gates ?? []}
                   totalCapacity={Number(formData.capacity) || 1000}
                   currentFloor={activeFloor}
+                  allFiguresForCapacity={allFigures}
                   onSave={(map) => {
                     const others = allFigures.filter(
                       (f) => (f.floor ?? 1) !== activeFloor,
@@ -1071,43 +1353,54 @@ const TemplateCard = ({
   template: SeatingMapTemplate;
   selected: boolean;
   onSelect: () => void;
-}) => (
-  <div
-      className={`flex w-56 flex-shrink-0 flex-col overflow-hidden rounded-2xl border-2 bg-card transition-all ${
-        selected ? 'border-primary shadow-md' : 'border-border'
+}) => {
+  const capacity = estimateTemplateCapacity(template);
+  const gateCount = template.gates?.length ?? 0;
+  const previewFigures = template.seatingMap?.figures ?? [];
+
+  return (
+    <article
+      className={`flex flex-col overflow-hidden rounded-2xl bg-card shadow-sm transition-all ${
+        selected ? 'ring-2 ring-primary' : ''
       }`}
     >
-      <div className="relative flex h-28 w-full items-center justify-center bg-gradient-to-br from-primary/15 via-primary/5 to-accent/10">
-        <LayoutTemplate className="h-10 w-10 text-primary" />
+      <div className="relative h-[108px] w-full overflow-hidden bg-gradient-to-br from-primary/10 via-background to-accent/10">
+        {previewFigures.length > 0 ? (
+          <SeatingPreview figures={previewFigures} height={108} />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <LayoutTemplate className="h-8 w-8 text-primary/60" />
+          </div>
+        )}
         {selected && (
-          <div className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
+          <div className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm">
             <Check className="h-3.5 w-3.5" />
           </div>
         )}
       </div>
-      <div className="flex flex-1 flex-col gap-1 p-3">
-        <p className="line-clamp-2 text-sm font-bold text-foreground">{template.name}</p>
-        <p className="text-[11px] text-muted-foreground">{template.city}</p>
-        <p className="line-clamp-2 text-xs text-muted-foreground">{template.description}</p>
-        <p className="text-xs font-medium text-foreground">
-          {formatTemplateCapacityLabel(template)}
+      <div className="flex flex-1 flex-col gap-1 p-2.5">
+        <p className="line-clamp-2 text-xs font-bold leading-tight text-foreground">{template.name}</p>
+        <p className="line-clamp-1 text-[10px] text-muted-foreground">{template.city}</p>
+        <p className="line-clamp-2 text-[10px] leading-snug text-muted-foreground">{template.description}</p>
+        <p className="text-[10px] font-semibold text-primary">
+          Capacidad: {capacity.toLocaleString('es-CO')}
+          {gateCount > 0 ? ` · ${gateCount} puerta${gateCount === 1 ? '' : 's'}` : ''}
         </p>
-        <p className="text-xs text-muted-foreground">
-          {template.floors.length} piso(s) · {template.zones.length} zonas
-        </p>
-        <SeatingTemplateInfoPanel template={template} compact />
-        <Button
+        <button
           type="button"
-          variant={selected ? 'default' : 'outline'}
-          size="sm"
           onClick={onSelect}
-          className="mt-2 w-full rounded-full"
+          className={`mt-1.5 w-full rounded-full py-2 text-[11px] font-semibold transition-colors ${
+            selected
+              ? 'bg-primary text-primary-foreground'
+              : 'bg-muted text-foreground hover:bg-muted/80'
+          }`}
         >
           {selected ? 'Seleccionada' : 'Usar plantilla'}
-        </Button>
+        </button>
       </div>
-    </div>
-);
+    </article>
+  );
+};
 
 const VenueCard = ({
   venue,
@@ -1118,63 +1411,68 @@ const VenueCard = ({
   selected: boolean;
   onSelect: () => void;
 }) => (
-  <div
-    className={`flex w-56 flex-shrink-0 flex-col overflow-hidden rounded-2xl border-2 bg-card transition-all ${
-      selected ? 'border-primary shadow-md' : 'border-border'
+  <article
+    className={`flex w-[220px] flex-shrink-0 flex-col overflow-hidden rounded-2xl bg-card shadow-sm transition-all active:scale-[0.98] ${
+      selected ? 'ring-2 ring-primary' : ''
     }`}
   >
-    <div className="relative h-28 w-full bg-muted">
+    <div className="relative h-32 w-full bg-muted">
       {venue.image ? (
         <img
           src={venue.image}
           alt={venue.name}
           className="h-full w-full object-cover"
+          loading="lazy"
         />
       ) : (
-        <div className="flex h-full w-full items-center justify-center text-primary/40">
+        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5 text-primary/40">
           <Home className="h-10 w-10" />
         </div>
       )}
       {selected && (
-        <div className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
+        <div className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm">
           <Check className="h-3.5 w-3.5" />
         </div>
       )}
     </div>
     <div className="flex flex-1 flex-col gap-1 p-3">
-      <p className="line-clamp-2 text-sm font-bold text-foreground">
+      <p className="line-clamp-2 text-sm font-bold leading-tight text-foreground">
         {venue.name}
       </p>
       <p className="text-[11px] text-muted-foreground">{venue.shortCode}</p>
       <p className="text-xs text-muted-foreground">
-        Capacidad: {venue.capacity} personas
+        Capacidad: {venue.capacity.toLocaleString('es-CO')} personas
       </p>
-      <Button
+      <button
         type="button"
-        variant={selected ? 'default' : 'outline'}
-        size="sm"
         onClick={onSelect}
-        className="mt-2 w-full rounded-full"
+        className={`mt-2 w-full rounded-full py-2 text-xs font-semibold transition-colors ${
+          selected
+            ? 'bg-primary text-primary-foreground'
+            : 'bg-muted text-foreground hover:bg-muted/80'
+        }`}
       >
         {selected ? 'Seleccionado' : 'Seleccionar'}
-      </Button>
+      </button>
     </div>
-  </div>
+  </article>
 );
 
 const seatStatesToLovableSets = (
   states?: Record<string, import('../../../lovable-bridge/venueToFigures').SeatVisualState>,
 ) => {
   const selectedLabels = new Set<string>();
-  const takenLabels = new Set<string>();
-  if (!states) return { selectedLabels, takenLabels };
+  const reservedLabels = new Set<string>();
+  const soldLabels = new Set<string>();
+  if (!states) return { selectedLabels, reservedLabels, soldLabels };
   Object.entries(states).forEach(([label, state]) => {
     if (state === 'selected') selectedLabels.add(label);
-    if (state === 'sold' || state === 'highlight' || state === 'disabled') {
-      takenLabels.add(label);
+    else if (state === 'reserved') reservedLabels.add(label);
+    else if (state === 'sold' || state === 'highlight' || state === 'disabled') {
+      soldLabels.add(label);
     }
   });
-  return { selectedLabels, takenLabels };
+  return { selectedLabels, reservedLabels, soldLabels };
 };
 
 export const SeatingPreview = ({
@@ -1182,12 +1480,15 @@ export const SeatingPreview = ({
   height = 240,
   seatStatesByFigure,
   interactive = false,
+  overviewMode = false,
   onSeatClick,
 }: {
   figures: import('@lovable/data/eventFormData').SeatingFigure[];
   height?: number | string;
   seatStatesByFigure?: Map<string, Record<string, import('../../../lovable-bridge/venueToFigures').SeatVisualState>>;
   interactive?: boolean;
+  /** Solo formas de zona y etiquetas; sin grilla de sillas */
+  overviewMode?: boolean;
   onSeatClick?: (figure: import('@lovable/data/eventFormData').SeatingFigure, label: string) => void;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -1262,6 +1563,7 @@ export const SeatingPreview = ({
               }}
             >
               {!hasImage && !isImage &&
+                !overviewMode &&
                 f.role === 'category' &&
                 (f.rows ?? 0) > 0 &&
                 (f.seatsPerRow ?? 0) > 0 && (

@@ -3,13 +3,15 @@ import { SafeImage } from '@doevents/shared';
 import { resolveEventImageUrl } from '@doevents/shared';
 import type { ChatMessage } from '@lovable/data/chatData';
 import { cn } from '@lovable/lib/utils';
+import MentionText from '../feed/MentionText';
 
 interface Props {
   message: ChatMessage;
   onEventClick?: (eventId: string) => void;
+  onMentionClick?: (mention: string) => void;
 }
 
-const ChatRichMessage = ({ message, onEventClick }: Props) => {
+const ChatRichMessage = ({ message, onEventClick, onMentionClick }: Props) => {
   if (message.isAnnouncement) {
     return (
       <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4">
@@ -17,7 +19,11 @@ const ChatRichMessage = ({ message, onEventClick }: Props) => {
           <Megaphone className="h-4 w-4 text-primary" />
           <span className="text-xs font-bold text-primary">Recordatorio</span>
         </div>
-        <p className="text-sm text-foreground break-words [overflow-wrap:anywhere]">{message.text}</p>
+        <MentionText
+          text={message.text}
+          onMentionClick={onMentionClick}
+          className="text-sm text-foreground break-words [overflow-wrap:anywhere]"
+        />
       </div>
     );
   }
@@ -111,9 +117,11 @@ const ChatRichMessage = ({ message, onEventClick }: Props) => {
   }
 
   return (
-    <p className={cn('text-sm text-foreground whitespace-pre-wrap break-words [overflow-wrap:anywhere]')}>
-      {message.text}
-    </p>
+    <MentionText
+      text={message.text}
+      onMentionClick={onMentionClick}
+      className={cn('text-sm text-foreground whitespace-pre-wrap break-words [overflow-wrap:anywhere]')}
+    />
   );
 };
 

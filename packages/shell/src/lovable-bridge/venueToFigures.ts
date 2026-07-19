@@ -9,6 +9,74 @@ import {
   type VenueFloorDetail,
 } from '@doevents/shared';
 
+function figureGridLabels(figure: SeatingFigure): Set<string> {
+  const labels = new Set<string>();
+  const rows = figure.rows ?? 0;
+  const cols = figure.seatsPerRow ?? 0;
+  if (rows <= 0 || cols <= 0) return labels;
+
+  const order: SeatingOrder = figure.seatingOrder ?? 'top-left';
+  for (let r = 0; r < rows; r += 1) {
+    for (let c = 0; c < cols; c += 1) {
+      const rowIdx = order === 'bottom-left' || order === 'bottom-right' ? rows - 1 - r : r;
+      const colIdx = order === 'top-right' || order === 'bottom-right' ? cols - 1 - c : c;
+      labels.add(`${rowLabelFromIndex(rowIdx)}${colIdx + 1}`.toUpperCase());
+    }
+  }
+  return labels;
+}
+
+export function findTicketCategoryForFigure(
+  categories: TicketCategory[] | undefined,
+  figure: SeatingFigure,
+): TicketCategory | undefined {
+  if (!categories?.length) return undefined;
+
+  const byFigureId = categories.find(
+    (c) =>
+      (figure.id && c.categoryId === figure.id)
+      || (figure.id && c.distributionId === figure.id),
+  );
+  if (byFigureId) return byFigureId;
+
+  const figureName = figure.name.trim().toLowerCase();
+  const byName = categories.filter(
+    (c) => c.categoryName.trim().toLowerCase() === figureName,
+  );
+  if (byName.length === 1) return byName[0];
+  if (byName.length > 1) {
+    const gridLabels = figureGridLabels(figure);
+    if (gridLabels.size > 0) {
+      const scored = byName
+        .map((cat) => ({
+          cat,
+          score: cat.seats.filter((seat) => {
+            const label = seatLabelFromAvailable(seat);
+            return label && gridLabels.has(label);
+          }).length,
+        }))
+        .sort((a, b) => b.score - a.score);
+      if (scored[0]?.score > 0) return scored[0].cat;
+    }
+    return byName[0];
+  }
+  return undefined;
+}
+
+function seatLabelFromAvailable(seat: AvailableSeat): string {
+  return resolveSeatLabel(seat).trim().toUpperCase();
+}
+
+export function seatMatchesGridLabel(seat: AvailableSeat, gridLabelUpper: string): boolean {
+  const resolved = seatLabelFromAvailable(seat);
+  if (resolved && resolved === gridLabelUpper) return true;
+  const row = seat.location?.rowLabel?.trim().toUpperCase()
+    || (seat.location as { row?: string })?.row?.trim().toUpperCase();
+  const col = seat.location?.colNumber
+    ?? (seat.location as { number?: number })?.number;
+  return Boolean(row && col && `${row}${col}` === gridLabelUpper);
+}
+
 function seatingOrderFromApi(colOrder?: string, rowOrder?: string): SeatingOrder {
   const col = colOrder === 'desc' ? 'desc' : 'asc';
   const row = rowOrder === 'desc' ? 'desc' : 'asc';
@@ -18,7 +86,14 @@ function seatingOrderFromApi(colOrder?: string, rowOrder?: string): SeatingOrder
   return 'bottom-right';
 }
 
-export type SeatVisualState = 'default' | 'disabled' | 'available' | 'selected' | 'sold' | 'highlight';
+export type SeatVisualState =
+  | 'default'
+  | 'disabled'
+  | 'available'
+  | 'selected'
+  | 'reserved'
+  | 'sold'
+  | 'highlight';
 
 export type HighlightSeat = { categoryName: string; label: string };
 
@@ -73,6 +148,23 @@ function mapCategoryToFigure(cat: VenueCategoryDetail): SeatingFigure {
     .map((s) => s.seatCode || '')
     .filter(Boolean);
 
+  const raw = cat as VenueCategoryDetail & Record<string, unknown>;
+  const labelDx = typeof cat.labelDx === 'number'
+    ? cat.labelDx
+    : typeof raw.label_dx === 'number'
+      ? Number(raw.label_dx)
+      : undefined;
+  const labelDy = typeof cat.labelDy === 'number'
+    ? cat.labelDy
+    : typeof raw.label_dy === 'number'
+      ? Number(raw.label_dy)
+      : undefined;
+  const labelRotation = typeof cat.labelRotation === 'number'
+    ? cat.labelRotation
+    : typeof raw.label_rotation === 'number'
+      ? Number(raw.label_rotation)
+      : undefined;
+
   return {
     id: cat.categoryId,
     shape: mapApiGeometry(cat.geometry),
@@ -83,6 +175,9 @@ function mapCategoryToFigure(cat: VenueCategoryDetail): SeatingFigure {
     w: cat.width,
     h: cat.height,
     rotation: cat.rotation,
+    labelDx,
+    labelDy,
+    labelRotation,
     color: cat.color || '#6366F1',
     rows: cat.rows,
     seatsPerRow: cat.seatsPerRow,
@@ -94,13 +189,20 @@ function mapCategoryToFigure(cat: VenueCategoryDetail): SeatingFigure {
 
 function mapElementToFigure(el: VenueElementDetail, floorNumber = 1): SeatingFigure {
   const name = (el.name || '').toLowerCase();
+  const geometry = String(el.geometry || '').toUpperCase();
   let shape: SeatingFigureShape = mapApiGeometry(el.geometry);
   if (name.includes('escenario') || name.includes('stage')) {
     shape = 'rectangle';
   }
+  const raw = el as VenueElementDetail & Record<string, unknown>;
+  const notes = String(el.notes || raw.note || '').trim();
+  const imageUrl = shape === 'image' || geometry === 'IMAGEN'
+    ? (notes || undefined)
+    : undefined;
+
   return {
     id: el.elementId,
-    shape,
+    shape: imageUrl ? 'image' : shape,
     role: 'element',
     name: el.name || 'Elemento',
     x: el.relX,
@@ -111,6 +213,8 @@ function mapElementToFigure(el: VenueElementDetail, floorNumber = 1): SeatingFig
     color: name.includes('escenario') || name.includes('stage') ? '#1e293b' : '#94a3b8',
     textColor: '#ffffff',
     arcInner: el.ringThickness,
+    notes: notes || undefined,
+    imageUrl,
     floor: floorNumber,
   };
 }
@@ -128,30 +232,52 @@ export function venueFloorsToFigures(floors: VenueFloorDetail[]): SeatingFigure[
   return figures;
 }
 
+function isSeatSelectedForFigure(
+  figureName: string,
+  labelUpper: string,
+  seat: AvailableSeat | undefined,
+  options?: {
+    selectedIds?: Set<string>;
+    selectedSeats?: HighlightSeat[];
+  },
+): boolean {
+  if (seat?.ticketInstanceId && options?.selectedIds?.has(seat.ticketInstanceId)) {
+    return true;
+  }
+  return Boolean(
+    options?.selectedSeats?.some(
+      (selected) =>
+        categoriesMatch(selected.categoryName, figureName)
+        && selected.label.trim().toUpperCase() === labelUpper,
+    ),
+  );
+}
+
 export function buildSeatStatesForFigure(
   figure: SeatingFigure,
   options?: {
     categories?: TicketCategory[];
     selectedIds?: Set<string>;
+    selectedSeats?: HighlightSeat[];
     highlightSeats?: HighlightSeat[];
     soldLabels?: string[];
+    ownerPreviewMode?: boolean;
   },
 ): Record<string, SeatVisualState> {
   const states: Record<string, SeatVisualState> = {};
   const disabled = new Set(figure.disabledSeats || []);
   const sold = new Set((options?.soldLabels || []).map((l) => l.toUpperCase()));
 
-  const category = options?.categories?.find(
-    (c) => c.categoryId === figure.id
-      || c.categoryName.trim().toLowerCase() === figure.name.trim().toLowerCase(),
-  );
+  const category = findTicketCategoryForFigure(options?.categories, figure);
 
   const seatByLabel = new Map<string, AvailableSeat>();
   category?.seats.forEach((seat) => {
-    const label = resolveSeatLabel(seat);
-    if (label) seatByLabel.set(label.toUpperCase(), seat);
-    const row = seat.location?.rowLabel?.toUpperCase();
-    const col = seat.location?.colNumber;
+    const label = seatLabelFromAvailable(seat);
+    if (label) seatByLabel.set(label, seat);
+    const row = seat.location?.rowLabel?.toUpperCase()
+      || (seat.location as { row?: string })?.row?.toUpperCase();
+    const col = seat.location?.colNumber
+      ?? (seat.location as { number?: number })?.number;
     if (row && col) seatByLabel.set(`${row}${col}`, seat);
   });
 
@@ -167,6 +293,15 @@ export function buildSeatStatesForFigure(
       const label = `${rowLabelFromIndex(rowIdx)}${colIdx + 1}`;
       const upper = label.toUpperCase();
 
+      if (options?.ownerPreviewMode) {
+        if (isSeatHighlighted(figure.name, upper, options?.highlightSeats)) {
+          states[label] = 'highlight';
+        } else {
+          states[label] = 'default';
+        }
+        continue;
+      }
+
       if (isSeatHighlighted(figure.name, upper, options?.highlightSeats)) {
         states[label] = 'highlight';
       } else if (disabled.has(label)) {
@@ -175,11 +310,17 @@ export function buildSeatStatesForFigure(
         states[label] = 'sold';
       } else {
         const seat = seatByLabel.get(upper);
-        if (seat && options?.selectedIds?.has(seat.ticketInstanceId)) {
+        if (isSeatSelectedForFigure(figure.name, upper, seat, options)) {
           states[label] = 'selected';
         } else if (seat) {
-          const status = String(seat.ticketStatus || '').toLowerCase();
-          states[label] = status && status !== 'available' && status !== 'libre' ? 'sold' : 'available';
+          const status = String(seat.ticketStatus || '').trim().toUpperCase();
+          if (status === 'RESERVED') {
+            states[label] = 'reserved';
+          } else if (status && status !== 'AVAILABLE' && status !== 'LIBRE') {
+            states[label] = 'sold';
+          } else {
+            states[label] = 'available';
+          }
         } else if (category) {
           states[label] = 'sold';
         }
@@ -195,14 +336,18 @@ export function findSeatByLabel(
   categories: TicketCategory[],
   figure: SeatingFigure,
 ): { category: TicketCategory; seat: AvailableSeat; label: string } | null {
-  const normalized = label.toUpperCase();
-  const category = categories.find(
-    (c) => c.categoryId === figure.id
-      || c.categoryName.trim().toLowerCase() === figure.name.trim().toLowerCase(),
-  );
+  const normalized = label.trim().toUpperCase();
+  if (!normalized) return null;
+
+  const category = findTicketCategoryForFigure(categories, figure);
   if (!category) return null;
-  const seat = category.seats.find((s) => resolveSeatLabel(s)?.toUpperCase() === normalized);
+
+  const seat = category.seats.find((s) => seatMatchesGridLabel(s, normalized));
   if (!seat) return null;
+
+  const status = String(seat.ticketStatus || '').toUpperCase();
+  if (status && status !== 'AVAILABLE' && status !== 'LIBRE') return null;
+
   return { category, seat, label: resolveSeatLabel(seat) || label };
 }
 

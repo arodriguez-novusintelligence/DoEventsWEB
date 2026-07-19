@@ -103,7 +103,7 @@ export const AddStorySheet: React.FC<AddStorySheetProps> = ({ open, onOpenChange
 
       try {
 
-        await updateStoryLivePlayback({ publicationId, mediaIds: [], isLive: false });
+        await updateStoryLivePlayback({ publicationId, isLive: false });
 
       } catch {
 
@@ -169,13 +169,10 @@ export const AddStorySheet: React.FC<AddStorySheetProps> = ({ open, onOpenChange
 
       if (isVideo) setMode('video');
 
-    } catch {
-
+    } catch (err) {
       setMediaIds([]);
-
       setMediaPreview(null);
-
-      showToast('No se pudo subir el archivo', 'error');
+      showToast(err instanceof Error ? err.message : 'No se pudo subir el archivo', 'error');
 
     } finally {
 
@@ -436,7 +433,7 @@ export const AddStorySheet: React.FC<AddStorySheetProps> = ({ open, onOpenChange
 
   return (
     <Sheet open={open} onOpenChange={(next) => { if (!next) onOpenChange(false); }}>
-      <SheetContent side="bottom" className="flex h-[92vh] flex-col overflow-y-auto rounded-t-3xl p-0">
+      <SheetContent side="bottom" className="mx-auto flex h-[min(92vh,820px)] w-full max-w-lg flex-col overflow-y-auto rounded-t-3xl p-0 sm:max-w-xl md:max-w-2xl">
         <SheetHeader className="px-4 pb-2 pt-4 text-left">
           <SheetTitle>
             {phase === 'choose'

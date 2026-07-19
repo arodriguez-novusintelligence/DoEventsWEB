@@ -49,6 +49,9 @@ export interface UserEventItem {
   imagen?: string;
   liked?: boolean;
   estatus?: string;
+  ticketsAprobados?: number;
+  amountCentsAprobados?: number;
+  codigosPromoRedimidos?: number;
 }
 
 export interface UserEventsResponse {

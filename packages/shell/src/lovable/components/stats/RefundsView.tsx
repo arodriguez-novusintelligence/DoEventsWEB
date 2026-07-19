@@ -22,10 +22,10 @@ const formatCurrency = (n: number, c = 'COP') =>
   `${c === 'USD' ? 'US$' : c === 'EUR' ? '€' : '$'} ${n.toLocaleString('es-CO')}`;
 
 const statusMeta: Record<RefundStatus, { label: string; icon: typeof Clock; className: string; dot: string }> = {
-  pending:   { label: 'Pendiente', icon: Clock,        className: 'bg-secondary text-secondary-foreground', dot: 'bg-secondary' },
+  pending:   { label: 'Pendiente', icon: Clock,        className: 'bg-amber-500/10 text-amber-600',   dot: 'bg-amber-500' },
   approved:  { label: 'Aprobado',  icon: CheckCircle2, className: 'bg-primary/10 text-primary',       dot: 'bg-primary' },
   rejected:  { label: 'Rechazado', icon: XCircle,      className: 'bg-destructive/10 text-destructive', dot: 'bg-destructive' },
-  processed: { label: 'Procesado', icon: ShieldCheck,  className: 'bg-primary/10 text-primary', dot: 'bg-primary' },
+  processed: { label: 'Procesado', icon: ShieldCheck,  className: 'bg-emerald-500/10 text-emerald-600', dot: 'bg-emerald-500' },
 };
 
 const sourceMeta: Record<RefundSource, { label: string; icon: typeof User; className: string; bgClass: string }> = {
@@ -46,6 +46,8 @@ const RefundsView = ({ event, onBack }: RefundsViewProps) => {
     event,
     resolveRefundsData,
     getEmptyRefundsData(event),
+    undefined,
+    'refunds',
   );
   // Reglas de negocio:
   // 0) Ningún reembolso dentro de política puede estar Rechazado: si llega así,
@@ -104,10 +106,11 @@ const RefundsView = ({ event, onBack }: RefundsViewProps) => {
     }));
 
   return (
-    <div className="min-h-screen bg-background pt-16 pb-20">
-      {/* Header */}
+    <div className="min-h-screen bg-background pt-16 pb-32">
+      {/* Header — diseño Lovable */}
       <div className="bg-primary px-6 pb-6 pt-6">
         <button
+          type="button"
           onClick={onBack}
           className="mb-4 flex items-center gap-1 text-sm text-primary-foreground/80 hover:text-primary-foreground transition-colors"
         >
@@ -122,6 +125,7 @@ const RefundsView = ({ event, onBack }: RefundsViewProps) => {
             <p className="text-xs text-primary-foreground/70 line-clamp-1">{event.eventName}</p>
           </div>
           <button
+            type="button"
             onClick={() => exportRefundsExcel(initial, requests)}
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-foreground/15 text-primary-foreground transition-colors hover:bg-primary-foreground/25"
             aria-label="Descargar Excel"
@@ -143,9 +147,10 @@ const RefundsView = ({ event, onBack }: RefundsViewProps) => {
 
       <div className="mx-auto max-w-lg px-4 py-5">
         {loading && (
-          <p className="mb-4 py-4 text-center text-sm text-muted-foreground">Cargando reembolsos…</p>
+          <p className="mb-4 py-2 text-center text-sm text-muted-foreground">Cargando reembolsos…</p>
         )}
-        {/* KPIs */}
+
+        {/* KPIs — Pendientes / Aprobadas / Procesadas / Rechazadas */}
         <div className="mb-5 grid grid-cols-4 gap-2">
           {([
             { label: 'Pendientes', value: stats.pending,   className: statusMeta.pending.className },
@@ -154,7 +159,7 @@ const RefundsView = ({ event, onBack }: RefundsViewProps) => {
             { label: 'Rechazadas', value: stats.rejected,  className: statusMeta.rejected.className },
           ] as const).map(k => (
             <div key={k.label} className="flex flex-col items-center rounded-xl bg-card p-3 shadow-sm">
-              <span className="text-xl font-bold text-card-foreground">{k.value}</span>
+              <span className="text-xl font-bold text-card-foreground">{loading ? '…' : k.value}</span>
               <span className={cn('mt-1 rounded-full px-2 py-0.5 text-[9px] font-medium', k.className)}>{k.label}</span>
             </div>
           ))}
@@ -201,6 +206,7 @@ const RefundsView = ({ event, onBack }: RefundsViewProps) => {
           {FILTERS.map(f => (
             <button
               key={f.id}
+              type="button"
               onClick={() => setFilter(f.id)}
               className={cn(
                 'shrink-0 rounded-full border px-3 py-1 text-xs font-medium transition-colors',
@@ -217,19 +223,27 @@ const RefundsView = ({ event, onBack }: RefundsViewProps) => {
         {/* Lista */}
         <div className="space-y-3">
           {filtered.map(req => {
-            const meta = statusMeta[req.status];
+            const meta = statusMeta[req.status] ?? statusMeta.pending;
             const StatusIcon = meta.icon;
             const isOpen = expanded === req.id;
+            const buyerInitials = String(req.buyerName || '?')
+              .split(/\s+/)
+              .filter(Boolean)
+              .map(n => n[0])
+              .slice(0, 2)
+              .join('')
+              .toUpperCase() || '?';
             return (
               <div key={req.id} className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
                 <button
+                  type="button"
                   onClick={() => setExpanded(isOpen ? null : req.id)}
                   className="flex w-full items-center gap-3 p-4 text-left transition-colors hover:bg-accent/30"
                 >
                   <Avatar className="h-11 w-11">
                     <AvatarImage src={req.buyerAvatar} />
                     <AvatarFallback className="bg-secondary text-secondary-foreground text-xs">
-                      {req.buyerName.split(' ').map(n => n[0]).slice(0, 2).join('')}
+                      {buyerInitials}
                     </AvatarFallback>
                   </Avatar>
                   <div className="min-w-0 flex-1">
@@ -242,7 +256,7 @@ const RefundsView = ({ event, onBack }: RefundsViewProps) => {
                     </div>
                     <div className="mt-1 flex items-center gap-1.5">
                       {(() => {
-                        const src = sourceMeta[req.source];
+                        const src = sourceMeta[req.source] ?? sourceMeta.user_request;
                         const SrcIcon = src.icon;
                         return (
                           <span className={cn('inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium', src.bgClass, src.className)}>
@@ -333,7 +347,7 @@ const RefundsView = ({ event, onBack }: RefundsViewProps) => {
 
                     {/* Fuente del reembolso */}
                     {(() => {
-                      const src = sourceMeta[req.source];
+                      const src = sourceMeta[req.source] ?? sourceMeta.user_request;
                       const SrcIcon = src.icon;
                       return (
                         <div className={cn(
@@ -483,13 +497,10 @@ const RefundsView = ({ event, onBack }: RefundsViewProps) => {
             );
           })}
 
-          {filtered.length === 0 && (
-            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card py-16 text-center shadow-sm">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
-                <RefreshCw className="h-7 w-7 text-primary" />
-              </div>
-              <p className="mt-3 text-sm font-semibold text-foreground">No hay solicitudes en este estado</p>
-              <p className="mt-1 text-xs text-muted-foreground">Prueba otro filtro o vuelve más tarde.</p>
+          {filtered.length === 0 && !loading && (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <RefreshCw className="h-10 w-10 text-muted-foreground" />
+              <p className="mt-3 text-sm text-muted-foreground">No hay solicitudes en este estado</p>
             </div>
           )}
         </div>

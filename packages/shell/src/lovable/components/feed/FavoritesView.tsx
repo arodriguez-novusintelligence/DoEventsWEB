@@ -6,7 +6,8 @@ import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBann
 import PostCard from './PostCard';
 import type { Post } from '@doevents/shared';
 import type { ProfileListUser } from './FollowersSheet';
-import { Avatar, AvatarFallback, AvatarImage } from '@lovable/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@lovable/components/ui/avatar';
+import { UserAvatarImage } from '../../../components/UserAvatarImage';
 
 export type FavEventItem = {
   id: string;
@@ -219,7 +220,7 @@ const ProfilesTab = ({
         >
           <Avatar className="h-11 w-11">
             {profile.avatarUrl ? (
-              <AvatarImage src={profile.avatarUrl} alt={profile.name} className="object-cover" />
+              <UserAvatarImage src={profile.avatarUrl} userId={profile.id} alt={profile.name} className="object-cover" />
             ) : null}
             <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
               {profile.initials}

@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { ChevronLeft, CalendarDays, MapPin } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { ChevronLeft, CalendarDays, MapPin, Loader2 } from 'lucide-react';
 import { Sheet, SheetContent } from '@lovable/components/ui/sheet';
 import { Button } from '@lovable/components/ui/button';
 import { Input } from '@lovable/components/ui/input';
@@ -10,6 +10,8 @@ interface BookingReviewSheetProps {
   onOpenChange: (open: boolean) => void;
   booking: BookingData | null;
   address?: string;
+  defaultBuyer?: BuyerData;
+  confirming?: boolean;
   onBack: () => void;
   onConfirm: (buyer: BuyerData) => void;
 }
@@ -29,12 +31,21 @@ const BookingReviewSheet = ({
   onOpenChange,
   booking,
   address = 'Vía Llanogrande Km 4',
+  defaultBuyer,
+  confirming = false,
   onBack,
   onConfirm,
 }: BookingReviewSheetProps) => {
-  const [firstName, setFirstName] = useState('Tatiana');
-  const [lastName, setLastName] = useState('Muñoz');
-  const [email, setEmail] = useState('tmunoz@mail.com');
+  const [firstName, setFirstName] = useState(defaultBuyer?.firstName || '');
+  const [lastName, setLastName] = useState(defaultBuyer?.lastName || '');
+  const [email, setEmail] = useState(defaultBuyer?.email || '');
+
+  useEffect(() => {
+    if (!open) return;
+    setFirstName(defaultBuyer?.firstName || '');
+    setLastName(defaultBuyer?.lastName || '');
+    setEmail(defaultBuyer?.email || '');
+  }, [open, defaultBuyer?.firstName, defaultBuyer?.lastName, defaultBuyer?.email]);
 
   const additionalTotal = useMemo(() => {
     if (!booking) return 0;
@@ -219,10 +230,17 @@ const BookingReviewSheet = ({
         <div className="fixed bottom-0 left-0 right-0 border-t border-border bg-card/95 backdrop-blur px-4 py-3">
           <Button
             className="w-full rounded-full py-6 text-base font-semibold"
-            disabled={!canConfirm}
+            disabled={!canConfirm || confirming}
             onClick={handleConfirm}
           >
-            Reservar
+            {confirming ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Creando reserva…
+              </>
+            ) : (
+              'Reservar'
+            )}
           </Button>
         </div>
       </SheetContent>

@@ -3,7 +3,8 @@ import { Heart, Trash2, Edit, MoreVertical, Mail, FolderInput, Check, Users as U
 import { Guest, GuestGroup } from "@lovable/types/guest";
 import { Button } from "@lovable/components/ui/button";
 import { Badge } from "@lovable/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@lovable/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@lovable/components/ui/avatar";
+import { UserAvatarImage } from "../../../components/UserAvatarImage";
 import { Checkbox } from "@lovable/components/ui/checkbox";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
@@ -57,7 +58,7 @@ export function DraggableGuestCard({
           </div>
         )}
         <Avatar className="h-9 w-9 shrink-0">
-          <AvatarImage src={guest.avatar} alt={`${guest.name} ${guest.lastName}`} />
+          <UserAvatarImage src={guest.avatar} userId={guest.invitedUserId || guest.id} alt={`${guest.name} ${guest.lastName}`} />
           <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs">{initials}</AvatarFallback>
         </Avatar>
         <div className="flex-1 min-w-0">

@@ -3,6 +3,7 @@ export interface ApiResponse<T = unknown> {
   message: string;
   data: T;
   statusDesc?: string;
+  sentVia?: string[];
 }
 
 export interface LoginCredentials {
@@ -14,6 +15,7 @@ export interface LoginUser {
   userId: string;
   email: string;
   userStatus: string;
+  platformRole?: string;
 }
 
 export interface LoginSuccessData {
@@ -44,7 +46,7 @@ export interface CreateAccountData {
 
 export interface OtpAction {
   action: 'generate' | 'verify' | 'sendActivationLink' | 'sendResetLink' | 'verifyLink' | 'resetPasswordWithToken';
-  email: string;
+  email?: string;
   userId: string;
   phoneNumber?: string;
   otp?: string;

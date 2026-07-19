@@ -211,6 +211,15 @@ export interface ServiceGalleryItem {
   kind: 'image' | 'video';
 }
 
+export interface ServicePromoCodeBatch {
+  id: string;
+  currency: string;
+  value: number;
+  quantity: number;
+  description: string;
+  codes: string[];
+}
+
 export interface ServiceFormData {
   /** URL remota (p. ej. foto de perfil) o preview tras subir */
   coverImageUrl?: string;
@@ -239,6 +248,11 @@ export interface ServiceFormData {
   globalEndTime: string;
   bookingPreference: 'instant' | 'approval';
   refundPolicy: string;
+  promoEnabled?: boolean;
+  promoCodes?: ServicePromoCodeBatch[];
+  /** Preview local de foto principal (blob URL) */
+  servicePhoto?: string;
+  galleryMedia?: { type: 'photo' | 'video'; url: string }[];
   faqs: FAQItem[];
   // legacy fields kept for compatibility
   selectedDays: boolean[];
@@ -278,6 +292,8 @@ export const initialFormData: ServiceFormData = {
   globalEndTime: '17:00',
   bookingPreference: 'instant',
   refundPolicy: '',
+  promoEnabled: false,
+  promoCodes: [],
   faqs: [{ question: '', answer: '' }],
   selectedDays: [false, false, false, false, false, false, false],
   customSchedule: false,

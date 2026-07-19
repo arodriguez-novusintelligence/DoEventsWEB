@@ -6,12 +6,37 @@ export interface FeedUiUser {
   avatarUrl?: string;
 }
 
+export interface VenueFeedAddonService {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  unit: 'evento' | 'día' | 'dia';
+  imageUrl?: string;
+}
+
+export interface VenueFeedData {
+  venueId: string;
+  pricePerDay?: number;
+  checkIn?: string;
+  checkOut?: string;
+  capacity?: number | string;
+  addonServices?: VenueFeedAddonService[];
+  availability?: {
+    selectedDates?: string[];
+    blockedDates?: string[];
+    globalStartTime?: string;
+    globalEndTime?: string;
+  };
+}
+
 export interface FeedUiComment {
   id: string;
   user: FeedUiUser;
   text: string;
   timeAgo: string;
   likes: number;
+  liked?: boolean;
   replies: number;
   repliesData?: FeedUiComment[];
   images?: string[];
@@ -34,8 +59,17 @@ export interface FeedUiPost {
   reposts: number;
   repostedBy: FeedUiUser[];
   type: 'evento' | 'servicio' | 'lugar' | 'publicacion';
+  /** Publicación creada por un usuario (menú +), no un sync nativo del timeline */
+  isUserPublication?: boolean;
+  /** Tipo de entidad promocionada en la tarjeta inferior (evento, servicio o lugar) */
+  promotedEntityType?: 'evento' | 'servicio' | 'lugar';
+  /** Multimedia original de la entidad promocionada (miniatura de la tarjeta EVENTOS/etc.) */
+  promotedEntityImages?: string[];
+  /** Menciones enriquecidas del backend (usuarios, eventos, etc.) */
+  feedMentions?: import('./feed').FeedMention[];
   visibility: 'public' | 'private';
   detailPath?: string | null;
+  venueFeed?: VenueFeedData;
   repostOf?: {
     user: FeedUiUser;
     timeAgo: string;
@@ -46,7 +80,11 @@ export interface FeedUiPost {
     location?: string;
     tags: string[];
     type?: 'evento' | 'servicio' | 'lugar' | 'publicacion';
+    isUserPublication?: boolean;
+    promotedEntityType?: 'evento' | 'servicio' | 'lugar';
+    promotedEntityImages?: string[];
     detailPath?: string | null;
+    venueFeed?: VenueFeedData;
   };
 }
 

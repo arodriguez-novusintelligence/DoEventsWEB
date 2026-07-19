@@ -1,5 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { formatRelativeTime, resolveImageUrl, uploadMediaFile } from '@doevents/shared';
+import {
+  formatRelativeTime,
+  resolveImageUrl,
+  toggleCommentLike,
+  uploadMediaFile,
+  fetchPublicationComments,
+} from '@doevents/shared';
 import LovableCommentsSheet from '@lovable/components/feed/CommentsSheet';
 import type { Comment } from '@doevents/shared';
 
@@ -8,12 +14,15 @@ interface ApiComment {
   text?: string;
   content?: string;
   createdAt?: string | number;
-  author?: { id?: string; name?: string; username?: string };
+  parentCommentId?: string | null;
+  author?: { id?: string; name?: string; username?: string; avatarUrl?: string | null };
   user?: { id?: string; name?: string; username?: string; avatarUrl?: string | null };
   authorId?: string;
   authorName?: string;
   images?: string[];
   media?: Array<{ url?: string }>;
+  stats?: { likes?: number; replies?: number };
+  viewerState?: { liked?: boolean };
 }
 
 export interface CommentSubmitPayload {
@@ -46,13 +55,96 @@ function mapComment(item: ApiComment): Comment {
       id: author?.id || item.authorId || item.id,
       name,
       initials: name.split(' ').map((p) => p[0]).join('').slice(0, 2).toUpperCase(),
+      avatarUrl: author?.avatarUrl || undefined,
     },
     text: item.text || item.content || '',
-    timeAgo: formatRelativeTime(item.createdAt || Date.now()),
-    likes: 0,
-    replies: 0,
+    timeAgo: formatRelativeTime(item.createdAt ? String(item.createdAt) : undefined),
+    likes: Number(item.stats?.likes ?? 0),
+    liked: Boolean(item.viewerState?.liked),
+    replies: Number(item.stats?.replies ?? 0),
     images,
   };
+}
+
+/** Anida respuestas bajo su comentario padre; roots sin parent o con parent huérfano. */
+function nestComments(items: ApiComment[]): Comment[] {
+  const mapped = new Map<string, Comment>();
+  for (const item of items) {
+    mapped.set(item.id, mapComment(item));
+  }
+
+  const roots: Comment[] = [];
+  for (const item of items) {
+    const comment = mapped.get(item.id);
+    if (!comment) continue;
+    const parentId = item.parentCommentId ? String(item.parentCommentId) : '';
+    if (parentId && mapped.has(parentId)) {
+      const parent = mapped.get(parentId)!;
+      parent.repliesData = parent.repliesData || [];
+      parent.repliesData.push(comment);
+    } else if (!parentId) {
+      roots.push(comment);
+    } else {
+      // parent missing in page → treat as root so it remains visible
+      roots.push(comment);
+    }
+  }
+
+  for (const root of roots) {
+    if (root.repliesData?.length) {
+      root.replies = root.repliesData.length;
+    }
+  }
+  return roots;
+}
+
+function findComment(comments: Comment[], commentId: string): Comment | undefined {
+  for (const comment of comments) {
+    if (comment.id === commentId) return comment;
+    if (comment.repliesData?.length) {
+      const nested = findComment(comment.repliesData, commentId);
+      if (nested) return nested;
+    }
+  }
+  return undefined;
+}
+
+function updateCommentLike(
+  comments: Comment[],
+  commentId: string,
+  liked: boolean,
+  likes: number,
+): Comment[] {
+  return comments.map((comment) => ({
+    ...comment,
+    ...(comment.id === commentId ? { liked, likes } : {}),
+    ...(comment.repliesData
+      ? { repliesData: updateCommentLike(comment.repliesData, commentId, liked, likes) }
+      : {}),
+  }));
+}
+
+function setRepliesData(
+  comments: Comment[],
+  parentId: string,
+  replies: Comment[],
+): Comment[] {
+  return comments.map((comment) => {
+    if (comment.id === parentId) {
+      return {
+        ...comment,
+        repliesData: replies,
+        replies: replies.length || comment.replies,
+      };
+    }
+    if (comment.repliesData?.length) {
+      return {
+        ...comment,
+        repliesData: setRepliesData(comment.repliesData, parentId, replies),
+      };
+    }
+    return comment;
+  });
 }
 
 export const LovableCommentsBridge: React.FC<LovableCommentsBridgeProps> = ({
@@ -70,13 +162,55 @@ export const LovableCommentsBridge: React.FC<LovableCommentsBridgeProps> = ({
   const refresh = useCallback(async () => {
     if (!publicationId) return;
     const items = await loadComments(publicationId);
-    setComments((items || []).map(mapComment));
+    setComments(nestComments(items || []));
   }, [loadComments, publicationId]);
 
   useEffect(() => {
     if (!open || !publicationId) return;
     refresh().catch(() => setComments([]));
   }, [open, publicationId, refresh]);
+
+  const handleToggleLike = useCallback(async (commentId: string, liked: boolean) => {
+    let previousLiked = false;
+    let previousLikes = 0;
+    setComments((current) => {
+      const comment = findComment(current, commentId);
+      previousLiked = Boolean(comment?.liked);
+      previousLikes = Number(comment?.likes ?? 0);
+      const optimisticLikes = Math.max(0, previousLikes + (liked ? 1 : -1));
+      return updateCommentLike(current, commentId, liked, optimisticLikes);
+    });
+
+    try {
+      const result = await toggleCommentLike(commentId, liked);
+      setComments((current) => updateCommentLike(
+        current,
+        commentId,
+        result.viewerState?.liked ?? liked,
+        Number(result.stats?.likes ?? Math.max(0, previousLikes + (liked ? 1 : -1))),
+      ));
+    } catch {
+      setComments((current) => updateCommentLike(
+        current,
+        commentId,
+        previousLiked,
+        previousLikes,
+      ));
+    }
+  }, []);
+
+  const handleLoadReplies = useCallback(async (parentCommentId: string) => {
+    if (!publicationId) return;
+    const existing = findComment(comments, parentCommentId);
+    if (existing?.repliesData && existing.repliesData.length > 0) return;
+    try {
+      const data = await fetchPublicationComments(publicationId, 50, { parentCommentId });
+      const replies = (data.items || []).map(mapComment);
+      setComments((current) => setRepliesData(current, parentCommentId, replies));
+    } catch {
+      /* keep count label; empty replies stay empty */
+    }
+  }, [comments, publicationId]);
 
   return (
     <LovableCommentsSheet
@@ -107,6 +241,8 @@ export const LovableCommentsBridge: React.FC<LovableCommentsBridgeProps> = ({
       onReportComment={onReportComment ? async (commentId) => {
         await onReportComment(commentId);
       } : undefined}
+      onToggleLike={handleToggleLike}
+      onLoadReplies={handleLoadReplies}
     />
   );
 };

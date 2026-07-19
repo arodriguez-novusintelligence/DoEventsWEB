@@ -33,6 +33,7 @@ import {
   declineChatInvitation,
   archiveChatRoom,
   unarchiveChatRoom,
+  markChatRoomRead,
   createPrivateGroupChat,
   inviteToEventChat,
   kickFromEventChat,
@@ -47,12 +48,14 @@ import {
   resolveDirectPeerParticipant,
   resolveDirectPeerUserId,
   userIdsMatch,
+  toggleChatReaction,
+  normalizeChatReactions,
   resolveRoomAvatar,
   resolveEventRoomImage,
   resolveRoomEventId,
   resolveAllChatMembers,
-  initChatMediaUpload,
-  completeChatMediaUpload,
+  uploadChatMediaFile,
+  normalizeChatMediaMime,
   hasRenderableMessageContent,
   isImageMessage,
   isGifMessage,
@@ -73,6 +76,9 @@ import {
   resolveRoomTitle,
   resolveUserLocation,
   searchUsers,
+  fetchFollowersCount,
+  canMessageUser,
+  getDirectMessageBlockReason,
   useToast,
   UserAvatar,
   blockUser,
@@ -141,35 +147,6 @@ function formatShareEventDate(raw?: string): string {
   if (!raw) return '';
   if (/^\d{8}$/.test(raw)) return `${raw.slice(6, 8)}/${raw.slice(4, 6)}/${raw.slice(0, 4)}`;
   return raw;
-}
-
-function resolveChatFileMime(file: File): string {
-  const normalized = String(file.type || '').trim().toLowerCase();
-  if (normalized) return normalized;
-  const ext = file.name.split('.').pop()?.toLowerCase() || '';
-  const byExt: Record<string, string> = {
-    jpg: 'image/jpeg',
-    jpeg: 'image/jpeg',
-    png: 'image/png',
-    gif: 'image/gif',
-    webp: 'image/webp',
-    heic: 'image/heic',
-    heif: 'image/heif',
-    mp4: 'video/mp4',
-    mov: 'video/quicktime',
-    webm: 'video/webm',
-    m4v: 'video/x-m4v',
-    pdf: 'application/pdf',
-    doc: 'application/msword',
-    docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    xls: 'application/vnd.ms-excel',
-    xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    ppt: 'application/vnd.ms-powerpoint',
-    pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-    txt: 'text/plain',
-    zip: 'application/zip',
-  };
-  return byExt[ext] || 'application/octet-stream';
 }
 
 function resolveMessageTypeFromFile(contentType: string, fileName: string): string {
@@ -369,9 +346,60 @@ async function enrichRoomsWithPeerProfiles(rooms: ChatRoom[], currentUserId: str
   }));
 }
 
+/** Hidrata avatares de participantes de salas de evento / grupo cuando el BE no los trae firmados. */
+async function enrichRoomMemberAvatars(room: ChatRoom): Promise<ChatRoom> {
+  const members = resolveAllChatMembers(room);
+  if (!members.length) return room;
+
+  const missingIds = members
+    .filter((member) => member.id && !hasUsableAvatar(member.avatar))
+    .map((member) => member.id as string);
+  if (!missingIds.length) return room;
+
+  try {
+    const profiles = await getCachedProfiles(missingIds);
+    const enrichedMembers = members.map((member) => {
+      if (!member.id || hasUsableAvatar(member.avatar)) return member;
+      const profile = profiles.get(member.id)
+        || [...profiles.entries()].find(([id]) => userIdsMatch(id, member.id!))?.[1];
+      const avatar = profile?.imagen || member.avatar;
+      if (!hasUsableAvatar(avatar)) return member;
+      return {
+        ...member,
+        name: member.name?.trim()
+          || [profile?.nombre, profile?.apellido].filter(Boolean).join(' ')
+          || profile?.username
+          || member.name,
+        avatar,
+      };
+    });
+
+    const first = room.participants?.[0];
+    if (typeof first === 'string') {
+      // Mantener IDs crudos para contratos API; enriquecer solo el detalle usado por UI.
+      return {
+        ...room,
+        pendingParticipantDetails: [
+          ...(room.pendingParticipantDetails || []),
+          ...enrichedMembers.filter((m) => m.id && hasUsableAvatar(m.avatar)),
+        ],
+      };
+    }
+
+    return { ...room, participants: enrichedMembers };
+  } catch {
+    return room;
+  }
+}
+
 async function enrichAllRooms(rooms: ChatRoom[], currentUserId: string): Promise<ChatRoom[]> {
   const withEvents = await enrichRoomsWithEventImages(rooms);
-  return enrichRoomsWithPeerProfiles(withEvents, currentUserId);
+  const withPeers = await enrichRoomsWithPeerProfiles(withEvents, currentUserId);
+  return Promise.all(withPeers.map((room) => (
+    isEventRoom(room) || isPrivateGroupRoom(room)
+      ? enrichRoomMemberAvatars(room)
+      : Promise.resolve(room)
+  )));
 }
 
 function resolveParticipantLabel(participant: ChatParticipant): string {
@@ -441,7 +469,12 @@ export const ChatPage: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const attachMenuRef = useRef<HTMLDivElement>(null);
   const deepLinkHandled = useRef(false);
+  const selectedRoomIdRef = useRef('');
   const selectedRoomId = selectedRoom ? resolveRoomId(selectedRoom) : '';
+
+  useEffect(() => {
+    selectedRoomIdRef.current = selectedRoomId;
+  }, [selectedRoomId]);
 
   useEffect(() => {
     if (!userId) return;
@@ -472,13 +505,14 @@ export const ChatPage: React.FC = () => {
       .map((room) => resolveRoomId(room))
       .filter(Boolean);
     roomIds.forEach((roomId) => {
-      try {
-        chatWebSocketClient.joinRoom(roomId);
-      } catch {
-        // ignore join errors for background sync
-      }
+      chatWebSocketClient.joinRoom(roomId);
     });
   }, [connectionState, rooms, userId]);
+
+  useEffect(() => {
+    if (connectionState !== 'connected' || !selectedRoomId) return;
+    chatWebSocketClient.joinRoom(selectedRoomId);
+  }, [connectionState, selectedRoomId]);
 
   const closedEventRoomIds = useMemo(
     () => new Set(
@@ -493,16 +527,18 @@ export const ChatPage: React.FC = () => {
   useEffect(() => {
     if (!userId) return undefined;
     return chatWebSocketClient.onMessage((payload) => {
-      const action = String(payload.action || payload.event || '');
+      const action = String(payload.action || '');
+      const event = String(payload.event || '');
 
-      if (action === 'chatMessageAck' || action === 'chat.message.ack') {
+      if (action === 'chatMessageAck' || action === 'chat.message.ack' || event === 'chat.message.ack') {
         const ack = (payload.message || payload.payload) as {
           clientMessageId?: string;
           serverMessageId?: string;
           roomId?: string;
         };
         const ackRoomId = String(ack?.roomId || payload.roomId || '');
-        if (ack?.clientMessageId && ack?.serverMessageId && ackRoomId && ackRoomId === selectedRoomId) {
+        const activeRoomId = selectedRoomIdRef.current;
+        if (ack?.clientMessageId && ack?.serverMessageId && ackRoomId && ackRoomId === activeRoomId) {
           setMessages((prev) => prev.map((m) => (
             m.clientMessageId === ack.clientMessageId
               ? { ...m, id: ack.serverMessageId, messageId: ack.serverMessageId }
@@ -544,17 +580,47 @@ export const ChatPage: React.FC = () => {
         if (!msgId) return;
         const editRoomId = String(editBody?.roomId || payload.roomId || '');
         if (editRoomId && closedEventRoomIds.has(editRoomId)) return;
-        if (editBody.status === 'deleted' || editBody.deletedAt) {
-          setMessages((prev) => prev.filter((m) => (m.id || m.messageId) !== msgId));
+        if (editBody.status === 'deleted' || (Boolean(editBody.deletedAt) && editBody.status !== 'edited')) {
+          setMessages((prev) => {
+            const next = prev.filter((m) => (m.id || m.messageId) !== msgId);
+            if (editRoomId) cacheChatMessages(editRoomId, next);
+            return next;
+          });
         } else {
-          setMessages((prev) => prev.map((m) => (
-            (m.id || m.messageId) === msgId ? { ...m, text: editBody.text || m.text } : m
-          )));
+          setMessages((prev) => {
+            const next = prev.map((m) => (
+              (m.id || m.messageId) === msgId
+                ? { ...m, text: editBody.text || m.text, updatedAt: new Date().toISOString() }
+                : m
+            ));
+            if (editRoomId) cacheChatMessages(editRoomId, next);
+            return next;
+          });
         }
         return;
       }
 
-      const isNewMessage = action === 'sendChatMessage' || action === 'chat.message.new';
+      if (action === 'reactChatMessage' || event === 'chat.message.reaction') {
+        const reactionBody = (payload.message || payload.payload || payload) as {
+          id?: string;
+          roomId?: string;
+          reactions?: ChatMessage['reactions'];
+        };
+        const msgId = reactionBody?.id;
+        if (!msgId) return;
+        const reactionRoomId = String(reactionBody?.roomId || payload.roomId || '');
+        const activeRoomId = selectedRoomIdRef.current;
+        if (reactionRoomId && activeRoomId && reactionRoomId !== activeRoomId) return;
+        const reactions = normalizeChatReactions(reactionBody.reactions);
+        setMessages((prev) => prev.map((m) => (
+          (m.id || m.messageId) === msgId ? { ...m, reactions } : m
+        )));
+        return;
+      }
+
+      const isNewMessage = action === 'sendChatMessage'
+        || action === 'chat.message.new'
+        || event === 'chat.message.new';
       if (!isNewMessage) return;
 
       const messageBody = (payload.message || payload.payload) as ChatMessage;
@@ -584,7 +650,8 @@ export const ChatPage: React.FC = () => {
           : room
       )));
 
-      if (selectedRoomId && incomingRoomId === selectedRoomId) {
+      const activeRoomId = selectedRoomIdRef.current;
+      if (activeRoomId && incomingRoomId === activeRoomId) {
         setMessages((prev) => {
           const serverId = normalized.id || normalized.messageId;
           const clientId = normalized.clientMessageId;
@@ -608,7 +675,7 @@ export const ChatPage: React.FC = () => {
         });
       }
     });
-  }, [selectedRoomId, userId, closedEventRoomIds]);
+  }, [userId, closedEventRoomIds]);
 
   useEffect(() => {
     let cancelled = false;
@@ -636,7 +703,7 @@ export const ChatPage: React.FC = () => {
     if (deepLinkHandled.current || loading || !userId) return;
     const eventId = searchParams.get('eventId');
     const roomId = searchParams.get('roomId');
-    const peerId = searchParams.get('peerId');
+    const peerId = searchParams.get('peerId') || searchParams.get('userId');
 
     const openRoom = (room: ChatRoom) => {
       deepLinkHandled.current = true;
@@ -689,7 +756,8 @@ export const ChatPage: React.FC = () => {
       }
       fetchChatRoomByEvent(eventId).then(async (room) => {
         if (!room) return;
-        const [enriched] = await enrichRoomsWithEventImages([room]);
+        const [withEvent] = await enrichRoomsWithEventImages([room]);
+        const enriched = await enrichRoomMemberAvatars(withEvent);
         openRoom(enriched);
       }).catch(() => undefined);
     }
@@ -712,17 +780,10 @@ export const ChatPage: React.FC = () => {
       }
       setLoadingMessages(!cachedMessages?.length);
       try {
-        if (selectedRoom.messages?.length) {
-          if (!cancelled) {
-            setMessages(selectedRoom.messages);
-            cacheChatMessages(roomId, selectedRoom.messages);
-          }
-        } else {
-          const data = await fetchChatMessages(roomId);
-          if (!cancelled) {
-            setMessages(data);
-            cacheChatMessages(roomId, data);
-          }
+        const data = await fetchChatMessages(roomId);
+        if (!cancelled) {
+          setMessages(data);
+          cacheChatMessages(roomId, data);
         }
         if (connectionState === 'connected') {
           chatWebSocketClient.joinRoom(roomId);
@@ -766,6 +827,20 @@ export const ChatPage: React.FC = () => {
     const normalized = userId && room.chatType === 'direct'
       ? normalizeDirectRoomForUser(room, userId)
       : room;
+    const roomId = resolveRoomId(normalized);
+    if (roomId) {
+      chatWebSocketClient.joinRoom(roomId);
+      if (userId) {
+        void markChatRoomRead(userId, roomId)
+          .then(() => {
+            setRooms((prev) => prev.map((item) => (
+              resolveRoomId(item) === roomId ? { ...item, unreadCount: 0 } : item
+            )));
+            window.dispatchEvent(new Event('doevents:chat-unread-updated'));
+          })
+          .catch(() => undefined);
+      }
+    }
     setSelectedRoom(normalized);
     setEventThreadTab('chat');
     setShowEmoji(false);
@@ -775,6 +850,16 @@ export const ChatPage: React.FC = () => {
     setShowEventInvite(false);
     setEventInviteSearch('');
     setMessageActionId(null);
+    if (isEventRoom(normalized) || isPrivateGroupRoom(normalized)) {
+      void enrichRoomMemberAvatars(normalized).then((enriched) => {
+        setSelectedRoom((current) => (
+          current && resolveRoomId(current) === resolveRoomId(enriched) ? enriched : current
+        ));
+        setRooms((prev) => prev.map((item) => (
+          resolveRoomId(item) === resolveRoomId(enriched) ? enriched : item
+        )));
+      });
+    }
   };
 
   useEffect(() => {
@@ -802,23 +887,74 @@ export const ChatPage: React.FC = () => {
       return;
     }
 
-    const existing = findDirectRoomWithPeer(rooms, userId, targetUserId);
-    if (existing) {
-      setActiveTab('private');
-      openRoom(existing);
+    const [followersResult, targetProfile] = await Promise.all([
+      fetchFollowersCount(targetUserId, userId).catch(() => ({
+        count: 0,
+        isFollowing: false,
+        followStatus: 'none' as const,
+      })),
+      fetchUserById(targetUserId).catch(() => null),
+    ]);
+    const isFollowing = followersResult.isFollowing || followersResult.followStatus === 'accepted';
+    const followPending = followersResult.followStatus === 'pending';
+    const isPublic = targetProfile?.isPublicProfile !== false;
+    const blockReason = getDirectMessageBlockReason({
+      isPublicProfile: isPublic,
+      isFollowing,
+      followPending,
+    });
+    if (blockReason || !canMessageUser({ isPublicProfile: isPublic, isFollowing })) {
+      showToast(blockReason || 'No puedes enviar mensajes a este usuario', 'error');
       return;
     }
 
+    const existing = findDirectRoomWithPeer(rooms, userId, targetUserId);
+
     setOpeningDm(true);
     try {
-      const draftRoom = await buildDraftDirectRoom(userId, targetUserId);
+      const result = await requestDirectChat(userId, targetUserId);
+      const [enrichedRoom] = await enrichRoomsWithPeerProfiles([result.room], userId);
+      const activeRoom = normalizeDirectRoomForUser({
+        ...(enrichedRoom || result.room),
+        canMessage: result.canMessage,
+        directChatStatus: result.status,
+        invitationPending: result.invitationPending,
+      }, userId);
       setActiveTab('private');
-      setSelectedRoom(draftRoom);
+      setSelectedRoom(activeRoom);
       setMessages([]);
       setEventThreadTab('chat');
       setDraft('');
+      setRooms((prev) => {
+        const roomId = resolveRoomId(activeRoom);
+        const without = prev.filter((r) => resolveRoomId(r) !== roomId);
+        const next = [activeRoom, ...without];
+        cacheChatRooms(userId, next);
+        return next;
+      });
+      patchCachedChatRoom(userId, activeRoom);
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'No se pudo abrir el chat directo', 'error');
+      if (existing) {
+        setActiveTab('private');
+        setSelectedRoom(normalizeDirectRoomForUser(existing, userId));
+        setMessages([]);
+        setEventThreadTab('chat');
+        setDraft('');
+      } else {
+        try {
+          const draftRoom = await buildDraftDirectRoom(userId, targetUserId);
+          setActiveTab('private');
+          setSelectedRoom(draftRoom);
+          setMessages([]);
+          setEventThreadTab('chat');
+          setDraft('');
+        } catch {
+          showToast(err instanceof Error ? err.message : 'No se pudo abrir el chat directo', 'error');
+        }
+      }
+      if (existing) {
+        showToast(err instanceof Error ? err.message : 'No se pudo sincronizar el chat directo', 'error');
+      }
     } finally {
       setOpeningDm(false);
     }
@@ -833,8 +969,11 @@ export const ChatPage: React.FC = () => {
       : selectedRoom;
     const closedEvent = isEventRoom(normalized) && isClosedEventChatRoom(normalized);
     const pending = normalized.pendingParticipants || [];
-    const isInvitee = pending.includes(userId) || normalized.inviteeId === userId;
-    const isRequesterWaiting = normalized.directChatStatus === 'pending' && !isInvitee;
+    const isInvitee = pending.some((id) => userIdsMatch(id, userId))
+      || (normalized.inviteeId ? userIdsMatch(normalized.inviteeId, userId) : false);
+    const isRequesterWaiting = normalized.directChatStatus === 'pending'
+      && !isInvitee
+      && normalized.canMessage !== true;
     return {
       canMessage: !closedEvent && normalized.canMessage !== false,
       isInvitee,
@@ -845,6 +984,16 @@ export const ChatPage: React.FC = () => {
 
   const canMessageInRoom = roomAccess.canMessage;
   const isClosedEventChat = roomAccess.isClosedEvent;
+
+  const handleChatBack = () => {
+    const returnTo = searchParams.get('returnTo');
+    if (returnTo && returnTo.startsWith('/')) {
+      navigate(returnTo);
+      return;
+    }
+    setSelectedRoom(null);
+  };
+
   const showCannotMessageToast = () => {
     if (isClosedEventChat) {
       showToast('Este chat está cerrado. Solo puedes ver el historial.', 'error');
@@ -886,15 +1035,22 @@ export const ChatPage: React.FC = () => {
     userId && eventCreatorId && userIdsMatch(userId, eventCreatorId),
   );
 
-  const sendRoomMessage = async (text: string, options?: { announcement?: boolean }) => {
+  const sendRoomMessage = async (
+    text: string,
+    options?: {
+      announcement?: boolean;
+      replyTo?: { id: string; text: string; senderName: string; senderId?: string };
+      editingMessageId?: string;
+    },
+  ) => {
     const trimmed = text.trim();
     if (!selectedRoom || !trimmed || !userId) return;
     if (!canMessageInRoom) {
       showCannotMessageToast();
       return;
     }
-    if (options?.announcement && !isEventCreator) {
-      showToast('Solo el creador del evento puede enviar difusiones.', 'error');
+    if (options?.announcement && !isEventAdmin) {
+      showToast('Solo los administradores del evento pueden enviar anuncios.', 'error');
       return;
     }
     setSending(true);
@@ -906,7 +1062,12 @@ export const ChatPage: React.FC = () => {
         if (!targetUserId) throw new Error('No se pudo identificar el destinatario');
         const result = await requestDirectChat(userId, targetUserId);
         const [enrichedRoom] = await enrichRoomsWithPeerProfiles([result.room], userId);
-        activeRoom = enrichedRoom || result.room;
+        activeRoom = normalizeDirectRoomForUser({
+          ...(enrichedRoom || result.room),
+          canMessage: result.canMessage,
+          directChatStatus: result.status,
+          invitationPending: result.invitationPending,
+        }, userId);
         setSelectedRoom(activeRoom);
         setRooms((prev) => {
           const roomId = resolveRoomId(activeRoom);
@@ -916,8 +1077,9 @@ export const ChatPage: React.FC = () => {
           return next;
         });
         patchCachedChatRoom(userId, activeRoom);
-        if (result.status === 'pending') {
+        if (result.status === 'pending' && !result.canMessage) {
           showToast('Solicitud enviada. La otra persona debe aceptar para responder.', 'success');
+          return;
         }
       }
 
@@ -928,16 +1090,61 @@ export const ChatPage: React.FC = () => {
         chatWebSocketClient.connect(userId);
         throw new Error('Chat reconectando. Espera unos segundos e intenta de nuevo.');
       }
-      const clientMessageId = options?.announcement
-        ? chatWebSocketClient.sendChatMessage(roomId, { text: trimmed, type: 'message-announcement' })
-        : chatWebSocketClient.sendChatMessage(roomId, trimmed);
+
+      if (options?.editingMessageId) {
+        chatWebSocketClient.editChatMessage(roomId, options.editingMessageId, { newText: trimmed });
+        setMessages((prev) => {
+          const next = prev.map((m) => (
+            (m.id || m.messageId) === options.editingMessageId
+              ? { ...m, text: trimmed, updatedAt: new Date().toISOString() }
+              : m
+          ));
+          cacheChatMessages(roomId, next);
+          return next;
+        });
+        return;
+      }
+
+      let clientMessageId: string;
+      if (options?.announcement) {
+        clientMessageId = chatWebSocketClient.sendChatMessage(roomId, {
+          text: trimmed,
+          type: 'message-announcement',
+        });
+      } else if (options?.replyTo) {
+        clientMessageId = chatWebSocketClient.sendChatMessage(roomId, {
+          text: trimmed,
+          type: 'message-reply',
+          replyToId: options.replyTo.id,
+          reply: {
+            id: options.replyTo.id,
+            text: options.replyTo.text,
+            sender: options.replyTo.senderId || '',
+            type: 'message-text',
+          },
+        });
+      } else {
+        clientMessageId = chatWebSocketClient.sendChatMessage(roomId, trimmed);
+      }
+
       const optimistic = {
         id: `local-${clientMessageId}`,
         clientMessageId,
         roomId,
         userId,
         text: trimmed,
-        type: options?.announcement ? 'message-announcement' : undefined,
+        type: options?.announcement ? 'message-announcement' : (options?.replyTo ? 'message-reply' : undefined),
+        ...(options?.replyTo ? {
+          replyMeta: {
+            replyToId: options.replyTo.id,
+            reply: {
+              id: options.replyTo.id,
+              text: options.replyTo.text,
+              sender: options.replyTo.senderId || '',
+              type: 'message-text',
+            },
+          },
+        } : {}),
         createdAt: new Date().toISOString(),
       };
       setMessages((prev) => {
@@ -1010,7 +1217,12 @@ export const ChatPage: React.FC = () => {
         if (!targetUserId) throw new Error('No se pudo identificar el destinatario');
         const result = await requestDirectChat(userId, targetUserId);
         const [enrichedRoom] = await enrichRoomsWithPeerProfiles([result.room], userId);
-        activeRoom = enrichedRoom || result.room;
+        activeRoom = normalizeDirectRoomForUser({
+          ...(enrichedRoom || result.room),
+          canMessage: result.canMessage,
+          directChatStatus: result.status,
+          invitationPending: result.invitationPending,
+        }, userId);
         setSelectedRoom(activeRoom);
         setRooms((prev) => {
           const roomId = resolveRoomId(activeRoom);
@@ -1020,8 +1232,9 @@ export const ChatPage: React.FC = () => {
           return next;
         });
         patchCachedChatRoom(userId, activeRoom);
-        if (result.status === 'pending') {
+        if (result.status === 'pending' && !result.canMessage) {
           showToast('Solicitud enviada. La otra persona debe aceptar para responder.', 'success');
+          return;
         }
       }
 
@@ -1199,6 +1412,31 @@ export const ChatPage: React.FC = () => {
     }
   };
 
+  const handleReportMessageById = (messageId: string) => {
+    const message = messages.find((m) => (m.id || m.messageId) === messageId);
+    if (message) void handleReportMessage(message as ChatMessage);
+  };
+
+  const handleReactMessage = (messageId: string, emoji: string) => {
+    if (!selectedRoom || !userId || isClosedEventChat) return;
+    const roomId = resolveRoomId(selectedRoom);
+    if (!roomId || !messageId) return;
+    try {
+      chatWebSocketClient.ensureConnected();
+      chatWebSocketClient.reactChatMessage(roomId, messageId, emoji);
+      setMessages((prev) => prev.map((m) => {
+        const id = m.id || m.messageId;
+        if (id !== messageId) return m;
+        return {
+          ...m,
+          reactions: toggleChatReaction(m.reactions, userId, emoji),
+        };
+      }));
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : 'No se pudo reaccionar al mensaje', 'error');
+    }
+  };
+
   function extractParticipantIdsFromRoom(room: ChatRoom): string[] {
     return normalizeParticipants(room).map((p) => p.id).filter(Boolean);
   }
@@ -1253,40 +1491,11 @@ export const ChatPage: React.FC = () => {
   const uploadChatAttachment = async (file: File) => {
     if (!selectedRoom || !userId) throw new Error('Chat no disponible');
     const roomId = resolveRoomId(selectedRoom);
-    const contentType = resolveChatFileMime(file);
-    const init = await initChatMediaUpload({
-      roomId,
-      userId,
-      fileName: file.name || 'archivo',
-      contentType,
-      size: file.size,
-    });
-    let uploadResponse: Response;
-    try {
-      uploadResponse = await fetch(init.uploadUrl, {
-        method: 'PUT',
-        headers: { 'Content-Type': contentType },
-        body: file,
-      });
-    } catch {
-      throw new Error('No se pudo subir el archivo. Revisa tu conexión e intenta de nuevo.');
-    }
-    if (!uploadResponse.ok) {
-      throw new Error('No se pudo guardar el archivo en el servidor.');
-    }
-    const completed = await completeChatMediaUpload({ mediaKey: init.mediaKey || '' });
-    const mediaUrl = completed.url || completed.mediaUrl || init.mediaUrl || '';
-    if (!mediaUrl) throw new Error('No se obtuvo URL del archivo');
+    const uploaded = await uploadChatMediaFile({ roomId, userId, file });
     return {
-      mediaUrl,
-      mediaKey: init.mediaKey || completed.media?.key || '',
-      media: {
-        ...completed.media,
-        key: init.mediaKey || completed.media?.key,
-        url: mediaUrl,
-        fileType: contentType,
-        fileName: file.name,
-      },
+      mediaUrl: uploaded.mediaUrl,
+      mediaKey: uploaded.mediaKey,
+      media: uploaded.media,
     };
   };
 
@@ -1297,7 +1506,7 @@ export const ChatPage: React.FC = () => {
     }
     setSending(true);
     try {
-      const contentType = resolveChatFileMime(file);
+      const contentType = normalizeChatMediaMime(file);
       const msgType = resolveMessageTypeFromFile(contentType, file.name);
       const uploaded = await uploadChatAttachment(file);
       await sendStructuredMessage({
@@ -1499,7 +1708,11 @@ export const ChatPage: React.FC = () => {
   };
 
   const openUserProfile = (targetUserId?: string) => {
-    if (!targetUserId || userIdsMatch(targetUserId, userId)) return;
+    if (!targetUserId) return;
+    if (userIdsMatch(targetUserId, userId)) {
+      navigate('/profile');
+      return;
+    }
     navigate(`/users/${encodeURIComponent(targetUserId)}`);
   };
 
@@ -1711,18 +1924,20 @@ export const ChatPage: React.FC = () => {
           peerName={peerProfile?.name || selectedRoom.hostName}
           peerAvatar={peerProfile?.avatar}
           inviteBusy={inviteBusy}
-          onBack={() => setSelectedRoom(null)}
+          onBack={handleChatBack}
           onAcceptInvitation={handleAcceptInvitation}
           onDeclineInvitation={handleDeclineInvitation}
           onSendMessage={sendRoomMessage}
           onDeleteMessage={handleDeleteMessageById}
+          onReportMessage={handleReportMessageById}
+          onReactMessage={handleReactMessage}
           onMediaPick={handleMediaPick}
           onShareLocation={handleShareLocation}
           onShareEvent={openEventPicker}
           onEventClick={(eventId) => navigate(`/events/${eventId}`)}
           onAddPerson={isEventAdmin && !isClosedEventChat ? () => setShowEventInvite(true) : undefined}
           isEventAdmin={isEventAdmin && !isClosedEventChat}
-          canBroadcast={isEventCreator && !isClosedEventChat}
+          canBroadcast={isEventAdmin && !isClosedEventChat}
           isEventChat={showEventLayout}
           isPrivateGroup={isPrivateGroupRoom(selectedRoom)}
           isReadOnlyEventChat={isClosedEventChat}
@@ -1731,6 +1946,26 @@ export const ChatPage: React.FC = () => {
               ? (participantId, participantName) => void handleKickParticipant(participantId, participantName)
               : undefined
           }
+          onOpenStory={(authorId) => setStoryViewerUserId(authorId)}
+          onOpenUserProfile={openUserProfile}
+          onCreateStory={() => setCreateStoryOpen(true)}
+        />
+        <CreateStorySheet
+          open={createStoryOpen}
+          onClose={() => setCreateStoryOpen(false)}
+          onCreated={() => {
+            setCreateStoryOpen(false);
+            refreshStories();
+          }}
+        />
+        <StoryViewer
+          open={Boolean(storyViewerUserId)}
+          authorUserId={storyViewerUserId}
+          currentUserId={userId}
+          currentUserAvatar={profileAvatar}
+          onClose={() => setStoryViewerUserId(null)}
+          onOpenProfile={openUserProfile}
+          onStoriesChanged={refreshStories}
         />
         <ChatEventPickerSheet
           open={showEventPicker}
@@ -1839,7 +2074,9 @@ export const ChatPage: React.FC = () => {
         open={Boolean(storyViewerUserId)}
         authorUserId={storyViewerUserId}
         currentUserId={userId}
+        currentUserAvatar={profileAvatar}
         onClose={() => setStoryViewerUserId(null)}
+        onOpenProfile={openUserProfile}
         onStoriesChanged={refreshStories}
       />
 

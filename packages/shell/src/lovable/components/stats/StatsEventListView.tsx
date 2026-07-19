@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { BarChart3, CalendarDays, Users, ChevronRight, MessageSquare, DollarSign, UserCheck, ScanLine, RefreshCw, Loader2, AlertCircle } from 'lucide-react';
+import { useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { BarChart3, CalendarDays, ChevronRight, MessageSquare, DollarSign, UserCheck, ScanLine, RefreshCw, Loader2, AlertCircle, Ticket } from 'lucide-react';
 import ProfileSectionBanner from '@lovable/components/profile/ProfileSectionBanner';
 import { Avatar, AvatarFallback, AvatarImage } from '@lovable/components/ui/avatar';
 import type { EventChatRoom, EventStatus } from '@lovable/data/chatData';
@@ -7,13 +8,16 @@ import SalesStatsView from './SalesStatsView';
 import GuestStatsView from './GuestStatsView';
 import AccessControlView from './AccessControlView';
 import RefundsView from './RefundsView';
+import PromoCodesStatsView from './PromoCodesStatsView';
 import { isAccessControlEnabled } from '../../../lovable-bridge/accessAdapter';
+import type { User } from '@lovable/data/';
 
 interface StatsEventListViewProps {
   events: EventChatRoom[];
   onBack: () => void;
   loading?: boolean;
   loadError?: string | null;
+  onViewProfile?: (user: User | { name: string; initials: string; id?: string }) => void;
 }
 
 const statusConfig: Record<EventStatus, { label: string; className: string; order: number }> = {
@@ -76,11 +80,79 @@ const statsOptions = [
     border: 'border-primary/15',
     chevron: 'text-primary/30',
   },
+  {
+    id: 'promocionales',
+    title: 'Códigos promocionales',
+    description: 'Códigos generados, redimidos y descuentos aplicados',
+    icon: Ticket,
+    color: 'text-primary',
+    bg: 'bg-primary/5',
+    border: 'border-primary/15',
+    chevron: 'text-primary/30',
+  },
 ];
 
-const StatsEventListView = ({ events, onBack, loading = false, loadError = null }: StatsEventListViewProps) => {
-  const [selectedEvent, setSelectedEvent] = useState<EventChatRoom | null>(null);
-  const [activeStatsOption, setActiveStatsOption] = useState<string | null>(null);
+const formatRevenue = (amount: number) =>
+  amount > 0 ? `COP ${amount.toLocaleString('es-CO')}` : null;
+
+const EventStatsSummary = ({ event }: { event: EventChatRoom }) => {
+  const sold = event.ticketsSold ?? 0;
+  const promos = event.promoCodesRedeemed ?? 0;
+  const revenue = event.salesRevenue ?? 0;
+
+  return (
+    <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+      <span className="inline-flex items-center gap-1">
+        <Ticket className="h-3 w-3 shrink-0" />
+        {sold} boleto{sold !== 1 ? 's' : ''} vendido{sold !== 1 ? 's' : ''}
+      </span>
+      {promos > 0 && (
+        <span className="inline-flex items-center gap-1">
+          <Ticket className="h-3 w-3 shrink-0 text-primary" />
+          {promos} promo{promos !== 1 ? 's' : ''} redimido{promos !== 1 ? 's' : ''}
+        </span>
+      )}
+      {revenue > 0 && (
+        <span className="inline-flex items-center gap-1">
+          <DollarSign className="h-3 w-3 shrink-0" />
+          {formatRevenue(revenue)}
+        </span>
+      )}
+    </div>
+  );
+};
+
+const StatsEventListView = ({ events, onBack, loading = false, loadError = null, onViewProfile }: StatsEventListViewProps) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const selectedEventId = searchParams.get('event');
+  const activeStatsOption = searchParams.get('view');
+
+  const selectedEvent = useMemo(() => {
+    if (!selectedEventId) return null;
+    return events.find(
+      (event) => event.id === selectedEventId || event.eventId === selectedEventId,
+    ) ?? null;
+  }, [events, selectedEventId]);
+
+  const openEvent = (event: EventChatRoom) => {
+    setSearchParams({ event: event.eventId || event.id });
+  };
+
+  const closeEvent = () => {
+    setSearchParams({});
+  };
+
+  const openStatsSection = (optionId: string) => {
+    if (!selectedEventId) return;
+    setSearchParams({ event: selectedEventId, view: optionId });
+  };
+
+  const backToEventMenu = () => {
+    if (selectedEventId) {
+      setSearchParams({ event: selectedEventId });
+    }
+  };
 
   const activeEvents = events
     .filter((e) => e.eventStatus === 'activo' || e.eventStatus === 'en_ejecucion')
@@ -101,7 +173,7 @@ const StatsEventListView = ({ events, onBack, loading = false, loadError = null 
     return (
       <SalesStatsView
         event={selectedEvent}
-        onBack={() => setActiveStatsOption(null)}
+        onBack={backToEventMenu}
       />
     );
   }
@@ -111,7 +183,7 @@ const StatsEventListView = ({ events, onBack, loading = false, loadError = null 
     return (
       <GuestStatsView
         event={selectedEvent}
-        onBack={() => setActiveStatsOption(null)}
+        onBack={backToEventMenu}
       />
     );
   }
@@ -121,7 +193,7 @@ const StatsEventListView = ({ events, onBack, loading = false, loadError = null 
     return (
       <AccessControlView
         event={selectedEvent}
-        onBack={() => setActiveStatsOption(null)}
+        onBack={backToEventMenu}
       />
     );
   }
@@ -131,7 +203,17 @@ const StatsEventListView = ({ events, onBack, loading = false, loadError = null 
     return (
       <RefundsView
         event={selectedEvent}
-        onBack={() => setActiveStatsOption(null)}
+        onBack={backToEventMenu}
+      />
+    );
+  }
+
+  if (selectedEvent && activeStatsOption === 'promocionales') {
+    return (
+      <PromoCodesStatsView
+        event={selectedEvent}
+        onBack={backToEventMenu}
+        onViewProfile={onViewProfile}
       />
     );
   }
@@ -176,7 +258,7 @@ const StatsEventListView = ({ events, onBack, loading = false, loadError = null 
           title={selectedEvent.eventName}
           subtitle="Opciones de estadísticas"
           icon={BarChart3}
-          onBack={() => setSelectedEvent(null)}
+          onBack={closeEvent}
         />
         <div className="mx-auto max-w-lg px-4 pt-4">
 
@@ -218,6 +300,9 @@ const StatsEventListView = ({ events, onBack, loading = false, loadError = null 
                   {selectedEvent.eventDate}
                 </div>
               </div>
+              <div className="mt-2">
+                <EventStatsSummary event={selectedEvent} />
+              </div>
             </div>
           </div>
 
@@ -237,7 +322,7 @@ const StatsEventListView = ({ events, onBack, loading = false, loadError = null 
               return (
               <button
                 key={opt.id}
-                onClick={() => !disabled && setActiveStatsOption(opt.id)}
+                onClick={() => !disabled && openStatsSection(opt.id)}
                 disabled={disabled}
                 className={`flex w-full items-center rounded-2xl border p-4 transition-all active:scale-[0.98] ${opt.bg} ${opt.border} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
@@ -300,7 +385,7 @@ const StatsEventListView = ({ events, onBack, loading = false, loadError = null 
               {activeEvents.map(event => (
                 <button
                   key={event.id}
-                  onClick={() => setSelectedEvent(event)}
+                  onClick={() => openEvent(event)}
                   className="flex w-full items-center gap-3 rounded-xl border border-border/60 bg-card p-4 shadow-sm transition-colors hover:bg-accent/50"
                 >
                   {event.eventImage ? (
@@ -323,10 +408,7 @@ const StatsEventListView = ({ events, onBack, loading = false, loadError = null 
                       <CalendarDays className="h-3 w-3 shrink-0" />
                       <span>{event.eventDate}</span>
                     </div>
-                    <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                      <Users className="h-3 w-3 shrink-0" />
-                      <span>{event.attendees.length} asistente{event.attendees.length !== 1 ? 's' : ''}</span>
-                    </div>
+                    <EventStatsSummary event={event} />
                   </div>
                   <ChevronRight className="h-5 w-5 shrink-0 text-primary" />
                 </button>
@@ -349,7 +431,7 @@ const StatsEventListView = ({ events, onBack, loading = false, loadError = null 
                 return (
                 <button
                   key={event.id}
-                  onClick={() => setSelectedEvent(event)}
+                  onClick={() => openEvent(event)}
                   className="flex w-full items-center gap-3 rounded-xl border border-border/60 bg-card p-4 shadow-sm transition-colors hover:bg-accent/50 opacity-90"
                 >
                   {event.eventImage ? (
@@ -377,6 +459,7 @@ const StatsEventListView = ({ events, onBack, loading = false, loadError = null 
                       <CalendarDays className="h-3 w-3 shrink-0" />
                       <span>{event.eventDate}</span>
                     </div>
+                    <EventStatsSummary event={event} />
                   </div>
                   <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" />
                 </button>

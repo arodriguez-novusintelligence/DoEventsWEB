@@ -6,6 +6,7 @@ import {
   fetchOwnerProfileVenues,
   invalidateVenuesCache,
   Loader,
+  patchProfilePageCounts,
   RootState,
   useToast,
 } from '@doevents/shared';
@@ -30,6 +31,7 @@ export const ProfileVenuesPage: React.FC = () => {
     try {
       const data = await fetchOwnerProfileVenues(userId);
       setVenues(data.map(nearbyVenueToPublishedDraft));
+      patchProfilePageCounts(userId, { myVenuesCount: data.length });
     } catch {
       setVenues([]);
     } finally {
@@ -46,7 +48,11 @@ export const ProfileVenuesPage: React.FC = () => {
     try {
       await deleteVenue(venue.id, userId);
       invalidateVenuesCache();
-      setVenues((prev) => prev.filter((v) => v.id !== venue.id));
+      setVenues((prev) => {
+        const next = prev.filter((v) => v.id !== venue.id);
+        if (userId) patchProfilePageCounts(userId, { myVenuesCount: next.length });
+        return next;
+      });
       showToast('Lugar eliminado', 'success');
     } catch (err) {
       showToast(err instanceof Error ? err.message : 'No se pudo eliminar', 'error');

@@ -2,6 +2,7 @@ import type { NearbyVenue } from '../api/venueService';
 
 const NEARBY_VENUES_CACHE_KEY = 'doevents_venues_nearby_cache_v1';
 const USER_VENUES_CACHE_KEY = 'doevents_venues_user_cache_v1';
+const VENUE_DETAIL_CACHE_KEY = 'doevents_venue_detail_cache_v1';
 
 export const VENUES_CACHE_INVALIDATED_EVENT = 'doevents-venues-cache-invalidated';
 
@@ -20,6 +21,12 @@ interface NearbyVenuesCacheStore {
 interface UserVenuesCacheStore {
   users: Record<string, VenuesTimedEntry<NearbyVenue[]>>;
 }
+
+interface VenueDetailCacheStore {
+  venues: Record<string, VenuesTimedEntry<Record<string, unknown>>>;
+}
+
+const venueDetailMemory = new Map<string, VenuesTimedEntry<Record<string, unknown>>>();
 
 function readStore<T>(key: string, fallback: T): T {
   try {
@@ -76,15 +83,73 @@ export function cacheNearbyVenues(key: string, data: NearbyVenue[]): void {
   writeStore(NEARBY_VENUES_CACHE_KEY, store);
 }
 
+export function getCachedVenueDetailEntry(
+  venueId: string,
+  allowStale = true,
+): VenuesTimedEntry<Record<string, unknown>> | null {
+  const mem = venueDetailMemory.get(venueId);
+  if (mem) {
+    if (isFresh(mem.cachedAt)) return mem;
+    if (allowStale && isStaleButUsable(mem.cachedAt)) return mem;
+    venueDetailMemory.delete(venueId);
+  }
+
+  const store = readStore<VenueDetailCacheStore>(VENUE_DETAIL_CACHE_KEY, { venues: {} });
+  const entry = getEntry(store.venues[venueId], allowStale);
+  if (entry) venueDetailMemory.set(venueId, entry);
+  return entry;
+}
+
+export function getCachedVenueDetail(
+  venueId: string,
+  allowStale = true,
+): Record<string, unknown> | null {
+  return getCachedVenueDetailEntry(venueId, allowStale)?.data ?? null;
+}
+
+export function isVenueDetailCacheFresh(venueId: string): boolean {
+  const entry = getCachedVenueDetailEntry(venueId, false);
+  return Boolean(entry);
+}
+
+export function cacheVenueDetail(venueId: string, detail: Record<string, unknown>): void {
+  const entry = { data: detail, cachedAt: Date.now() };
+  venueDetailMemory.set(venueId, entry);
+  const store = readStore<VenueDetailCacheStore>(VENUE_DETAIL_CACHE_KEY, { venues: {} });
+  store.venues[venueId] = entry;
+  writeStore(VENUE_DETAIL_CACHE_KEY, store);
+}
+
+export function invalidateVenueDetailCache(venueId?: string): void {
+  if (!venueId) {
+    venueDetailMemory.clear();
+    try {
+      localStorage.removeItem(VENUE_DETAIL_CACHE_KEY);
+    } catch {
+      // ignore
+    }
+    return;
+  }
+  venueDetailMemory.delete(venueId);
+  const store = readStore<VenueDetailCacheStore>(VENUE_DETAIL_CACHE_KEY, { venues: {} });
+  delete store.venues[venueId];
+  writeStore(VENUE_DETAIL_CACHE_KEY, store);
+}
+
+import { invalidateSocialFeedCache } from './eventsCache';
+
 export function invalidateVenuesCache(): void {
   try {
     localStorage.removeItem(NEARBY_VENUES_CACHE_KEY);
     localStorage.removeItem(USER_VENUES_CACHE_KEY);
+    localStorage.removeItem(VENUE_DETAIL_CACHE_KEY);
     localStorage.removeItem('doevents_discover_cache_v1');
     localStorage.removeItem('doevents_map_cache_v1');
+    invalidateSocialFeedCache();
   } catch {
     // ignore
   }
+  venueDetailMemory.clear();
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new Event(VENUES_CACHE_INVALIDATED_EVENT));
   }

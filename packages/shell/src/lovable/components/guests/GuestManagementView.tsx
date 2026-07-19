@@ -26,7 +26,7 @@ interface Props {
 
 const GuestManagementView = ({ onBack, guestsController, userId, initialEventId, autoOpenInvitation }: Props) => {
   const {
-    allGuests, guests, favoriteGuests, favoritesWithoutGroup, regularGuests, guestsByGroup, ungroupedGuests, groups,
+    allGuests, guests, favoriteGuests, regularGuests, guestsByGroup, ungroupedGuests, groups,
     selectedGroupId, searchTerm, setSearchTerm, setSelectedGroupId,
     addGuest, updateGuest, deleteGuest, toggleFavorite,
     addGroup, updateGroup, deleteGroup, moveGuestToGroup, getGroupGuestCount,
@@ -38,7 +38,7 @@ const GuestManagementView = ({ onBack, guestsController, userId, initialEventId,
   const [showFavorites, setShowFavorites] = useState(false);
   const [editing, setEditing] = useState<Guest | null>(null);
   const [editOpen, setEditOpen] = useState(false);
-  const [invitationOpen, setInvitationOpen] = useState(Boolean(autoOpenInvitation));
+  const [invitationOpen, setInvitationOpen] = useState(false);
   const [presetEventId, setPresetEventId] = useState<string | undefined>(
     autoOpenInvitation ? initialEventId : undefined,
   );
@@ -47,6 +47,7 @@ const GuestManagementView = ({ onBack, guestsController, userId, initialEventId,
   // Invitaciones enviadas en esta sesión (sin persistencia local ficticia)
   const [invitedCounts, setInvitedCounts] = useState<Record<string, number>>({});
   const [addGuestOpen, setAddGuestOpen] = useState(false);
+  const [autoInviteHandled, setAutoInviteHandled] = useState(false);
   const [junkPurged, setJunkPurged] = useState(false);
   const { toast } = useToast();
 
@@ -61,11 +62,16 @@ const GuestManagementView = ({ onBack, guestsController, userId, initialEventId,
   }, [junkPurged, guestsLoading, userId, purgeJunkGuests, toast]);
 
   useEffect(() => {
-    if (autoOpenInvitation) {
-      setInvitationOpen(true);
-      if (initialEventId) setPresetEventId(initialEventId);
-    }
-  }, [autoOpenInvitation, initialEventId]);
+    if (!autoOpenInvitation || guestsLoading || !userId || autoInviteHandled) return;
+    setInvitationOpen(true);
+    if (initialEventId) setPresetEventId(initialEventId);
+    setAutoInviteHandled(true);
+  }, [autoOpenInvitation, initialEventId, guestsLoading, userId, autoInviteHandled]);
+
+  const handleInvitationOpenChange = (open: boolean) => {
+    setInvitationOpen(open);
+    if (!open) setAutoInviteHandled(true);
+  };
 
   const handleInvitationsSent = (ids: string[], _eventId: string) => {
     setInvitedCounts(prev => {
@@ -141,11 +147,19 @@ const GuestManagementView = ({ onBack, guestsController, userId, initialEventId,
   const toggleSel = (id: string) => { const n = new Set(selected); n.has(id) ? n.delete(id) : n.add(id); setSelected(n); };
   const allSelected = displayed.length > 0 && selected.size === displayed.length;
 
-  const handleDrop = (g: Guest, target?: string) => {
+  const handleDrop = async (g: Guest, target?: string) => {
     if (g.groupId === target) return;
-    moveGuestToGroup(g.id, target);
     const name = target ? groups.find(x => x.id === target)?.name || "Grupo" : "Sin grupo";
-    toast({ title: "Invitado movido", description: `${g.name} → ${name}` });
+    try {
+      await moveGuestToGroup(g.id, target);
+      toast({ title: "Invitado movido", description: `${g.name} → ${name}` });
+    } catch (err) {
+      toast({
+        title: "No se pudo mover",
+        description: guestErrorMessage(err),
+        variant: "destructive",
+      });
+    }
   };
 
   const showGroupedLayout = !selectedGroupId && !showFavorites;
@@ -154,7 +168,7 @@ const GuestManagementView = ({ onBack, guestsController, userId, initialEventId,
   const invitationModal = (
     <EventInvitationModal
       open={invitationOpen}
-      onOpenChange={setInvitationOpen}
+      onOpenChange={handleInvitationOpenChange}
       guests={allGuests}
       userId={userId}
       initialEventId={presetEventId}
@@ -172,7 +186,7 @@ const GuestManagementView = ({ onBack, guestsController, userId, initialEventId,
     />
   );
 
-  if (guestsLoading && !invitationOpen) {
+  if (guestsLoading) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-secondary px-4">
         <div className="flex flex-col items-center gap-3 rounded-2xl bg-card px-8 py-10 shadow-sm">
@@ -315,7 +329,7 @@ const GuestManagementView = ({ onBack, guestsController, userId, initialEventId,
                 <DropdownMenuContent align="end" className="w-52">
                   <DropdownMenuLabel className="text-[11px] text-muted-foreground font-normal">Mover a grupo</DropdownMenuLabel>
                   {groups.map((gr) => (
-                    <DropdownMenuItem key={gr.id} onSelect={(e) => { e.preventDefault(); selected.forEach((id) => moveGuestToGroup(id, gr.id)); const count = selected.size; setSelected(new Set()); toast({ title: `${count} invitado(s) movidos`, description: `→ ${gr.name}` }); }} className="cursor-pointer">
+                  <DropdownMenuItem key={gr.id} onSelect={(e) => { e.preventDefault(); void (async () => { for (const id of selected) { const g = guests.find((x) => x.id === id); if (g) await handleDrop(g, gr.id); } const count = selected.size; setSelected(new Set()); toast({ title: `${count} invitado(s) movidos`, description: `→ ${gr.name}` }); })(); }} className="cursor-pointer">
                       <span className="h-2.5 w-2.5 rounded-full mr-2" style={{ backgroundColor: gr.color }} />
                       {gr.name}
                     </DropdownMenuItem>
@@ -353,7 +367,10 @@ const GuestManagementView = ({ onBack, guestsController, userId, initialEventId,
                 onDragEnd={() => setDragged(null)}
                 invitedCounts={invitedCounts}
                 allGroups={groups}
-                onMoveToGroup={(id, gid) => { const g = guests.find((x) => x.id === id); if (g) handleDrop(g, gid); }}
+                onMoveToGroup={(id, gid) => {
+                  const g = guests.find((x) => x.id === id || x.favoriteId === id);
+                  if (g) void handleDrop(g, gid);
+                }}
               />
             ) : (
               <>
@@ -362,12 +379,12 @@ const GuestManagementView = ({ onBack, guestsController, userId, initialEventId,
                     <div className="flex items-center gap-2 mb-3">
                       <Heart className="h-4 w-4 text-favorite fill-current" />
                       <h2 className="text-base font-semibold text-card-foreground">Favoritos</h2>
-                      <Badge variant="favorite" className="text-xs">{favoritesWithoutGroup.length}</Badge>
+                      <Badge variant="favorite" className="text-xs">{favoriteGuests.length}</Badge>
                     </div>
-                    {favoritesWithoutGroup.length > 0 ? (
+                    {favoriteGuests.length > 0 ? (
                       <div className="space-y-3">
-                        {favoritesWithoutGroup.map(g => (
-                          <DraggableGuestCard key={g.id} guest={g} onToggleFavorite={toggleFavorite} onDelete={handleDelete} onEdit={handleEdit} onSelectionToggle={toggleSel} isSelected={selected.has(g.id)} onDragStart={setDragged} onDragEnd={() => setDragged(null)} isDragging={dragged?.id === g.id} invitedCount={invitedCounts[g.id] || 0} groups={groups} onMoveToGroup={(id, gid) => { const gg = guests.find((x) => x.id === id); if (gg) handleDrop(gg, gid); }} />
+                        {favoriteGuests.map(g => (
+                          <DraggableGuestCard key={g.id} guest={g} onToggleFavorite={toggleFavorite} onDelete={handleDelete} onEdit={handleEdit} onSelectionToggle={toggleSel} isSelected={selected.has(g.id)} onDragStart={setDragged} onDragEnd={() => setDragged(null)} isDragging={dragged?.id === g.id} invitedCount={invitedCounts[g.id] || 0} groups={groups} onMoveToGroup={(id, gid) => { const gg = guests.find((x) => x.id === id || x.favoriteId === id); if (gg) void handleDrop(gg, gid); }} />
                         ))}
                       </div>
                     ) : (
@@ -376,10 +393,10 @@ const GuestManagementView = ({ onBack, guestsController, userId, initialEventId,
                   </section>
                 )}
                 {showGroupedLayout && groups.map(group => (
-                  <GroupDropZone key={group.id} group={group} guests={guestsByGroup[group.id] || []} alwaysShow onToggleFavorite={toggleFavorite} onDelete={handleDelete} onEdit={handleEdit} onSelectionToggle={toggleSel} selectedGuests={selected} onDropGuest={handleDrop} draggedGuest={dragged} onDragStart={setDragged} onDragEnd={() => setDragged(null)} invitedCounts={invitedCounts} allGroups={groups} onMoveToGroup={(id, gid) => { const gg = guests.find((x) => x.id === id); if (gg) handleDrop(gg, gid); }} />
+                  <GroupDropZone key={group.id} group={group} guests={guestsByGroup[group.id] || []} alwaysShow onToggleFavorite={toggleFavorite} onDelete={handleDelete} onEdit={handleEdit} onSelectionToggle={toggleSel} selectedGuests={selected} onDropGuest={handleDrop} draggedGuest={dragged} onDragStart={setDragged} onDragEnd={() => setDragged(null)} invitedCounts={invitedCounts} allGroups={groups} onMoveToGroup={(id, gid) => { const gg = guests.find((x) => x.id === id || x.favoriteId === id); if (gg) void handleDrop(gg, gid); }} />
                 ))}
                 {showGroupedLayout && (
-                  <GroupDropZone guests={ungroupedGuests} isUngrouped alwaysShow onToggleFavorite={toggleFavorite} onDelete={handleDelete} onEdit={handleEdit} onSelectionToggle={toggleSel} selectedGuests={selected} onDropGuest={handleDrop} draggedGuest={dragged} onDragStart={setDragged} onDragEnd={() => setDragged(null)} invitedCounts={invitedCounts} allGroups={groups} onMoveToGroup={(id, gid) => { const gg = guests.find((x) => x.id === id); if (gg) handleDrop(gg, gid); }} />
+                  <GroupDropZone guests={ungroupedGuests} isUngrouped alwaysShow onToggleFavorite={toggleFavorite} onDelete={handleDelete} onEdit={handleEdit} onSelectionToggle={toggleSel} selectedGuests={selected} onDropGuest={handleDrop} draggedGuest={dragged} onDragStart={setDragged} onDragEnd={() => setDragged(null)} invitedCounts={invitedCounts} allGroups={groups} onMoveToGroup={(id, gid) => { const gg = guests.find((x) => x.id === id || x.favoriteId === id); if (gg) void handleDrop(gg, gid); }} />
                 )}
                 {showFavorites && (
                   <section>
@@ -390,7 +407,7 @@ const GuestManagementView = ({ onBack, guestsController, userId, initialEventId,
                     </div>
                     <div className="space-y-3">
                       {displayed.map(g => (
-                        <DraggableGuestCard key={g.id} guest={g} onToggleFavorite={toggleFavorite} onDelete={handleDelete} onEdit={handleEdit} onSelectionToggle={toggleSel} isSelected={selected.has(g.id)} onDragStart={setDragged} onDragEnd={() => setDragged(null)} isDragging={dragged?.id === g.id} invitedCount={invitedCounts[g.id] || 0} groups={groups} onMoveToGroup={(id, gid) => { const gg = guests.find((x) => x.id === id); if (gg) handleDrop(gg, gid); }} />
+                        <DraggableGuestCard key={g.id} guest={g} onToggleFavorite={toggleFavorite} onDelete={handleDelete} onEdit={handleEdit} onSelectionToggle={toggleSel} isSelected={selected.has(g.id)} onDragStart={setDragged} onDragEnd={() => setDragged(null)} isDragging={dragged?.id === g.id} invitedCount={invitedCounts[g.id] || 0} groups={groups} onMoveToGroup={(id, gid) => { const gg = guests.find((x) => x.id === id || x.favoriteId === id); if (gg) void handleDrop(gg, gid); }} />
                       ))}
                     </div>
                   </section>

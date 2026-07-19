@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@lovable/components/ui/select";
-import { Armchair, Minus, Plus } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import {
   SeatingCategory,
   CATEGORY_COLORS,
@@ -74,7 +74,6 @@ const SeatingCategoryDialog = ({
 
   const handleSave = () => {
     if (!name.trim() || !floorId) return;
-    if (rows < 1 || seatsPerRow < 1) return;
     const category: SeatingCategory = {
       id: editCategory?.id || Date.now().toString(),
       name,
@@ -111,7 +110,7 @@ const SeatingCategoryDialog = ({
   const renderSeatPreview = () => {
     const rowLabels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
     return (
-      <div className="p-4 bg-card border border-border/60 rounded-2xl shadow-sm">
+      <div className="p-4 bg-secondary/30 rounded-lg">
         <p className="text-xs text-muted-foreground mb-2">
           Vista previa ({totalSeats} sillas) - Arrastra A1 para reorganizar
         </p>
@@ -124,7 +123,7 @@ const SeatingCategoryDialog = ({
                   className="w-8 h-6 rounded text-xs flex items-center justify-center font-medium"
                   style={{
                     backgroundColor: selectedColor,
-                    color: "hsl(var(--primary-foreground))",
+                    color: "white",
                   }}
                 >
                   {rowLabels[rowIndex]}
@@ -134,8 +133,8 @@ const SeatingCategoryDialog = ({
             </div>
           ))}
         </div>
-        <p className="text-xs text-muted-foreground mt-2 text-center" aria-label="Vista previa de distribución de asientos">
-          Vista previa · posición inicial superior izquierda
+        <p className="text-xs text-muted-foreground mt-2 text-center">
+          Posición inicial: Superior izquierda
         </p>
       </div>
     );
@@ -143,21 +142,14 @@ const SeatingCategoryDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto rounded-2xl shadow-sm">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/20">
-              <Armchair className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <DialogTitle className="font-extrabold">
-                {editCategory ? "Editar Categoría" : "Crear Categoría"}
-              </DialogTitle>
-              <p className="text-sm text-muted-foreground">
-                Configura los detalles de la categoría y organiza la distribución de asientos
-              </p>
-            </div>
-          </div>
+          <DialogTitle>
+            {editCategory ? "Editar Categoría" : "Crear Categoría"}
+          </DialogTitle>
+          <p className="text-sm text-muted-foreground">
+            Configura los detalles de la categoría y organiza la distribución de asientos
+          </p>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
@@ -230,7 +222,7 @@ const SeatingCategoryDialog = ({
                   type="button"
                   className={`w-10 h-10 rounded-full transition-all ${
                     selectedColor === color
-                      ? "ring-2 ring-offset-2 ring-primary/20 scale-110"
+                      ? "ring-2 ring-offset-2 ring-primary scale-110"
                       : "hover:scale-105"
                   }`}
                   style={{ backgroundColor: color }}
@@ -247,7 +239,6 @@ const SeatingCategoryDialog = ({
               <Button
                 variant="outline"
                 size="icon"
-                className="rounded-full h-9 w-9"
                 onClick={() => setRows(Math.max(1, rows - 1))}
               >
                 <Minus className="w-4 h-4" />
@@ -334,10 +325,10 @@ const SeatingCategoryDialog = ({
         </div>
 
         <div className="flex justify-end gap-2">
-          <Button variant="outline" className="rounded-full" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
-          <Button className="rounded-full" onClick={handleSave} disabled={!name.trim() || !floorId || rows < 1 || seatsPerRow < 1}>
+          <Button onClick={handleSave} disabled={!name.trim() || !floorId}>
             {editCategory ? "Guardar cambios" : "Crear categoría"}
           </Button>
         </div>

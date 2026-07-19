@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { Loader2, Lock, Mail } from 'lucide-react';
+import { Eye, EyeOff, Loader2, Lock, Mail } from 'lucide-react';
 import {
   generateOtp,
   initApiClient,
@@ -30,6 +30,7 @@ export const LoginView = () => {
   const env = getEnvironment();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [facebookLoading, setFacebookLoading] = useState(false);
@@ -138,10 +139,10 @@ export const LoginView = () => {
   };
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-secondary px-4 pb-12">
+    <div className="mx-auto flex min-h-screen max-w-lg flex-col bg-secondary px-4 pb-12 pt-6">
       <AuthLogo />
 
-      <div className="rounded-2xl bg-card p-6 shadow-md border border-border/60">
+      <div className="w-full rounded-2xl border border-border/60 bg-card p-6 shadow-md">
         <div className="flex items-center gap-3">
           <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-2 ring-primary/20">
             <Lock className="h-5 w-5 text-primary" />
@@ -180,18 +181,30 @@ export const LoginView = () => {
               <Lock className="h-4 w-4 text-primary" />
               Contraseña
             </Label>
-            <Input
-              id="login-password"
-              type="password"
-              autoComplete="current-password"
-              placeholder="Tu contraseña"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={busy}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && isValid && !loading) void handleLogin();
-              }}
-            />
+            <div className="relative">
+              <Input
+                id="login-password"
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="current-password"
+                placeholder="Tu contraseña"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={busy}
+                className="pr-11"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && isValid && !loading) void handleLogin();
+                }}
+              />
+              <button
+                type="button"
+                aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-muted-foreground hover:text-foreground"
+                onClick={() => setShowPassword((v) => !v)}
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
           </div>
 
           <Button
@@ -230,17 +243,19 @@ export const LoginView = () => {
           </div>
         </div>
 
-        <SocialLoginButtons
-          onGoogle={handleGoogleLogin}
-          onFacebook={handleFacebookLogin}
-          onApple={handleAppleLogin}
-          googleEnabled={env.oauth.google.enabled}
-          facebookEnabled={env.oauth.facebook.enabled}
-          appleEnabled={env.oauth.apple.enabled}
-          googleLoading={googleLoading}
-          facebookLoading={facebookLoading}
-          appleLoading={appleLoading}
-        />
+        <div className="w-full">
+          <SocialLoginButtons
+            onGoogle={handleGoogleLogin}
+            onFacebook={handleFacebookLogin}
+            onApple={handleAppleLogin}
+            googleEnabled={env.oauth.google.enabled}
+            facebookEnabled={env.oauth.facebook.enabled}
+            appleEnabled={env.oauth.apple.enabled}
+            googleLoading={googleLoading}
+            facebookLoading={facebookLoading}
+            appleLoading={appleLoading}
+          />
+        </div>
       </div>
     </div>
   );

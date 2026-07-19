@@ -1,7 +1,7 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Search, X } from 'lucide-react';
-import { searchUsers, useToast } from '@doevents/shared';
+import { searchUsers, useToast, UserAvatar, resolveUserAvatarUrl } from '@doevents/shared';
 import { Input } from '@lovable/components/ui/input';
 import { Button } from '@lovable/components/ui/button';
 
@@ -36,6 +36,23 @@ function initialsFromName(name: string): string {
     .toUpperCase() || 'DE';
 }
 
+function normalizeSearchQuery(raw: string): string {
+  return raw.trim().replace(/^@+/, '');
+}
+
+function isSearchReady(raw: string): boolean {
+  const trimmed = raw.trim();
+  if (!trimmed) return false;
+  if (trimmed.startsWith('@')) return trimmed.length > 1;
+  return trimmed.length >= 2;
+}
+
+function buildSearchTerm(raw: string): string {
+  const trimmed = raw.trim();
+  if (trimmed.startsWith('@')) return trimmed;
+  return normalizeSearchQuery(trimmed);
+}
+
 export const UserSearchPickerModal: React.FC<UserSearchPickerModalProps> = ({
   title,
   subtitle,
@@ -53,17 +70,22 @@ export const UserSearchPickerModal: React.FC<UserSearchPickerModalProps> = ({
   const [results, setResults] = useState<UserSearchResult[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [searched, setSearched] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const requestIdRef = useRef(0);
 
-  const runSearch = useCallback(async () => {
-    const q = query.trim();
-    if (q.length < 2) {
-      showToast('Escribe al menos 2 caracteres para buscar', 'error');
+  const runSearch = useCallback(async (rawQuery: string) => {
+    if (!isSearchReady(rawQuery)) {
+      setResults([]);
+      setSearched(false);
       return;
     }
+    const searchTerm = buildSearchTerm(rawQuery);
+    const requestId = ++requestIdRef.current;
     setSearching(true);
     setSearched(true);
     try {
-      const users = await searchUsers(q);
+      const users = await searchUsers(searchTerm);
+      if (requestId !== requestIdRef.current) return;
       setResults(
         users
           .map((u) => ({
@@ -72,17 +94,33 @@ export const UserSearchPickerModal: React.FC<UserSearchPickerModalProps> = ({
             username: u.username,
             email: u.email,
             initials: initialsFromName(u.name || u.username || 'U'),
-            avatarUrl: u.imagen || u.fotoPerfilUrl,
+            avatarUrl: resolveUserAvatarUrl(u.imagen || u.fotoPerfilUrl, u.id),
           }))
           .filter((u) => u.id),
       );
     } catch (err) {
+      if (requestId !== requestIdRef.current) return;
       showToast(err instanceof Error ? err.message : 'Error al buscar usuarios', 'error');
       setResults([]);
     } finally {
-      setSearching(false);
+      if (requestId === requestIdRef.current) setSearching(false);
     }
-  }, [query, showToast]);
+  }, [showToast]);
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (!isSearchReady(query)) {
+      setResults([]);
+      setSearched(false);
+      return undefined;
+    }
+    debounceRef.current = setTimeout(() => {
+      void runSearch(query);
+    }, 300);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [query, runSearch]);
 
   const toggle = (id: string) => {
     if (!multiSelect && onSelectSingle) {
@@ -132,17 +170,18 @@ export const UserSearchPickerModal: React.FC<UserSearchPickerModalProps> = ({
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') void runSearch(); }}
+                onKeyDown={(e) => { if (e.key === 'Enter') void runSearch(query); }}
                 placeholder={searchPlaceholder}
                 className="h-11 rounded-xl pl-9"
+                autoFocus
               />
             </div>
             <Button
               type="button"
               variant="outline"
               className="h-11 shrink-0 rounded-xl px-4"
-              disabled={searching}
-              onClick={() => void runSearch()}
+              disabled={searching || !isSearchReady(query)}
+              onClick={() => void runSearch(query)}
             >
               {searching ? '…' : 'Buscar'}
             </Button>
@@ -155,12 +194,15 @@ export const UserSearchPickerModal: React.FC<UserSearchPickerModalProps> = ({
           )}
 
           <div className="space-y-2">
+            {searching && (
+              <p className="py-4 text-center text-sm text-muted-foreground">Buscando…</p>
+            )}
             {!searching && searched && results.length === 0 && (
               <p className="py-6 text-center text-sm text-muted-foreground">Sin resultados</p>
             )}
-            {!searched && (
+            {!searching && !searched && (
               <p className="py-6 text-center text-sm text-muted-foreground">
-                Escribe y pulsa Buscar para encontrar usuarios de la plataforma.
+                Escribe @usuario o el nombre para ver resultados al instante.
               </p>
             )}
             {results.map((u) => {
@@ -180,13 +222,7 @@ export const UserSearchPickerModal: React.FC<UserSearchPickerModalProps> = ({
                         : 'border-border bg-card hover:bg-secondary/50'
                   }`}
                 >
-                  {u.avatarUrl ? (
-                    <img src={u.avatarUrl} alt={u.name} className="h-10 w-10 rounded-full object-cover" />
-                  ) : (
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-sm font-bold text-primary">
-                      {u.initials}
-                    </div>
-                  )}
+                  <UserAvatar name={u.name} imageUrl={u.avatarUrl} userId={u.id} size={40} />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-bold text-foreground">{u.name}</p>
                     <p className="truncate text-xs text-muted-foreground">

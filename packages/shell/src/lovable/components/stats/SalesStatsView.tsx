@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { ChevronLeft, Ticket, TrendingUp, BarChart3, Users, Download, List, Loader2 } from 'lucide-react';
+import { ChevronLeft, Ticket, Users, Download, Loader2, DollarSign, List } from 'lucide-react';
 import type { EventChatRoom } from '@lovable/data/chatData';
 import type { EventSalesData, CategorySales } from '@lovable/data/salesStatsData';
 import { getEmptySalesData, resolveSalesData } from '../../../lovable-bridge/statsAdapter';
 import { useLiveEventStats } from '../../../lovable-bridge/useLiveEventStats';
 import { exportSalesExcel, exportCategoryBuyersExcel, exportAllBuyersExcel } from '@lovable/utils/exportSalesExcel';
 import CategoryBuyerList from './CategoryBuyerList';
+import StatsSectionBanner from './StatsSectionBanner';
 
 interface SalesStatsViewProps {
   event: EventChatRoom;
@@ -20,6 +21,8 @@ const SalesStatsView = ({ event, onBack }: SalesStatsViewProps) => {
     event,
     resolveSalesData,
     getEmptySalesData(event),
+    undefined,
+    'sales',
   );
   const [selectedCategory, setSelectedCategory] = useState<CategorySales | null>(null);
   const [showBuyerList, setShowBuyerList] = useState(false);
@@ -31,31 +34,36 @@ const SalesStatsView = ({ event, onBack }: SalesStatsViewProps) => {
   const totalOccupancy = totalCapacity > 0 ? Math.round((totalSold / totalCapacity) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-background pt-16 pb-24">
-      {/* Top bar */}
-      <div className="fixed top-0 left-0 right-0 z-20 flex items-center gap-3 border-b border-border/40 bg-gradient-to-r from-primary/5 via-background to-accent/5 px-4 py-3 shadow-sm">
-        <button onClick={onBack} className="text-foreground">
-          <ChevronLeft className="h-5 w-5" />
-        </button>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <BarChart3 className="h-4 w-4 text-primary" />
-            <h1 className="text-sm font-bold text-foreground">Estadísticas de Ventas</h1>
-          </div>
-          <p className="text-xs text-muted-foreground line-clamp-1">
-            {salesData.eventName} — {salesData.venueName}
-          </p>
-        </div>
-        <button
-          onClick={() => exportSalesExcel(salesData)}
-          className="flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 transition-opacity"
-        >
-          <Download className="h-3.5 w-3.5" />
-          Excel
-        </button>
-      </div>
+    <div className="min-h-screen bg-slate-50 pb-24">
+      <StatsSectionBanner
+        title="Estadísticas de Ventas"
+        subtitle={event.eventName}
+        icon={DollarSign}
+        onBack={onBack}
+        stats={[
+          { value: loading ? '…' : `${totalSold}/${totalCapacity || totalSold}`, label: 'Vendidos' },
+          { value: loading ? '…' : formatCurrency(totalRevenue, salesData.currency), label: 'Ingresos' },
+          { value: loading ? '…' : `${totalOccupancy}%`, label: 'Ocupación' },
+        ]}
+        summary={
+          <>
+            Ingreso total:{' '}
+            <span className="font-bold">{formatCurrency(totalRevenue, salesData.currency)}</span>
+          </>
+        }
+        rightAction={(
+          <button
+            type="button"
+            onClick={() => exportSalesExcel(salesData)}
+            className="flex items-center gap-1.5 rounded-lg bg-primary-foreground/15 px-3 py-1.5 text-xs font-medium text-primary-foreground transition hover:bg-primary-foreground/25"
+          >
+            <Download className="h-3.5 w-3.5" />
+            Excel
+          </button>
+        )}
+      />
 
-      <div className="mx-auto max-w-lg px-4 py-4">
+      <div className="mx-auto max-w-lg px-4 pt-5">
         {loading && (
           <p className="mb-4 flex items-center justify-center gap-2 py-4 text-sm text-muted-foreground">
             <Loader2 className="h-4 w-4 animate-spin text-primary" />
@@ -75,26 +83,6 @@ const SalesStatsView = ({ event, onBack }: SalesStatsViewProps) => {
         )}
         {!loading && salesData.categories.length > 0 && (
         <>
-        {/* Summary cards */}
-        <div className="grid grid-cols-3 gap-2 mb-5">
-          <div className="flex flex-col items-center rounded-xl bg-card p-3 shadow-sm border border-border">
-            <Ticket className="h-4 w-4 text-muted-foreground mb-1" />
-            <span className="text-lg font-bold text-foreground">{totalSold}/{totalCapacity}</span>
-            <span className="text-[10px] text-muted-foreground">Boletos vendidos</span>
-          </div>
-          <div className="flex flex-col items-center rounded-xl bg-card p-3 shadow-sm border border-primary/30">
-            <TrendingUp className="h-4 w-4 text-primary mb-1" />
-            <span className="text-base font-bold text-foreground">{formatCurrency(totalRevenue, salesData.currency)}</span>
-            <span className="text-[10px] text-muted-foreground">Ingreso total</span>
-          </div>
-          <div className="flex flex-col items-center rounded-xl bg-card p-3 shadow-sm border border-border">
-            <BarChart3 className="h-4 w-4 text-muted-foreground mb-1" />
-            <span className="text-lg font-bold text-foreground">{totalOccupancy}%</span>
-            <span className="text-[10px] text-muted-foreground">Ocupación</span>
-          </div>
-        </div>
-
-        {/* Category detail or table */}
         {showConsolidatedBuyers ? (
           <CategoryBuyerList
             consolidated
@@ -149,7 +137,10 @@ const SalesStatsView = ({ event, onBack }: SalesStatsViewProps) => {
                         className="border-b border-border/50 cursor-pointer hover:bg-accent/50 transition-colors"
                       >
                         <td className="py-2.5 flex items-center gap-2">
-                          <span className={`h-2.5 w-2.5 rounded-full ${cat.color}`} />
+                          <span
+                            className="h-2.5 w-2.5 rounded-full"
+                            style={{ backgroundColor: cat.colorHex }}
+                          />
                           <span className="font-medium text-foreground">{cat.name}</span>
                         </td>
                         <td className="py-2.5 text-center text-foreground">{cat.sold}/{cat.total}</td>
@@ -246,22 +237,32 @@ const CategoryDetail = ({
   onBack: () => void;
   onShowBuyers: () => void;
 }) => {
-  const [selectedSeat, setSelectedSeat] = useState<{ row: string; number: number; buyerName?: string } | null>(null);
+  const [selectedSeat, setSelectedSeat] = useState<{
+    row: string;
+    number: number;
+    buyerName?: string;
+    buyerPhone?: string;
+    buyerEmail?: string;
+    purchaseDate?: string;
+  } | null>(null);
 
-  // Group seats by row
   const rows = category.seats.reduce<Record<string, typeof category.seats>>((acc, seat) => {
     if (!acc[seat.row]) acc[seat.row] = [];
     acc[seat.row].push(seat);
     return acc;
   }, {});
 
+  const hasSeats = category.seats.length > 0;
+
   return (
     <>
-      {/* Category header */}
-      <div className="rounded-2xl bg-card p-4 shadow-sm mb-4">
-        <button onClick={onBack} className="flex items-center gap-2 mb-3">
+      <div className="mb-4 rounded-2xl bg-card p-4 shadow-sm">
+        <button type="button" onClick={onBack} className="mb-3 flex items-center gap-2">
           <ChevronLeft className="h-4 w-4 text-foreground" />
-          <span className={`h-3 w-3 rounded-full ${category.color}`} />
+          <span
+            className="h-3 w-3 rounded-full"
+            style={{ backgroundColor: category.colorHex }}
+          />
           <span className="text-sm font-bold text-foreground">{category.name}</span>
         </button>
 
@@ -278,72 +279,98 @@ const CategoryDetail = ({
             <span className="text-lg font-bold text-foreground">{category.available}</span>
             <span className="text-[10px] text-muted-foreground">Disponibles</span>
           </div>
-          <div className="flex flex-col items-center rounded-xl bg-card border border-border p-2.5">
+          <div className="flex flex-col items-center rounded-xl border border-border bg-card p-2.5">
             <span className="text-sm font-bold text-foreground">{formatCurrency(category.revenue, currency)}</span>
             <span className="text-[10px] text-muted-foreground">Neto vendido</span>
           </div>
         </div>
       </div>
 
-      {/* View buyers button */}
       <button
+        type="button"
         onClick={onShowBuyers}
-        className="w-full flex items-center justify-center gap-2 rounded-2xl bg-card border border-primary/30 p-3.5 shadow-sm hover:bg-accent/30 transition-colors mb-4"
+        className="mb-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-primary/30 bg-card p-3.5 shadow-sm transition-colors hover:bg-accent/30"
       >
         <List className="h-4 w-4 text-primary" />
         <span className="text-sm font-semibold text-primary">Ver lista de compradores</span>
       </button>
 
-      {/* Seating map */}
       <div className="rounded-2xl bg-card p-4 shadow-sm">
-        <h3 className="text-sm font-bold text-foreground mb-1">Mapa de sillería</h3>
-        <p className="text-[11px] text-muted-foreground mb-4">Haz clic en un asiento vendido para ver los datos del comprador</p>
+        <h3 className="mb-1 text-sm font-bold text-foreground">Mapa de sillería</h3>
+        <p className="mb-4 text-[11px] text-muted-foreground">
+          Haz clic en un asiento vendido para ver los datos del comprador
+        </p>
 
-        {/* Legend */}
-        <div className="flex items-center justify-center gap-4 mb-4">
+        <div className="mb-4 flex items-center justify-center gap-4">
           <div className="flex items-center gap-1.5">
-            <span className={`h-3 w-3 rounded ${category.color}`} />
+            <span
+              className="h-3 w-3 rounded-full"
+              style={{ backgroundColor: category.colorHex }}
+            />
             <span className="text-[11px] text-muted-foreground">Vendido</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="h-3 w-3 rounded bg-muted border border-border" />
+            <span className="h-3 w-3 rounded-full border border-border bg-muted" />
             <span className="text-[11px] text-muted-foreground">Disponible</span>
           </div>
         </div>
 
-        {/* Seat grid */}
-        <div className="flex flex-col items-center gap-2">
-          {Object.entries(rows).map(([row, seats]) => (
-            <div key={row} className="flex items-center gap-2">
-              <span className="w-5 text-xs font-medium text-muted-foreground text-center">{row}</span>
-              <div className="flex gap-1.5">
-                {seats.map(seat => (
-                  <button
-                    key={`${seat.row}${seat.number}`}
-                    onClick={() => seat.sold && setSelectedSeat(seat)}
-                    className={`flex h-9 w-9 items-center justify-center rounded-lg text-xs font-medium transition-all ${
-                      seat.sold
-                        ? 'text-white shadow-sm cursor-pointer hover:opacity-80'
-                        : 'bg-muted border border-border text-muted-foreground cursor-default'
-                    }`}
-                    style={seat.sold ? { backgroundColor: category.colorHex } : undefined}
-                  >
-                    {seat.number}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
+        {!hasSeats ? (
+          <p className="py-8 text-center text-sm text-muted-foreground">
+            No hay sillas registradas para esta categoría.
+          </p>
+        ) : (
+          <div className="flex flex-col items-center gap-2">
+            {Object.entries(rows)
+              .sort(([a], [b]) => a.localeCompare(b, 'es'))
+              .map(([row, seats]) => (
+                <div key={row} className="flex items-center gap-2">
+                  <span className="w-5 text-center text-xs font-medium text-muted-foreground">{row}</span>
+                  <div className="flex gap-1.5">
+                    {[...seats]
+                      .sort((a, b) => a.number - b.number)
+                      .map((seat) => (
+                        <button
+                          key={`${seat.row}${seat.number}`}
+                          type="button"
+                          onClick={() => seat.sold && setSelectedSeat(seat)}
+                          className={`flex h-9 w-9 items-center justify-center rounded-full text-xs font-medium transition-all ${
+                            seat.sold
+                              ? 'cursor-pointer text-white shadow-sm hover:opacity-80'
+                              : 'cursor-default border border-border bg-muted text-muted-foreground'
+                          }`}
+                          style={seat.sold ? { backgroundColor: category.colorHex } : undefined}
+                          title={seat.sold ? (seat.buyerName || 'Vendido') : 'Disponible'}
+                        >
+                          {seat.number}
+                        </button>
+                      ))}
+                  </div>
+                </div>
+              ))}
+          </div>
+        )}
 
-        {/* Buyer info tooltip */}
         {selectedSeat && (
           <div className="mt-4 rounded-xl border border-border bg-accent/50 p-3 text-center">
             <p className="text-xs text-muted-foreground">
-              Asiento <span className="font-semibold text-foreground">{selectedSeat.row}{selectedSeat.number}</span>
+              Asiento{' '}
+              <span className="font-semibold text-foreground">
+                {selectedSeat.row}{selectedSeat.number}
+              </span>
             </p>
-            <p className="text-sm font-semibold text-foreground mt-0.5">{selectedSeat.buyerName}</p>
+            <p className="mt-0.5 text-sm font-semibold text-foreground">
+              {selectedSeat.buyerName || 'Comprador no identificado'}
+            </p>
+            {(selectedSeat.buyerPhone || selectedSeat.buyerEmail || selectedSeat.purchaseDate) && (
+              <p className="mt-1 text-[11px] text-muted-foreground">
+                {[selectedSeat.purchaseDate, selectedSeat.buyerPhone, selectedSeat.buyerEmail]
+                  .filter(Boolean)
+                  .join(' · ')}
+              </p>
+            )}
             <button
+              type="button"
               onClick={() => setSelectedSeat(null)}
               className="mt-2 text-[11px] text-primary hover:underline"
             >
