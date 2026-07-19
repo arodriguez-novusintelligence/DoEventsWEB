@@ -492,11 +492,16 @@ const CreateEventView = ({
               setPublishing(true);
               try {
                 const eventId = await onPublish({ ...formData, wizardStep: 7 });
-                if (eventId) {
-                  setPublishedEventId(eventId);
-                  updateForm({ persistedEventId: eventId });
+                if (!eventId) return;
+                setPublishedEventId(eventId);
+                updateForm({ persistedEventId: eventId });
+                // En creación: pedir datos bancarios antes de salir al Feed.
+                // En edición: solo confirmar y notificar al padre.
+                if (mode === 'edit') {
                   onPublished?.(eventId);
+                  return;
                 }
+                setShowPublishFlow(true);
               } catch (err) {
                 toast.error(
                   err instanceof Error
