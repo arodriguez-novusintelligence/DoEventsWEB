@@ -834,15 +834,17 @@ const StepEventSummary = ({
               </div>
             </div>
 
-            {canViewPromoCodes && formData.persistedEventId ? (
+            {(formData.promoCodes?.length ?? 0) > 0 && (
+              <PromoCodesSummary batches={formData.promoCodes!} eventName={formData.name} />
+            )}
+
+            {canViewPromoCodes && formData.persistedEventId && !(formData.promoCodes?.length) && (
               <EventPromoCodesLivePanel
                 eventId={formData.persistedEventId}
                 eventName={formData.name}
                 embedded
               />
-            ) : (formData.promoCodes?.length ?? 0) > 0 ? (
-              <PromoCodesSummary batches={formData.promoCodes!} eventName={formData.name} />
-            ) : null}
+            )}
 
             {onEdit && (
               <button
