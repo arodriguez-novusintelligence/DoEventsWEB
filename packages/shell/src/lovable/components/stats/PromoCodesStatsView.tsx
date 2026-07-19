@@ -44,6 +44,7 @@ interface SearchableUser {
   email: string;
   initials: string;
   avatar?: string;
+  phone?: string;
 }
 
 type ShareChannel = 'mail' | 'whatsapp' | 'campana';
@@ -185,14 +186,23 @@ const PromoCodesStatsView = ({ event, service, venue, embedded = false, onBack, 
           users
             .filter((u) => u.id)
             .slice(0, 6)
-            .map((u) => ({
-              id: u.id!,
-              name: u.name || u.email || 'Usuario',
-              username: (u.username || u.email?.split('@')[0] || 'usuario').replace(/^@/, ''),
-              email: u.email || '',
-              initials: toInitials(u.name || u.email || 'U'),
-              avatar: u.imagen,
-            })),
+            .map((u) => {
+              const digits = String(u.phone || u.phoneNumber || '').replace(/\D/g, '');
+              const indicative = String(u.indicativo || '').replace(/\D/g, '');
+              const phone =
+                digits.length >= 10
+                  ? (indicative && !digits.startsWith(indicative) ? `${indicative}${digits}` : digits)
+                  : '';
+              return {
+                id: u.id!,
+                name: u.name || u.email || 'Usuario',
+                username: (u.username || u.email?.split('@')[0] || 'usuario').replace(/^@/, ''),
+                email: u.email || '',
+                initials: toInitials(u.name || u.email || 'U'),
+                avatar: u.imagen,
+                phone: phone || undefined,
+              };
+            }),
         );
       } catch {
         if (!cancelled) setSearchResults([]);
@@ -339,6 +349,7 @@ const PromoCodesStatsView = ({ event, service, venue, embedded = false, onBack, 
         recipient_name: shareUser.name,
         recipient_username: shareUser.username,
         recipient_email: shareUser.email,
+        recipient_phone: shareUser.phone || null,
         channels: shareChannels,
         message: finalMessage,
         organizer_name: organizerName,
@@ -352,7 +363,15 @@ const PromoCodesStatsView = ({ event, service, venue, embedded = false, onBack, 
       setShareSent(true);
       if (shareChannels.includes('campana')) emitNotificationsUpdated();
       const labels = shareChannels.map(channelLabel).join(', ');
-      toast.success(`Código enviado a @${shareUser.username} vía ${labels}`);
+      const warnings = Array.isArray((share as { warnings?: string[] }).warnings)
+        ? (share as { warnings?: string[] }).warnings!
+        : [];
+      if (warnings.length) {
+        toast.success(`Código enviado a @${shareUser.username} vía ${labels}`);
+        warnings.forEach((w) => toast.error(w));
+      } else {
+        toast.success(`Código enviado a @${shareUser.username} vía ${labels}`);
+      }
       setTimeout(() => setShareCode(null), 1500);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'No se pudo registrar el envío');

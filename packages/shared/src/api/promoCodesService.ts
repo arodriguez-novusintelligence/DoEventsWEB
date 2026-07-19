@@ -199,7 +199,7 @@ export interface SharePromoCodeInput {
 export async function shareEventPromoCode(
   eventId: string,
   input: SharePromoCodeInput,
-): Promise<PromoCodeShareRecord> {
+): Promise<PromoCodeShareRecord & { warnings?: string[] }> {
   let response: Response;
   try {
     response = await fetch(`${promoBase(eventId)}/share`, {
@@ -210,12 +210,12 @@ export async function shareEventPromoCode(
   } catch (err) {
     throw new Error(toUserFacingError(err, 'el envío del código promocional'));
   }
-  const data = await parseFetchResponse<{ share?: PromoCodeShareRecord }>(
+  const data = await parseFetchResponse<{ share?: PromoCodeShareRecord; warnings?: string[] }>(
     response,
     'No se pudo compartir el código promocional',
   );
   if (!data.share) throw new Error('Respuesta inválida al compartir el código');
-  return data.share;
+  return { ...data.share, warnings: data.warnings || [] };
 }
 
 export async function cancelEventPromoCode(

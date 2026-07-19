@@ -12,6 +12,9 @@ export interface SearchUserResult {
   user?: string;
   nombreCompleto?: string;
   fotoPerfilUrl?: string;
+  phone?: string | null;
+  phoneNumber?: string | null;
+  indicativo?: string | null;
 }
 
 function authHeaders(): Record<string, string> {
@@ -72,6 +75,9 @@ export async function searchUsers(query: string): Promise<SearchUserResult[]> {
       username,
       imagen: avatar,
       avatarUrl: avatar,
+      phone: raw.phone || raw.phoneNumber || null,
+      phoneNumber: raw.phoneNumber || raw.phone || null,
+      indicativo: raw.indicativo || null,
     };
   });
 }
