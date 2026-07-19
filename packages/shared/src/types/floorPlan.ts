@@ -24,6 +24,10 @@ export interface FloorPlanBaseShape {
   width: number;
   height: number;
   rotation: number;
+  /** Offset del título respecto al centro (unidades del canvas). */
+  labelDx?: number;
+  labelDy?: number;
+  labelRotation?: number;
   zIndex: number;
   locked: boolean;
   ringThickness?: number;

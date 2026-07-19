@@ -243,6 +243,9 @@ export interface VenueElementDetail {
   height: number;
   rotation?: number;
   ringThickness?: number;
+  labelDx?: number;
+  labelDy?: number;
+  labelRotation?: number;
   notes?: string;
 }
 
@@ -471,6 +474,9 @@ function mapElementToPayload(element: WizardFloor['elements'][number]) {
     width: element.width,
     height: element.height,
     rotation: element.rotation ?? 0,
+    labelDx: element.labelDx,
+    labelDy: element.labelDy,
+    labelRotation: element.labelRotation,
     zIndex: element.zIndex ?? 0,
     ringThickness: element.ringThickness ?? 55,
     horseshoeCurvature: element.ringThickness ?? 55,
@@ -1268,6 +1274,21 @@ export function venueDetailToWizardState(venue: VenueDetail & Record<string, unk
         width: el.width ?? 20,
         height: el.height ?? 15,
         rotation: el.rotation ?? 0,
+        labelDx: typeof rawEl.labelDx === 'number'
+          ? rawEl.labelDx
+          : typeof rawEl.label_dx === 'number'
+            ? Number(rawEl.label_dx)
+            : undefined,
+        labelDy: typeof rawEl.labelDy === 'number'
+          ? rawEl.labelDy
+          : typeof rawEl.label_dy === 'number'
+            ? Number(rawEl.label_dy)
+            : undefined,
+        labelRotation: typeof rawEl.labelRotation === 'number'
+          ? rawEl.labelRotation
+          : typeof rawEl.label_rotation === 'number'
+            ? Number(rawEl.label_rotation)
+            : undefined,
         zIndex: Number(rawEl.zIndex ?? 1),
         locked: Boolean(rawEl.locked),
         ringThickness: el.ringThickness ?? 55,

@@ -210,6 +210,21 @@ function mapElementToFigure(el: VenueElementDetail, floorNumber = 1): SeatingFig
     w: el.width,
     h: el.height,
     rotation: el.rotation,
+    labelDx: typeof el.labelDx === 'number'
+      ? el.labelDx
+      : typeof raw.label_dx === 'number'
+        ? Number(raw.label_dx)
+        : undefined,
+    labelDy: typeof el.labelDy === 'number'
+      ? el.labelDy
+      : typeof raw.label_dy === 'number'
+        ? Number(raw.label_dy)
+        : undefined,
+    labelRotation: typeof el.labelRotation === 'number'
+      ? el.labelRotation
+      : typeof raw.label_rotation === 'number'
+        ? Number(raw.label_rotation)
+        : undefined,
     color: name.includes('escenario') || name.includes('stage') ? '#1e293b' : '#94a3b8',
     textColor: '#ffffff',
     arcInner: el.ringThickness,
