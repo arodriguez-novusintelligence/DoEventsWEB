@@ -16,6 +16,13 @@ on:
         description: "Número de issue a procesar"
         required: true
         type: string
+      mode:
+        description: "full = agente+merge+deploy | deploy-only = build+deploy DEV (sin agente)"
+        type: choice
+        options:
+          - full
+          - deploy-only
+        default: full
       skip_deploy:
         description: "Omitir deploy DEV"
         type: boolean
@@ -52,8 +59,10 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "number=${{ inputs.issue_number }}" >> "$GITHUB_OUTPUT"
+            echo "mode=${{ inputs.mode || 'full' }}" >> "$GITHUB_OUTPUT"
           else
             echo "number=${{ github.event.issue.number }}" >> "$GITHUB_OUTPUT"
+            echo "mode=full" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Checkout DoEventsWEB (NADF branch)
@@ -65,6 +74,7 @@ jobs:
           fetch-depth: 0
 
       - name: Checkout NADF framework
+        if: ${{ steps.issue.outputs.mode != 'deploy-only' }}
         uses: actions/checkout@v4
         with:
           repository: arodriguez-novusintelligence/NovusAIDevelopmentFramework
@@ -76,12 +86,16 @@ jobs:
         with:
           node-version: "20"
           cache: npm
-          cache-dependency-path: nadf/prototypes/m6-cloud-agent/package-lock.json
+          cache-dependency-path: |
+            nadf/prototypes/m6-cloud-agent/package-lock.json
+            web/package-lock.json
 
       - name: Install NADF runtime
+        if: ${{ steps.issue.outputs.mode != 'deploy-only' }}
         run: npm ci --prefix nadf/prototypes/m6-cloud-agent
 
       - name: Fetch issue payload
+        if: ${{ steps.issue.outputs.mode != 'deploy-only' }}
         env:
           GH_TOKEN: ${{ secrets.GH_PAT || github.token }}
         shell: bash
@@ -91,6 +105,7 @@ jobs:
           cat issue.json
 
       - name: Complexity Routing
+        if: ${{ steps.issue.outputs.mode != 'deploy-only' }}
         working-directory: nadf/prototypes/m6-cloud-agent
         env:
           NADF_ISSUE_JSON: ${{ github.workspace }}/issue.json
@@ -99,7 +114,15 @@ jobs:
           cp route-decision.json "${{ github.workspace }}/route-decision.json"
           cat route-decision.json
 
+      - name: Seed route for deploy-only
+        if: ${{ steps.issue.outputs.mode == 'deploy-only' }}
+        shell: bash
+        run: |
+          echo '{"target":"both","profile":"DEPLOY_ONLY","lightweight":true,"workBranch":"feature/NovusAIDevelopmentFramework","targetRepos":[]}' > route-decision.json
+          cat route-decision.json
+
       - name: Comment routing on issue
+        if: ${{ steps.issue.outputs.mode != 'deploy-only' }}
         env:
           GH_TOKEN: ${{ secrets.GH_PAT || github.token }}
         shell: bash
@@ -122,6 +145,7 @@ jobs:
             --body "$BODY"
 
       - name: Build agent prompt
+        if: ${{ steps.issue.outputs.mode != 'deploy-only' }}
         working-directory: nadf/prototypes/m6-cloud-agent
         run: |
           npm run build:doevents-prompt -- \
@@ -130,6 +154,7 @@ jobs:
             "${{ github.workspace }}/agent-prompt.txt"
 
       - name: Invoke Cloud Agent(s)
+        if: ${{ steps.issue.outputs.mode != 'deploy-only' }}
         working-directory: nadf/prototypes/m6-cloud-agent
         env:
           CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
@@ -147,6 +172,7 @@ jobs:
 
       - name: Auto-merge agent PRs → NADF branch (DEV only)
         id: merge
+        if: ${{ steps.issue.outputs.mode != 'deploy-only' }}
         env:
           GH_TOKEN: ${{ secrets.GH_PAT || github.token }}
           NADF_AUTO_MERGE_DEV: ${{ vars.NADF_AUTO_MERGE_DEV || 'true' }}
@@ -175,10 +201,12 @@ jobs:
             local -n COUNT_REF="$2"
             local COUNT=0
             local N
-            # PRs abiertos hacia la rama NADF que referencian este issue
             while IFS= read -r N; do
               [ -z "${N:-}" ] && continue
               echo "Merging $REPO#$N → $BASE (DEV only)"
+              if gh pr ready "$N" --repo "$REPO" 2>/dev/null || true; then
+                :
+              fi
               if gh pr merge "$N" --repo "$REPO" --merge --delete-branch; then
                 COUNT=$((COUNT + 1))
               else
