@@ -1,6 +1,8 @@
 # NADF-GUIDE
-# Propósito: Issues DoEventsWEB → Complexity Routing → Cloud Agent → build/deploy DEV.
-# Configuración: secrets CURSOR_API_KEY, GH_PAT; vars AWS_ROLE_ARN, CLOUDFRONT_DISTRIBUTION_ID.
+# Propósito: Issues DoEventsWEB → Complexity Routing → Cloud Agent → auto-merge → build/deploy DEV.
+# Configuración: secrets CURSOR_API_KEY, GH_PAT; vars AWS_ROLE_ARN, CLOUDFRONT_DISTRIBUTION_ID,
+#                NADF_AUTO_MERGE_DEV (default true), NADF_AUTO_DEPLOY_DEV (default true).
+# Política: auto-merge/deploy solo a DEV. PROD forbidden.
 name: NADF DoEvents issue → DEV
 
 on:
@@ -16,6 +18,10 @@ on:
         type: string
       skip_deploy:
         description: "Omitir deploy DEV"
+        type: boolean
+        default: false
+      skip_merge:
+        description: "Omitir auto-merge de PRs del agente"
         type: boolean
         default: false
 
@@ -139,6 +145,73 @@ jobs:
           echo "Repos=$NADF_TARGET_REPOS"
           npm run invoke:doevents-issue
 
+      - name: Auto-merge agent PRs → NADF branch (DEV only)
+        id: merge
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT || github.token }}
+          NADF_AUTO_MERGE_DEV: ${{ vars.NADF_AUTO_MERGE_DEV || 'true' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          ISSUE="${{ steps.issue.outputs.number }}"
+          BASE="feature/NovusAIDevelopmentFramework"
+          MERGED_WEB=0
+          MERGED_BACK=0
+          SKIP_MERGE=false
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.skip_merge }}" = "true" ]; then
+            SKIP_MERGE=true
+          fi
+          if [ "$SKIP_MERGE" = "true" ] || [ "${NADF_AUTO_MERGE_DEV}" != "true" ]; then
+            echo "Auto-merge omitido (skip_merge o NADF_AUTO_MERGE_DEV!=true)"
+            echo "merged_web=0" >> "$GITHUB_OUTPUT"
+            echo "merged_back=0" >> "$GITHUB_OUTPUT"
+            echo "auto_merge=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "auto_merge=true" >> "$GITHUB_OUTPUT"
+
+          merge_issue_prs() {
+            local REPO="$1"
+            local -n COUNT_REF="$2"
+            local COUNT=0
+            local N
+            # PRs abiertos hacia la rama NADF que referencian este issue
+            while IFS= read -r N; do
+              [ -z "${N:-}" ] && continue
+              echo "Merging $REPO#$N → $BASE (DEV only)"
+              if gh pr merge "$N" --repo "$REPO" --merge --delete-branch; then
+                COUNT=$((COUNT + 1))
+              else
+                echo "::warning::No se pudo mergear $REPO#$N"
+              fi
+            done < <(
+              gh pr list --repo "$REPO" --state open --base "$BASE" --limit 30 \
+                --json number,title,body \
+                | jq -r --arg n "$ISSUE" '
+                  .[]
+                  | select(
+                      (.title | test("#" + $n + "\\b"))
+                      or (.body | test("(?i)(fixes|closes|resolves)\\s*#" + $n + "\\b"))
+                      or (.body | test("#" + $n + "\\b"))
+                    )
+                  | .number
+                '
+            )
+            COUNT_REF=$COUNT
+          }
+
+          TARGET=$(jq -r '.target' route-decision.json)
+          if [ "$TARGET" = "web" ] || [ "$TARGET" = "both" ]; then
+            merge_issue_prs "arodriguez-novusintelligence/DoEventsWEB" MERGED_WEB
+          fi
+          if [ "$TARGET" = "back" ] || [ "$TARGET" = "both" ]; then
+            merge_issue_prs "arodriguez-novusintelligence/DoEventsBack" MERGED_BACK
+          fi
+
+          echo "merged_web=$MERGED_WEB" >> "$GITHUB_OUTPUT"
+          echo "merged_back=$MERGED_BACK" >> "$GITHUB_OUTPUT"
+          echo "Auto-merge DEV: WEB=$MERGED_WEB Back=$MERGED_BACK"
+
       - name: Build / validate WEB
         if: ${{ hashFiles('route-decision.json') != '' }}
         working-directory: web
@@ -146,11 +219,14 @@ jobs:
         run: |
           TARGET=$(jq -r '.target' ../route-decision.json)
           if [ "$TARGET" = "web" ] || [ "$TARGET" = "both" ]; then
-            git fetch origin feature/NovusAIDevelopmentFramework || true
-            git pull --rebase origin feature/NovusAIDevelopmentFramework || true
+            git fetch origin feature/NovusAIDevelopmentFramework
+            git checkout feature/NovusAIDevelopmentFramework
+            git reset --hard origin/feature/NovusAIDevelopmentFramework
             npm ci
             npm run build:qa
             npm run lint --if-present
+            # Artefacto listo para deploy-dev (mismo build profile)
+            npm run build:devaws
           else
             echo "Skip WEB build (target=$TARGET)"
           fi
@@ -158,14 +234,20 @@ jobs:
       - name: Assume AWS DEV (OIDC)
         id: aws
         continue-on-error: true
-        if: ${{ github.event_name != 'workflow_dispatch' || inputs.skip_deploy != true }}
+        if: >
+          (vars.NADF_AUTO_DEPLOY_DEV != 'false') &&
+          (github.event_name != 'workflow_dispatch' || inputs.skip_deploy != true)
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: sa-east-1
 
       - name: Deploy WEB DEV
-        if: ${{ steps.aws.outcome == 'success' && (github.event_name != 'workflow_dispatch' || inputs.skip_deploy != true) }}
+        id: deploy
+        if: >
+          steps.aws.outcome == 'success' &&
+          (vars.NADF_AUTO_DEPLOY_DEV != 'false') &&
+          (github.event_name != 'workflow_dispatch' || inputs.skip_deploy != true)
         working-directory: web
         env:
           CLOUDFRONT_DISTRIBUTION_ID: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID || 'E1AIDTCT83PAW5' }}
@@ -176,8 +258,10 @@ jobs:
           if [ "$TARGET" = "web" ] || [ "$TARGET" = "both" ]; then
             chmod +x infrastructure/aws/deploy-dev.sh
             ./infrastructure/aws/deploy-dev.sh
+            echo "deployed=true" >> "$GITHUB_OUTPUT"
           else
             echo "Skip WEB deploy"
+            echo "deployed=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Validate Back (checkout + deps)
@@ -190,11 +274,12 @@ jobs:
           if [ "$TARGET" != "back" ] && [ "$TARGET" != "both" ]; then
             echo "Skip Back validate"; exit 0
           fi
+          rm -rf back
           gh repo clone arodriguez-novusintelligence/DoEventsBack back \
             -- --branch feature/NovusAIDevelopmentFramework --single-branch --depth 1 || \
           gh repo clone arodriguez-novusintelligence/DoEventsBack back \
             -- --branch feature/DoEventsBack-Nadf --single-branch --depth 1
-          for dir in aws-lambda-manageevents aws-lambda-login aws-lambda-managetickets; do
+          for dir in aws-lambda-manageevents aws-lambda-login aws-lambda-managetickets aws-lambda-eventsFeed; do
             if [ -f "back/$dir/package.json" ]; then
               echo "==> $dir"
               npm ci --prefix "back/$dir" --omit=dev 2>/dev/null || npm install --prefix "back/$dir" --omit=dev
@@ -208,15 +293,22 @@ jobs:
         shell: bash
         run: |
           STATUS="${{ job.status }}"
+          MERGED_WEB="${{ steps.merge.outputs.merged_web || '0' }}"
+          MERGED_BACK="${{ steps.merge.outputs.merged_back || '0' }}"
+          AUTO_MERGE="${{ steps.merge.outputs.auto_merge || 'false' }}"
+          DEPLOYED="${{ steps.deploy.outputs.deployed || 'false' }}"
+          AWS_OUT="${{ steps.aws.outcome || 'skipped' }}"
           gh issue comment "${{ steps.issue.outputs.number }}" \
             --repo arodriguez-novusintelligence/DoEventsWEB \
             --body "## NADF ejecución \`${STATUS}\`
 
           - Action: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           - Branch: \`feature/NovusAIDevelopmentFramework\`
-          - Deploy DEV WEB: https://dev.doeventsapp.com (si AWS OIDC configurado y target web/both)
+          - Auto-merge DEV: \`${AUTO_MERGE}\` (WEB PRs: ${MERGED_WEB}, Back PRs: ${MERGED_BACK})
+          - Deploy DEV WEB: \`${DEPLOYED}\` (AWS OIDC: \`${AWS_OUT}\`) → https://dev.doeventsapp.com
+          - PROD: forbidden (sin auto-deploy)
 
-          Revisa PRs abiertos por el Cloud Agent en WEB/Back y mergea a \`feature/NovusAIDevelopmentFramework\` si aplica."
+          Si el deploy quedó en false, revisa la var \`AWS_ROLE_ARN\` (OIDC) en el repo."
 
       - name: Upload evidence
         if: always()
