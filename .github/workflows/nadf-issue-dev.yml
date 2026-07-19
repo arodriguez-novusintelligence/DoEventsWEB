@@ -1,7 +1,7 @@
 # NADF-GUIDE
 # Propósito: Issues DoEventsWEB → Complexity Routing → Cloud Agent → auto-merge → build/deploy DEV.
 # Configuración: secrets CURSOR_API_KEY, GH_PAT; vars AWS_ROLE_ARN, CLOUDFRONT_DISTRIBUTION_ID,
-#                NADF_AUTO_MERGE_DEV (default true), NADF_AUTO_DEPLOY_DEV (default true).
+#                VITE_GOOGLE_MAPS_API_KEY, NADF_AUTO_MERGE_DEV (default true), NADF_AUTO_DEPLOY_DEV (default true).
 # Política: auto-merge/deploy solo a DEV. PROD forbidden.
 name: NADF DoEvents issue → DEV
 
@@ -243,6 +243,8 @@ jobs:
       - name: Build / validate WEB
         if: ${{ hashFiles('route-decision.json') != '' }}
         working-directory: web
+        env:
+          VITE_GOOGLE_MAPS_API_KEY: ${{ vars.VITE_GOOGLE_MAPS_API_KEY }}
         shell: bash
         run: |
           TARGET=$(jq -r '.target' ../route-decision.json)
@@ -294,10 +296,15 @@ jobs:
         env:
           CLOUDFRONT_DISTRIBUTION_ID: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID || 'E1AIDTCT83PAW5' }}
           DOEVENTS_WEB_DEV_BUCKET: ${{ vars.DOEVENTS_WEB_DEV_BUCKET || 'doevents-web-dev' }}
+          VITE_GOOGLE_MAPS_API_KEY: ${{ vars.VITE_GOOGLE_MAPS_API_KEY }}
         shell: bash
         run: |
           TARGET=$(jq -r '.target' ../route-decision.json)
           if [ "$TARGET" = "web" ] || [ "$TARGET" = "both" ]; then
+            if [ -z "${VITE_GOOGLE_MAPS_API_KEY:-}" ]; then
+              echo "::error::Falta vars.VITE_GOOGLE_MAPS_API_KEY (Actions → Variables). Vite la embebe en build."
+              exit 1
+            fi
             chmod +x infrastructure/aws/deploy-dev.sh
             ./infrastructure/aws/deploy-dev.sh
             echo "deployed=true" >> "$GITHUB_OUTPUT"

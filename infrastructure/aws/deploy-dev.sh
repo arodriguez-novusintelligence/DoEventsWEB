@@ -11,6 +11,11 @@ REGION="${AWS_REGION:-sa-east-1}"
 BUCKET="${DOEVENTS_WEB_DEV_BUCKET:-doevents-web-dev}"
 CF_ID="${CLOUDFRONT_DISTRIBUTION_ID:-E1AIDTCT83PAW5}"
 
+if [ -z "${VITE_GOOGLE_MAPS_API_KEY:-}" ]; then
+  echo "ERROR: Falta VITE_GOOGLE_MAPS_API_KEY (exportarla o definir vars en Actions)." >&2
+  exit 1
+fi
+
 echo "=== Build DEV (devaws) ==="
 npm run build:devaws
 
