@@ -159,7 +159,7 @@ function mapRawEvent(raw: Record<string, unknown>): FeedEventItem {
     horaFin: raw.horaFin as string | undefined,
     direccion: raw.direccion as string | undefined,
     pais: raw.pais as string | undefined,
-    userId: raw.userId as string | undefined,
+    userId: (raw.userId ?? raw.user_id) as string | undefined,
     estatus: raw.estatus as string | undefined,
     Categoria: raw.Categoria as string | undefined,
     tipoEvento: raw.tipoEvento as string | undefined,

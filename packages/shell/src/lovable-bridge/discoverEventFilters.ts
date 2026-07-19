@@ -141,3 +141,49 @@ export function discoverNearbyLooksIncomplete(
   if (nearby.length > 0) return false;
   return buildNearbyEventsFromCatalog(catalog, lat, lng, radiusKm).length > 0;
 }
+
+function sortEventsByDistance(items: FeedEventItem[]): FeedEventItem[] {
+  return [...items].sort((a, b) => (a.distancia ?? Infinity) - (b.distancia ?? Infinity));
+}
+
+function mergeCatalogEvents(
+  catalog: FeedEventItem[],
+  supplementalCatalog: FeedEventItem[] = [],
+): FeedEventItem[] {
+  if (!supplementalCatalog.length) return catalog;
+  const merged = [...catalog];
+  const seen = new Set(catalog.map((event) => event.id).filter(Boolean));
+  for (const event of supplementalCatalog) {
+    if (!event.id || seen.has(event.id)) continue;
+    merged.push(event);
+    seen.add(event.id);
+  }
+  return merged;
+}
+
+/** Resuelve eventos cercanos: API geo + catálogo del feed + eventos propios como fallback. */
+export function mergeDiscoverNearbyEvents(options: {
+  apiNearby?: FeedEventItem[];
+  catalog?: FeedEventItem[];
+  supplementalCatalog?: FeedEventItem[];
+  loc?: { lat: number; lng: number } | null;
+  radiusKm?: number;
+}): FeedEventItem[] {
+  const apiNearby = options.apiNearby ?? [];
+  const catalog = options.catalog ?? [];
+  const supplementalCatalog = options.supplementalCatalog ?? [];
+  const radiusKm = options.radiusKm ?? 100;
+  const filtered = filterDiscoverFeedEvents(apiNearby);
+  const loc = options.loc;
+
+  if (!loc) return sortEventsByDistance(filtered);
+
+  const mergedCatalog = mergeCatalogEvents(catalog, supplementalCatalog);
+  return buildNearbyEventsFromCatalog(
+    mergedCatalog,
+    loc.lat,
+    loc.lng,
+    radiusKm,
+    sortEventsByDistance(filtered),
+  );
+}
