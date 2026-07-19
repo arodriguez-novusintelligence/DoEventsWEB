@@ -143,59 +143,38 @@ const getNotificationText = (n: Notification): string => {
   }
 
   if (n.message) {
-
     const target = n.eventName || n.postTitle || n.venueName || n.serviceName;
+    const targetSuffix = target && !n.message.includes(target) ? `: ${target}` : '';
 
     if (
-
       n.type === 'event_created'
-
       || n.type === 'refund'
-
       || n.type === 'event_finished'
-
       || n.type === 'promo_code_canceled'
-
       || n.type === 'promo_code_shared'
-
       || n.type === 'venue_reserved'
-
       || n.type === 'service_booked'
-
     ) {
-
-      return `${n.message}${target ? `: ${target}` : ''}`;
-
+      return `${n.message}${targetSuffix}`;
     }
 
-    return `${n.fromUser.name} ${n.message}${target ? `: ${target}` : ''}`;
-
+    const actorName = (n.fromUser.name || '').trim() || 'Usuario';
+    return `${actorName} ${n.message}${targetSuffix}`;
   }
 
   const labelMap: Partial<Record<NotificationType, string>> = {
-
     like: 'le dio me gusta a tu evento',
-
     comment: 'comentó en tu evento',
-
     repost: 'reposteó',
-
     share: 'compartió',
-
     follow: 'te empezó a seguir',
-
     user_mention: 'te mencionó',
-
     event_mention: 'mencionó tu evento',
-
   };
 
   const label = labelMap[n.type] || '';
-
   const target = n.postTitle || n.eventName || '';
-
   return `${n.fromUser.name} ${label}${target ? ` "${target}"` : ''}`;
-
 };
 
 

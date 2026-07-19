@@ -1,4 +1,5 @@
 import type { AppNotification } from '@doevents/shared';
+import { getEnrollmentUserId, getPersistedUserDisplayName } from '@doevents/shared';
 
 import type { Notification, NotificationType } from '@lovable/contexts/NotificationsContext';
 import {
@@ -8,10 +9,95 @@ import {
   mapTriggerToType,
 } from './notificationNavigation';
 
+/** Tipos sociales: el nombre debe ser del actor, nunca del viewer. */
+const SOCIAL_ACTOR_TYPES = new Set<NotificationType>([
+  'like',
+  'comment',
+  'repost',
+  'share',
+  'follow',
+  'follow_request',
+  'user_mention',
+  'event_mention',
+  'chatroom_invite',
+  'event_invite',
+  'ticket_sold',
+  'ticket_transfer',
+]);
+
+function firstMeaningfulName(...values: unknown[]): string {
+  for (const value of values) {
+    const name = String(value || '').trim();
+    if (!name) continue;
+    if (/^(usuario|alguien|sistema|null|undefined)$/i.test(name)) continue;
+    return name;
+  }
+  return '';
+}
+
+/** Nombre del usuario en sesión (OAuth / cache de perfil). */
+function resolveViewerDisplayName(): string {
+  const persisted = getPersistedUserDisplayName().trim();
+  if (persisted) return persisted;
+
+  try {
+    const userId = getEnrollmentUserId();
+    if (!userId) return '';
+    const raw = localStorage.getItem('doevents_profile_cache_v1');
+    if (!raw) return '';
+    const store = JSON.parse(raw) as Record<string, {
+      nombre?: string;
+      apellido?: string;
+      username?: string;
+    }>;
+    const profile = store[userId];
+    if (!profile) return '';
+    const full = [profile.nombre, profile.apellido].filter(Boolean).join(' ').trim();
+    if (full) return full;
+    const username = String(profile.username || '').trim().replace(/^@/, '');
+    return username;
+  } catch {
+    return '';
+  }
+}
+
+function resolveSenderName(
+  type: NotificationType,
+  meta: Record<string, unknown>,
+): string {
+  const fromMeta = firstMeaningfulName(
+    meta.senderName,
+    meta.actorName,
+    meta.buyerName,
+    meta.invitedBy,
+    meta.inviterName,
+    meta.userName,
+    meta.organizerName,
+    meta.fromName,
+    meta.assignedByName,
+    meta.recipientName,
+  );
+  if (fromMeta) return fromMeta;
+
+  if (type === 'venue_reservation' || type === 'service_booking') return 'Sistema';
+  if (SOCIAL_ACTOR_TYPES.has(type)) return 'Alguien';
+
+  // Notificaciones de sistema / hacia el propio usuario (compra, ventas, etc.)
+  return resolveViewerDisplayName() || 'Usuario';
+}
+
+function parseNotificationDate(value?: string): Date | null {
+  if (!value) return null;
+  // IDs Dynamo: 2026-07-19T14:59:59.488Z#inApp#abc123
+  const iso = value.includes('#') ? value.split('#')[0] : value;
+  const date = new Date(iso);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
 function formatRelativeTime(value?: string): string {
   if (!value) return '';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
+  const date = parseNotificationDate(value);
+  if (!date) return value.includes('#') ? value.split('#')[0] : value;
   const diffMins = Math.floor((Date.now() - date.getTime()) / 60000);
   if (diffMins < 1) return 'Justo ahora';
   if (diffMins < 60) return `hace ${diffMins} min`;
@@ -54,22 +140,13 @@ export function appNotificationToLovable(n: AppNotification): Notification {
   const data = (meta.data || {}) as Record<string, unknown>;
   const type = mapTriggerToType(n.type || String(meta.type || ''), meta);
 
-  const senderName = String(
-    meta.senderName
-    || meta.actorName
-    || meta.buyerName
-    || meta.invitedBy
-    || meta.inviterName
-    || meta.userName
-    || meta.organizerName
-    || meta.fromName
-    || meta.assignedByName
-    || (type === 'venue_reservation' || type === 'service_booking' ? 'Sistema' : 'Usuario'),
-  );
+  const senderName = resolveSenderName(type, meta);
   const initials = senderName.split(' ').filter(Boolean).map((p) => p[0]).join('').slice(0, 2).toUpperCase() || 'DE';
 
   const notificationId = n.notificationId || n.id;
-  const timestamp = n.timestamp || n.createdAt || '';
+  const rawTimestamp = n.timestamp || n.createdAt || notificationId || '';
+  const parsedTs = parseNotificationDate(rawTimestamp);
+  const timestamp = parsedTs ? parsedTs.toISOString() : String(rawTimestamp).split('#')[0] || '';
   const apiUserId = n.userId || String(meta.userId || '');
 
   const venueName = String(meta.venueName || '');
@@ -157,7 +234,7 @@ export function appNotificationToLovable(n: AppNotification): Notification {
     postId: String(meta.postId || meta.publicationId || data.publicationId || ''),
     followId: followId || undefined,
     message: rawMessage,
-    timeAgo: formatRelativeTime(n.timestamp || n.createdAt),
+    timeAgo: formatRelativeTime(timestamp || n.timestamp || n.createdAt || notificationId),
     read: isReadNotification(n),
     actionable: isActionableNotificationType(type) || type === 'event_invite',
   };
