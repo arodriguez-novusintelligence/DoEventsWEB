@@ -4,8 +4,10 @@
 name: NADF DoEvents issue → DEV
 
 on:
+  # Solo `labeled` (+ reopened): al crear un issue CON label `nadf`, GitHub dispara
+  # opened Y labeled → dos runs. Con solo labeled queda una ejecución.
   issues:
-    types: [opened, labeled, reopened]
+    types: [labeled, reopened]
   workflow_dispatch:
     inputs:
       issue_number:
@@ -34,7 +36,9 @@ jobs:
     timeout-minutes: 180
     if: >
       github.event_name == 'workflow_dispatch' ||
-      contains(join(github.event.issue.labels.*.name, ','), 'nadf')
+      (github.event_name == 'issues' &&
+        ((github.event.action == 'reopened' && contains(join(github.event.issue.labels.*.name, ','), 'nadf')) ||
+         (github.event.action == 'labeled' && (github.event.label.name == 'nadf' || github.event.label.name == 'nadf:approved'))))
     steps:
       - name: Resolve issue number
         id: issue
