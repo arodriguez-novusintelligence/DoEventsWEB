@@ -45,10 +45,10 @@ import {
 import EventsView from '@lovable/components/feed/EventsView';
 import { feedEventToDiscoverItem } from '../lovable-bridge/discoverAdapter';
 import {
-  buildNearbyEventsFromCatalog,
   discoverNearbyLooksIncomplete,
   filterAndSortMyPublishedEvents,
   filterDiscoverFeedEvents,
+  mergeDiscoverNearbyEvents,
 } from '../lovable-bridge/discoverEventFilters';
 import {
   buildOtherDiscoverEvents,
@@ -96,22 +96,22 @@ function resolveNearbyEvents(
   apiNearby: FeedEventItem[],
   catalog: FeedEventItem[],
   loc: StoredUserLocation | null,
+  supplementalCatalog: FeedEventItem[] = [],
 ): FeedEventItem[] {
-  const filtered = filterDiscoverFeedEvents(apiNearby);
-  if (!loc) return sortEventsByDistance(filtered);
-  return buildNearbyEventsFromCatalog(
+  return mergeDiscoverNearbyEvents({
+    apiNearby,
     catalog,
-    loc.lat,
-    loc.lng,
-    NEARBY_RADIUS_KM,
-    sortEventsByDistance(filtered),
-  );
+    supplementalCatalog,
+    loc,
+    radiusKm: NEARBY_RADIUS_KM,
+  });
 }
 
 function shouldSkipDiscoverNetworkRefresh(
   cached: {
     nearby?: FeedEventItem[];
     recommended?: FeedEventItem[];
+    myEvents?: FeedEventItem[];
     services?: NearbyServiceProvider[];
     venues?: NearbyVenue[];
   },
@@ -119,9 +119,10 @@ function shouldSkipDiscoverNetworkRefresh(
   cacheFresh: boolean,
 ): boolean {
   if (!cacheFresh || !hasDiscoverContent(cached)) return false;
+  if (loc && !(cached.nearby?.length)) return false;
   if (discoverNearbyLooksIncomplete(
     cached.nearby || [],
-    cached.recommended || [],
+    [...(cached.recommended || []), ...filterDiscoverFeedEvents(cached.myEvents || [])],
     loc?.lat,
     loc?.lng,
     NEARBY_RADIUS_KM,
@@ -345,13 +346,18 @@ export const EventsPage: React.FC = () => {
       const cached = getCachedDiscover(locationKey, true);
       if (cached) {
         const cachedRecommended = filterDiscoverFeedEvents(cached.recommended || []);
-        const sortedNearby = resolveNearbyEvents(cached.nearby || [], cachedRecommended, loc);
+        const sortedNearby = resolveNearbyEvents(
+          cached.nearby || [],
+          cachedRecommended,
+          loc,
+          filterDiscoverFeedEvents(cached.myEvents || []),
+        );
         await applyDiscoverPayload(
           loc,
           sortedNearby,
           cachedRecommended,
-          cached.myEvents,
-          cached.favorites,
+          cached.myEvents || [],
+          cached.favorites || [],
           sortServicesByDistance(cached.services || []),
           sortVenuesByDistance(cached.venues || []),
         );
@@ -392,7 +398,7 @@ export const EventsPage: React.FC = () => {
         (item) => item.userId,
         userId || undefined,
       );
-      const sortedNearby = resolveNearbyEvents(nearbyRes, feedItems, loc);
+      const sortedNearby = resolveNearbyEvents(nearbyRes, feedItems, loc, mineItems);
       const sortedServices = sortServicesByDistance(servicesRes);
       let mergedVenues = sortVenuesByDistance(venuesRes);
       if (userId) {
@@ -477,7 +483,15 @@ export const EventsPage: React.FC = () => {
     }
   };
 
-  if (loading && !nearby.length && !recommendedAll.length && !serviceProviders.length && !publishedVenues.length) {
+  if (
+    loading
+    && !nearby.length
+    && !recommendedAll.length
+    && !serviceProviders.length
+    && !publishedVenues.length
+    && !myEvents.length
+    && !favorites.length
+  ) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3 bg-background pb-24">
         <div className="flex flex-col items-center gap-3 rounded-2xl bg-card px-10 py-12 shadow-sm">
