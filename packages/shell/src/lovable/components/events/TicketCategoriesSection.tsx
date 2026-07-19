@@ -275,11 +275,11 @@ const TicketCategoriesSection = ({
           </label>
         </div>
 
-        <div className="flex items-center justify-between">
-          <div>
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
             <span className="block text-sm font-bold text-foreground">¿Tiene precio?</span>
             <span className="text-xs text-muted-foreground">
-              Desactívalo para crear boletería gratuita (sin costo).
+              Actívalo si la categoría tiene costo de boletería.
             </span>
           </div>
           <Switch
@@ -289,6 +289,21 @@ const TicketCategoriesSection = ({
             }
           />
         </div>
+        {!draft.hasPrice && (
+          <div
+            role="status"
+            className="flex gap-2.5 rounded-xl border border-amber-300/80 bg-amber-50 px-3 py-2.5 text-amber-950"
+          >
+            <span className="mt-0.5 text-sm font-bold text-amber-600">i</span>
+            <div className="min-w-0 space-y-0.5">
+              <p className="text-sm font-semibold leading-snug">Categoría sin costo</p>
+              <p className="text-xs leading-relaxed text-amber-900/90">
+                Se publicará como boletería gratuita. Los asistentes podrán obtener
+                boletas de esta categoría sin pagar.
+              </p>
+            </div>
+          </div>
+        )}
 
         <label className="block">
           <span className="block text-sm font-bold text-foreground">Moneda</span>

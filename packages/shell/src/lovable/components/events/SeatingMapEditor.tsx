@@ -32,6 +32,7 @@ import {
   Eraser,
   ArrowUpToLine,
   ArrowDownToLine,
+  Info,
 } from 'lucide-react';
 import { Button } from '@lovable/components/ui/button';
 import { Input } from '@lovable/components/ui/input';
@@ -1527,8 +1528,9 @@ const CategoryFormSheet = ({
 
   const rows = figure.rows ?? 0;
   const spr = figure.seatsPerRow ?? 0;
+  const isPaidCategory = figure.priceEnabled === true;
   const priceInvalid =
-    figure.priceEnabled !== false && (!figure.price || figure.price <= 0);
+    isPaidCategory && (!figure.price || figure.price <= 0);
 
   return (
     <Sheet onClose={onClose} title="Nueva Categoría">
@@ -1565,24 +1567,43 @@ const CategoryFormSheet = ({
           </div>
         </Field>
 
-        {/* Price toggle */}
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-bold text-foreground">Precio</span>
-          <Switch
-            checked={!!figure.priceEnabled}
-            onCheckedChange={(v) => onChange({
-              priceEnabled: v,
-              ...(v ? {} : { price: 0 }),
-            })}
-          />
+        {/* Price toggle + disclaimer cero costo */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <span className="text-sm font-bold text-foreground">Precio</span>
+              <p className="text-xs text-muted-foreground">
+                Actívalo si la categoría tiene costo de boletería.
+              </p>
+            </div>
+            <Switch
+              checked={isPaidCategory}
+              onCheckedChange={(v) => onChange({
+                priceEnabled: v,
+                ...(v ? {} : { price: 0 }),
+              })}
+            />
+          </div>
+          {!isPaidCategory && (
+            <div
+              role="status"
+              className="flex gap-2.5 rounded-xl border border-amber-300/80 bg-amber-50 px-3 py-2.5 text-amber-950 dark:border-amber-500/40 dark:bg-amber-950/40 dark:text-amber-50"
+            >
+              <Info className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-300" strokeWidth={2.25} />
+              <div className="min-w-0 space-y-0.5">
+                <p className="text-sm font-semibold leading-snug">
+                  Categoría sin costo
+                </p>
+                <p className="text-xs leading-relaxed text-amber-900/90 dark:text-amber-100/90">
+                  Se publicará como boletería gratuita. Los asistentes podrán
+                  reservar asientos de esta categoría sin pagar.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
-        {!figure.priceEnabled && (
-          <p className="text-xs text-muted-foreground">
-            Categoría sin costo: se publicará como boletería gratuita.
-          </p>
-        )}
 
-        {figure.priceEnabled && (
+        {isPaidCategory && (
           <div className="grid grid-cols-2 gap-4">
             <Field label="Moneda">
               <Select
