@@ -22,6 +22,8 @@ export interface LovablePostCardBridgeProps {
   onMentionClick?: (mention: string, publicationId?: string) => void;
   onMenuAction?: (action: 'hide' | 'save' | 'not-interested' | 'block' | 'report') => void;
   onOpenStory?: (userId: string) => void;
+  onViewLikes?: () => void;
+  onViewReposts?: () => void;
 }
 
 export const LovablePostCardBridge: React.FC<LovablePostCardBridgeProps> = ({
@@ -41,6 +43,8 @@ export const LovablePostCardBridge: React.FC<LovablePostCardBridgeProps> = ({
   onMentionClick,
   onMenuAction,
   onOpenStory,
+  onViewLikes,
+  onViewReposts,
 }) => {
   const navigate = useNavigate();
   const lovablePost = feedPublicationToLovablePost(post);
@@ -79,6 +83,8 @@ export const LovablePostCardBridge: React.FC<LovablePostCardBridgeProps> = ({
       onOpenDetail={(onOpen || lovablePost.detailPath) ? handleOpenDetail : undefined}
       onMentionClick={onMentionClick ? (mention) => onMentionClick(mention, post.id) : undefined}
       onOpenStory={onOpenStory}
+      onViewLikes={onViewLikes}
+      onViewReposts={onViewReposts}
     />
   );
 };

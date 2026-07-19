@@ -22,8 +22,13 @@ const CountBubble = ({
   onClick?: () => void;
 }) => (
   <button
-    onClick={onClick}
+    type="button"
+    onClick={(e) => {
+      e.stopPropagation();
+      onClick?.();
+    }}
     className="flex h-6 min-w-6 items-center justify-center rounded-full bg-secondary px-2 text-xs font-semibold text-primary"
+    aria-label={`${count} me gusta`}
   >
     {count}
   </button>

@@ -61,6 +61,7 @@ import {
   sharePublication,
 
   togglePublicationLike,
+  listPublicationLikes,
 
   updatePublication,
 
@@ -114,6 +115,7 @@ import { LovableCommentsBridge } from '../lovable-bridge/LovableCommentsBridge';
 import { feedPublicationToLovablePost } from '../lovable-bridge/feedAdapter';
 import { filterAndSortMyPublishedEvents } from '../lovable-bridge/discoverEventFilters';
 import RepostSheet from '@lovable/components/feed/RepostSheet';
+import InteractionsSheet from '@lovable/components/feed/InteractionsSheet';
 import { useFeedStories } from '../lovable-bridge/useFeedStories';
 import { useActiveStoryAuthors } from '../contexts/StoriesContext';
 import { useNearbyServices } from '../lovable-bridge/useNearbyServices';
@@ -206,6 +208,10 @@ export const SocialWallTab: React.FC = () => {
   const [repostingPost, setRepostingPost] = useState<FeedPublication | null>(null);
   const [reportPostId, setReportPostId] = useState<string | null>(null);
   const [showLocationSheet, setShowLocationSheet] = useState(false);
+  const [likesSheetPostId, setLikesSheetPostId] = useState<string | null>(null);
+  const [likesUsers, setLikesUsers] = useState<Post['likedBy']>([]);
+  const [likesLoading, setLikesLoading] = useState(false);
+  const [likesError, setLikesError] = useState<string | null>(null);
   const recentLocalPostIds = useRef<Set<string>>(new Set());
 
   const feedLocationDetails = useMemo(() => {
@@ -595,6 +601,51 @@ export const SocialWallTab: React.FC = () => {
     }
     navigate(`/users/${encodeURIComponent(targetUserId)}`);
   }, [navigate, userId]);
+
+  useEffect(() => {
+    if (!likesSheetPostId) {
+      setLikesUsers([]);
+      setLikesError(null);
+      setLikesLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setLikesLoading(true);
+    setLikesError(null);
+    setLikesUsers([]);
+
+    listPublicationLikes(likesSheetPostId, { limit: 100 })
+      .then((result) => {
+        if (cancelled) return;
+        setLikesUsers(
+          result.items.map((user) => {
+            const name = user.name || 'Usuario';
+            return {
+              id: user.id,
+              name,
+              initials: name
+                .split(' ')
+                .filter(Boolean)
+                .map((part) => part[0])
+                .join('')
+                .slice(0, 2)
+                .toUpperCase() || 'DE',
+              avatarUrl: user.avatarUrl || undefined,
+            };
+          }),
+        );
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        setLikesError(err instanceof Error ? err.message : 'No se pudo cargar la lista');
+      })
+      .finally(() => {
+        if (!cancelled) setLikesLoading(false);
+      });
+
+    return () => { cancelled = true; };
+  }, [likesSheetPostId]);
 
   const handleLike = async (post: FeedPublication) => {
     const liked = !post.viewerState?.liked;
@@ -1048,6 +1099,7 @@ export const SocialWallTab: React.FC = () => {
               onDelete={post.viewerState?.canDelete ? () => handleDelete(post.id) : undefined}
               onMentionClick={handleMentionClick}
               onAuthorClick={authorId ? () => openUserProfile(authorId) : undefined}
+              onViewLikes={() => setLikesSheetPostId(post.id)}
               onFollow={() => handleFollow(post)}
               onMenuAction={(action) => {
                 if (action === 'hide' || action === 'not-interested') {
@@ -1138,6 +1190,21 @@ export const SocialWallTab: React.FC = () => {
         loadComments={loadComments}
         onSubmitComment={submitComment}
         onReportComment={userId ? reportComment : undefined}
+      />
+
+      <InteractionsSheet
+        open={Boolean(likesSheetPostId)}
+        onOpenChange={(open) => {
+          if (!open) setLikesSheetPostId(null);
+        }}
+        likedBy={likesUsers}
+        loading={likesLoading}
+        error={likesError}
+        defaultTab="likes"
+        onViewProfile={(user) => {
+          setLikesSheetPostId(null);
+          openUserProfile(user.id);
+        }}
       />
 
       {editingPost && (

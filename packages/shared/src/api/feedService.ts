@@ -373,6 +373,58 @@ export async function togglePublicationLike(
   return body;
 }
 
+export interface PublicationLikeUser {
+  id: string;
+  name: string;
+  avatarUrl?: string | null;
+  username?: string | null;
+  role?: string | null;
+  likedAt?: string | null;
+}
+
+export async function listPublicationLikes(
+  publicationId: string,
+  options?: { limit?: number; cursor?: string | null },
+): Promise<{
+  items: PublicationLikeUser[];
+  total: number;
+  hasMore: boolean;
+  nextCursor: string | null;
+}> {
+  const params = new URLSearchParams();
+  params.set('limit', String(options?.limit ?? 50));
+  if (options?.cursor) params.set('cursor', options.cursor);
+
+  const response = await fetch(
+    `${wallBase()}/publications/${encodeURIComponent(publicationId)}/likes?${params}`,
+    { headers: authHeaders() },
+  );
+
+  const body = await response.json() as {
+    items?: PublicationLikeUser[];
+    total?: number;
+    hasMore?: boolean;
+    nextCursor?: string | null;
+    error?: { message?: string };
+  };
+
+  if (!response.ok) {
+    throw new Error(body.error?.message || 'No se pudo cargar quién dio me gusta');
+  }
+
+  return {
+    items: (body.items || []).map((item) => ({
+      ...item,
+      id: String(item.id || ''),
+      name: String(item.name || 'Usuario'),
+      avatarUrl: resolveUserMediaDisplayUrl(item.avatarUrl) || resolveImageUrl(item.avatarUrl) || item.avatarUrl,
+    })).filter((item) => item.id),
+    total: Number(body.total ?? body.items?.length ?? 0),
+    hasMore: Boolean(body.hasMore),
+    nextCursor: body.nextCursor ?? null,
+  };
+}
+
 export async function toggleCommentLike(
   commentId: string,
   liked: boolean,
