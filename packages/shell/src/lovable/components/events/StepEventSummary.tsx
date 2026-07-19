@@ -834,9 +834,15 @@ const StepEventSummary = ({
               </div>
             </div>
 
-            {(formData.promoCodes?.length ?? 0) > 0 && (
+            {canViewPromoCodes && formData.persistedEventId ? (
+              <EventPromoCodesLivePanel
+                eventId={formData.persistedEventId}
+                eventName={formData.name}
+                embedded
+              />
+            ) : (formData.promoCodes?.length ?? 0) > 0 ? (
               <PromoCodesSummary batches={formData.promoCodes!} eventName={formData.name} />
-            )}
+            ) : null}
 
             {onEdit && (
               <button
@@ -988,9 +994,6 @@ const StepEventSummary = ({
             </div>
           );
         })}
-        {canViewPromoCodes && formData.persistedEventId && (
-          <EventPromoCodesLivePanel eventId={formData.persistedEventId} eventName={formData.name} />
-        )}
       </div>
 
       <div className="mt-8 mb-4 flex items-start justify-around gap-4">
@@ -1059,9 +1062,12 @@ const StepEventSummary = ({
 const EventPromoCodesLivePanel = ({
   eventId,
   eventName,
+  embedded = false,
 }: {
   eventId: string;
   eventName: string;
+  /** Dentro de "Fecha y reembolsos"; no renderizar como acordeón de primer nivel */
+  embedded?: boolean;
 }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -1090,6 +1096,90 @@ const EventPromoCodesLivePanel = ({
   );
   const used = allCodes.filter((code) => usedSet.has(code));
 
+  const body = (
+    <div className={embedded ? 'mt-3 space-y-3' : 'border-t border-border/60 px-4 py-3 space-y-3'}>
+      {loading && (
+        <div className="flex items-center justify-center py-6">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        </div>
+      )}
+      {error && <p className="text-sm text-destructive">{error}</p>}
+      {!loading && !error && data && (
+        <>
+          <p className="text-xs text-muted-foreground">
+            Códigos del evento <strong>{eventName || 'sin nombre'}</strong>. Solo visible para el creador y administradores.
+          </p>
+          <div className="grid grid-cols-3 gap-3">
+            <div className="rounded-xl border border-border bg-background/50 p-3">
+              <p className="text-xs text-muted-foreground">Disponibles</p>
+              <p className="text-lg font-bold text-primary">{available.length}</p>
+            </div>
+            <div className="rounded-xl border border-border bg-background/50 p-3">
+              <p className="text-xs text-muted-foreground">Usados</p>
+              <p className="text-lg font-bold text-foreground">{used.length}</p>
+            </div>
+            <div className="rounded-xl border border-border bg-background/50 p-3">
+              <p className="text-xs text-muted-foreground">Compartidos</p>
+              <p className="text-lg font-bold text-indigo-600">{shared.length}</p>
+            </div>
+          </div>
+          {available.length > 0 && (
+            <div>
+              <p className="mb-2 text-xs font-semibold text-foreground">Disponibles</p>
+              <div className="flex flex-wrap gap-1.5">
+                {available.map((code) => (
+                  <span key={code} className="rounded-md border border-primary/20 bg-primary/5 px-2 py-1 font-mono text-[11px] font-semibold text-primary">
+                    {code}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+          {used.length > 0 && (
+            <div>
+              <p className="mb-2 text-xs font-semibold text-muted-foreground">Usados</p>
+              <div className="flex flex-wrap gap-1.5">
+                {used.map((code) => (
+                  <span key={code} className="rounded-md border border-border bg-muted/40 px-2 py-1 font-mono text-[11px] text-muted-foreground line-through">
+                    {code}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+          {!allCodes.length && (
+            <p className="text-sm text-muted-foreground">Este evento aún no tiene códigos promocionales generados.</p>
+          )}
+        </>
+      )}
+    </div>
+  );
+
+  if (embedded) {
+    return (
+      <div>
+        <div className="h-px bg-border mb-4" />
+        <button
+          type="button"
+          onClick={() => setOpen((value) => !value)}
+          className="flex w-full items-center justify-between gap-2"
+        >
+          <div className="flex items-center gap-2">
+            <TicketIcon className="h-4 w-4 text-primary" />
+            <h4 className="text-sm font-bold text-primary">Códigos promocionales</h4>
+            {data ? (
+              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">
+                {allCodes.length}
+              </span>
+            ) : null}
+          </div>
+          <ChevronDown className={`h-4 w-4 text-primary transition-transform ${open ? 'rotate-180' : ''}`} />
+        </button>
+        {open ? body : null}
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-2xl bg-card shadow-sm">
       <button
@@ -1103,64 +1193,7 @@ const EventPromoCodesLivePanel = ({
         <span className="flex-1 text-sm font-semibold text-foreground">Códigos promocionales</span>
         {open ? <ChevronUp className="h-4 w-4 text-primary" /> : <ChevronDown className="h-4 w-4 text-primary" />}
       </button>
-      {open && (
-        <div className="border-t border-border/60 px-4 py-3 space-y-3">
-          {loading && (
-            <div className="flex items-center justify-center py-6">
-              <Loader2 className="h-6 w-6 animate-spin text-primary" />
-            </div>
-          )}
-          {error && <p className="text-sm text-destructive">{error}</p>}
-          {!loading && !error && data && (
-            <>
-              <p className="text-xs text-muted-foreground">
-                Códigos del evento <strong>{eventName || 'sin nombre'}</strong>. Solo visible para el creador y administradores.
-              </p>
-              <div className="grid grid-cols-3 gap-3">
-                <div className="rounded-xl border border-border bg-background/50 p-3">
-                  <p className="text-xs text-muted-foreground">Disponibles</p>
-                  <p className="text-lg font-bold text-primary">{available.length}</p>
-                </div>
-                <div className="rounded-xl border border-border bg-background/50 p-3">
-                  <p className="text-xs text-muted-foreground">Usados</p>
-                  <p className="text-lg font-bold text-foreground">{used.length}</p>
-                </div>
-                <div className="rounded-xl border border-border bg-background/50 p-3">
-                  <p className="text-xs text-muted-foreground">Compartidos</p>
-                  <p className="text-lg font-bold text-indigo-600">{shared.length}</p>
-                </div>
-              </div>
-              {available.length > 0 && (
-                <div>
-                  <p className="mb-2 text-xs font-semibold text-foreground">Disponibles</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {available.map((code) => (
-                      <span key={code} className="rounded-md border border-primary/20 bg-primary/5 px-2 py-1 font-mono text-[11px] font-semibold text-primary">
-                        {code}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {used.length > 0 && (
-                <div>
-                  <p className="mb-2 text-xs font-semibold text-muted-foreground">Usados</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {used.map((code) => (
-                      <span key={code} className="rounded-md border border-border bg-muted/40 px-2 py-1 font-mono text-[11px] text-muted-foreground line-through">
-                        {code}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {!allCodes.length && (
-                <p className="text-sm text-muted-foreground">Este evento aún no tiene códigos promocionales generados.</p>
-              )}
-            </>
-          )}
-        </div>
-      )}
+      {open ? body : null}
     </div>
   );
 };
