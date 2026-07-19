@@ -259,6 +259,20 @@ jobs:
             echo "Skip WEB build (target=$TARGET)"
           fi
 
+      - name: Debug OIDC claims
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Requesting OIDC token..."
+          RESP=$(curl -sS -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com")
+          TOKEN=$(echo "$RESP" | jq -r .value)
+          PAYLOAD=$(echo "$TOKEN" | cut -d. -f2 | tr '_-' '/+')
+          PAD=$(( (4 - ${#PAYLOAD} % 4) % 4 ))
+          PAYLOAD="${PAYLOAD}$(printf '=%.0s' $(seq 1 $PAD))"
+          echo "$PAYLOAD" | base64 -d 2>/dev/null | jq '{sub,aud,iss,repository,repository_owner,job_workflow_ref,ref}'
+
       - name: Assume AWS DEV (OIDC)
         id: aws
         continue-on-error: true
