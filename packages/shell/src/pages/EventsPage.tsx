@@ -30,6 +30,7 @@ import {
   likeVenue,
   likeService,
   resolveUserLocation,
+  normalizeFeedEventItem,
   useStoredUserLocation,
   RootState,
   useToast,
@@ -78,6 +79,12 @@ function sortVenuesByDistance(items: NearbyVenue[]): NearbyVenue[] {
   return [...items].sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity));
 }
 
+function normalizeDiscoverUserEvents(items: unknown[] = []): FeedEventItem[] {
+  return filterDiscoverFeedEvents(
+    items.map((item) => normalizeFeedEventItem(item as Record<string, unknown>)),
+  );
+}
+
 function hasDiscoverContent(cached: {
   nearby?: FeedEventItem[];
   recommended?: FeedEventItem[];
@@ -122,7 +129,7 @@ function shouldSkipDiscoverNetworkRefresh(
   if (loc && !(cached.nearby?.length)) return false;
   if (discoverNearbyLooksIncomplete(
     cached.nearby || [],
-    [...(cached.recommended || []), ...filterDiscoverFeedEvents(cached.myEvents || [])],
+    [...(cached.recommended || []), ...normalizeDiscoverUserEvents(cached.myEvents || [])],
     loc?.lat,
     loc?.lng,
     NEARBY_RADIUS_KM,
@@ -350,7 +357,7 @@ export const EventsPage: React.FC = () => {
           cached.nearby || [],
           cachedRecommended,
           loc,
-          filterDiscoverFeedEvents(cached.myEvents || []),
+          normalizeDiscoverUserEvents(cached.myEvents || []),
         );
         await applyDiscoverPayload(
           loc,
@@ -398,7 +405,7 @@ export const EventsPage: React.FC = () => {
         (item) => item.userId,
         userId || undefined,
       );
-      const mineItems = filterDiscoverFeedEvents(mineRes.data?.datosEvento || []);
+      const mineItems = normalizeDiscoverUserEvents(mineRes.data?.datosEvento || []);
       const favItems = filterDiscoverFeedEvents(Array.isArray(favRes) ? favRes : []);
       const sortedNearby = resolveNearbyEvents(nearbyRes, feedItems, loc, mineItems);
       const sortedServices = sortServicesByDistance(servicesRes);
