@@ -40,7 +40,7 @@ permissions:
 
 concurrency:
   group: nadf-doevents-issue-${{ github.event.issue.number || inputs.issue_number }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   nadf:
@@ -136,6 +136,8 @@ jobs:
             "- Target: **\(.target)**\n" +
             "- Lightweight: `\(.lightweight)`\n" +
             "- Branch: `\(.workBranch)`\n" +
+            "- Domain ALLOWED: `" + ((.domainScope.allowed // []) | join(", ")) + "`\n" +
+            "- Domain FORBIDDEN: `" + ((.domainScope.forbidden // []) | join(", ")) + "`\n" +
             "- Rationale: " + ((.rationale // []) | join("; ")) + "\n\n" +
             "Aislamiento: solo el alcance de este issue; no se tocan otras funcionalidades.\n" +
             "Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
@@ -169,6 +171,16 @@ jobs:
           export NADF_TARGET_REPOS="$REPOS"
           echo "Repos=$NADF_TARGET_REPOS"
           npm run invoke:doevents-issue
+
+      - name: Validate domain scope (pre-merge)
+        if: ${{ steps.issue.outputs.mode != 'deploy-only' }}
+        working-directory: nadf/prototypes/m6-cloud-agent
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT || github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run validate:doevents-scope -- "${{ github.workspace }}/route-decision.json"
 
       - name: Auto-merge agent PRs → NADF branch (DEV only)
         id: merge
