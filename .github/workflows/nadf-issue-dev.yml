@@ -159,6 +159,7 @@ jobs:
             "${{ github.workspace }}/agent-prompt.txt"
 
       - name: Invoke Cloud Agent(s)
+        id: agent
         if: ${{ steps.issue.outputs.mode != 'deploy-only' }}
         working-directory: nadf/prototypes/m6-cloud-agent
         env:
@@ -168,12 +169,39 @@ jobs:
           NADF_STARTING_REF: feature/NovusAIDevelopmentFramework
           NADF_MODEL: ${{ vars.NADF_MODEL || 'composer-2.5' }}
           NADF_AUTO_CREATE_PR: "true"
+          NADF_AGENT_RESULT_FILE: ${{ github.workspace }}/agent-result.json
         shell: bash
         run: |
           REPOS=$(jq -r '.targetRepos | join(",")' "${{ github.workspace }}/route-decision.json")
           export NADF_TARGET_REPOS="$REPOS"
           echo "Repos=$NADF_TARGET_REPOS"
           npm run invoke:doevents-issue
+          if [ -f "${{ github.workspace }}/agent-result.json" ]; then
+            echo "agent_status=$(jq -r '.status' "${{ github.workspace }}/agent-result.json")" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Verify agent PRs (fail tipado si no hay push/PR)
+        id: agent_verify
+        if: ${{ always() && steps.issue.outputs.mode != 'deploy-only' && steps.agent.outcome != 'skipped' }}
+        working-directory: nadf/prototypes/m6-cloud-agent
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT || github.token }}
+          NADF_ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+          NADF_STARTING_REF: feature/NovusAIDevelopmentFramework
+          NADF_AGENT_RESULT_FILE: ${{ github.workspace }}/agent-result.json
+          NADF_AGENT_VERIFY_FILE: ${{ github.workspace }}/agent-verify.json
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -f "${{ github.workspace }}/agent-result.json" ]; then
+            echo '{"status":"FAIL","code":"AGENT_RUN_ERROR","why":"Falta agent-result.json tras Invoke","prOpened":false,"fixHint":"Revisar logs del Cloud Agent / CURSOR_API_KEY","details":[]}' \
+              > "${{ github.workspace }}/agent-verify.json"
+            echo "::error::AGENT_RUN_ERROR: falta agent-result.json"
+            exit 2
+          fi
+          npm run verify:doevents-agent-prs -- "${{ github.workspace }}/route-decision.json"
+          echo "code=$(jq -r '.code' "${{ github.workspace }}/agent-verify.json")" >> "$GITHUB_OUTPUT"
+          echo "pr_opened=$(jq -r '.prOpened' "${{ github.workspace }}/agent-verify.json")" >> "$GITHUB_OUTPUT"
 
       - name: Validate domain scope (pre-merge)
         if: ${{ steps.issue.outputs.mode != 'deploy-only' }}
@@ -183,9 +211,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          npm run validate:doevents-scope -- "${{ github.workspace }}/route-decision.json"
+          npm run validate:doevents-scope -- "${{ github.workspace }}/route-decision.json" || {
+            echo "::error::SCOPE_VIOLATION: el PR toca paths FORBIDDEN"
+            exit 1
+          }
 
-          npm run validate:doevents-ui -- "${{ github.workspace }}/route-decision.json"
+          npm run validate:doevents-ui -- "${{ github.workspace }}/route-decision.json" || {
+            echo "::error::UI_INVARIANT_BREAK: el PR rompe cableado/secciones Descubre"
+            exit 1
+          }
 
       - name: Auto-merge agent PRs → NADF branch (DEV only)
         id: merge
@@ -218,8 +252,11 @@ jobs:
             local -n COUNT_REF="$2"
             local COUNT=0
             local N
+            local FOUND=0
+            local FAILED=0
             while IFS= read -r N; do
               [ -z "${N:-}" ] && continue
+              FOUND=$((FOUND + 1))
               echo "Merging $REPO#$N → $BASE (DEV only)"
               if gh pr ready "$N" --repo "$REPO" 2>/dev/null || true; then
                 :
@@ -227,7 +264,8 @@ jobs:
               if gh pr merge "$N" --repo "$REPO" --merge --delete-branch; then
                 COUNT=$((COUNT + 1))
               else
-                echo "::warning::No se pudo mergear $REPO#$N"
+                echo "::error::PR_MERGE_FAILED: no se pudo mergear $REPO#$N"
+                FAILED=$((FAILED + 1))
               fi
             done < <(
               gh pr list --repo "$REPO" --state open --base "$BASE" --limit 30 \
@@ -243,6 +281,15 @@ jobs:
                 '
             )
             COUNT_REF=$COUNT
+            if [ "$FAILED" -gt 0 ]; then
+              echo "merge_failed=true" >> "$GITHUB_OUTPUT"
+              exit 1
+            fi
+            if [ "$FOUND" -gt 0 ] && [ "$COUNT" -eq 0 ]; then
+              echo "::error::PR_MERGE_FAILED: había PR(s) del issue en $REPO pero ninguno se mergeó"
+              echo "merge_failed=true" >> "$GITHUB_OUTPUT"
+              exit 1
+            fi
           }
 
           TARGET=$(jq -r '.target' route-decision.json)
@@ -258,6 +305,7 @@ jobs:
           echo "Auto-merge DEV: WEB=$MERGED_WEB Back=$MERGED_BACK"
 
       - name: Build / validate WEB
+        id: build
         if: ${{ hashFiles('route-decision.json') != '' }}
         working-directory: web
         env:
@@ -272,10 +320,21 @@ jobs:
             npm ci
             npm run build:qa
             npm run lint --if-present
-            # Artefacto listo para deploy-dev (mismo build profile)
             npm run build:devaws
+            # Postcondition: bundle DEV cloud debe embeber env=devaws (api-dev), no default "dev" (api-qa)
+            if ! grep -Rql 'VITE_DOEVENTS_ENV:"devaws"' packages/shell/dist --include='*.js' --include='*.mjs' 2>/dev/null \
+              && ! grep -Rql 'name:"devaws"' packages/shell/dist --include='*.js' --include='*.mjs' 2>/dev/null; then
+              echo "::error::BUILD_ENV_MISMATCH: build:devaws no embebió VITE_DOEVENTS_ENV=devaws (riesgo api-qa)"
+              exit 1
+            fi
+            if ! grep -Rql 'api-dev.doeventsapp.com' packages/shell/dist --include='*.js' --include='*.mjs' 2>/dev/null; then
+              echo "::error::BUILD_ENV_MISMATCH: bundle sin api-dev.doeventsapp.com"
+              exit 1
+            fi
+            echo "ok=true" >> "$GITHUB_OUTPUT"
           else
             echo "Skip WEB build (target=$TARGET)"
+            echo "ok=skipped" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Debug OIDC claims
@@ -294,7 +353,6 @@ jobs:
 
       - name: Assume AWS DEV (OIDC)
         id: aws
-        continue-on-error: true
         if: >
           (vars.NADF_AUTO_DEPLOY_DEV != 'false') &&
           (github.event_name != 'workflow_dispatch' || inputs.skip_deploy != true)
@@ -302,6 +360,18 @@ jobs:
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: sa-east-1
+
+      - name: Fail if OIDC required but missing
+        if: >
+          always() &&
+          (vars.NADF_AUTO_DEPLOY_DEV != 'false') &&
+          (github.event_name != 'workflow_dispatch' || inputs.skip_deploy != true) &&
+          steps.aws.outcome != 'success' &&
+          steps.aws.outcome != 'skipped'
+        shell: bash
+        run: |
+          echo "::error::DEPLOY_OIDC_FAILED: no se pudo assume-role AWS (vars.AWS_ROLE_ARN / trust OIDC)"
+          exit 1
 
       - name: Deploy WEB DEV
         id: deploy
@@ -346,19 +416,25 @@ jobs:
             exit 0
           fi
           if [ ! -f packages/shell/src/pages/EventsPage.tsx ]; then
-            echo "::error::EventsPage.tsx ausente tras merge"
+            echo "::error::GATE_WIRING_FAILED: EventsPage.tsx ausente tras merge"
             exit 1
           fi
           if [ -f scripts/check-discover-wiring.mjs ]; then
-            node scripts/check-discover-wiring.mjs
+            node scripts/check-discover-wiring.mjs || {
+              echo "::error::GATE_WIRING_FAILED: check-discover-wiring"
+              exit 1
+            }
           else
-            echo "::error::Falta scripts/check-discover-wiring.mjs en la rama DEV"
+            echo "::error::GATE_WIRING_FAILED: falta scripts/check-discover-wiring.mjs en la rama DEV"
             exit 1
           fi
           if [ -f scripts/smoke-discover-marketplace.mjs ]; then
-            node scripts/smoke-discover-marketplace.mjs
+            node scripts/smoke-discover-marketplace.mjs || {
+              echo "::error::SMOKE_FAILED: smoke-discover-marketplace"
+              exit 1
+            }
           else
-            echo "::error::Falta scripts/smoke-discover-marketplace.mjs en la rama DEV"
+            echo "::error::SMOKE_FAILED: falta scripts/smoke-discover-marketplace.mjs en la rama DEV"
             exit 1
           fi
           echo "pass=true" >> "$GITHUB_OUTPUT"
@@ -385,32 +461,101 @@ jobs:
             fi
           done
 
-      - name: Final issue comment
+      - name: Final issue comment + execution report
+        id: report
         if: always()
         env:
           GH_TOKEN: ${{ secrets.GH_PAT || github.token }}
+          NADF_ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+          NADF_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          NADF_AGENT_RESULT_FILE: ${{ github.workspace }}/agent-result.json
+          NADF_AGENT_VERIFY_FILE: ${{ github.workspace }}/agent-verify.json
+          NADF_EXECUTION_REPORT_FILE: ${{ github.workspace }}/execution-report.json
+          NADF_EXECUTION_COMMENT_FILE: ${{ github.workspace }}/execution-comment.md
         shell: bash
         run: |
-          STATUS="${{ job.status }}"
-          MERGED_WEB="${{ steps.merge.outputs.merged_web || '0' }}"
-          MERGED_BACK="${{ steps.merge.outputs.merged_back || '0' }}"
-          AUTO_MERGE="${{ steps.merge.outputs.auto_merge || 'false' }}"
+          set -euo pipefail
+          # Mapear outcomes de steps → taxonomía para consola / issue
+          map_outcome() {
+            case "$1" in
+              success) echo PASS ;;
+              failure) echo FAIL ;;
+              skipped|"") echo SKIP ;;
+              *) echo WARN ;;
+            esac
+          }
+
+          export NADF_STEP_AGENT=$(map_outcome "${{ steps.agent.outcome }}")
+          export NADF_STEP_PR=$(map_outcome "${{ steps.agent_verify.outcome }}")
+          if [ "${{ steps.merge.outputs.auto_merge || 'false' }}" = "true" ]; then
+            export NADF_STEP_MERGE=$(map_outcome "${{ steps.merge.outcome }}")
+            export NADF_STEP_MERGE_DETAIL="WEB=${{ steps.merge.outputs.merged_web || '0' }} Back=${{ steps.merge.outputs.merged_back || '0' }}"
+            if [ "${{ steps.merge.outcome }}" = "failure" ]; then
+              export NADF_STEP_MERGE_CODE=PR_MERGE_FAILED
+            fi
+          else
+            export NADF_STEP_MERGE=SKIP
+            export NADF_STEP_MERGE_DETAIL="auto_merge omitido"
+          fi
+
+          export NADF_STEP_BUILD=$(map_outcome "${{ steps.build.outcome }}")
+          if [ "${{ steps.build.outcome }}" = "failure" ]; then
+            export NADF_STEP_BUILD_CODE=BUILD_FAILED
+          fi
+
           DEPLOYED="${{ steps.deploy.outputs.deployed || 'false' }}"
           AWS_OUT="${{ steps.aws.outcome || 'skipped' }}"
-          DISCOVER_GATE="${{ steps.discover_gate.outputs.pass || 'n/a' }}"
+          if [ "$DEPLOYED" = "true" ]; then
+            export NADF_STEP_DEPLOY=PASS
+          elif [ "$AWS_OUT" = "failure" ]; then
+            export NADF_STEP_DEPLOY=FAIL
+            export NADF_STEP_DEPLOY_CODE=DEPLOY_OIDC_FAILED
+            export NADF_STEP_DEPLOY_DETAIL="OIDC/assume-role falló"
+          elif [ "${{ steps.deploy.outcome }}" = "failure" ]; then
+            export NADF_STEP_DEPLOY=FAIL
+            export NADF_STEP_DEPLOY_CODE=DEPLOY_FAILED
+          elif [ "${{ vars.NADF_AUTO_DEPLOY_DEV || 'true' }}" = "false" ] || [ "${{ inputs.skip_deploy || false }}" = "true" ]; then
+            export NADF_STEP_DEPLOY=SKIP
+            export NADF_STEP_DEPLOY_CODE=DEPLOY_SKIPPED
+            export NADF_STEP_DEPLOY_DETAIL="auto_deploy desactivado o skip_deploy"
+          else
+            export NADF_STEP_DEPLOY=$(map_outcome "${{ steps.deploy.outcome }}")
+            if [ "${NADF_STEP_DEPLOY}" = "SKIP" ]; then
+              export NADF_STEP_DEPLOY_CODE=DEPLOY_SKIPPED
+            fi
+          fi
+
+          DG="${{ steps.discover_gate.outputs.pass || 'n/a' }}"
+          if [ "$DG" = "true" ]; then
+            export NADF_STEP_GATES=PASS
+          elif [ "$DG" = "skipped" ]; then
+            export NADF_STEP_GATES=SKIP
+          elif [ "${{ steps.discover_gate.outcome }}" = "failure" ]; then
+            export NADF_STEP_GATES=FAIL
+            export NADF_STEP_GATES_CODE=SMOKE_FAILED
+          else
+            export NADF_STEP_GATES=$(map_outcome "${{ steps.discover_gate.outcome }}")
+          fi
+
+          if [ -d nadf/prototypes/m6-cloud-agent ]; then
+            (cd nadf/prototypes/m6-cloud-agent && npm run report:doevents-execution) || true
+          else
+            echo "## NADF ejecución \`${{ job.status }}\`" > execution-comment.md
+            echo "" >> execution-comment.md
+            echo "- Action: $NADF_RUN_URL" >> execution-comment.md
+            echo "- (runtime NADF no disponible en este mode; comentario mínimo)" >> execution-comment.md
+          fi
+
+          # Imprimir resumen en consola Actions (visible sin abrir artifact)
+          if [ -f execution-report.json ]; then
+            echo "======== NADF EXECUTION REPORT ========"
+            jq -r '"overall=" + .overall + " code=" + .primaryCode + "\nwhy=" + .why + "\nfix=" + .fixHint' execution-report.json
+            echo "======================================="
+          fi
+
           gh issue comment "${{ steps.issue.outputs.number }}" \
             --repo arodriguez-novusintelligence/DoEventsWEB \
-            --body "## NADF ejecución \`${STATUS}\`
-
-          - Action: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          - Branch: \`feature/NovusAIDevelopmentFramework\`
-          - Auto-merge DEV: \`${AUTO_MERGE}\` (WEB PRs: ${MERGED_WEB}, Back PRs: ${MERGED_BACK})
-          - Deploy DEV WEB: \`${DEPLOYED}\` (AWS OIDC: \`${AWS_OUT}\`) → https://dev.doeventsapp.com
-          - Gate Descubre (wiring + smoke marketplace): \`${DISCOVER_GATE}\`
-          - PROD: forbidden (sin auto-deploy)
-
-          **Éxito ≠ merge.** Si el gate Descubre falla, no declarar la issue resuelta.
-          Si el deploy quedó en false, revisa la var \`AWS_ROLE_ARN\` (OIDC) en el repo."
+            --body-file execution-comment.md
 
       - name: Upload evidence
         if: always()
@@ -421,4 +566,8 @@ jobs:
             issue.json
             route-decision.json
             agent-prompt.txt
+            agent-result.json
+            agent-verify.json
+            execution-report.json
+            execution-comment.md
           if-no-files-found: ignore
