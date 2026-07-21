@@ -6,7 +6,9 @@ import path from 'path';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, path.resolve(__dirname, '../..'), '');
   const isQaBuild = mode === 'qa' || env.VITE_DOEVENTS_ENV === 'qa';
-  const doeventsEnv = isQaBuild ? 'qa' : (env.VITE_DOEVENTS_ENV || 'dev');
+  const doeventsEnv = isQaBuild
+    ? 'qa'
+    : (env.VITE_DOEVENTS_ENV || (mode === 'devaws' ? 'devaws' : 'dev'));
 
   return {
     envDir: path.resolve(__dirname, '../..'),

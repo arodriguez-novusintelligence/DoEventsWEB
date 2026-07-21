@@ -266,6 +266,7 @@ export async function fetchNearbyEvents(
 
   const applyNearbyPrivacy = async (data: Record<string, unknown>): Promise<FeedEventItem[]> => {
     const result = normalizeFeedResponse(data);
+    if (!result.items.length) return [];
     const { filterByOwnerPrivacyFailOpen } = await import('../lib/privacyVisibility');
     const visible = await filterByOwnerPrivacyFailOpen(
       result.items,
@@ -273,8 +274,10 @@ export async function fetchNearbyEvents(
       userId,
       4000,
     );
-    cacheEvents(visible);
-    return visible;
+    // Fail-open Descubre: no vaciar geo si privacy devuelve [] con ítems en feed.
+    const resolved = visible.length ? visible : result.items;
+    cacheEvents(resolved);
+    return resolved;
   };
 
   try {
@@ -297,7 +300,7 @@ export async function fetchNearbyEvents(
       method: 'POST',
       url: env.endpoints.eventsFeed,
       data: payload,
-    });
+    }, { useServiceToken: true });
     return applyNearbyPrivacy(data);
   } catch (err) {
     throw new Error(

@@ -41,7 +41,9 @@ export default defineConfig(({ mode }) => ({
   },
   define: {
     'import.meta.env.VITE_DOEVENTS_ENV': JSON.stringify(
-      process.env.DOEVENTS_ENV || (mode === 'qa' || mode === 'production' ? 'qa' : 'dev'),
+      process.env.DOEVENTS_ENV || (
+        mode === 'devaws' ? 'devaws' : mode === 'qa' || mode === 'production' ? 'qa' : 'dev'
+      ),
     ),
   },
 }));
