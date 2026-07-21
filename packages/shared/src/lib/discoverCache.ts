@@ -2,8 +2,8 @@ import type { FeedEventItem } from '../types/events';
 import type { NearbyServiceProvider } from '../api/servicesService';
 import type { NearbyVenue } from '../api/venueService';
 
-// v2: invalida cachés v1 incompletos (nearby sintetizado sin places/services de red).
-const DISCOVER_CACHE_KEY = 'doevents_discover_cache_v2';
+// v3: invalida cachés incompletos de fixes previos de eventos cercanos.
+const DISCOVER_CACHE_KEY = 'doevents_discover_cache_v3';
 const FRESH_MS = 10 * 60 * 1000;
 const STALE_MS = 60 * 60 * 1000;
 

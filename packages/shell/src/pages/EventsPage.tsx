@@ -115,7 +115,7 @@ function resolveNearbyEvents(
 }
 
 function shouldSkipDiscoverNetworkRefresh(
-  cached: {
+  _cached: {
     nearby?: FeedEventItem[];
     recommended?: FeedEventItem[];
     myEvents?: FeedEventItem[];
@@ -123,24 +123,12 @@ function shouldSkipDiscoverNetworkRefresh(
     venues?: NearbyVenue[];
     locationBoundFetched?: boolean;
   },
-  loc: StoredUserLocation | null,
-  cacheFresh: boolean,
+  _loc: StoredUserLocation | null,
+  _cacheFresh: boolean,
 ): boolean {
-  if (!cacheFresh || !hasDiscoverContent(cached)) return false;
-  // Con ubicación: no omitir red si nunca se cargaron places/services en esa entrada.
-  // Evita el caso: nearby rellenado en cliente → skip → Descubre sin lugares/servicios.
-  if (loc && cached.locationBoundFetched !== true) return false;
-  if (loc && !(cached.nearby?.length)) return false;
-  if (discoverNearbyLooksIncomplete(
-    cached.nearby || [],
-    [...(cached.recommended || []), ...normalizeDiscoverUserEvents(cached.myEvents || [])],
-    loc?.lat,
-    loc?.lng,
-    NEARBY_RADIUS_KM,
-  )) {
-    return false;
-  }
-  return true;
+  // Descubre mezcla eventos/lugares/servicios: no omitir red.
+  // Un skip prematuro (p.ej. tras sintetizar nearby) dejaba la UI sin el resto de secciones.
+  return false;
 }
 
 async function enrichProviderAvatars(
@@ -336,11 +324,18 @@ export const EventsPage: React.FC = () => {
     setRecommendedAll(mappedRecommended);
     setMyEvents(mappedMy);
     setFavorites(mappedFav);
-    const providers = groupServicesByProvider(sortedServices);
-    const enrichedProviders = await enrichProviderAvatars(providers);
-    setServiceProviders(enrichedProviders);
+    // Pintar lugares/servicios ANTES del enrich de avatares (si cuelga, las secciones ya existen).
     setNearbyServiceCards(sortedServices.map(providerToCard));
     setPublishedVenues(mergedVenues.map(nearbyVenueToPublishedDraft));
+    const providers = groupServicesByProvider(sortedServices);
+    setServiceProviders(providers);
+    void enrichProviderAvatars(providers)
+      .then((enrichedProviders) => {
+        setServiceProviders(enrichedProviders);
+      })
+      .catch(() => {
+        /* keep unenriched providers */
+      });
     void loadLikedDiscoverItems(
       mergedVenues.map((v) => v.venueId).filter(Boolean),
       sortedServices.map((s) => s.serviceId).filter(Boolean),
@@ -452,16 +447,13 @@ export const EventsPage: React.FC = () => {
     let cancelled = false;
 
     const run = async () => {
+      // Limpia cachés viejas que podían dejar Descubre a medias tras fixes de cercanos.
+      invalidateDiscoverCache();
       const stored = userLocation ?? getStoredUserLocation();
       const loc = await resolveDiscoverLocation(userId || undefined, stored);
       if (cancelled) return;
-      const locationKey = buildDiscoverLocationKey(loc?.lat, loc?.lng, userId || undefined);
-      const staleEmpty = getCachedDiscover(locationKey, true);
-      if (staleEmpty && !hasDiscoverContent(staleEmpty)) {
-        invalidateDiscoverCache();
-      }
       setEffectiveLocation(loc);
-      await load(loc);
+      await load(loc, true);
     };
     void run();
 
