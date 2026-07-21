@@ -327,6 +327,76 @@ jobs:
             echo "deployed=false" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Gate Descubre wiring + marketplace smoke
+        id: discover_gate
+        if: always()
+        working-directory: web
+        shell: bash
+        env:
+          DISCOVER_SMOKE_API: ${{ vars.DISCOVER_SMOKE_API || 'https://api-dev.doeventsapp.com' }}
+        run: |
+          set -euo pipefail
+          TARGET=$(jq -r '.target' ../route-decision.json 2>/dev/null || echo web)
+          if [ "$TARGET" != "web" ] && [ "$TARGET" != "both" ]; then
+            echo "Skip Descubre gate (target=$TARGET)"
+            echo "pass=skipped" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [ ! -f packages/shell/src/pages/EventsPage.tsx ]; then
+            echo "::error::EventsPage.tsx ausente tras merge — no se puede validar Descubre"
+            exit 1
+          fi
+          # Cableado FE (sin auth): detecta el fallo de “arreglar 1 cosa y apagar marketplace”.
+          node <<'NODE'
+          const fs = require("fs");
+          const page = fs.readFileSync("packages/shell/src/pages/EventsPage.tsx", "utf8");
+          const required = [
+            "fetchNearbyVenues",
+            "fetchNearbyServices",
+            "setPublishedVenues",
+            "setNearbyServiceCards",
+            "publishedVenues",
+            "nearbyServiceCards",
+          ];
+          const missing = required.filter((s) => !page.includes(s));
+          if (page.includes("shouldSkipDiscoverNetworkRefresh") && !page.includes("locationBoundFetched")) {
+            missing.push("locationBoundFetched (skip sin marketplace)");
+          }
+          const enrich = page.indexOf("await enrichProviderAvatars");
+          const paint = page.indexOf("setPublishedVenues");
+          if (enrich >= 0 && paint >= 0 && enrich < paint) {
+            missing.push("await enrichProviderAvatars antes de setPublishedVenues");
+          }
+          if (missing.length) {
+            console.error("FAIL Descubre wiring:", missing.join(", "));
+            process.exit(1);
+          }
+          console.log("PASS Descubre wiring (EventsPage)");
+          NODE
+          if [ -f scripts/smoke-discover-marketplace.mjs ]; then
+            node scripts/smoke-discover-marketplace.mjs
+          else
+            echo "::warning::Falta scripts/smoke-discover-marketplace.mjs — smoke API inline"
+            node <<'NODE'
+            const API = (process.env.DISCOVER_SMOKE_API || "https://api-dev.doeventsapp.com").replace(/\/$/, "");
+            const LAT = 4.2805, LNG = -74.774, R = 100;
+            (async () => {
+              const tok = await fetch(API + "/auth/generateToken", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" }).then(r => r.json());
+              const token = tok.token || tok.accessToken;
+              if (!token) throw new Error("no token");
+              const auth = { Authorization: token };
+              const venues = await fetch(`${API}/venues/venues?latitude=${LAT}&longitude=${LNG}&maxDistance=${R}&limit=40&status=active`, { headers: auth }).then(r => r.json());
+              const services = await fetch(`${API}/services/nearby`, { method: "POST", headers: { ...auth, "Content-Type": "application/json" }, body: JSON.stringify({ latitude: LAT, longitude: LNG, maxDistanceKm: R, limit: 40 }) }).then(r => r.json());
+              const vc = (venues.venues || []).length;
+              const sc = (services.services || services.items || []).length;
+              console.log(JSON.stringify({ api: API, venuesCount: vc, servicesCount: sc }));
+              if (vc < 1 || sc < 1) { console.error("FAIL marketplace smoke"); process.exit(1); }
+              console.log("PASS marketplace smoke");
+            })().catch((e) => { console.error(e); process.exit(1); });
+            NODE
+          fi
+          echo "pass=true" >> "$GITHUB_OUTPUT"
+
       - name: Validate Back (checkout + deps)
         if: always()
         env:
@@ -361,6 +431,7 @@ jobs:
           AUTO_MERGE="${{ steps.merge.outputs.auto_merge || 'false' }}"
           DEPLOYED="${{ steps.deploy.outputs.deployed || 'false' }}"
           AWS_OUT="${{ steps.aws.outcome || 'skipped' }}"
+          DISCOVER_GATE="${{ steps.discover_gate.outputs.pass || 'n/a' }}"
           gh issue comment "${{ steps.issue.outputs.number }}" \
             --repo arodriguez-novusintelligence/DoEventsWEB \
             --body "## NADF ejecución \`${STATUS}\`
@@ -369,8 +440,10 @@ jobs:
           - Branch: \`feature/NovusAIDevelopmentFramework\`
           - Auto-merge DEV: \`${AUTO_MERGE}\` (WEB PRs: ${MERGED_WEB}, Back PRs: ${MERGED_BACK})
           - Deploy DEV WEB: \`${DEPLOYED}\` (AWS OIDC: \`${AWS_OUT}\`) → https://dev.doeventsapp.com
+          - Gate Descubre (wiring + smoke marketplace): \`${DISCOVER_GATE}\`
           - PROD: forbidden (sin auto-deploy)
 
+          **Éxito ≠ merge.** Si el gate Descubre falla, no declarar la issue resuelta.
           Si el deploy quedó en false, revisa la var \`AWS_ROLE_ARN\` (OIDC) en el repo."
 
       - name: Upload evidence
