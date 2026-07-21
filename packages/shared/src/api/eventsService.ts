@@ -247,6 +247,22 @@ async function requestEventsFeed(userId: string | undefined, offset: number, lim
   }
 }
 
+async function applyNearbyFeedPrivacy(
+  data: Record<string, unknown>,
+  userId?: string,
+): Promise<FeedEventItem[]> {
+  const result = normalizeFeedResponse(data);
+  const { filterByOwnerPrivacyFailOpen } = await import('../lib/privacyVisibility');
+  const visible = await filterByOwnerPrivacyFailOpen(
+    result.items,
+    (item) => item.userId,
+    userId,
+    4000,
+  );
+  cacheEvents(visible);
+  return visible;
+}
+
 export async function fetchNearbyEvents(
   latitude: number,
   longitude: number,
@@ -264,45 +280,49 @@ export async function fetchNearbyEvents(
     userLocation: { latitude, longitude },
   };
 
-  const applyNearbyPrivacy = async (data: Record<string, unknown>): Promise<FeedEventItem[]> => {
-    const result = normalizeFeedResponse(data);
-    const { filterByOwnerPrivacyFailOpen } = await import('../lib/privacyVisibility');
-    const visible = await filterByOwnerPrivacyFailOpen(
-      result.items,
-      (item) => item.userId,
-      userId,
-      4000,
-    );
-    cacheEvents(visible);
-    return visible;
-  };
-
+  const authTokens: Array<string | undefined> = [];
+  const userToken = getAuthToken().trim();
+  if (userToken) authTokens.push(userToken);
   try {
-    const response = await fetch(env.endpoints.eventsFeed, {
-      method: 'POST',
-      headers: authHeaders(),
-      body: JSON.stringify(payload),
-    });
-
-    if (response.ok) {
-      const data = await response.json() as Record<string, unknown>;
-      return applyNearbyPrivacy(data);
-    }
+    const serviceToken = await fetchServiceToken();
+    if (serviceToken) authTokens.push(serviceToken);
   } catch {
-    // Red/CORS: intentar vía apiRequest (mismo patrón que requestEventsFeed).
+    // token de servicio opcional
+  }
+  authTokens.push(undefined);
+
+  const seenTokens = new Set<string>();
+  for (const token of authTokens) {
+    const tokenKey = token || '__public__';
+    if (seenTokens.has(tokenKey)) continue;
+    seenTokens.add(tokenKey);
+
+    try {
+      const response = await fetch(env.endpoints.eventsFeed, {
+        method: 'POST',
+        headers: authHeaders({ token }),
+        body: JSON.stringify(payload),
+      });
+      if (response.ok) {
+        const data = await response.json().catch(() => null) as Record<string, unknown> | null;
+        if (data) {
+          return applyNearbyFeedPrivacy(data, userId);
+        }
+      }
+    } catch {
+      // Red/CORS: probar siguiente credencial o apiRequest al final.
+    }
   }
 
   try {
     const data = await apiRequest<Record<string, unknown>>({
       method: 'POST',
-      url: env.endpoints.eventsFeed,
+      url: '/events-feed/eventsFeed',
       data: payload,
-    });
-    return applyNearbyPrivacy(data);
-  } catch (err) {
-    throw new Error(
-      err instanceof Error ? err.message : 'Error al cargar eventos cercanos',
-    );
+    }, { useServiceToken: !getAuthToken().trim() });
+    return applyNearbyFeedPrivacy(data, userId);
+  } catch {
+    throw new Error('Error al cargar eventos cercanos');
   }
 }
 

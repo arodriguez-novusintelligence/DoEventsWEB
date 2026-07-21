@@ -10,6 +10,7 @@ export const PUBLISHED_EVENT_STATUSES = new Set([
   'en_ejecucion',
   'en ejecucion',
   'ejecucion',
+  'in_progress',
 ]);
 
 export function isPublishedEventStatus(estatus?: string | null): boolean {
