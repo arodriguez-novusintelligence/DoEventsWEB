@@ -38,9 +38,12 @@ permissions:
   pull-requests: write
   id-token: write
 
+# Incluir label/action en el group: al crear un issue con `nadf`+`bug`, GitHub
+# dispara dos `labeled`. Si el group es solo el número, cancel-in-progress mata
+# el run de `nadf` cuando llega el de `bug` (que luego queda skipped).
 concurrency:
-  group: nadf-doevents-issue-${{ github.event.issue.number || inputs.issue_number }}
-  cancel-in-progress: true
+  group: nadf-doevents-issue-${{ github.event.issue.number || inputs.issue_number }}-${{ github.event_name == 'issues' && github.event.label.name || github.event.action || inputs.mode || 'dispatch' }}
+  cancel-in-progress: false
 
 jobs:
   nadf:
