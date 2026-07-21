@@ -65,7 +65,24 @@ import DiscoverServiceDetailOverlay from '../components/DiscoverServiceDetailOve
 const NEARBY_RADIUS_KM = 100;
 const NEARBY_FETCH_LIMIT = 80;
 const DISCOVER_FEED_LIMIT = 100;
+const DISCOVER_FETCH_TIMEOUT_MS = 12_000;
 const FAVORITE_REFRESH_EVENT = EVENT_FAVORITE_CHANGED_EVENT;
+
+function withTimeout<T>(promise: Promise<T>, fallback: T, ms = DISCOVER_FETCH_TIMEOUT_MS): Promise<T> {
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => resolve(fallback), ms);
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      () => {
+        clearTimeout(timer);
+        resolve(fallback);
+      },
+    );
+  });
+}
 
 function sortEventsByDistance(items: FeedEventItem[]): FeedEventItem[] {
   return [...items].sort((a, b) => (a.distancia ?? Infinity) - (b.distancia ?? Infinity));
@@ -376,33 +393,52 @@ export const EventsPage: React.FC = () => {
 
     setLoading(true);
     try {
+      const emptyFeed = { items: [] as FeedEventItem[] };
+      const emptyMine = { data: { datosEvento: [] as FeedEventItem[] } };
       const [nearbyRes, feedRes, mineRes, favRes, servicesRes, venuesRes] = await Promise.all([
         loc
-          ? fetchNearbyEvents(loc.lat, loc.lng, NEARBY_RADIUS_KM, userId || undefined, NEARBY_FETCH_LIMIT).catch((err) => {
-            console.warn('[Descubre] fetchNearbyEvents falló', err);
-            return [] as FeedEventItem[];
-          })
-          : Promise.resolve([]),
-        fetchEventsFeed(userId || undefined, 0, DISCOVER_FEED_LIMIT, { forceNetwork: true }).catch(() => ({ items: [] as FeedEventItem[] })),
+          ? withTimeout(
+            fetchNearbyEvents(loc.lat, loc.lng, NEARBY_RADIUS_KM, userId || undefined, NEARBY_FETCH_LIMIT)
+              .catch((err) => {
+                console.warn('[Descubre] fetchNearbyEvents falló', err);
+                return [] as FeedEventItem[];
+              }),
+            [] as FeedEventItem[],
+          )
+          : Promise.resolve([] as FeedEventItem[]),
+        withTimeout(
+          fetchEventsFeed(userId || undefined, 0, DISCOVER_FEED_LIMIT, { forceNetwork: true })
+            .catch(() => emptyFeed),
+          emptyFeed,
+        ),
         userId
-          ? fetchUserEvents(userId, { forceNetwork: true }).catch(() => ({ data: { datosEvento: [] as FeedEventItem[] } }))
-          : Promise.resolve({ data: { datosEvento: [] as FeedEventItem[] } }),
+          ? withTimeout(
+            fetchUserEvents(userId, { forceNetwork: true }).catch(() => emptyMine),
+            emptyMine,
+          )
+          : Promise.resolve(emptyMine),
         userId
-          ? fetchFavoriteUserEvents(userId, 40).catch(() => [])
-          : Promise.resolve([]),
+          ? withTimeout(fetchFavoriteUserEvents(userId, 40).catch(() => []), [] as FeedEventItem[])
+          : Promise.resolve([] as FeedEventItem[]),
         loc
-          ? fetchNearbyServices(loc.lat, loc.lng, NEARBY_RADIUS_KM, 40, { forceNetwork: true }).catch(() => [])
-          : Promise.resolve([]),
+          ? withTimeout(
+            fetchNearbyServices(loc.lat, loc.lng, NEARBY_RADIUS_KM, 40, { forceNetwork: true }).catch(() => []),
+            [] as NearbyServiceProvider[],
+          )
+          : Promise.resolve([] as NearbyServiceProvider[]),
         loc
-          ? fetchNearbyVenues(loc.lat, loc.lng, NEARBY_RADIUS_KM, 40, { forceNetwork: true }).catch(() => [])
-          : Promise.resolve([]),
+          ? withTimeout(
+            fetchNearbyVenues(loc.lat, loc.lng, NEARBY_RADIUS_KM, 40, { forceNetwork: true }).catch(() => []),
+            [] as NearbyVenue[],
+          )
+          : Promise.resolve([] as NearbyVenue[]),
       ]);
 
       const feedItemsRaw = filterDiscoverFeedEvents(feedRes.items || []);
-      const feedItems = await filterByOwnerPrivacy(
+      const feedItems = await withTimeout(
+        filterByOwnerPrivacy(feedItemsRaw, (item) => item.userId, userId || undefined),
         feedItemsRaw,
-        (item) => item.userId,
-        userId || undefined,
+        8_000,
       );
       const mineItems = normalizeDiscoverUserEvents(mineRes.data?.datosEvento || []);
       const favItems = filterDiscoverFeedEvents(Array.isArray(favRes) ? favRes : []);
@@ -410,7 +446,11 @@ export const EventsPage: React.FC = () => {
       const sortedServices = sortServicesByDistance(servicesRes);
       let mergedVenues = sortVenuesByDistance(venuesRes);
       if (userId) {
-        const ownVenues = await fetchOwnerRentalVenues(userId).catch(() => []);
+        const ownVenues = await withTimeout(
+          fetchOwnerRentalVenues(userId).catch(() => []),
+          [] as NearbyVenue[],
+          8_000,
+        );
         mergedVenues = sortVenuesByDistance(mergeVenuesById(mergedVenues, ownVenues));
       }
 
@@ -447,12 +487,34 @@ export const EventsPage: React.FC = () => {
     let cancelled = false;
 
     const run = async () => {
-      // Limpia cachés viejas que podían dejar Descubre a medias tras fixes de cercanos.
-      invalidateDiscoverCache();
       const stored = userLocation ?? getStoredUserLocation();
       const loc = await resolveDiscoverLocation(userId || undefined, stored);
       if (cancelled) return;
       setEffectiveLocation(loc);
+      // 1) Pintar caché v3 al instante (si hay) para que las secciones existan.
+      // 2) Luego red con timeouts (force) para no quedarnos colgados en un fetch.
+      const locationKey = buildDiscoverLocationKey(loc?.lat, loc?.lng, userId || undefined);
+      const cached = getCachedDiscover(locationKey, true);
+      if (cached && hasDiscoverContent(cached)) {
+        const cachedRecommended = filterDiscoverFeedEvents(cached.recommended || []);
+        const sortedNearby = resolveNearbyEvents(
+          cached.nearby || [],
+          cachedRecommended,
+          loc,
+          normalizeDiscoverUserEvents(cached.myEvents || []),
+        );
+        await applyDiscoverPayload(
+          loc,
+          sortedNearby,
+          cachedRecommended,
+          cached.myEvents || [],
+          cached.favorites || [],
+          sortServicesByDistance(cached.services || []),
+          sortVenuesByDistance(cached.venues || []),
+        );
+        if (!cancelled) setLoading(false);
+      }
+      if (cancelled) return;
       await load(loc, true);
     };
     void run();
