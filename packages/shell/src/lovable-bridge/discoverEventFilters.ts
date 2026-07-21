@@ -192,7 +192,7 @@ function mergeCatalogEvents(
   return merged;
 }
 
-/** Resuelve eventos cercanos: API geo + catálogo del feed + eventos propios como fallback. */
+/** Resuelve eventos cercanos: API geo + catálogo solo como fallback si geo viene vacío/incompleto. */
 export function mergeDiscoverNearbyEvents(options: {
   apiNearby?: FeedEventItem[];
   catalog?: FeedEventItem[];
@@ -209,12 +209,25 @@ export function mergeDiscoverNearbyEvents(options: {
 
   if (!loc) return sortEventsByDistance(filtered);
 
+  // Si la API geo ya trae resultados en rango, no absorber todo el feed en "cercanos"
+  // (eso vaciaba recomendados/otros y ensuciaba el resto de Descubre).
+  const fromApi = buildNearbyEventsFromCatalog(
+    [],
+    loc.lat,
+    loc.lng,
+    radiusKm,
+    sortEventsByDistance(filtered),
+  );
   const mergedCatalog = mergeCatalogEvents(catalog, supplementalCatalog);
+  if (fromApi.length > 0 && !discoverNearbyLooksIncomplete(fromApi, mergedCatalog, loc.lat, loc.lng, radiusKm)) {
+    return fromApi;
+  }
+
   return buildNearbyEventsFromCatalog(
     mergedCatalog,
     loc.lat,
     loc.lng,
     radiusKm,
-    sortEventsByDistance(filtered),
+    fromApi,
   );
 }

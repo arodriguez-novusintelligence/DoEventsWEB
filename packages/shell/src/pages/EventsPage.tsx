@@ -121,11 +121,15 @@ function shouldSkipDiscoverNetworkRefresh(
     myEvents?: FeedEventItem[];
     services?: NearbyServiceProvider[];
     venues?: NearbyVenue[];
+    locationBoundFetched?: boolean;
   },
   loc: StoredUserLocation | null,
   cacheFresh: boolean,
 ): boolean {
   if (!cacheFresh || !hasDiscoverContent(cached)) return false;
+  // Con ubicación: no omitir red si nunca se cargaron places/services en esa entrada.
+  // Evita el caso: nearby rellenado en cliente → skip → Descubre sin lugares/servicios.
+  if (loc && cached.locationBoundFetched !== true) return false;
   if (loc && !(cached.nearby?.length)) return false;
   if (discoverNearbyLooksIncomplete(
     cached.nearby || [],
@@ -425,6 +429,7 @@ export const EventsPage: React.FC = () => {
         favorites: favItems,
         services: sortedServices,
         venues: mergedVenues,
+        locationBoundFetched: Boolean(loc),
       });
     } catch (err) {
       showToast(err instanceof Error ? err.message : 'No se pudo cargar Descubre', 'error');
