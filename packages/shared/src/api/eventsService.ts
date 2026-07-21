@@ -272,11 +272,12 @@ export async function fetchNearbyEvents(
 
   const data = await response.json() as Record<string, unknown>;
   const result = normalizeFeedResponse(data);
-  const { filterByOwnerPrivacy } = await import('../lib/privacyVisibility');
-  const visible = await filterByOwnerPrivacy(
+  const { filterByOwnerPrivacyFailOpen } = await import('../lib/privacyVisibility');
+  const visible = await filterByOwnerPrivacyFailOpen(
     result.items,
     (item) => item.userId,
     userId,
+    4000,
   );
   cacheEvents(visible);
   return visible;

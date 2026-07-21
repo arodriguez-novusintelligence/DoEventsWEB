@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { useSelector } from 'react-redux';
@@ -92,6 +92,20 @@ function hasDiscoverContent(cached: {
   );
 }
 
+function mergeDiscoverSupplementalCatalog(
+  catalog: FeedEventItem[],
+  supplementalCatalog: FeedEventItem[] = [],
+): FeedEventItem[] {
+  const mergedCatalog = [...catalog];
+  const seen = new Set(catalog.map((event) => event.id).filter(Boolean));
+  for (const event of supplementalCatalog) {
+    if (!event.id || seen.has(event.id)) continue;
+    mergedCatalog.push(event);
+    seen.add(event.id);
+  }
+  return mergedCatalog;
+}
+
 function resolveNearbyEvents(
   apiNearby: FeedEventItem[],
   catalog: FeedEventItem[],
@@ -100,15 +114,8 @@ function resolveNearbyEvents(
 ): FeedEventItem[] {
   const filtered = filterDiscoverFeedEvents(apiNearby);
   if (!loc) return sortEventsByDistance(filtered);
-  const mergedCatalog = [...catalog];
-  const seen = new Set(catalog.map((event) => event.id).filter(Boolean));
-  for (const event of supplementalCatalog) {
-    if (!event.id || seen.has(event.id)) continue;
-    mergedCatalog.push(event);
-    seen.add(event.id);
-  }
   return buildNearbyEventsFromCatalog(
-    mergedCatalog,
+    mergeDiscoverSupplementalCatalog(catalog, supplementalCatalog),
     loc.lat,
     loc.lng,
     NEARBY_RADIUS_KM,
@@ -120,6 +127,8 @@ function shouldSkipDiscoverNetworkRefresh(
   cached: {
     nearby?: FeedEventItem[];
     recommended?: FeedEventItem[];
+    myEvents?: FeedEventItem[];
+    favorites?: FeedEventItem[];
     services?: NearbyServiceProvider[];
     venues?: NearbyVenue[];
     locationBoundFetched?: boolean;
@@ -131,12 +140,17 @@ function shouldSkipDiscoverNetworkRefresh(
   // Con ubicación: no saltar si nunca se completó el fetch geo de lugares/servicios.
   // Antes se saltaba solo por tener eventos sintetizados → Descubre sin marketplace.
   if (loc && !cached.locationBoundFetched) return false;
+  const supplementalCatalog = filterDiscoverFeedEvents([
+    ...(cached.myEvents || []),
+    ...(cached.favorites || []),
+  ]);
   if (discoverNearbyLooksIncomplete(
     cached.nearby || [],
     cached.recommended || [],
     loc?.lat,
     loc?.lng,
     NEARBY_RADIUS_KM,
+    supplementalCatalog,
   )) {
     return false;
   }
@@ -187,6 +201,7 @@ export const EventsPage: React.FC = () => {
   const [likedServiceIds, setLikedServiceIds] = useState<Set<string>>(new Set());
   const [discoverService, setDiscoverService] = useState<{ id: string; openBooking?: boolean } | null>(null);
   const [effectiveLocation, setEffectiveLocation] = useState<StoredUserLocation | null>(() => getStoredUserLocation());
+  const loadGenerationRef = useRef(0);
 
   const recommendedCarousel = useMemo(() => splitRecommendedCarousel(recommendedAll), [recommendedAll]);
   const upcomingEvents = useMemo(() => buildUpcomingDiscoverEvents(myEvents), [myEvents]);
@@ -356,20 +371,29 @@ export const EventsPage: React.FC = () => {
   };
 
   const load = async (loc: StoredUserLocation | null, forceNetwork = false) => {
+    const generation = ++loadGenerationRef.current;
+    const isCurrentLoad = () => generation === loadGenerationRef.current;
+
     setEffectiveLocation(loc);
     const locationKey = buildDiscoverLocationKey(loc?.lat, loc?.lng, userId || undefined);
     const cacheFresh = !forceNetwork && isDiscoverCacheFresh(locationKey);
+    const supplementalFromCache = (cachedMy: FeedEventItem[], cachedFav: FeedEventItem[]) => (
+      filterDiscoverFeedEvents([...cachedMy, ...cachedFav])
+    );
 
     if (!forceNetwork) {
       const cached = getCachedDiscover(locationKey, true);
       if (cached) {
         const cachedRecommended = filterDiscoverFeedEvents(cached.recommended || []);
+        const cachedMine = filterDiscoverFeedEvents(cached.myEvents || []);
+        const cachedFav = filterDiscoverFeedEvents(cached.favorites || []);
         const sortedNearby = resolveNearbyEvents(
           cached.nearby || [],
           cachedRecommended,
           loc,
-          filterDiscoverFeedEvents(cached.myEvents || []),
+          supplementalFromCache(cachedMine, cachedFav),
         );
+        if (!isCurrentLoad()) return;
         await applyDiscoverPayload(
           loc,
           sortedNearby,
@@ -379,6 +403,7 @@ export const EventsPage: React.FC = () => {
           sortServicesByDistance(cached.services || []),
           sortVenuesByDistance(cached.venues || []),
         );
+        if (!isCurrentLoad()) return;
         setLoading(false);
         if (shouldSkipDiscoverNetworkRefresh(cached, loc, cacheFresh)) {
           return;
@@ -410,6 +435,8 @@ export const EventsPage: React.FC = () => {
           : Promise.resolve([]),
       ]);
 
+      if (!isCurrentLoad()) return;
+
       const feedItemsRaw = filterDiscoverFeedEvents(feedRes.items || []);
       const feedItems = await filterByOwnerPrivacyFailOpen(
         feedItemsRaw,
@@ -417,18 +444,28 @@ export const EventsPage: React.FC = () => {
         userId || undefined,
         4000,
       );
+      if (!isCurrentLoad()) return;
+
       const mineItems = filterDiscoverFeedEvents(mineRes.data?.datosEvento || []);
       const favItems = filterDiscoverFeedEvents(Array.isArray(favRes) ? favRes : []);
-      const sortedNearby = resolveNearbyEvents(nearbyRes, feedItems, loc, mineItems);
+      const sortedNearby = resolveNearbyEvents(
+        nearbyRes,
+        feedItems,
+        loc,
+        supplementalFromCache(mineItems, favItems),
+      );
       const sortedServices = sortServicesByDistance(servicesRes);
       let mergedVenues = sortVenuesByDistance(venuesRes);
       if (userId) {
         const ownVenues = await fetchOwnerRentalVenues(userId).catch(() => []);
+        if (!isCurrentLoad()) return;
         mergedVenues = sortVenuesByDistance(mergeVenuesById(mergedVenues, ownVenues));
       }
 
+      if (!isCurrentLoad()) return;
       await applyDiscoverPayload(loc, sortedNearby, feedItems, mineItems, favItems, sortedServices, mergedVenues);
 
+      if (!isCurrentLoad()) return;
       cacheDiscover({
         locationKey,
         nearby: sortedNearby,
@@ -440,9 +477,12 @@ export const EventsPage: React.FC = () => {
         locationBoundFetched: Boolean(loc),
       });
     } catch (err) {
+      if (!isCurrentLoad()) return;
       showToast(err instanceof Error ? err.message : 'No se pudo cargar Descubre', 'error');
     } finally {
-      setLoading(false);
+      if (isCurrentLoad()) {
+        setLoading(false);
+      }
     }
   };
 
