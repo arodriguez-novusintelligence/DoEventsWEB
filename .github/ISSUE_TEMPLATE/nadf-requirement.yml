@@ -37,13 +37,17 @@ body:
       value: |
         - 
         - No se eliminan ni rompen otras funcionalidades
+        - En Descubre (`/events`) se conservan las secciones existentes (Favoritos, Lugares, Eventos cercanos, Servicios, Perfiles, Recomendados, Otros) salvo que este issue pida quitar una explícitamente
     validations:
       required: true
   - type: textarea
     id: out_of_scope
     attributes:
       label: Fuera de alcance
-      placeholder: Lo que NO debe tocarse
+      description: Lista explícita. Ej. lugares, servicios, mapa, auth.
+      value: |
+        - 
+      placeholder: Lugares cercanos, servicios cercanos, mapa, auth…
   - type: markdown
     attributes:
       value: "Entorno: **DEV** únicamente. PROD prohibido."

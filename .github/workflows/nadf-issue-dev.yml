@@ -182,6 +182,8 @@ jobs:
           set -euo pipefail
           npm run validate:doevents-scope -- "${{ github.workspace }}/route-decision.json"
 
+          npm run validate:doevents-ui -- "${{ github.workspace }}/route-decision.json"
+
       - name: Auto-merge agent PRs → NADF branch (DEV only)
         id: merge
         if: ${{ steps.issue.outputs.mode != 'deploy-only' }}
