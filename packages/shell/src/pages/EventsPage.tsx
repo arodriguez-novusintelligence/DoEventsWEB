@@ -137,6 +137,7 @@ function shouldSkipDiscoverNetworkRefresh(
   cacheFresh: boolean,
 ): boolean {
   if (!cacheFresh || !hasDiscoverContent(cached)) return false;
+  if (loc && !(cached.nearby?.length)) return false;
   // Con ubicación: no saltar si nunca se completó el fetch geo de lugares/servicios.
   // Antes se saltaba solo por tener eventos sintetizados → Descubre sin marketplace.
   if (loc && !cached.locationBoundFetched) return false;

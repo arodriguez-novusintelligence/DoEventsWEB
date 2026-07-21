@@ -149,6 +149,7 @@ function mapRawEvent(raw: Record<string, unknown>): FeedEventItem {
     id: String(raw.id || ''),
     nombre: String(raw.nombre || raw.name || 'Evento'),
     fechaIni: raw.fechaIni as string | undefined,
+    fechaFin: raw.fechaFin as string | undefined,
     horaIni: raw.horaIni as string | undefined,
     ciudad: raw.ciudad as string | undefined,
     departamento: raw.departamento as string | undefined,
@@ -159,7 +160,11 @@ function mapRawEvent(raw: Record<string, unknown>): FeedEventItem {
     horaFin: raw.horaFin as string | undefined,
     direccion: raw.direccion as string | undefined,
     pais: raw.pais as string | undefined,
-    userId: raw.userId as string | undefined,
+    userId: (
+      raw.userId
+      || raw.user_id
+      || raw.createdBy
+    ) as string | undefined,
     estatus: raw.estatus as string | undefined,
     Categoria: raw.Categoria as string | undefined,
     tipoEvento: raw.tipoEvento as string | undefined,
@@ -259,28 +264,46 @@ export async function fetchNearbyEvents(
     userLocation: { latitude, longitude },
   };
 
-  const response = await fetch(env.endpoints.eventsFeed, {
-    method: 'POST',
-    headers: authHeaders(),
-    body: JSON.stringify(payload),
-  });
+  const applyNearbyPrivacy = async (data: Record<string, unknown>): Promise<FeedEventItem[]> => {
+    const result = normalizeFeedResponse(data);
+    const { filterByOwnerPrivacyFailOpen } = await import('../lib/privacyVisibility');
+    const visible = await filterByOwnerPrivacyFailOpen(
+      result.items,
+      (item) => item.userId,
+      userId,
+      4000,
+    );
+    cacheEvents(visible);
+    return visible;
+  };
 
-  if (!response.ok) {
-    const errText = await response.text().catch(() => '');
-    throw new Error(errText || `Error al cargar eventos cercanos (${response.status})`);
+  try {
+    const response = await fetch(env.endpoints.eventsFeed, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify(payload),
+    });
+
+    if (response.ok) {
+      const data = await response.json() as Record<string, unknown>;
+      return applyNearbyPrivacy(data);
+    }
+  } catch {
+    // Red/CORS: intentar vía apiRequest (mismo patrón que requestEventsFeed).
   }
 
-  const data = await response.json() as Record<string, unknown>;
-  const result = normalizeFeedResponse(data);
-  const { filterByOwnerPrivacyFailOpen } = await import('../lib/privacyVisibility');
-  const visible = await filterByOwnerPrivacyFailOpen(
-    result.items,
-    (item) => item.userId,
-    userId,
-    4000,
-  );
-  cacheEvents(visible);
-  return visible;
+  try {
+    const data = await apiRequest<Record<string, unknown>>({
+      method: 'POST',
+      url: env.endpoints.eventsFeed,
+      data: payload,
+    });
+    return applyNearbyPrivacy(data);
+  } catch (err) {
+    throw new Error(
+      err instanceof Error ? err.message : 'Error al cargar eventos cercanos',
+    );
+  }
 }
 
 export async function fetchEventsFeed(

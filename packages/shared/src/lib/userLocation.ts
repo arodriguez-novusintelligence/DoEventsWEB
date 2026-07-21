@@ -84,6 +84,16 @@ export async function applyProfileCityAsLocation(
   return resolveManualUserLocation(query);
 }
 
+async function isGeolocationPermissionGranted(): Promise<boolean> {
+  if (typeof navigator === 'undefined' || !navigator.permissions?.query) return false;
+  try {
+    const status = await navigator.permissions.query({ name: 'geolocation' });
+    return status.state === 'granted';
+  } catch {
+    return false;
+  }
+}
+
 export async function resolveUserLocation(options?: {
   fallbackCity?: string;
   profileCity?: string;
@@ -94,7 +104,11 @@ export async function resolveUserLocation(options?: {
   const cached = getStoredUserLocation();
   if (!options?.force && cached && Date.now() - cached.updatedAt < 1000 * 60 * 30) return cached;
 
-  const tryGeolocation = options?.prompt !== false && typeof navigator !== 'undefined' && navigator.geolocation;
+  const hasGeolocation = typeof navigator !== 'undefined' && Boolean(navigator.geolocation);
+  let tryGeolocation = hasGeolocation && options?.prompt !== false;
+  if (hasGeolocation && options?.prompt === false) {
+    tryGeolocation = await isGeolocationPermissionGranted();
+  }
 
   if (tryGeolocation) {
     try {

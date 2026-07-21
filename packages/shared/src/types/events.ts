@@ -7,6 +7,7 @@ export interface FeedEventItem {
   id: string;
   nombre: string;
   fechaIni?: string;
+  fechaFin?: string;
   horaIni?: string;
   horaFin?: string;
   ciudad?: string;
