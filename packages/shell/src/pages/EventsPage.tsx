@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { useSelector } from 'react-redux';
@@ -46,7 +46,6 @@ import {
 import EventsView from '@lovable/components/feed/EventsView';
 import { feedEventToDiscoverItem } from '../lovable-bridge/discoverAdapter';
 import {
-  discoverNearbyLooksIncomplete,
   filterAndSortMyPublishedEvents,
   filterDiscoverFeedEvents,
   mergeDiscoverNearbyEvents,
@@ -105,12 +104,18 @@ function normalizeDiscoverUserEvents(items: unknown[] = []): FeedEventItem[] {
 function hasDiscoverContent(cached: {
   nearby?: FeedEventItem[];
   recommended?: FeedEventItem[];
+  myEvents?: FeedEventItem[];
+  favorites?: FeedEventItem[];
   services?: NearbyServiceProvider[];
   venues?: NearbyVenue[];
+  locationBoundFetched?: boolean;
 }): boolean {
+  if (cached.locationBoundFetched) return true;
   return Boolean(
     cached.nearby?.length
     || cached.recommended?.length
+    || cached.myEvents?.length
+    || cached.favorites?.length
     || cached.services?.length
     || cached.venues?.length,
   );
@@ -162,7 +167,7 @@ async function enrichProviderAvatars(
   });
 }
 
-async function resolveDiscoverLocation(
+async function resolveDiscoverLocationInner(
   userId?: string,
   stored?: StoredUserLocation | null,
 ): Promise<StoredUserLocation | null> {
@@ -173,6 +178,13 @@ async function resolveDiscoverLocation(
   const profile = await fetchUserById(userId).catch(() => null);
   if (!profile?.ciudad) return null;
   return applyProfileCityAsLocation(profile.ciudad, profile.departamento).catch(() => null);
+}
+
+async function resolveDiscoverLocation(
+  userId?: string,
+  stored?: StoredUserLocation | null,
+): Promise<StoredUserLocation | null> {
+  return withTimeout(resolveDiscoverLocationInner(userId, stored), null, 8_000);
 }
 
 export const EventsPage: React.FC = () => {
@@ -192,6 +204,7 @@ export const EventsPage: React.FC = () => {
   const [likedServiceIds, setLikedServiceIds] = useState<Set<string>>(new Set());
   const [discoverService, setDiscoverService] = useState<{ id: string; openBooking?: boolean } | null>(null);
   const [effectiveLocation, setEffectiveLocation] = useState<StoredUserLocation | null>(() => getStoredUserLocation());
+  const hasPaintedDiscoverRef = useRef(false);
 
   const recommendedCarousel = useMemo(() => splitRecommendedCarousel(recommendedAll), [recommendedAll]);
   const upcomingEvents = useMemo(() => buildUpcomingDiscoverEvents(myEvents), [myEvents]);
@@ -384,6 +397,7 @@ export const EventsPage: React.FC = () => {
           sortServicesByDistance(cached.services || []),
           sortVenuesByDistance(cached.venues || []),
         );
+        hasPaintedDiscoverRef.current = true;
         setLoading(false);
         if (shouldSkipDiscoverNetworkRefresh(cached, loc, cacheFresh)) {
           return;
@@ -391,7 +405,10 @@ export const EventsPage: React.FC = () => {
       }
     }
 
-    setLoading(true);
+    const isBackgroundRefresh = forceNetwork && hasPaintedDiscoverRef.current;
+    if (!isBackgroundRefresh) {
+      setLoading(true);
+    }
     try {
       const emptyFeed = { items: [] as FeedEventItem[] };
       const emptyMine = { data: { datosEvento: [] as FeedEventItem[] } };
@@ -469,6 +486,7 @@ export const EventsPage: React.FC = () => {
     } catch (err) {
       showToast(err instanceof Error ? err.message : 'No se pudo cargar Descubre', 'error');
     } finally {
+      hasPaintedDiscoverRef.current = true;
       setLoading(false);
     }
   };
@@ -512,6 +530,7 @@ export const EventsPage: React.FC = () => {
           sortServicesByDistance(cached.services || []),
           sortVenuesByDistance(cached.venues || []),
         );
+        hasPaintedDiscoverRef.current = true;
         if (!cancelled) setLoading(false);
       }
       if (cancelled) return;
@@ -588,7 +607,7 @@ export const EventsPage: React.FC = () => {
         otherEvents={otherEvents}
         publishedVenues={publishedVenues}
         nearbyServiceCards={nearbyServiceCards}
-        servicesLoading={loading}
+        servicesLoading={loading && !nearbyServiceCards.length && !serviceProviders.length}
         discoverLoading={loading}
         hasUserLocation={Boolean(effectiveLocation ?? userLocation)}
         nearbyRadiusKm={NEARBY_RADIUS_KM}
