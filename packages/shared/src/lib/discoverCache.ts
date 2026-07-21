@@ -2,8 +2,8 @@ import type { FeedEventItem } from '../types/events';
 import type { NearbyServiceProvider } from '../api/servicesService';
 import type { NearbyVenue } from '../api/venueService';
 
-// v5: invalida cachés que saltaban red con eventos pero sin lugares/servicios.
-const DISCOVER_CACHE_KEY = 'doevents_discover_cache_v5';
+// v6: invalida cachés con nearby=[] pese a catálogo geo válido (issue Descubre eventos cercanos).
+const DISCOVER_CACHE_KEY = 'doevents_discover_cache_v6';
 const FRESH_MS = 10 * 60 * 1000;
 const STALE_MS = 60 * 60 * 1000;
 

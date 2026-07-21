@@ -52,8 +52,9 @@ function eventDistanceKm(
   if (event.distancia != null && Number.isFinite(event.distancia)) {
     return event.distancia;
   }
-  const elat = Number(event.latitude ?? event.ubicacion?.latitude);
-  const elng = Number(event.longitude ?? event.ubicacion?.longitude);
+  const ubicacion = event.ubicacion as { latitude?: unknown; longitude?: unknown; lat?: unknown; lng?: unknown } | undefined;
+  const elat = Number(event.latitude ?? ubicacion?.latitude ?? ubicacion?.lat);
+  const elng = Number(event.longitude ?? ubicacion?.longitude ?? ubicacion?.lng);
   if (Number.isFinite(elat) && Number.isFinite(elng)) {
     return haversineKm(lat, lng, elat, elng);
   }
@@ -130,14 +131,30 @@ export function buildNearbyEventsFromCatalog(
   return merged.sort((a, b) => (a.distancia ?? Infinity) - (b.distancia ?? Infinity));
 }
 
+function mergeDiscoverCatalogSources(
+  primary: FeedEventItem[],
+  supplemental: FeedEventItem[] = [],
+): FeedEventItem[] {
+  const merged = [...primary];
+  const seen = new Set(primary.map((event) => event.id).filter(Boolean));
+  for (const event of supplemental) {
+    if (!event.id || seen.has(event.id)) continue;
+    merged.push(event);
+    seen.add(event.id);
+  }
+  return merged;
+}
+
 export function discoverNearbyLooksIncomplete(
   nearby: FeedEventItem[],
   catalog: FeedEventItem[],
   lat?: number,
   lng?: number,
   radiusKm = 100,
+  supplementalCatalog: FeedEventItem[] = [],
 ): boolean {
   if (lat == null || lng == null) return false;
   if (nearby.length > 0) return false;
-  return buildNearbyEventsFromCatalog(catalog, lat, lng, radiusKm).length > 0;
+  const mergedCatalog = mergeDiscoverCatalogSources(catalog, supplementalCatalog);
+  return buildNearbyEventsFromCatalog(mergedCatalog, lat, lng, radiusKm).length > 0;
 }
