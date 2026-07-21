@@ -346,57 +346,20 @@ jobs:
             exit 0
           fi
           if [ ! -f packages/shell/src/pages/EventsPage.tsx ]; then
-            echo "::error::EventsPage.tsx ausente tras merge — no se puede validar Descubre"
+            echo "::error::EventsPage.tsx ausente tras merge"
             exit 1
           fi
-          # Cableado FE (sin auth): detecta el fallo de “arreglar 1 cosa y apagar marketplace”.
-          node <<'NODE'
-          const fs = require("fs");
-          const page = fs.readFileSync("packages/shell/src/pages/EventsPage.tsx", "utf8");
-          const required = [
-            "fetchNearbyVenues",
-            "fetchNearbyServices",
-            "setPublishedVenues",
-            "setNearbyServiceCards",
-            "publishedVenues",
-            "nearbyServiceCards",
-          ];
-          const missing = required.filter((s) => !page.includes(s));
-          if (page.includes("shouldSkipDiscoverNetworkRefresh") && !page.includes("locationBoundFetched")) {
-            missing.push("locationBoundFetched (skip sin marketplace)");
-          }
-          const enrich = page.indexOf("await enrichProviderAvatars");
-          const paint = page.indexOf("setPublishedVenues");
-          if (enrich >= 0 && paint >= 0 && enrich < paint) {
-            missing.push("await enrichProviderAvatars antes de setPublishedVenues");
-          }
-          if (missing.length) {
-            console.error("FAIL Descubre wiring:", missing.join(", "));
-            process.exit(1);
-          }
-          console.log("PASS Descubre wiring (EventsPage)");
-          NODE
+          if [ -f scripts/check-discover-wiring.mjs ]; then
+            node scripts/check-discover-wiring.mjs
+          else
+            echo "::error::Falta scripts/check-discover-wiring.mjs en la rama DEV"
+            exit 1
+          fi
           if [ -f scripts/smoke-discover-marketplace.mjs ]; then
             node scripts/smoke-discover-marketplace.mjs
           else
-            echo "::warning::Falta scripts/smoke-discover-marketplace.mjs — smoke API inline"
-            node <<'NODE'
-            const API = (process.env.DISCOVER_SMOKE_API || "https://api-dev.doeventsapp.com").replace(/\/$/, "");
-            const LAT = 4.2805, LNG = -74.774, R = 100;
-            (async () => {
-              const tok = await fetch(API + "/auth/generateToken", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" }).then(r => r.json());
-              const token = tok.token || tok.accessToken;
-              if (!token) throw new Error("no token");
-              const auth = { Authorization: token };
-              const venues = await fetch(`${API}/venues/venues?latitude=${LAT}&longitude=${LNG}&maxDistance=${R}&limit=40&status=active`, { headers: auth }).then(r => r.json());
-              const services = await fetch(`${API}/services/nearby`, { method: "POST", headers: { ...auth, "Content-Type": "application/json" }, body: JSON.stringify({ latitude: LAT, longitude: LNG, maxDistanceKm: R, limit: 40 }) }).then(r => r.json());
-              const vc = (venues.venues || []).length;
-              const sc = (services.services || services.items || []).length;
-              console.log(JSON.stringify({ api: API, venuesCount: vc, servicesCount: sc }));
-              if (vc < 1 || sc < 1) { console.error("FAIL marketplace smoke"); process.exit(1); }
-              console.log("PASS marketplace smoke");
-            })().catch((e) => { console.error(e); process.exit(1); });
-            NODE
+            echo "::error::Falta scripts/smoke-discover-marketplace.mjs en la rama DEV"
+            exit 1
           fi
           echo "pass=true" >> "$GITHUB_OUTPUT"
 
