@@ -40,23 +40,35 @@ function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): nu
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
+function readEventCoordinates(event: FeedEventItem): { lat: number; lng: number } | null {
+  const ubicacion = event.ubicacion as { latitude?: unknown; longitude?: unknown; lat?: unknown; lng?: unknown } | undefined;
+  const lat = Number(event.latitude ?? ubicacion?.latitude ?? ubicacion?.lat);
+  const lng = Number(event.longitude ?? ubicacion?.longitude ?? ubicacion?.lng);
+  if (Number.isFinite(lat) && Number.isFinite(lng)) {
+    return { lat, lng };
+  }
+  return null;
+}
+
 function eventDistanceKm(
   event: FeedEventItem,
   lat: number,
   lng: number,
   nearbyDistances: Map<string, number>,
+  options?: { preferCoordinates?: boolean },
 ): number | null {
   if (event.id && nearbyDistances.has(event.id)) {
     return nearbyDistances.get(event.id)!;
   }
+  const coords = readEventCoordinates(event);
+  if (options?.preferCoordinates && coords) {
+    return haversineKm(lat, lng, coords.lat, coords.lng);
+  }
   if (event.distancia != null && Number.isFinite(event.distancia)) {
     return event.distancia;
   }
-  const ubicacion = event.ubicacion as { latitude?: unknown; longitude?: unknown; lat?: unknown; lng?: unknown } | undefined;
-  const elat = Number(event.latitude ?? ubicacion?.latitude ?? ubicacion?.lat);
-  const elng = Number(event.longitude ?? ubicacion?.longitude ?? ubicacion?.lng);
-  if (Number.isFinite(elat) && Number.isFinite(elng)) {
-    return haversineKm(lat, lng, elat, elng);
+  if (coords) {
+    return haversineKm(lat, lng, coords.lat, coords.lng);
   }
   return null;
 }
@@ -119,7 +131,8 @@ export function buildNearbyEventsFromCatalog(
 
   for (const event of filterDiscoverFeedEvents(catalog)) {
     if (!event.id || seen.has(event.id)) continue;
-    const distance = eventDistanceKm(event, lat, lng, new Map());
+    // Catálogo del feed: distancia siempre por coordenadas (evita distancia obsoleta de otra ubicación).
+    const distance = eventDistanceKm(event, lat, lng, new Map(), { preferCoordinates: true });
     if (distance == null || distance > radiusKm) continue;
     merged.push({
       ...event,
