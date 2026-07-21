@@ -2,7 +2,8 @@ import type { FeedEventItem } from '../types/events';
 import type { NearbyServiceProvider } from '../api/servicesService';
 import type { NearbyVenue } from '../api/venueService';
 
-const DISCOVER_CACHE_KEY = 'doevents_discover_cache_v1';
+// v5: invalida cachés que saltaban red con eventos pero sin lugares/servicios.
+const DISCOVER_CACHE_KEY = 'doevents_discover_cache_v5';
 const FRESH_MS = 10 * 60 * 1000;
 const STALE_MS = 60 * 60 * 1000;
 
@@ -15,6 +16,8 @@ export interface DiscoverCacheEntry {
   venues: NearbyVenue[];
   locationKey: string;
   cachedAt: number;
+  /** true tras un fetch de red con ubicación (aunque venues/services vengan vacíos). */
+  locationBoundFetched?: boolean;
 }
 
 function readStore(): DiscoverCacheEntry | null {

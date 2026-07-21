@@ -162,3 +162,33 @@ export async function filterByOwnerPrivacy<T>(
     return setHasUserId(following, ownerId);
   });
 }
+
+/**
+ * Marketplace Descubre: si privacy/following cuelga, mostrar ítems sin filtrar.
+ * Evita loading eterno o listas vacías por peaje de perfiles.
+ */
+export async function filterByOwnerPrivacyFailOpen<T>(
+  items: T[],
+  getOwnerId: (item: T) => string | undefined | null,
+  viewerId?: string | null,
+  timeoutMs = 2500,
+): Promise<T[]> {
+  if (!items.length) return items;
+  try {
+    return await new Promise<T[]>((resolve, reject) => {
+      const timer = setTimeout(() => resolve(items), timeoutMs);
+      filterByOwnerPrivacy(items, getOwnerId, viewerId).then(
+        (value) => {
+          clearTimeout(timer);
+          resolve(value);
+        },
+        (err) => {
+          clearTimeout(timer);
+          reject(err);
+        },
+      );
+    });
+  } catch {
+    return items;
+  }
+}

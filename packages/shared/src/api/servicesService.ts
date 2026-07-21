@@ -179,8 +179,8 @@ export async function fetchNearbyServices(
       profileImageUrl: resolveImageUrl(raw) || raw,
     };
   });
-  const { filterByOwnerPrivacy } = await import('../lib/privacyVisibility');
-  const visible = await filterByOwnerPrivacy(services, (s) => s.userId, viewerId);
+  const { filterByOwnerPrivacyFailOpen } = await import('../lib/privacyVisibility');
+  const visible = await filterByOwnerPrivacyFailOpen(services, (s) => s.userId, viewerId, 2500);
   cacheNearbyServices(cacheKey, visible);
   return visible;
 }

@@ -634,12 +634,13 @@ export async function fetchNearbyVenues(
     throw new Error(body.message || body.error || 'No se pudieron cargar lugares cercanos');
   }
   const venues = mapVenueRecords(body.venues || []);
-  const { filterByOwnerPrivacy } = await import('../lib/privacyVisibility');
+  const { filterByOwnerPrivacyFailOpen } = await import('../lib/privacyVisibility');
   const { getStoredUserId } = await import('./authService');
-  const visible = await filterByOwnerPrivacy(
+  const visible = await filterByOwnerPrivacyFailOpen(
     venues,
     (v) => v.ownerUserId,
     getStoredUserId(),
+    2500,
   );
   cacheNearbyVenues(cacheKey, visible);
   return visible;

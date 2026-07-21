@@ -37,7 +37,7 @@ import {
   dispatchEventFavoriteChanged,
   syncEventFavoriteWithFeedPublications,
   USER_LOCATION_CHANGED_EVENT,
-  filterByOwnerPrivacy,
+  filterByOwnerPrivacyFailOpen,
   type FeedEventItem,
   type NearbyServiceProvider,
   type NearbyVenue,
@@ -96,11 +96,19 @@ function resolveNearbyEvents(
   apiNearby: FeedEventItem[],
   catalog: FeedEventItem[],
   loc: StoredUserLocation | null,
+  supplementalCatalog: FeedEventItem[] = [],
 ): FeedEventItem[] {
   const filtered = filterDiscoverFeedEvents(apiNearby);
   if (!loc) return sortEventsByDistance(filtered);
+  const mergedCatalog = [...catalog];
+  const seen = new Set(catalog.map((event) => event.id).filter(Boolean));
+  for (const event of supplementalCatalog) {
+    if (!event.id || seen.has(event.id)) continue;
+    mergedCatalog.push(event);
+    seen.add(event.id);
+  }
   return buildNearbyEventsFromCatalog(
-    catalog,
+    mergedCatalog,
     loc.lat,
     loc.lng,
     NEARBY_RADIUS_KM,
@@ -114,11 +122,15 @@ function shouldSkipDiscoverNetworkRefresh(
     recommended?: FeedEventItem[];
     services?: NearbyServiceProvider[];
     venues?: NearbyVenue[];
+    locationBoundFetched?: boolean;
   },
   loc: StoredUserLocation | null,
   cacheFresh: boolean,
 ): boolean {
   if (!cacheFresh || !hasDiscoverContent(cached)) return false;
+  // Con ubicación: no saltar si nunca se completó el fetch geo de lugares/servicios.
+  // Antes se saltaba solo por tener eventos sintetizados → Descubre sin marketplace.
+  if (loc && !cached.locationBoundFetched) return false;
   if (discoverNearbyLooksIncomplete(
     cached.nearby || [],
     cached.recommended || [],
@@ -324,11 +336,18 @@ export const EventsPage: React.FC = () => {
     setRecommendedAll(mappedRecommended);
     setMyEvents(mappedMy);
     setFavorites(mappedFav);
-    const providers = groupServicesByProvider(sortedServices);
-    const enrichedProviders = await enrichProviderAvatars(providers);
-    setServiceProviders(enrichedProviders);
+    // Pintar lugares/servicios ANTES del enrich de avatares (si cuelga, las secciones ya existen).
     setNearbyServiceCards(sortedServices.map(providerToCard));
     setPublishedVenues(mergedVenues.map(nearbyVenueToPublishedDraft));
+    const providers = groupServicesByProvider(sortedServices);
+    setServiceProviders(providers);
+    void enrichProviderAvatars(providers)
+      .then((enrichedProviders) => {
+        setServiceProviders(enrichedProviders);
+      })
+      .catch(() => {
+        /* keep unenriched providers */
+      });
     void loadLikedDiscoverItems(
       mergedVenues.map((v) => v.venueId).filter(Boolean),
       sortedServices.map((s) => s.serviceId).filter(Boolean),
@@ -345,7 +364,12 @@ export const EventsPage: React.FC = () => {
       const cached = getCachedDiscover(locationKey, true);
       if (cached) {
         const cachedRecommended = filterDiscoverFeedEvents(cached.recommended || []);
-        const sortedNearby = resolveNearbyEvents(cached.nearby || [], cachedRecommended, loc);
+        const sortedNearby = resolveNearbyEvents(
+          cached.nearby || [],
+          cachedRecommended,
+          loc,
+          filterDiscoverFeedEvents(cached.myEvents || []),
+        );
         await applyDiscoverPayload(
           loc,
           sortedNearby,
@@ -387,20 +411,21 @@ export const EventsPage: React.FC = () => {
       ]);
 
       const feedItemsRaw = filterDiscoverFeedEvents(feedRes.items || []);
-      const feedItems = await filterByOwnerPrivacy(
+      const feedItems = await filterByOwnerPrivacyFailOpen(
         feedItemsRaw,
         (item) => item.userId,
         userId || undefined,
+        4000,
       );
-      const sortedNearby = resolveNearbyEvents(nearbyRes, feedItems, loc);
+      const mineItems = filterDiscoverFeedEvents(mineRes.data?.datosEvento || []);
+      const favItems = filterDiscoverFeedEvents(Array.isArray(favRes) ? favRes : []);
+      const sortedNearby = resolveNearbyEvents(nearbyRes, feedItems, loc, mineItems);
       const sortedServices = sortServicesByDistance(servicesRes);
       let mergedVenues = sortVenuesByDistance(venuesRes);
       if (userId) {
         const ownVenues = await fetchOwnerRentalVenues(userId).catch(() => []);
         mergedVenues = sortVenuesByDistance(mergeVenuesById(mergedVenues, ownVenues));
       }
-      const mineItems = filterDiscoverFeedEvents(mineRes.data?.datosEvento || []);
-      const favItems = filterDiscoverFeedEvents(Array.isArray(favRes) ? favRes : []);
 
       await applyDiscoverPayload(loc, sortedNearby, feedItems, mineItems, favItems, sortedServices, mergedVenues);
 
@@ -412,6 +437,7 @@ export const EventsPage: React.FC = () => {
         favorites: favItems,
         services: sortedServices,
         venues: mergedVenues,
+        locationBoundFetched: Boolean(loc),
       });
     } catch (err) {
       showToast(err instanceof Error ? err.message : 'No se pudo cargar Descubre', 'error');
@@ -443,7 +469,8 @@ export const EventsPage: React.FC = () => {
         invalidateDiscoverCache();
       }
       setEffectiveLocation(loc);
-      await load(loc);
+      // forceNetwork en el primer paint: evita quedarnos con caché incompleta de sesiones previas.
+      await load(loc, true);
     };
     void run();
 
