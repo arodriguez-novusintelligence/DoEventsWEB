@@ -1,5 +1,5 @@
 import type { FeedEventItem, UserEventItem } from '@doevents/shared';
-import { isDiscoverableFeedEvent, mapDiscoverEventBadge } from '@doevents/shared';
+import { getCachedEvent, isDiscoverableFeedEvent, mapDiscoverEventBadge } from '@doevents/shared';
 
 type DiscoverFeedEventFields = {
   estatus?: string;
@@ -40,6 +40,33 @@ function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): nu
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
+function toCoordinate(value: unknown): number | undefined {
+  if (value == null || value === '') return undefined;
+  const num = typeof value === 'number' ? value : Number(value);
+  return Number.isFinite(num) ? num : undefined;
+}
+
+function readEventCoordinates(event: FeedEventItem): { lat: number; lng: number } | null {
+  const ubicacion = event.ubicacion as {
+    latitude?: unknown;
+    longitude?: unknown;
+    lat?: unknown;
+    lng?: unknown;
+  } | undefined;
+  const lat = toCoordinate(event.latitude ?? ubicacion?.latitude ?? ubicacion?.lat);
+  const lng = toCoordinate(event.longitude ?? ubicacion?.longitude ?? ubicacion?.lng);
+  if (lat == null || lng == null) return null;
+  return { lat, lng };
+}
+
+function resolveDiscoverEventCoordinates(event: FeedEventItem): { lat: number; lng: number } | null {
+  const direct = readEventCoordinates(event);
+  if (direct) return direct;
+  if (!event.id) return null;
+  const cached = getCachedEvent(event.id);
+  return cached ? readEventCoordinates(cached) : null;
+}
+
 function eventDistanceKm(
   event: FeedEventItem,
   lat: number,
@@ -49,14 +76,12 @@ function eventDistanceKm(
   if (event.id && nearbyDistances.has(event.id)) {
     return nearbyDistances.get(event.id)!;
   }
+  const coords = resolveDiscoverEventCoordinates(event);
+  if (coords) {
+    return haversineKm(lat, lng, coords.lat, coords.lng);
+  }
   if (event.distancia != null && Number.isFinite(event.distancia)) {
     return event.distancia;
-  }
-  const ubicacion = event.ubicacion as { latitude?: unknown; longitude?: unknown; lat?: unknown; lng?: unknown } | undefined;
-  const elat = Number(event.latitude ?? ubicacion?.latitude ?? ubicacion?.lat);
-  const elng = Number(event.longitude ?? ubicacion?.longitude ?? ubicacion?.lng);
-  if (Number.isFinite(elat) && Number.isFinite(elng)) {
-    return haversineKm(lat, lng, elat, elng);
   }
   return null;
 }
@@ -75,7 +100,7 @@ export function filterAndSortMyPublishedEvents(
   const lng = options?.userLng;
   const nearbyDistances = options?.nearbyDistances ?? new Map<string, number>();
 
-  let filtered = filterDiscoverFeedEvents(events);
+  const filtered = filterDiscoverFeedEvents(events);
 
   return filtered.sort((a, b) => {
     const sa = STATUS_ORDER[mapDiscoverEventBadge({
@@ -114,19 +139,24 @@ export function buildNearbyEventsFromCatalog(
   radiusKm: number,
   existing: FeedEventItem[] = [],
 ): FeedEventItem[] {
-  const seen = new Set(existing.map((e) => e.id).filter(Boolean));
-  const merged = [...existing];
+  const seen = new Set<string>();
+  const merged: FeedEventItem[] = [];
+  const apiDistances = new Map(
+    existing
+      .filter((event) => event.id && event.distancia != null && Number.isFinite(event.distancia))
+      .map((event) => [event.id!, event.distancia!]),
+  );
 
-  for (const event of filterDiscoverFeedEvents(catalog)) {
-    if (!event.id || seen.has(event.id)) continue;
-    const distance = eventDistanceKm(event, lat, lng, new Map());
-    if (distance == null || distance > radiusKm) continue;
-    merged.push({
-      ...event,
-      distancia: event.distancia ?? distance,
-    });
+  const pushInRange = (event: FeedEventItem, trustedDistances: Map<string, number>) => {
+    if (!event.id || seen.has(event.id)) return;
+    const distance = eventDistanceKm(event, lat, lng, trustedDistances);
+    if (distance == null || distance > radiusKm) return;
+    merged.push({ ...event, distancia: distance });
     seen.add(event.id);
-  }
+  };
+
+  filterDiscoverFeedEvents(existing).forEach((event) => pushInRange(event, apiDistances));
+  filterDiscoverFeedEvents(catalog).forEach((event) => pushInRange(event, new Map()));
 
   return merged.sort((a, b) => (a.distancia ?? Infinity) - (b.distancia ?? Infinity));
 }

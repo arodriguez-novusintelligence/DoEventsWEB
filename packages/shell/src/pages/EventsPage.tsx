@@ -30,6 +30,7 @@ import {
   likeVenue,
   likeService,
   resolveUserLocation,
+  normalizeFeedEventItem,
   useStoredUserLocation,
   RootState,
   useToast,
@@ -76,6 +77,12 @@ function sortServicesByDistance(items: NearbyServiceProvider[]): NearbyServicePr
 
 function sortVenuesByDistance(items: NearbyVenue[]): NearbyVenue[] {
   return [...items].sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity));
+}
+
+function normalizeDiscoverSupplementalEvents(items: unknown[] = []): FeedEventItem[] {
+  return filterDiscoverFeedEvents(
+    items.map((item) => normalizeFeedEventItem(item as Record<string, unknown>)),
+  );
 }
 
 function hasDiscoverContent(cached: {
@@ -140,7 +147,7 @@ function shouldSkipDiscoverNetworkRefresh(
   // Con ubicación: no saltar si nunca se completó el fetch geo de lugares/servicios.
   // Antes se saltaba solo por tener eventos sintetizados → Descubre sin marketplace.
   if (loc && !cached.locationBoundFetched) return false;
-  const supplementalCatalog = filterDiscoverFeedEvents([
+  const supplementalCatalog = normalizeDiscoverSupplementalEvents([
     ...(cached.myEvents || []),
     ...(cached.favorites || []),
   ]);
@@ -378,15 +385,15 @@ export const EventsPage: React.FC = () => {
     const locationKey = buildDiscoverLocationKey(loc?.lat, loc?.lng, userId || undefined);
     const cacheFresh = !forceNetwork && isDiscoverCacheFresh(locationKey);
     const supplementalFromCache = (cachedMy: FeedEventItem[], cachedFav: FeedEventItem[]) => (
-      filterDiscoverFeedEvents([...cachedMy, ...cachedFav])
+      normalizeDiscoverSupplementalEvents([...(cachedMy || []), ...(cachedFav || [])])
     );
 
     if (!forceNetwork) {
       const cached = getCachedDiscover(locationKey, true);
       if (cached) {
         const cachedRecommended = filterDiscoverFeedEvents(cached.recommended || []);
-        const cachedMine = filterDiscoverFeedEvents(cached.myEvents || []);
-        const cachedFav = filterDiscoverFeedEvents(cached.favorites || []);
+        const cachedMine = normalizeDiscoverSupplementalEvents(cached.myEvents || []);
+        const cachedFav = normalizeDiscoverSupplementalEvents(cached.favorites || []);
         const sortedNearby = resolveNearbyEvents(
           cached.nearby || [],
           cachedRecommended,
@@ -446,8 +453,8 @@ export const EventsPage: React.FC = () => {
       );
       if (!isCurrentLoad()) return;
 
-      const mineItems = filterDiscoverFeedEvents(mineRes.data?.datosEvento || []);
-      const favItems = filterDiscoverFeedEvents(Array.isArray(favRes) ? favRes : []);
+      const mineItems = normalizeDiscoverSupplementalEvents(mineRes.data?.datosEvento || []);
+      const favItems = normalizeDiscoverSupplementalEvents(Array.isArray(favRes) ? favRes : []);
       const sortedNearby = resolveNearbyEvents(
         nearbyRes,
         feedItems,
